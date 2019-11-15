@@ -50,14 +50,13 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.layerModel.Layer;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.ImageRenderer;
-import org.orbisgis.coremap.renderer.Renderer;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.junit.Test;
+import org.orbisgis.coremap.layerModel.LayerException;
+import org.orbisgis.coremap.renderer.MapRenderer;
 import org.orbisgis.coremap.utils.progress.NullProgressMonitor;
 import org.orbisgis.datamanager.h2gis.H2GIS;
 import org.orbisgis.datamanagerapi.dataset.ITable;
@@ -84,60 +83,33 @@ public class Gallery {
     }
 
 
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 1000;
-
     public void template(String shapefile, String title, String stylePath, String source,
             String savePath, Envelope extent)
-            throws IOException, InvalidStyle, SQLException {
+            throws IOException, InvalidStyle, SQLException, LayerException {
         
             ITable table = h2GIS.load(new File(shapefile),true);
-            String tableReference = table.getName();
-            MapTransform mt = new MapTransform();
+            String tableReference = table.getName();          
 
-            if (extent == null) {
-                extent = h2GIS.getSpatialTable(tableReference).getExtend();
-            }
 
-            mt.resizeImage(WIDTH, HEIGHT);
-            mt.setExtent(extent);
-            Envelope effectiveExtent = mt.getAdjustedExtent();
-            System.out.print("Extent: " + effectiveExtent);
-
-            BufferedImage img = mt.getImage();
-            Graphics2D g2 = (Graphics2D) img.getGraphics();
-
-            g2.setRenderingHints(mt.getRenderingHints());
-
-            ILayer layer = new Layer("swiss", h2GIS.getSpatialTable(tableReference));
+            Layer layer = new Layer("swiss", h2GIS.getSpatialTable(tableReference));
 
             Style style = new Style(layer, stylePath);
-            layer.setStyle(0,style);
+            layer.setStyle(style);
 
-            Renderer renderer = new ImageRenderer();
-            BufferedImage image = mt.getImage();
+            MapRenderer mapRenderer = new MapRenderer();
+            mapRenderer.addLayer(layer);
 
-            Graphics graphics = image.getGraphics();
-            graphics.setColor(Color.white);
-            graphics.fillRect(0, 0, WIDTH, HEIGHT);
-
-
-            renderer.draw(img, effectiveExtent , layer, new NullProgressMonitor());
-
-            if (source != null) {
-                graphics.setColor(Color.black);
-                graphics.drawChars(source.toCharArray(), 0, source.length(), 20, HEIGHT - 30);
-            }
+            mapRenderer.draw();
+            
 
             if (savePath != null) {
-                File file = new File(savePath);
-                ImageIO.write(image, "png", file);
+                mapRenderer.save(savePath);
             }
     }
 
     @Test
     public void testMaps()
-            throws ParameterException, IOException, InvalidStyle, SQLException {
+            throws ParameterException, IOException, InvalidStyle, SQLException, LayerException {
         
         this.template("/home/ebocher/Autres/codes/orbisgis/bundles/core-map/src/test/resources/data/landcover2000.shp", "Lancover",
                "/home/ebocher/Autres/codes/orbisgis/bundles/core-map/src/test/resources/org/orbisgis/coremap/renderer/se/fills.se", null, "/tmp/extLancover.png", null);

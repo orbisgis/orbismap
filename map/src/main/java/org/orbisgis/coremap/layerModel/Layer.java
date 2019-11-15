@@ -36,22 +36,34 @@
  */
 package org.orbisgis.coremap.layerModel;
 
+import java.awt.Graphics2D;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.locationtech.jts.geom.Envelope;
-import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import javax.swing.SwingWorker;
-import org.orbisgis.coremap.layerModel.model.ILayer;
+import org.locationtech.jts.geom.Geometry;
+import org.orbisgis.coremap.layerModel.model.AbstractLayer;
+import org.orbisgis.coremap.map.MapTransform;
+import org.orbisgis.coremap.renderer.se.Rule;
 import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.renderer.se.Symbolizer;
+import org.orbisgis.coremap.renderer.se.VectorSymbolizer;
+import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
+import org.orbisgis.coremap.utils.progress.IProgressMonitor;
+import org.orbisgis.datamanager.JdbcTable;
 import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
 
-public class Layer extends BeanLayer {
-    // When dataURI is not specified, this layer use the tableReference instead of external URI
-    private static final String JDBC_REFERENCE_SCHEME = "WORKSPACE";
+public class Layer extends AbstractLayer {
 
     private ISpatialTable spatialTable;
-    private URI dataURI;
     private Envelope envelope = new Envelope();
-    private ExecutorService executorService = null;
+    private Style style;
 
     public Layer(String name, ISpatialTable spatialTable) {
         super(name);
@@ -66,8 +78,16 @@ public class Layer extends BeanLayer {
     public Layer(ISpatialTable spatialTable, Style style) {
         super(spatialTable.getName());
         this.spatialTable = spatialTable;
-        addStyle(0, style);
     }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public void setStyle(Style style) {
+        this.style = style;
+    }
+    
        
     @Override
     public void clearCache() {
@@ -92,25 +112,115 @@ public class Layer extends BeanLayer {
     public boolean isSerializable() {
         return spatialTable != null;
     }
-
     
-    private void fireSelectionChanged() {
-        listeners.forEach((listener) -> {
-            listener.selectionChanged(new SelectionEvent(this));
-        });
-    }
-    
-    
-    private void executeJob(SwingWorker worker) {
-        if (executorService == null) {
-            worker.execute();
-        } else {
-            executorService.execute(worker);
-        }
-    }    
-
-    @Override
     public ISpatialTable getSpatialTable() {
         return spatialTable;
     }
+
+    @Override
+    public void draw(Graphics2D g2, MapTransform mt, IProgressMonitor pm) throws LayerException {    
+        
+        if(isVisible() && mt.getAdjustedExtent().intersects(envelope)){
+        if (spatialTable == null && !(spatialTable instanceof JdbcTable)) {
+            throw new LayerException("There is neither a ResultSetProviderFactory instance nor available DataSource in the vectorial layer");
+        }
+       
+        String geomColumnName = spatialTable.getGeometricColumns().get(0);
+        StringBuilder geofilter = new StringBuilder();
+        geofilter.append("'").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ").append(geomColumnName);
+        try {
+            // i.e. TextSymbolizer are always drawn above all other layer !! Should now be handle with symbolizer level
+            // Standard rules (with filter or no filter but not with elsefilter)
+            IProgressMonitor rulesProgress = pm.startTask(style.getRules().size());
+            for (Rule r : style.getRules()) {
+                FeaturesVisitor fv = new FeaturesVisitor();
+                fv.visitSymbolizerNode(r);
+                Set<String> fields = fv.getResult();
+                fields.add(geomColumnName);
+                
+                ISpatialTable spatialTableQuery = ((JdbcTable) spatialTable).columns(fields.toArray(new String[0]))
+                        .where(geofilter.toString()).getSpatialTable();
+
+                IProgressMonitor rowSetProgress = rulesProgress.startTask("Drawing " + getName() + " (Rule " + r.getName() + ")", 1);
+
+                //ResultSet spatialTableQuery = ps.executeQuery();
+                long row = -1;
+
+                while (spatialTableQuery.next()) {
+                    if (rulesProgress.isCancelled()) {
+                        break;
+                    }
+                    Geometry theGeom = spatialTableQuery.getGeometry();
+
+                    // Do not display the geometry when the envelope
+                    //doesn't intersect the current mapcontext area.
+                    if (theGeom != null) {
+                        //Workaround because H2 linked table doesn't contains PK or _ROWID_
+                        row++;
+                        //End workaround
+                        boolean selected = false;
+                        List<Symbolizer> sl = r.getCompositeSymbolizer().getSymbolizerList();
+                        for (Symbolizer s : sl) {
+                            boolean res = drawFeature(s, theGeom, spatialTableQuery, row,
+                                     mt.getAdjustedExtent(), selected, mt, g2);
+                        }
+                    }
+                    rowSetProgress.endTask();
+                }
+                rulesProgress.endTask();
+            }
+            //disposeLayer(g2);
+        } catch (ParameterException | IOException | SQLException ex) {
+             Logger.getLogger(Layer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
+    }
+    
+     private boolean drawFeature(Symbolizer s, Geometry geom, ResultSet rs,
+            long rowIdentifier, Envelope extent, boolean selected,
+            MapTransform mt, Graphics2D g2) throws ParameterException,
+            IOException, SQLException {
+        Geometry theGeom = geom;
+        boolean somethingReached = false;
+        if (theGeom == null) {
+            //We try to retrieve a geometry. If we fail, an
+            //exception will be thrown by the call to draw,
+            //and a message will be shown to the user...
+            VectorSymbolizer vs = (VectorSymbolizer) s;
+            theGeom = vs.getGeometry(rs, rowIdentifier);
+            if (theGeom != null && theGeom.getEnvelopeInternal().intersects(extent)) {
+                somethingReached = true;
+            }
+        }
+        if (somethingReached || theGeom != null) {
+            s.draw(g2, rs, rowIdentifier, selected, mt, theGeom);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addPropertyChangeListener(String prop, PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removePropertyChangeListener(String prop, PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+   
+    
+    
 }

@@ -36,28 +36,61 @@
  */
 package org.orbisgis.coremap.layerModel.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 import org.slf4j.*;
-import org.orbisgis.coremap.renderer.se.Style;
 import org.orbisgis.coremap.layerModel.LayerCollectionEvent;
 import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.layerModel.LayerListener;
 import org.orbisgis.coremap.layerModel.LayerListenerEvent;
+import org.orbisgis.coremap.renderer.se.common.Description;
 import org.orbisgis.coremap.utils.CollectionUtils;
 
 public abstract class AbstractLayer implements ILayer {
         
+        //Listener container
+        protected transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
         
         protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractLayer.class);
-
-	public AbstractLayer() {
-		listeners = new ArrayList<LayerListener>();
-        }
-
+        
+         private Description description;
+         
+        private boolean visible = true;
+        
 	private ILayer parent;
 
 	protected ArrayList<LayerListener> listeners = new ArrayList<LayerListener>();
 
+
+	public AbstractLayer(String name) {
+		listeners = new ArrayList<LayerListener>();
+                description = new Description();
+                description.addTitle(Locale.getDefault(), name);
+        }
+
+        /**
+         * Get the value of description
+         *
+         * @return the value of description
+         */
+        @Override
+        public Description getDescription() {
+                return description;
+        }
+
+        /**
+         * Set the value of description
+         *
+         * @param description new value of description
+         */
+        @Override
+        public void setDescription(Description description) {
+                Description oldDescription = this.description;
+                this.description = description;
+                propertyChangeSupport.firePropertyChange(PROP_DESCRIPTION, oldDescription, description);
+        }
 	
         @Override
 	public ILayer getParent() {
@@ -133,11 +166,6 @@ public abstract class AbstractLayer implements ILayer {
 
 		return ret.toArray(new ILayer[ret.size()]);
 	}
-
-        @Override
-        public void setStyles(List<Style> fts) {
-                this.fireStyleChanged();
-        }
         
         @Override
 	public ILayer[] getLayerPath() {
@@ -200,21 +228,24 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
         /**
-         * Event if the layer is moved
-         * @param parent
-         * @param layer 
-         */
-	private void fireLayerMovedEvent(ILayer parent, ILayer layer) {
-                LayerCollectionEvent evt = new LayerCollectionEvent(parent,
-					new ILayer[] { layer });
-                LayerCollectionEvent ev2 = new LayerCollectionEvent(layer.getParent(),
-					new ILayer[] { layer });
-		for (LayerListener listener : listeners) {
-			listener.layerMoved(evt);
-			listener.layerMoved(ev2);
-		}
+     * Event if the layer is moved
+     *
+     * @param parent
+     * @param layer
+     */
+    private void fireLayerMovedEvent(ILayer parent, ILayer layer) {
+        LayerCollectionEvent evt = new LayerCollectionEvent(parent,
+                new ILayer[]{layer});
+        LayerCollectionEvent ev2 = new LayerCollectionEvent(layer.getParent(),
+                new ILayer[]{layer});
+        listeners.stream().map((listener) -> {
+            listener.layerMoved(evt);
+            return listener;
+        }).forEachOrdered((listener) -> {
+            listener.layerMoved(ev2);
+        });
 
-	}
+    }
 
         /**
          * Event if the style of the layer change
@@ -259,14 +290,8 @@ public abstract class AbstractLayer implements ILayer {
 	protected boolean fireLayerRemovingEvent(ILayer[] toRemove) {
 		ArrayList<LayerListener> l = (ArrayList<LayerListener>) listeners
 				.clone();
-		for (LayerListener listener : l) {
-			if (!listener
-					.layerRemoving(new LayerCollectionEvent(this, toRemove))) {
-				return false;
-			}
-		}
-
-		return true;
+		return l.stream().noneMatch((listener) -> (!listener
+                        .layerRemoving(new LayerCollectionEvent(this, toRemove))));
 	}
         
     @Override
@@ -351,5 +376,102 @@ public abstract class AbstractLayer implements ILayer {
         return null;
     }
     
+    
+     /**
+         * Get the value of visible
+         *
+         * @return the value of visible
+         */
+        @Override
+        public boolean isVisible() {
+                return visible;
+        }
+
+        /**
+         * Set the value of visible
+         *
+         * @param visible new value of visible
+         * @throws org.orbisgis.coremap.layerModel.LayerException
+         */
+        @Override
+        public void setVisible(boolean visible) throws LayerException  {
+                boolean oldVisible = this.visible;
+                this.visible = visible;
+                propertyChangeSupport.firePropertyChange(PROP_VISIBLE, oldVisible, visible);
+                //Deprecated listener
+                fireVisibilityChanged();
+        }
+        
+        /**
+	 * 
+         * @return the name of the layer
+	 * @see org.orbisgis.coremap.layerModel.ILayer#getName()
+	 */
+        @Override
+	public String getName() {
+                String ret = description.getTitle(Locale.getDefault());
+		return ret == null ? description.getDefaultTitle() : ret;
+	}
+
+	/**
+	 * 
+         * @param name set a new name to the layer
+	 * @throws LayerException
+	 * @see org.orbisgis.coremap.layerModel.ILayer#setName(java.lang.String)
+	 */
+        @Override
+	public void setName(final String name) throws LayerException {
+                if(name!=null && !name.equals(getName())) {
+                        //Set the localised title of this layer
+                        final Set<String> allLayersNames = getRoot().getAllLayersNames();
+                        allLayersNames.remove(getName());
+                        String unUsedName = provideNewLayerName(name, allLayersNames);                
+                        description.addTitle(Locale.getDefault(), unUsedName);
+                        setDescription(description);
+                        fireNameChanged();
+                }
+	}
+    
+        
+        /**
+        * Add a property-change listener for all properties.
+        * The listener is called for all properties.
+        * @param listener The PropertyChangeListener instance
+        * Use EventHandler.create to build the PropertyChangeListener instance
+        */
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener listener) {
+                propertyChangeSupport.addPropertyChangeListener(listener);
+        }
+        /**
+        * Add a property-change listener for a specific property.
+        * The listener is called only when there is a change to 
+        * the specified property.
+        * @param prop The static property name PROP_..
+        * @param listener The PropertyChangeListener instance
+        * Use EventHandler.create to build the PropertyChangeListener instance
+        */
+        @Override
+        public void addPropertyChangeListener(String prop,PropertyChangeListener listener) {
+                propertyChangeSupport.addPropertyChangeListener(prop, listener);
+        }
+        /**
+        * Remove the specified listener from the list
+        * @param listener The listener instance
+        */
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener listener) {
+                propertyChangeSupport.removePropertyChangeListener(listener);
+        }
+
+        /**
+        * Remove the specified listener for a specified property from the list
+        * @param prop The static property name PROP_..
+        * @param listener The listener instance
+        */
+        @Override
+        public void removePropertyChangeListener(String prop,PropertyChangeListener listener) {
+                propertyChangeSupport.removePropertyChangeListener(prop,listener);
+        }
    
 }

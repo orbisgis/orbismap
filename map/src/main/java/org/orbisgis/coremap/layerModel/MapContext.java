@@ -34,15 +34,10 @@
 package org.orbisgis.coremap.layerModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import org.cts.crs.CoordinateReferenceSystem;
 import org.slf4j.*;
-import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.ImageRenderer;
-import org.orbisgis.coremap.renderer.Renderer;
 import org.orbisgis.coremap.layerModel.model.ILayer;
-import org.orbisgis.coremap.utils.progress.IProgressMonitor;
 
 /**
  * Class that contains the status of the Map .
@@ -55,7 +50,6 @@ public final class MapContext extends BeanMapContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapContext.class);
     private ArrayList<MapContextListener> listeners = new ArrayList<MapContextListener>();
     
-    private boolean open = false;
     private long idTime;
 
     /**
@@ -138,46 +132,7 @@ public final class MapContext extends BeanMapContext {
             }
         }
         return false;
-    }
-
-    /**
-     * Implementation of public draw method
-     *
-     * @param mt Contain the extent and the image to draw on
-     * @param pm Object to report process and check the cancelled condition
-     * @param layer Draw recursively this layer
-     * @throws IllegalStateException If the map is closed
-     */
-    private void drawImpl(MapTransform mt, IProgressMonitor pm, ILayer layer) throws IllegalStateException {        
-        Renderer renderer = new ImageRenderer();
-        renderer.draw(mt, layer, pm);
-    }
-
-    @Override
-    public void draw(MapTransform mt, IProgressMonitor pm, ILayer layer) {
-        //Layer must be from this layer model
-        if (!isLayerFromThisLayerModel(layer)) {
-            throw new IllegalStateException("Layer provided for drawing is not from the map context layer model.");
-        }
-        drawImpl(mt, pm, layer);
-    }
-
-    @Override
-    public void draw(MapTransform mt,
-            IProgressMonitor pm) {
-        drawImpl(mt, pm, getLayerModel());
-    }
-
-    /**
-     * Search recursively for the specified layer in the layer model
-     *
-     * @param layer Searched layer
-     * @return True if the layer is in the map context layer model
-     */
-    private boolean isLayerFromThisLayerModel(ILayer layer) {
-        ILayer[] allLayers = getLayerModel().getLayersRecursively();
-        return Arrays.asList(allLayers).contains(layer);
-    }
+    }  
 
     
 
@@ -219,6 +174,5 @@ public final class MapContext extends BeanMapContext {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
         
 }

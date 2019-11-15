@@ -203,26 +203,7 @@ public interface IMapContext {
     public void setSelectedLayers(ILayer[] selectedLayers)
             throws IllegalStateException;
 
-    /**
-     * Draws an image of the layers in the specified MapTransform.
-     *
-     * @param mt Contain the extent and the image to draw on
-     * @param pm Object to report process and check the cancelled condition
-     * @throws IllegalStateException If the map is closed
-     */
-    void draw(MapTransform mt, IProgressMonitor pm)
-            throws IllegalStateException;
-
-    /**
-     * Draws an image of the specified layer in the specified MapTransform.
-     *
-     * @param mt Contain the extent and the image to draw on
-     * @param pm Object to report process and check the cancelled condition
-     * @param layer Draw recursively this layer
-     * @throws IllegalStateException If the map is closed
-     */
-    void draw(MapTransform mt, IProgressMonitor pm, ILayer layer)
-            throws IllegalStateException;
+    
 
     /**
      * Gets the layer where all the edition actions take place
@@ -235,6 +216,7 @@ public interface IMapContext {
     /**
      * Sets the layer where all the edition actions take place
      *
+     * @param activeLayer
      * @return
      * @throws IllegalStateException If the map is closed
      */

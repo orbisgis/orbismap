@@ -99,27 +99,18 @@ public class LayerModelTest {
         @Test
 	public void testLayerEvents() throws Exception {
 		TestLayerListener listener = new TestLayerListener();
-		ILayer vl = new Layer(h2GIS.getSpatialTable(dummy));
+		Layer vl = new Layer(h2GIS.getSpatialTable(dummy));
 		ILayer lc = mc.createLayerCollection("root");
 		vl.addLayerListener(listener);
 		lc.addLayerListener(listener);
-		ILayer vl1 = new Layer(h2GIS.getSpatialTable(dummy));
+		Layer vl1 = new Layer(h2GIS.getSpatialTable(dummy));
 		lc.addLayer(vl1);
 		assertTrue(listener.la == 1);
 		lc.setName("new name");
 		assertTrue(listener.nc == 1);
 		lc.setVisible(false);
 		assertTrue(listener.vc == 1);
-		int refsc = listener.sc;
-		vl.addStyle(new Style(vl, colorRecodeFile));
-		assertTrue(listener.sc == refsc + 1);
-		vl.setStyle(0,new Style(vl, colorRecodeFile));
-		assertTrue(listener.sc == refsc + 2);
-                List<Style> styles = new ArrayList<Style>();
-		vl.setStyles(styles);
-		assertTrue(listener.sc == refsc + 3);
-		vl.addStyle(0,new Style(vl, colorRecodeFile));
-		assertTrue(listener.sc == refsc + 4);
+		vl.setStyle(new Style(vl, colorRecodeFile));
 		lc.removeLayer(vl1.getName());
 		assertTrue(listener.lr == 1);
 		assertTrue(listener.lring == 1);

@@ -56,6 +56,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,8 @@ public class MapTransform implements PointTransformation {
         private ShapeWriter converter;
         private double dpi;
         private static final double DEFAULT_DPI = 96.0;       
-        private double MAXPIXEL_DISPLAY = 0;
+        private double MAXPIXEL_DISPLAY = 0 ;
+        static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
         static {
                 Map<RenderingHints.Key, Object> hints = new HashMap<>();
@@ -90,8 +92,7 @@ public class MapTransform implements PointTransformation {
                 } else {
                     LOGGER.trace("Headless graphics environment, set current DPI to 96.0");
                     this.dpi = DEFAULT_DPI;
-                }                
-                //updateRenderingHints();
+                } 
         }
 
         /**
@@ -301,6 +302,12 @@ public class MapTransform implements PointTransformation {
                     listener.imageSizeChanged(oldWidth, oldHeight, this);
             });
         }
+
+    public static GeometryFactory getGeometryFactory() {
+        return GEOMETRY_FACTORY;
+    }
+        
+        
 
         /**
          * Gets this transformation

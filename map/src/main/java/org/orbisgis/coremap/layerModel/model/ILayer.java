@@ -33,16 +33,16 @@
  */
 package org.orbisgis.coremap.layerModel.model;
 
+import java.awt.Graphics2D;
 import org.locationtech.jts.geom.Envelope;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.Set;
 
 import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.layerModel.LayerListener;
-import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.common.Description;
-import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
+import org.orbisgis.coremap.utils.progress.IProgressMonitor;
 
 /**
  *
@@ -53,8 +53,6 @@ public interface ILayer {
     //Properties index
     public static final String PROP_DESCRIPTION = "description";
     public static final String PROP_VISIBLE = "visible";
-    public static final String PROP_STYLES = "styles";
-    public static final String PROP_SOURCE_URI = "sourceUri";
 
     /**
      * Add a property-change listener for all properties. The listener is called
@@ -315,86 +313,9 @@ public interface ILayer {
      * @param index
      * @return
      */
-    public ILayer getLayer(final int index);
+    public ILayer getLayer(final int index);    
 
-    /**
-     * Gets all the raster layers in the tree under this layer
-     *
-     * @return
-     * @throws LayerException
-     */
-    /**
-     * Gets the {@code List} of SE styles that are used to define the
-     * symbologies associated to the current {@code ILayer}.
-     *
-     * @return
-     */
-    List<Style> getStyles();
-
-    /**
-     * Sets the {@code List} of SE styles that are used to define the
-     * symbologies associated to the current {@code ILayer}.
-     *
-     * @param fts
-     */
-    void setStyles(List<Style> fts);
-
-    /**
-     * Gets the {@code i}th {@code Style} that is used to define the symbology
-     * associated to the current {@code ILayer}.
-     *
-     * @param index
-     * @return
-     */
-    Style getStyle(int index);
-
-    /**
-     * Sets the {@code i}th {@code Style} that is used to define the symbology
-     * associated to the current {@code ILayer}.
-     *
-     * @param index
-     * @param style
-     */
-    void setStyle(int index, Style style);
-
-    /**
-     * Adds a {@code Style} instance at the end of the list of associated
-     * {@code Style}s.
-     *
-     * @param style
-     */
-    public void addStyle(Style style);
-
-    /**
-     * Adds a {@code Style} instance at the ith position of the list of
-     * associated {@code Style}s.
-     *
-     * @param index
-     * @param style
-     */
-    public void addStyle(int index, Style style);
-
-    /**
-     * Gets the index of {@code s} in this {@code ILayer}, or {@code -1} if
-     * {@code s} is not associated to this.
-     *
-     * @param s
-     * @return
-     */
-    public int indexOf(Style s);
-
-    /**
-     * Removes s from the styles associated to this layer.
-     *
-     * @param style
-     */
-    void removeStyle(Style style);
-
-    /**
-     * The spatial table
-     *
-     * @return
-     */
-    ISpatialTable getSpatialTable();
+        
+    void draw(Graphics2D g2, MapTransform mt,IProgressMonitor pm) throws LayerException ;
 
 }

@@ -33,6 +33,7 @@
  */
 package org.orbisgis.coremap.layerModel;
 
+import java.awt.Graphics2D;
 import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.locationtech.jts.geom.Envelope;
 
@@ -42,10 +43,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.orbisgis.coremap.layerModel.model.AbstractLayer;
+import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.utils.progress.IProgressMonitor;
 import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
 
-public class LayerCollection extends BeanLayer {
+public class LayerCollection extends AbstractLayer {
 
     private List<ILayer> layerCollection;
 
@@ -175,11 +179,7 @@ public class LayerCollection extends BeanLayer {
         }
     }
 
-    @Override
-    public void setStyle(int i, Style fts) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+   
     /**
      *
      * @return
@@ -325,24 +325,7 @@ public class LayerCollection extends BeanLayer {
         return result;
     }
 
-    @Override
-    public Style getStyle(int i) {
-        throw new UnsupportedOperationException("Cannot set "
-                + "a legend on a layer collection");
-    }
-
-    @Override
-    public List<Style> getStyles() {
-        throw new UnsupportedOperationException("Cannot set "
-                + "a legend on a layer collection");
-    }
-
-    @Override
-    public void setStyles(List<Style> s) {
-        throw new UnsupportedOperationException("Cannot set "
-                + "a legend on a layer collection");
-    }
-
+    
     ///////////Static methods///////////////////////////////
     /**
      * Aooky action to each leave of this layer tree
@@ -407,26 +390,21 @@ public class LayerCollection extends BeanLayer {
                 }
             }
         }
-    }
+    }   
 
-    @Override
-    public void addStyle(Style style) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void addStyle(int i, Style style) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int indexOf(Style s) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
+    
     public ISpatialTable getSpatialTable() {
         throw new UnsupportedOperationException("Not supported."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void draw(Graphics2D g2, MapTransform mt, IProgressMonitor pm) throws LayerException {
+        final LayerCollection lc = this;
+        if (null != lc.getLayerCollection()) {
+            for (ILayer layer : lc.getChildren()) {
+                layer.draw(g2, mt, pm);
+            }
+        }            
     }
 
     //////////Private classes//////////////////////////

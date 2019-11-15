@@ -41,9 +41,6 @@ import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.locationtech.jts.geom.Envelope;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.net.URI;
-
-import org.orbisgis.coremap.renderer.se.Style;
 import org.orbisgis.coremap.renderer.se.common.Description;
 
 /**
