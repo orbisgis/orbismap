@@ -46,22 +46,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ExtensionParameterType;
-import net.opengis.se._2_0.core.ExtensionType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.PointSymbolizerType;
-import org.slf4j.*;
-
-
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.geometry.GeometryAttribute;
 
 /**
  * {@code PointSymbolizer} are used to draw a graphic at a point. As a symbolizer, 
@@ -100,43 +90,7 @@ public final class PointSymbolizer extends VectorSymbolizer implements GraphicNo
         MarkGraphic mark = new MarkGraphic();
         graphic.addGraphic(mark);
         onVertex = false;
-    }
-
-    /**
-     * Build a {@code PointSymbolizer} using the elements registered in the 
-     * givenJAXBElement.
-     * @param st
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public PointSymbolizer(JAXBElement<PointSymbolizerType> st) throws InvalidStyle {
-        super(st);
-        PointSymbolizerType pst = st.getValue();
-
-        if (pst.getGeometry() != null) {
-            this.setGeometryAttribute(new GeometryAttribute(pst.getGeometry()));
-        }
-
-        onVertex = false;
-        if (pst.getExtension() != null) {
-            for (ExtensionParameterType param : pst.getExtension().getExtensionParameter()) {
-                if (param.getName().equalsIgnoreCase("mode")) {
-                    //level = Integer.parseInt(param.getContent());
-                    onVertex = param.getContent().equalsIgnoreCase(MODE_VERTEX);
-                    break;
-                }
-            }
-        }
-
-        if (pst.getUom() != null) {
-            Uom u = Uom.fromOgcURN(pst.getUom());
-            this.setUom(u);
-        }
-
-        if (pst.getGraphic() != null) {
-            this.setGraphicCollection(new GraphicCollection(pst.getGraphic(), this));
-
-        }
-    }
+    }    
 
     @Override
     public GraphicCollection getGraphicCollection() {
@@ -174,40 +128,7 @@ public final class PointSymbolizer extends VectorSymbolizer implements GraphicNo
                     graphic.draw(g2, map, selected, mt, AffineTransform.getTranslateInstance(x, y));
                 }
         }
-    }
-
-    @Override
-    public JAXBElement<PointSymbolizerType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        PointSymbolizerType s = of.createPointSymbolizerType();
-
-        this.setJAXBProperty(s);
-
-
-        if (this.getGeometryAttribute() != null){
-            s.setGeometry(getGeometryAttribute().getJAXBGeometryType());
-        }
-
-
-        if (getUom() != null) {
-            s.setUom(this.getUom().toURN());
-        }
-
-        if (graphic != null) {
-            s.setGraphic(graphic.getJAXBElement());
-        }
-
-        if (onVertex) {
-            ExtensionType exts = new ExtensionType();
-            ExtensionParameterType param = of.createExtensionParameterType();
-            param.setName("mode");
-            param.setContent(MODE_VERTEX);
-            exts.getExtensionParameter().add(param);
-            s.setExtension(exts);
-        }
-
-        return of.createPointSymbolizer(s);
-    }
+    }  
 
     public boolean isOnVertex() {
         return onVertex;

@@ -38,18 +38,11 @@ package org.orbisgis.coremap.renderer.se.parameter.string;
 
 import java.sql.ResultSet;
 import java.util.*;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ConcatenateType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.ParameterValueType;
 
 
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameter;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 
 /**
  * Implementation of the {@code Concatenate} SE function. This function takes at
@@ -60,35 +53,12 @@ import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
  * processing of its content.
  * @author Alexis Guéganno
  */
-public class StringConcatenate extends AbstractSymbolizerNode implements SeParameter,StringParameter, Iterable<StringParameter> {
+public class StringConcatenate extends AbstractSymbolizerNode implements StringParameter, Iterable<StringParameter> {
 
         private List<StringParameter> inputStrings;
 
-        /**
-         * Build a new {@code StringConcatenate} instance from the given JAXB
-         * {@code ConcatenateType} instance.
-         * @param concatenate
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public StringConcatenate(ConcatenateType concatenate) throws InvalidStyle {
-                List<ParameterValueType> jaxbList = concatenate.getStringValue();
-                inputStrings = new ArrayList<StringParameter>(jaxbList.size());
-                for(ParameterValueType pvt : jaxbList){
-                        StringParameter sp = SeParameterFactory.createStringParameter(pvt);
-                        sp.setParent(this);
-                        inputStrings.add(sp);
-                }
-        }
-        /**
-         * Build a new {@code StringConcatenate} instance from the given 
-         * {@code JAXBElement<ConcatenateType>} instance.
-         * @param concatenate
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-
-        public StringConcatenate(JAXBElement<ConcatenateType> concat) throws InvalidStyle {
-                this(concat.getValue());
-        }
+       
+        
 
         @Override
         public String getValue(ResultSet rs, long fid) throws ParameterException {
@@ -126,24 +96,7 @@ public class StringConcatenate extends AbstractSymbolizerNode implements SeParam
         public void setRestrictionTo(String[] list) {
         }
 
-        @Override
-        public ParameterValueType getJAXBParameterValueType() {
-                ParameterValueType p = new ParameterValueType();
-                p.getContent().add(this.getJAXBExpressionType());
-                return p;
-        }
-
-        @Override
-        public JAXBElement<?> getJAXBExpressionType() {
-                ObjectFactory of = new ObjectFactory();
-                ConcatenateType ct = new ConcatenateType();
-                List<ParameterValueType> inc = ct.getStringValue();
-                for(StringParameter sp : inputStrings){
-                        inc.add(sp.getJAXBParameterValueType());
-                }
-                return of.createConcatenate(ct);
-        }
-
+        
         /**
          * Gets the number of StringParameter that are concatenated using this
          * function.

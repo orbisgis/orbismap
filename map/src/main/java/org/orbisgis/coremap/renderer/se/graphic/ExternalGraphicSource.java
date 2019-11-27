@@ -40,7 +40,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
-import net.opengis.se._2_0.core.ExternalGraphicType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -84,5 +83,4 @@ public interface ExternalGraphicSource extends SymbolizerNode{
     void draw(Graphics2D g2, Map<String,Object> map, AffineTransform at, MapTransform mt,
               double opacity, String mimeType) throws ParameterException;
 
-    void setJAXBSource(ExternalGraphicType e);
 }

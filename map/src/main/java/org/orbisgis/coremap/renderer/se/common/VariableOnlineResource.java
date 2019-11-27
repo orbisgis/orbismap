@@ -55,9 +55,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import net.opengis.se._2_0.core.ExternalGraphicType;
-import net.opengis.se._2_0.core.MarkGraphicType;
-import net.opengis.se._2_0.core.VariableOnlineResourceType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
@@ -66,7 +63,6 @@ import org.orbisgis.coremap.renderer.se.graphic.ExternalGraphicSource;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphicSource;
 import org.orbisgis.coremap.renderer.se.graphic.ViewBox;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
@@ -108,17 +104,7 @@ public class VariableOnlineResource extends AbstractSymbolizerNode implements Ex
         this.url.setParent(this);
     }
 
-    /**
-     * Builds a new {@code VariableOnlineResource} from its JaXB representation?
-     * @param onlineResource The JaXB representation of a {@code VariableOnlineResource}.
-     * @throws MalformedURLException If the given JaXB object contains malformed URLs.
-     * @throws InvalidStyle If the input object can't be recognized as a valid SE style element.
-     */
-    public VariableOnlineResource(VariableOnlineResourceType onlineResource)
-            throws MalformedURLException, InvalidStyle {
-        this.url = SeParameterFactory.createStringParameter(onlineResource.getHref());
-        this.url.setParent(this);
-    }
+    
 
     /**
      * Gets the inner StringParameter that stores the URL(s) used to get the image(s) backed by this object.
@@ -370,15 +356,7 @@ public class VariableOnlineResource extends AbstractSymbolizerNode implements Ex
             drawJAI(g2, map, at, mt, opacity);
         }
     }
-
-    @Override
-    public void setJAXBSource(ExternalGraphicType e) {
-        VariableOnlineResourceType o = new VariableOnlineResourceType();
-
-        o.setHref(url.getJAXBParameterValueType());
-        e.setOnlineResource(o);
-    }
-
+   
 
     public Font getFont(Map<String,Object> map) {
         InputStream iStream;
@@ -473,13 +451,7 @@ public class VariableOnlineResource extends AbstractSymbolizerNode implements Ex
         }
 
         throw new ParameterException("Unknown MIME type: " + mimeType);
-    }
-
-    public void setJAXBSource(MarkGraphicType m) {
-        VariableOnlineResourceType o = new VariableOnlineResourceType();
-        o.setHref(url.getJAXBParameterValueType());
-        m.setOnlineResource(o);
-    }
+    }    
 
 
     @Override

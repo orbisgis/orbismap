@@ -36,21 +36,15 @@
  */
 package org.orbisgis.coremap.renderer.se.fill;
 
-import net.opengis.se._2_0.core.GraphicFillType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.TileGapType;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
-import javax.xml.bind.JAXBElement;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -88,39 +82,8 @@ public final class GraphicFill extends Fill {
         this.setGapY(null);
     }
 
-    /**
-     * Creates a new GraphicFill directly from the Jaxb representation of the style.
-     * @param gft
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public GraphicFill(GraphicFillType gft) throws InvalidStyle {
-        if (gft.getGraphic() != null) {
-            this.setGraphic(new GraphicCollection(gft.getGraphic(), this));
-        }
-        TileGapType gap = gft.getTileGap();
-        if (gap != null) {
-            if (gap.getX() != null) {
-                this.setGapX(SeParameterFactory.createRealParameter(gap.getX()));
-            }
-            if (gap.getY() != null) {
-                this.setGapY(SeParameterFactory.createRealParameter(gap.getY()));
-            }
-        }
-
-        if (gft.getUom() != null) {
-            this.setUom(Uom.fromOgcURN(gft.getUom()));
-        }
-    }
-
-    /**
-     * Creates a new GraphicFill directly from the Jaxb representation of the style.
-     * @param f
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    GraphicFill(JAXBElement<GraphicFillType> f) throws InvalidStyle {
-        this(f.getValue());
-    }
-
+    
+    
     /**
      * Set the GraphicCollection embedded in this GraphicFill. This is set as the parent of <code>graphic</code>
      * @return 
@@ -266,31 +229,7 @@ public final class GraphicFill extends Fill {
 
     }
 
-    @Override
-    public GraphicFillType getJAXBType() {
-        GraphicFillType f = new GraphicFillType();
-
-        if (getOwnUom() != null) {
-            f.setUom(getOwnUom().toURN());
-        }
-
-        if (graphic != null) {
-            f.setGraphic(graphic.getJAXBElement());
-        }
-
-        if (gapX != null || gapY != null) {
-            TileGapType tile = new TileGapType();
-            if (gapX != null) {
-                tile.setX(gapX.getJAXBParameterValueType());
-            }
-            if (gapY != null) {
-                tile.setY(gapY.getJAXBParameterValueType());
-            }
-            f.setTileGap(tile);
-        }
-
-        return f;
-    }
+    
 
     @Override
     public List<SymbolizerNode> getChildren() {
@@ -307,9 +246,5 @@ public final class GraphicFill extends Fill {
         return ls;
     }
 
-    @Override
-    public JAXBElement<GraphicFillType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createGraphicFill(this.getJAXBType());
-    }
+   
 }

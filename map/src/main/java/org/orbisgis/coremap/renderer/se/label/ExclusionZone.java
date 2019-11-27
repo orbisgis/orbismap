@@ -36,9 +36,7 @@
  */
 package org.orbisgis.coremap.renderer.se.label;
 
-import net.opengis.se._2_0.core.ExclusionRadiusType;
-import net.opengis.se._2_0.core.ExclusionRectangleType;
-import net.opengis.se._2_0.core.ExclusionZoneType;
+
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.UomNode;
@@ -54,29 +52,7 @@ import javax.xml.bind.JAXBElement;
 public abstract class ExclusionZone extends AbstractSymbolizerNode implements UomNode {
         private Uom uom;
 
-        /**
-         * Gets a JAXB representation of this {@code ExclusionZone}
-         * @return 
-         */
-        public abstract JAXBElement<? extends ExclusionZoneType> getJAXBElement();
-
-        /**
-         * Build an {@code ExclusionZone} from a JAXBElement.
-         * @param ezt
-         * @return
-         * Whether a {@code ExclusionRadius}, or a {@code ExclusionRectangle}, but as a {@code ExclusionZone}.
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public static ExclusionZone createFromJAXBElement(JAXBElement<? extends ExclusionZoneType> ezt) throws InvalidStyle {
-                if (ezt.getDeclaredType() == ExclusionRadiusType.class) {
-                        return new ExclusionRadius((JAXBElement<ExclusionRadiusType>) ezt);
-                } else if (ezt.getDeclaredType() == ExclusionRectangleType.class) {
-                        return new ExclusionRectangle((JAXBElement<ExclusionRectangleType>) ezt);
-                } else {
-                        return null;
-                }
-        }
-
+                
         @Override
         public Uom getUom() {
                 if (uom != null) {

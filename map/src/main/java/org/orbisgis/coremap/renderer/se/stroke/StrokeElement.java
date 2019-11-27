@@ -38,11 +38,8 @@ package org.orbisgis.coremap.renderer.se.stroke;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.se._2_0.core.StrokeElementType;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -79,35 +76,7 @@ public final class StrokeElement extends CompoundStrokeElement implements Stroke
                 setStroke(new PenStroke());
         }
 
-        /**
-         * Build a {@code StrokeElement} from the JAXB type given in argument.
-         * @param set
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public StrokeElement(StrokeElementType set) throws InvalidStyle {
-                if (set.getPreGap() != null) {
-                        setPreGap(SeParameterFactory.createRealParameter(set.getPreGap()));
-                }
-
-                if (set.getPreGap() != null) {
-                        setPostGap(SeParameterFactory.createRealParameter(set.getPostGap()));
-                }
-
-                if (set.getLength() != null) {
-                        setLength(SeParameterFactory.createRealParameter(set.getLength()));
-                }
-
-                if (set.getStroke() != null) {
-                        Stroke s = Stroke.createFromJAXBElement(set.getStroke());
-                        if (!(s instanceof CompoundStroke)) {
-                                setStroke(Stroke.createFromJAXBElement(set.getStroke()));
-                        } else {
-                                throw new InvalidStyle("Not allowed to nest compound stroke within compound stroke");
-                        }
-
-                }
-        }
-
+        
         /**
          * Set the PreGap value embedded in this {@code StrokeElement}.It is used to 
          * define how far to advance along the line before starting to plot content.
@@ -201,29 +170,7 @@ public final class StrokeElement extends CompoundStrokeElement implements Stroke
                 return stroke;
         }
 
-        @Override
-        public Object getJAXBType() {
-                StrokeElementType set = new StrokeElementType();
-
-                if (this.getLength() != null) {
-                        set.setLength(length.getJAXBParameterValueType());
-                }
-
-                if (this.getPreGap() != null) {
-                        set.setPreGap(preGap.getJAXBParameterValueType());
-                }
-
-                if (this.getPostGap() != null) {
-                        set.setPostGap(postGap.getJAXBParameterValueType());
-                }
-
-                if (this.getStroke() != null) {
-                        set.setStroke(stroke.getJAXBElement());
-                }
-
-                return set;
-        }
-
+        
         @Override
         public List<SymbolizerNode> getChildren() {
                 List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();

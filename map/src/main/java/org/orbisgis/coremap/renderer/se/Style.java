@@ -38,27 +38,11 @@ package org.orbisgis.coremap.renderer.se;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventLocator;
-import javax.xml.bind.util.ValidationEventCollector;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.RuleType;
-import net.opengis.se._2_0.core.StyleType;
-import net.opengis.se._2_0.core.VersionType;
 //import org.slf4j.*;
 import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Description;
 import org.slf4j.*;
 //import org.slf4j.Logger;
@@ -99,106 +83,7 @@ public final class Style extends AbstractSymbolizerNode {
             this.addRule(new Rule(layer));
         }
     }
-
-    /**
-     * Build a new {@code Style} from the given se file and associated to the
-     * given {@code ILayer}.
-     * @param layer
-     * @param seFile
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     * If the SE file can't be read or is not valid against the XML schemas.
-     */
-    public Style(ILayer layer, String seFile) throws InvalidStyle {
-        rules = new ArrayList<Rule>();
-        this.layer = layer;
-
-        try {
-
-            Unmarshaller u = org.orbisgis.coremap.map.JaxbContainer.JAXBCONTEXT.createUnmarshaller();
-
-
-            //Schema schema = u.getSchema();
-            ValidationEventCollector validationCollector = new ValidationEventCollector();
-            u.setEventHandler(validationCollector);
-
-            JAXBElement<StyleType> fts = (JAXBElement<StyleType>) u.unmarshal(
-                    new FileInputStream(seFile));
-
-            StringBuilder errors = new StringBuilder();
-            for (ValidationEvent event : validationCollector.getEvents()) {
-                String msg = event.getMessage();
-                ValidationEventLocator locator = event.getLocator();
-                int line = locator.getLineNumber();
-                int column = locator.getColumnNumber();
-                errors.append("Error at line ");
-                errors.append(line);
-                errors.append(" column ");
-                errors.append(column);
-                errors.append(" (");
-                errors.append(msg);
-                errors.append(")\n");
-            }
-
-            if (errors.length() == 0) {
-                this.setFromJAXB(fts);
-            } else {
-                throw new SeExceptions.InvalidStyle(errors.toString());
-            }
-
-        } catch (Exception ex) {
-            throw new SeExceptions.InvalidStyle("Error while loading the style (" + seFile + "): " + ex);
-        }
-
-    }
-
-    /**
-     * Build a new {@code Style} associated to the given {@code ILayer} from the
-     * given {@code JAXBElement<StyleType>}.
-     * @param ftst
-     * @param layer
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public Style(JAXBElement<StyleType> ftst, ILayer layer) throws InvalidStyle {
-        rules = new ArrayList<Rule>();
-        this.layer = layer;
-        this.setFromJAXB(ftst);
-    }
-
-    /**
-     * Build a new {@code Style} associated to the given {@code ILayer} from the
-     * given {@code StyleType}.
-     * @param fts
-     * @param layer
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public Style(StyleType fts, ILayer layer) throws InvalidStyle {
-        rules = new ArrayList<Rule>();
-        this.layer = layer;
-        this.setFromJAXBType(fts);
-    }
-
-    private void setFromJAXB(JAXBElement<StyleType> ftst) throws InvalidStyle {
-        StyleType fts = ftst.getValue();
-        this.setFromJAXBType(fts);
-    }
-
-    private void setFromJAXBType(StyleType fts) throws InvalidStyle {
-        if (fts.getName() != null) {
-            this.name = fts.getName();
-        } else {
-            name = DEFAULT_NAME;
-        }
-
-        if (fts.getRule() != null) {
-            for (RuleType rt : fts.getRule()) {
-                this.addRule(new Rule(rt, this.layer));
-            }
-        }
-        if(fts.getDescription() != null){
-            description = new Description(fts.getDescription());
-        }
-    }
-
+    
     /**
      * Gets the description associated to this style.
      * @return The description associated to this style.
@@ -245,52 +130,7 @@ public final class Style extends AbstractSymbolizerNode {
     public void clear() {
         this.rules.clear();
     }
-
-    /**
-     * Export this {@code Style} to the given SE file, in XML format.
-     * @param seFile
-     */
-    public void export(String seFile) {
-        try {
-            JAXBContext jaxbContext = org.orbisgis.coremap.map.JaxbContainer.JAXBCONTEXT;
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(getJAXBElement(), new FileOutputStream(seFile));
-        } catch (FileNotFoundException ex) {
-            LOGGER.error("Can't find the file "+seFile, ex);
-        } catch (JAXBException ex) {
-            LOGGER.error("Can't export your style into "+seFile+". May there be"
-                    + "some error in it ?", ex);
-        }
-    }
-
-    /**
-     * Gets a JAXB representation of this {@code Style}.
-     * @return
-     */
-    public JAXBElement<StyleType> getJAXBElement() {
-        StyleType ftst = new StyleType();
-
-        if (this.name != null) {
-            ftst.setName(this.name);
-        }
-
-        ftst.setVersion(VersionType.VALUE_1); // TODO 
-
-        List<RuleType> ruleTypes = ftst.getRule();
-        for (Rule r : rules) {
-            ruleTypes.add(r.getJAXBType());
-        }
-        if(description != null){
-            ftst.setDescription(description.getJAXBType());
-        }
-
-        ObjectFactory of = new ObjectFactory();
-
-        return of.createStyle(ftst);
-
-    }
-
+    
     /**
      * Return all symbolizers from rules with a filter but not those from
      * a ElseFilter (i.e. fallback) rule
@@ -313,21 +153,18 @@ public final class Style extends AbstractSymbolizerNode {
             // Only process visible rules with valid domain
                 if (r.isDomainAllowed(mt)) {
                     // Split standard rules and elseFilter rules
-                    if (!r.isFallbackRule()) {
+                    
                         rules.add(r);
-                    } else {
-                        fallbackRules.add(r);
-                    }
-
-                    for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
-                        // Extract TextSymbolizer into specific set =>
-                        // Label are always drawn on top
-                        //if (s instanceof TextSymbolizer) {
-                        //overlaySymbolizers.add(s);
-                        //} else {
-                        layerSymbolizers.add(s);
-                        //}
-                    }
+                    
+                        r.getCompositeSymbolizer().getSymbolizerList().forEach((s) -> {
+                            // Extract TextSymbolizer into specific set =>
+                            // Label are always drawn on top
+                            //if (s instanceof TextSymbolizer) {
+                            //overlaySymbolizers.add(s);
+                            //} else {
+                            layerSymbolizers.add(s);
+                            //}
+                    });
                 }
             }
         }

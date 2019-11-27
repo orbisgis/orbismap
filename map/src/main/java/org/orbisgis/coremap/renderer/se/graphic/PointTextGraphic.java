@@ -44,19 +44,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.PointTextGraphicType;
-import net.opengis.se._2_0.core.TranslateType;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.label.PointLabel;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -81,29 +75,7 @@ public final class PointTextGraphic extends Graphic implements UomNode {
         public PointTextGraphic() {
                 setPointLabel(new PointLabel());
         }
-
-        PointTextGraphic(JAXBElement<PointTextGraphicType> tge) throws InvalidStyle {
-                PointTextGraphicType tgt = tge.getValue();
-
-                if (tgt.getUom() != null) {
-                        this.setUom(Uom.fromOgcURN(tgt.getUom()));
-                }
-
-                if (tgt.getPointLabel() != null) {
-                        this.setPointLabel(new PointLabel(tgt.getPointLabel()));
-                }
-
-                if (tgt.getPointPosition() != null) {
-                        TranslateType pp = tgt.getPointPosition();
-                        if (pp.getX() != null) {
-                                setX(SeParameterFactory.createRealParameter(pp.getX()));
-                        }
-
-                        if (pp.getY() != null) {
-                                setY(SeParameterFactory.createRealParameter(pp.getY()));
-                        }
-                }
-        }
+        
 
         @Override
         public Uom getUom() {
@@ -171,36 +143,7 @@ public final class PointTextGraphic extends Graphic implements UomNode {
                 pointLabel.draw(g2, map, atShp, selected, mt);
         }
 
-
-        /*@Override
-        public double getMaxWidth(DataSet sds, long fid, MapTransform mt) throws ParameterException, IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-        }*/
-        @Override
-        public JAXBElement<PointTextGraphicType> getJAXBElement() {
-                PointTextGraphicType t = new PointTextGraphicType();
-
-                if (pointLabel != null) {
-                        t.setPointLabel(pointLabel.getJAXBType());
-                }
-
-                if (x != null || y != null) {
-                        TranslateType ppt = new TranslateType();
-                        if (x != null) {
-                                ppt.setX(x.getJAXBParameterValueType());
-                        }
-                        if (y != null) {
-                                ppt.setY(y.getJAXBParameterValueType());
-                        }
-
-                        t.setPointPosition(ppt);
-                }
-                if (getOwnUom() != null) {
-                        t.setUom(getOwnUom().toURN());
-                }
-                ObjectFactory of = new ObjectFactory();
-                return of.createPointTextGraphic(t);
-        }
+        
 
         /**
          * Get the x-displacement in the associated translation.

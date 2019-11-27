@@ -36,10 +36,7 @@
  */
 package org.orbisgis.coremap.renderer.se.stroke;
 
-import net.opengis.se._2_0.core.AlternativeStrokeElementsType;
-import net.opengis.se._2_0.core.StrokeElementType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 
 /**
  * {@code CompoundStrokeElement} is an abstract class. Thanks to it, it becomes 
@@ -49,27 +46,6 @@ import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
  */
 public abstract class CompoundStrokeElement extends AbstractSymbolizerNode {
 
-        /**
-        * Get a concrete instance of {@code CompoundStrokeElement} using the object
-        * given in argument.
-        * @param o
-        * @return
-        * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-        */
-	public static CompoundStrokeElement createCompoundStrokeElement(Object o) throws InvalidStyle{
-		if (o instanceof StrokeElementType){
-			return new StrokeElement((StrokeElementType)o);
-		}else if (o instanceof AlternativeStrokeElementsType){
-			return new AlternativeStrokeElements((AlternativeStrokeElementsType)o);
-		}
-
-		return null;
-	}
-
-        /**
-         * Get the JAXB representation of this object.
-         * @return 
-         */
-	public abstract Object getJAXBType();
+       
 
 }

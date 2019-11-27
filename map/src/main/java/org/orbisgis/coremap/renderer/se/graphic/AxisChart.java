@@ -48,15 +48,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.thematic.AxisChartSubtypeType;
-import net.opengis.se._2_0.thematic.AxisChartType;
-import net.opengis.se._2_0.thematic.CategoryType;
-import net.opengis.se._2_0.thematic.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
@@ -64,7 +58,6 @@ import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
@@ -139,63 +132,7 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
                 this.setAxisScale(new AxisScale());
         }
 
-        /**
-         * Build a new {@code AxisChart} from a {@code JAXBElement} instance
-         * that embeds an {@link AxisChartType}.
-         * @param chartE
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        AxisChart(JAXBElement<AxisChartType> chartE) throws InvalidStyle {
-                this();
-                AxisChartType t = chartE.getValue();
-
-                if (t.getUom() != null) {
-                        this.setUom(Uom.fromOgcURN(t.getUom()));
-                }
-
-                if (t.getTransform() != null) {
-                        this.setTransform(new Transform(t.getTransform()));
-                }
-
-                if (t.getNormalization() != null) {
-                        this.setNormalizeTo(SeParameterFactory.createRealParameter(t.getNormalization()));
-                }
-
-                if (t.getCategoryWidth() != null) {
-                        this.setCategoryWidth(SeParameterFactory.createRealParameter(t.getCategoryWidth()));
-                }
-
-                if (t.getCategoryGap() != null) {
-                        this.setCategoryGap(SeParameterFactory.createRealParameter(t.getCategoryGap()));
-                }
-
-                if (t.getAxisChartSubtype() != null) {
-                        String type = t.getAxisChartSubtype().value();
-                        if (type.equalsIgnoreCase("polar")) {
-                                subtype = AxisChartSubType.POLAR;
-                        } else if (type.equalsIgnoreCase("stacked")) {
-                                subtype = AxisChartSubType.STACKED;
-                        } else {
-                                subtype = AxisChartSubType.ORTHO;
-                        }
-                }
-
-                if (t.getFill() != null) {
-                        this.setFill(Fill.createFromJAXBElement(t.getFill()));
-                }
-
-                if (t.getStroke() != null) {
-                        this.setStroke(Stroke.createFromJAXBElement(t.getStroke()));
-                }
-
-                if (t.getAxisScale() != null) {
-                        this.setAxisScale(new AxisScale(t.getAxisScale()));
-                }
-
-                for (CategoryType ct : t.getCategory()) {
-                        addCategory(new Category(ct));
-                }
-        }
+        
 
         @Override
         public Uom getUom() {
@@ -865,66 +802,7 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
                         default:
                                 return getOrthoBounds(map, mt);
                 }
-        }
-
-        @Override
-        public JAXBElement<AxisChartType> getJAXBElement() {
-
-                AxisChartType a = new AxisChartType();
-
-                if (axisScale != null) {
-                        a.setAxisScale(axisScale.getJAXBType());
-                }
-
-                if (categoryGap != null) {
-                        a.setCategoryGap(categoryGap.getJAXBParameterValueType());
-                }
-
-                if (categoryWidth != null) {
-                        a.setCategoryWidth(categoryWidth.getJAXBParameterValueType());
-                }
-
-                if (areaFill != null) {
-                        a.setFill(areaFill.getJAXBElement());
-                }
-
-                if (normalizeTo != null) {
-                        a.setNormalization(normalizeTo.getJAXBParameterValueType());
-                }
-
-
-                if (lineStroke != null) {
-                        a.setStroke(lineStroke.getJAXBElement());
-                }
-
-                if (transform != null) {
-                        a.setTransform(transform.getJAXBType());
-                }
-
-                if (uom != null) {
-                        a.setUom(uom.toString());
-                }
-
-                switch (subtype) {
-                        case ORTHO:
-                                a.setAxisChartSubtype(AxisChartSubtypeType.ORTHO);
-                                break;
-                        case POLAR:
-                                a.setAxisChartSubtype(AxisChartSubtypeType.POLAR);
-                                break;
-                        case STACKED:
-                                a.setAxisChartSubtype(AxisChartSubtypeType.STACKED);
-                                break;
-                }
-                List<CategoryType> category = a.getCategory();
-                for (Category c : categories) {
-                        category.add(c.getJAXBType());
-                }
-
-                ObjectFactory of = new ObjectFactory();
-                return of.createAxisChart(a);
-
-        }
+        }        
 
         @Override
         public List<SymbolizerNode> getChildren() {

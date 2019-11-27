@@ -40,18 +40,11 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.io.IOException;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.LabelType;
-import net.opengis.se._2_0.core.LineLabelType;
-import net.opengis.se._2_0.core.ParameterValueType;
-import net.opengis.se._2_0.core.PointLabelType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 
 /**
  * Labels are used to provide text-label contents. A textSymbolizer must contain
@@ -162,23 +155,7 @@ public abstract class Label extends AbstractSymbolizerNode implements UomNode {
         }
     }
     
-    /**
-     * Creates a <code>Label</code> instance using the given <code>JAXBElement</code>.
-     * @param l
-     * @return
-     * The created <code>Label</code> instance, or null if the declared type of <code>l</code>
-     * can't be recognized as a <code>PointLabelType</code> or a  <code>LineLabelType</code>
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public static Label createLabelFromJAXBElement(JAXBElement<? extends LabelType> l) throws InvalidStyle {
-        if (l.getDeclaredType() == PointLabelType.class) {
-            return new PointLabel((JAXBElement<PointLabelType>) l);
-        } else if (l.getDeclaredType() == LineLabelType.class) {
-            return new LineLabel((JAXBElement<LineLabelType>) l);
-        }
-
-        return null;
-    }
+    
 
     /**
      * Create a new <code>Label</code> with default values as defined in the default
@@ -189,43 +166,7 @@ public abstract class Label extends AbstractSymbolizerNode implements UomNode {
         setLabel(new StyledText());
     }
 
-    /**
-     * Create a new {@code Label} built from a JAXB object.
-     * @param t
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    protected Label(LabelType t) throws InvalidStyle {
-        if (t.getUom() != null) {
-            this.uom = Uom.fromOgcURN(t.getUom());
-        }
-
-        if (t.getStyledText() != null) {
-            this.setLabel(new StyledText(t.getStyledText()));
-        }
-
-
-        if (t.getHorizontalAlignment() != null) {
-            this.hAlign = HorizontalAlignment.fromString(SeParameterFactory.extractToken(t.getHorizontalAlignment()));
-        } else {
-            this.hAlign = HorizontalAlignment.CENTER;
-        }
-
-        if (t.getVerticalAlignment() != null) {
-            this.vAlign = VerticalAlignment.fromString(SeParameterFactory.extractToken(t.getVerticalAlignment()));
-        } else {
-            this.vAlign = VerticalAlignment.MIDDLE;
-        }
-
-    }
-
-    /**
-     * Create a new {@code Label} built from a generic JAXB object.
-     * @param l
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    protected Label(JAXBElement<? extends LabelType> l) throws InvalidStyle {
-        this(l.getValue());
-    }
+    
 
     @Override
     public Uom getOwnUom() {
@@ -304,33 +245,7 @@ public abstract class Label extends AbstractSymbolizerNode implements UomNode {
             this.vAlign = vAlign;
         }
     }
-
-    /**
-     * Fill the {@code LabelType} given in argument with this {@code Label}'s
-     * properties.
-     * @param lt
-     */
-    protected void setJAXBProperties(LabelType lt) {
-        if (uom != null) {
-            lt.setUom(uom.toString());
-        }
-
-        if (label != null){
-        lt.setStyledText(label.getJAXBType());
-        }
-
-        if (hAlign != null) {
-            ParameterValueType h = new ParameterValueType();
-            h.getContent().add(hAlign.toString());
-            lt.setHorizontalAlignment(h);
-        }
-
-        if (vAlign != null) {
-            ParameterValueType v = new ParameterValueType();
-            v.getContent().add(vAlign.toString());
-            lt.setVerticalAlignment(v);
-        }
-    }
+    
 
     /**
      * Draw this {@code Label} in {@code g2}.
@@ -346,11 +261,5 @@ public abstract class Label extends AbstractSymbolizerNode implements UomNode {
             Shape shp, boolean selected, MapTransform mt)
             throws ParameterException, IOException;
 
-    /**
-     * Get a JAXB representation of this {@code Label}
-     * @return
-     * A {@code JAXBElement} that contains a {@code LabelType} specialization.
-     */
-    public abstract JAXBElement<? extends LabelType> getJAXBElement();
 
 }

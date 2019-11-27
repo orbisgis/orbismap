@@ -38,14 +38,11 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import net.opengis.se._2_0.core.MapItemType;
-import net.opengis.se._2_0.core.RecodeType;
 
 
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.Recode;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
 
 /**
@@ -68,26 +65,7 @@ public class Recode2Real extends Recode<RealParameter, RealLiteral> implements R
                 ctx = RealParameterContext.REAL_CONTEXT;
         }
 
-        /**
-         * Creates a new instance of <code>Recode2Real</code>. All the needed objects
-         * will be created using the JAXB element given in parameter. Particularly,
-         * the <code>MapItem</code>s used in the current recode will be retrieved 
-         * from this XML representation.
-         * @param expr
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Recode2Real(RecodeType expr) throws InvalidStyle {
-                ctx = RealParameterContext.REAL_CONTEXT;
-
-                this.setFallbackValue(new RealLiteral(expr.getFallbackValue()));
-                this.setLookupValue(SeParameterFactory.createStringParameter(expr.getLookupValue()));
-
-                for (MapItemType mi : expr.getMapItem()) {
-                        this.addMapItem(mi.getKey(),
-                                SeParameterFactory.createRealParameter(mi.getValue()));
-                }
-        }
-
+        
         @Override
         public Double getValue(ResultSet rs, long fid) throws ParameterException {
                 if (rs == null) {

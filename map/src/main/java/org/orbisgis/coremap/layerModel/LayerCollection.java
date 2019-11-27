@@ -45,7 +45,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.orbisgis.coremap.layerModel.model.AbstractLayer;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.Style;
 import org.orbisgis.coremap.utils.progress.IProgressMonitor;
 import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
 

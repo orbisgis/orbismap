@@ -38,16 +38,9 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import net.opengis.se._2_0.core.InterpolateType;
-import net.opengis.se._2_0.core.InterpolationPointType;
-import net.opengis.se._2_0.core.ModeType;
-
-
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.Interpolate;
 import org.orbisgis.coremap.renderer.se.parameter.InterpolationPoint;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 
 /**
  * Interpolate a real value to a real value. Interpolation points must be
@@ -69,38 +62,7 @@ public final class Interpolate2Real extends Interpolate<RealParameter, RealLiter
                 ctx = RealParameterContext.REAL_CONTEXT;
         }
 
-        /**
-         * Create a new <code>Interpolate2Real</code> instance. All its inner 
-         * elements are computed from the <code>JAXBElement&lt;InterpolateType></code>
-         * given in argument.
-         * @param expr
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Interpolate2Real(InterpolateType expr) throws InvalidStyle {
-                super();
-                ctx = RealParameterContext.REAL_CONTEXT;
-
-                this.setFallbackValue(new RealLiteral(expr.getFallbackValue()));
-                this.setLookupValue(SeParameterFactory.createRealParameter(expr.getLookupValue()));
-
-                if (expr.getMode() == ModeType.COSINE) {
-                        this.setInterpolationMode(InterpolationMode.COSINE);
-                } else if (expr.getMode() == ModeType.CUBIC) {
-                        this.setInterpolationMode(InterpolationMode.CUBIC);
-                } else {
-                        this.setInterpolationMode(InterpolationMode.LINEAR);
-                }
-
-                for (InterpolationPointType ipt : expr.getInterpolationPoint()) {
-                        InterpolationPoint<RealParameter> ip = new InterpolationPoint<RealParameter>();
-
-                        ip.setData(ipt.getData());
-                        ip.setValue(SeParameterFactory.createRealParameter(ipt.getValue()));
-
-                        this.addInterpolationPoint(ip);
-                }
-
-        }
+        
 
         /**
          * Retrieve the <code>Double</code> that must be associated to the datum at index

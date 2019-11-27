@@ -39,8 +39,6 @@ package org.orbisgis.coremap.renderer.se.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import net.opengis.ows._2.LanguageStringType;
-import net.opengis.ows._2.ObjectFactory;
 
 /**
  * Basically a {@code String} associated to a {@code Locale} instance.
@@ -213,17 +211,7 @@ public class LocalizedText {
             
     }
     
-    /**
-     * Gets the JaXB representation of this object.
-     * @return The JaXB representation of this object.
-     */
-    public LanguageStringType getJAXBType(){
-        ObjectFactory of = new ObjectFactory();
-        LanguageStringType lst = of.createLanguageStringType();
-        lst.setLang(locale != null ? toLanguageTag(getLocale()) : "");
-        lst.setValue(getValue());
-        return lst;
-    }
+    
 
     /**
      * Two {@code LocalizedText} are equal if and only if their associated

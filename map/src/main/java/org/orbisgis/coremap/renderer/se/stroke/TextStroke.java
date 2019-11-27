@@ -43,9 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.TextStrokeType;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
@@ -71,26 +68,7 @@ public final class TextStroke extends Stroke {
                 setLineLabel(new LineLabel());
         }
 
-        /**
-         * Build a new {@code TexteStroke} using the given JAXB {@code TextStrokeType}.
-         * @param tst
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        TextStroke(TextStrokeType tst) throws InvalidStyle {
-                super(tst);
-                if (tst.getLineLabel() != null) {
-                        setLineLabel(new LineLabel(tst.getLineLabel()));
-                }
-        }
-
-        /**
-         * Build a new {@code TexteStroke} using the given {@code JABElement}.
-         * @param s
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        TextStroke(JAXBElement<TextStrokeType> s) throws InvalidStyle {
-                this(s.getValue());
-        }
+       
 
         /**
          * Get the {@link LineLabel} associated to this {@code TextStroke}.
@@ -122,28 +100,7 @@ public final class TextStroke extends Stroke {
                 }
         }
 
-        @Override
-        public JAXBElement<TextStrokeType> getJAXBElement() {
-                ObjectFactory of = new ObjectFactory();
-                return of.createTextStroke(this.getJAXBType());
-        }
-
-        /**
-         * Build a new {@link TextStrokeType} representing this {@code TextStroke}.
-         * @return
-         */
-        public TextStrokeType getJAXBType() {
-                TextStrokeType s = new TextStrokeType();
-
-                this.setJAXBProperties(s);
-
-                if (lineLabel != null) {
-                        s.setLineLabel(lineLabel.getJAXBType());
-                }
-
-                return s;
-        }
-
+       
         @Override
         public List<SymbolizerNode> getChildren() {
                 List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();

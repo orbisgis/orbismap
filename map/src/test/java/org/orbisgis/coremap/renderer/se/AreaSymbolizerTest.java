@@ -39,13 +39,7 @@ package org.orbisgis.coremap.renderer.se;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
 import javax.swing.JPanel;
-import javax.xml.bind.Marshaller;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-import org.orbisgis.coremap.renderer.se.parameter.UsedAnalysis;
-import org.orbisgis.coremap.renderer.se.visitors.UsedAnalysisVisitor;
 
 /**
  *
@@ -70,24 +64,5 @@ public class AreaSymbolizerTest {
             // g.drawLine(0, 0, 1000, 1000);
         }
     }
-
-    @Test
-    public void testAreaSymbolizer() throws Exception {
-            Style style = new Style(null, AreaSymbolizerTest.class.getResource("Districts/choro.se").getFile());
-            Marshaller marshaller = org.orbisgis.coremap.map.JaxbContainer.JAXBCONTEXT.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(style.getJAXBElement(), new FileOutputStream("output.se"));
-            assertTrue(true);
-    }
-
-    @Test
-    public void testCategorizeUsedAnalysis() throws Exception {
-        Style style = new Style(null, AreaSymbolizerTest.class.getResource("colorCategorize.se").getFile());
-        AreaSymbolizer ps =(AreaSymbolizer) style.getRules().get(0).getCompositeSymbolizer().getSymbolizerList().get(0);
-        UsedAnalysisVisitor uv = new UsedAnalysisVisitor();
-        uv.visitSymbolizerNode(ps);
-        UsedAnalysis ua = uv.getUsedAnalysis();
-        assertTrue(ua.isCategorizeUsed());
-        assertTrue(ua.getAnalysis().size()==1);
-    }
+    
 }

@@ -43,20 +43,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ExternalGraphicType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.ViewBoxNode;
 import org.orbisgis.coremap.renderer.se.common.Halo;
 import org.orbisgis.coremap.renderer.se.common.Uom;
-import org.orbisgis.coremap.renderer.se.common.VariableOnlineResource;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
@@ -99,46 +93,7 @@ public final class ExternalGraphic extends Graphic implements UomNode, Transform
     public ExternalGraphic() {
     }
 
-    /**
-     * Build a new {@code ExternalGraphic}, using the given JAXBElement. The
-     * value in this JAXBElement must be an {@code ExternalGraphicType}.
-     * @param extG
-     * @throws IOException
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    ExternalGraphic(JAXBElement<ExternalGraphicType> extG) throws IOException, InvalidStyle {
-        ExternalGraphicType t = extG.getValue();
-
-        if (t.getHalo() != null) {
-            this.setHalo(new Halo(t.getHalo()));
-        }
-
-        if (t.getOpacity() != null) {
-            this.setOpacity(SeParameterFactory.createRealParameter(t.getOpacity()));
-        }
-
-        if (t.getTransform() != null) {
-            this.setTransform(new Transform(t.getTransform()));
-        }
-
-        if (t.getUom() != null) {
-            this.setUom(Uom.fromOgcURN(t.getUom()));
-        }
-
-        if (t.getViewBox() != null) {
-            this.setViewBox(new ViewBox(t.getViewBox()));
-        }
-        //try{
-        if (t.getOnlineResource() != null) {
-            this.setSource(new VariableOnlineResource(t.getOnlineResource()));
-        }
-        //}catch (URISyntaxException e){
-        //        throw new InvalidStyle("There's a malformed URI in your style", e);
-        //}
-
-        this.mimeType = t.getFormat();
-    }
-
+    
     @Override
     public Uom getUom() {
         if (uom != null) {
@@ -434,39 +389,4 @@ public final class ExternalGraphic extends Graphic implements UomNode, Transform
         return ls;
     }
 
-    @Override
-    public JAXBElement<ExternalGraphicType> getJAXBElement() {
-        ExternalGraphicType e = new ExternalGraphicType();
-
-        if (halo != null) {
-            e.setHalo(halo.getJAXBType());
-        }
-
-        if (source != null) {
-            source.setJAXBSource(e);
-        }
-
-        if (mimeType != null) {
-            e.setFormat(mimeType);
-        }
-
-        if (opacity != null) {
-            e.setOpacity(opacity.getJAXBParameterValueType());
-        }
-
-        if (transform != null) {
-            e.setTransform(transform.getJAXBType());
-        }
-
-        if (uom != null) {
-            e.setUom(uom.toURN());
-        }
-
-        if (viewBox != null) {
-            e.setViewBox(viewBox.getJAXBType());
-        }
-
-        ObjectFactory of = new ObjectFactory();
-        return of.createExternalGraphic(e);
-    }
 }

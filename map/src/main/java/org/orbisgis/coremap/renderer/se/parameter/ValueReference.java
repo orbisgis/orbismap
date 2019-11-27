@@ -42,10 +42,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.fes._2.ObjectFactory;
-import net.opengis.fes._2.ValueReferenceType;
-import net.opengis.se._2_0.core.ParameterValueType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
@@ -56,7 +52,7 @@ import org.orbisgis.coremap.renderer.se.SymbolizerNode;
  * @author Alexis Guéganno
  * @author Erwan Bocher
  */
-public abstract class ValueReference extends AbstractSymbolizerNode implements SeParameter{
+public abstract class ValueReference extends AbstractSymbolizerNode{
 
         
 	private String fieldName;
@@ -80,31 +76,7 @@ public abstract class ValueReference extends AbstractSymbolizerNode implements S
 		this.fieldName = fieldName;
 	}
 
-        /**
-         * Build a new {@code ValueReference} using the given 
-         * {@code ValueReferenceType}.
-         * @param pName
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-	public ValueReference(ValueReferenceType pName) throws InvalidStyle {
-		if (pName.getContent().size() == 1) {
-			this.fieldName = (String) pName.getContent().get(0);
-			this.fieldId = -1;
-		} else {
-			throw new InvalidStyle("Invalid field name");
-		}
-	}
-
-        /**
-         * Build a new {@code ValueReference} using the given {@code JAXBElement
-         * } that contains a {@code ValueReferenceType}.
-         * 
-         * @param expr
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-	public ValueReference(JAXBElement<String> expr) throws InvalidStyle {
-		this(expr.getValue());
-	}
+   
 
         /**
          * Add a listener to this ValueReference.
@@ -191,18 +163,6 @@ public abstract class ValueReference extends AbstractSymbolizerNode implements S
         }
     }
 
-	@Override
-	public ParameterValueType getJAXBParameterValueType() {
-		ParameterValueType p = new ParameterValueType();
-		p.getContent().add(this.getJAXBExpressionType());
-		return p;
-	}
-
-	@Override
-	public JAXBElement<?> getJAXBExpressionType() {
-		ObjectFactory of = new ObjectFactory();
-		return of.createValueReference(fieldName);
-	}
 
         @Override
         public List<SymbolizerNode> getChildren() {

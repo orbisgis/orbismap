@@ -14,7 +14,6 @@ import java.util.Map;
 import org.orbisgis.coremap.layerModel.Layer;
 import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.renderer.se.SeExceptions;
-import org.orbisgis.coremap.renderer.se.Style;
 import org.orbisgis.coremap.renderer.se.StyleFactory;
 import org.orbisgis.datamanager.h2gis.H2GIS;
 import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
@@ -33,19 +32,21 @@ public class OrbisMap {
         
         //Data
         String inputFile = "/home/ebocher/Autres/data/jgb/landcover2000.shp";
-        inputFile ="/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
+        //inputFile ="/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
         //inputFile="/home/ebocher/Autres/data/admin/communes.shp";
         inputFile="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";    
         //inputFile = "/home/ebocher/Autres/data/admin/cantons.shp";
         
-        String stylePath ="/home/ebocher/Autres/codes/orbismap/map/src/test/resources/org/orbisgis/coremap/renderer/se/symbol_prop_canton_interpol_sqrt.se";
+       String stylePath ="/home/ebocher/Autres/codes/orbismap/map/src/test/resources/org/orbisgis/coremap/renderer/se/symbol_prop_canton_interpol_sqrt.se";
         
         //stylePath ="/tmp/routes.se";
         
         Map<String, String> map = new HashMap<>();
         map.put(DataSourceFactory.JDBC_DATABASE_NAME, "./target/" + OrbisMap.class.getName());
         H2GIS h2GIS = H2GIS.open(map);
-        ISpatialTable spatialTable = (ISpatialTable) h2GIS.load(new File(inputFile), "LANDCOVER", true);
+        
+        long draw = System.currentTimeMillis();
+        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "LANDCOVER", true);
 
         Layer layer = new Layer(spatialTable);
         layer.setStyle(StyleFactory.createLineSymbolizerStyle(layer));
@@ -54,17 +55,19 @@ public class OrbisMap {
         MapRenderer mapRenderer = new MapRenderer();
         mapRenderer.addLayer(layer);
 
-        long draw = System.currentTimeMillis();
 
-        mapRenderer.draw();
+        mapRenderer.draw();        
+       
 
         System.out.println("Drawing : " + (System.currentTimeMillis() - draw));
+        
+        mapRenderer.show();
 
         //renderer.draw(img, effectiveExtent , layer, new NullProgressMonitor());
         long end = System.currentTimeMillis();
-        mapRenderer.save("/tmp/orbisgis_carte.png");
+        /*mapRenderer.save("/tmp/orbisgis_carte.png");
 
-        System.out.println("Save file : " + (System.currentTimeMillis() - end));
+        System.out.println("Save file : " + (System.currentTimeMillis() - end));*/
 
         
     }

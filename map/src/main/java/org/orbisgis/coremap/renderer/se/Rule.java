@@ -36,17 +36,8 @@
  */
 package org.orbisgis.coremap.renderer.se;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.opengis.se._2_0.core.ElseFilterType;
-import net.opengis.se._2_0.core.RuleType;
-import org.h2gis.utilities.TableLocation;
 import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
@@ -76,11 +67,9 @@ public final class Rule extends AbstractSymbolizerNode {
     private String name = "";
     private Description description = new Description();
     private String where;
-    private boolean fallbackRule = false;
     private Double minScaleDenom = null;
     private Double maxScaleDenom = null;
     private CompositeSymbolizer symbolizer;
-    private static final int FETCH_DIMENSION_LIMIT = 1000;
 
     /**
      * Create a default, empty Rule, with a default inner (and empty) CompositeSymbolizer.
@@ -120,59 +109,9 @@ public final class Rule extends AbstractSymbolizerNode {
      */
     public void createSymbolizer(ILayer layer) {
         if (layer != null) {
-
-           symbolizer.addSymbolizer(new PointSymbolizer());
-                    
+           symbolizer.addSymbolizer(new PointSymbolizer());                    
         }
-    }
-
-    /**
-     * Build a rule, using both a <code>RuleType</code> and an <code>ILayer</code>.
-     * The inner <code>CompositeSymbolizer</code> will be populated according to 
-     * the information contained in <code>rt</code>
-     * @param rt A JaXB representation of the input style.
-     * @param layer
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public Rule(RuleType rt, ILayer layer) throws InvalidStyle {
-        //this(layer);
-
-        if (rt.getName() != null) {
-            this.name = rt.getName();
-        } else {
-            this.name = Rule.DEFAULT_NAME;
-        }
-        if(rt.getDescription() != null){
-            description = new Description(rt.getDescription());
-        }
-
-        /*
-         * Is a fallback rule ?
-         * If a ElseFilter is defined, this rule is a fallback one
-         */
-        this.fallbackRule = rt.getElseFilter() != null;
-
-        if (rt.getMinScaleDenominator() != null) {
-            this.setMinScaleDenom(rt.getMinScaleDenominator());
-        }
-
-        if (rt.getMaxScaleDenominator() != null) {
-            this.setMaxScaleDenom(rt.getMaxScaleDenominator());
-        }
-
-        if (rt.getSymbolizer() != null) {
-            this.setCompositeSymbolizer(new CompositeSymbolizer(rt.getSymbolizer()));
-        } else {
-                setCompositeSymbolizer(new CompositeSymbolizer());
-        }
-
-        /*
-         * TODO  Replace with fes
-         */
-        if (rt.getWhereClause() != null) {
-            this.setWhere(rt.getWhereClause());
-        }
-    }
+    }    
 
     /**
      * Replace the current inner <code>CompositeSymbolizer</code> with <code>cs</code>
@@ -190,40 +129,7 @@ public final class Rule extends AbstractSymbolizerNode {
     public CompositeSymbolizer getCompositeSymbolizer() {
         return symbolizer;
     }
-
-    /**
-     * Fill and return a JaXB representation of this rule (ie a <code>RuleType</code>)
-     * @return The JaXB representation of this Rule as a {@link RuleType} instance.
-     */
-    public RuleType getJAXBType() {
-        RuleType rt = new RuleType();
-
-        if (!this.name.equals(Rule.DEFAULT_NAME)) {
-            rt.setName(this.name);
-        }
-
-        if (this.minScaleDenom != null) {
-            rt.setMinScaleDenominator(minScaleDenom);
-        }
-
-        if (this.maxScaleDenom != null) {
-            rt.setMaxScaleDenominator(maxScaleDenom);
-        }
-
-        if (this.isFallbackRule()) {
-            rt.setElseFilter(new ElseFilterType());
-        } else if (this.getWhere() != null && !this.getWhere().isEmpty()) {
-            rt.setWhereClause(this.getWhere());
-            // Temp HACK TODO !! Serialize Filters !!!!
-        }
-        if(description != null){
-            rt.setDescription(description.getJAXBType());
-        }
-
-        rt.setSymbolizer(this.symbolizer.getJAXBElement());
-
-        return rt;
-    }
+    
     /**
      * Get the <code>where</code> clause associated to this rule.
      * @return 
@@ -285,28 +191,7 @@ public final class Rule extends AbstractSymbolizerNode {
             }
         }
         return "";
-    }
-
-    /**
-     * Checks if this <code>Rule</code> is a fallback one or not, ie if the
-     * <code>where</code> associated to this <code>Rule</code> was included 
-     * in an <code>ElseFilter</code>.
-     * 
-     * @return 
-     *      <code>true</code> if this rule contains an <code>ElseFilter</code>
-     */
-    public boolean isFallbackRule() {
-        return fallbackRule;
-    }
-
-    /**
-     * If <code>fallbackRule</code> is true, this rule will be considered as an
-     * <code>ElseFilter</code> clause.
-     * @param fallbackRule If true, this Rule will be considered as an ElseFilter.
-     */
-    public void setFallbackRule(boolean fallbackRule) {
-        this.fallbackRule = fallbackRule;
-    }
+    }   
 
     /**
      * Gets the maximum scale for which this <code>Rule</code> (and the features it is applied on)

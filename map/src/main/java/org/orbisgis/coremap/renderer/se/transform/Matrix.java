@@ -38,9 +38,6 @@ package org.orbisgis.coremap.renderer.se.transform;
 
 import java.awt.geom.AffineTransform;
 import java.util.*;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.MatrixType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
@@ -48,7 +45,6 @@ import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -145,32 +141,7 @@ public final class Matrix extends AbstractSymbolizerNode implements Transformati
                 }
         }
 
-        /**
-         * Creates a hard copy of <code>m</code>
-         * @param m
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        Matrix(MatrixType m) throws InvalidStyle {
-                this();
-                if (m.getA() != null) {
-                        this.setA(SeParameterFactory.createRealParameter(m.getA()));
-                }
-                if (m.getB() != null) {
-                        this.setB(SeParameterFactory.createRealParameter(m.getB()));
-                }
-                if (m.getC() != null) {
-                        this.setC(SeParameterFactory.createRealParameter(m.getC()));
-                }
-                if (m.getD() != null) {
-                        this.setD(SeParameterFactory.createRealParameter(m.getD()));
-                }
-                if (m.getE() != null) {
-                        this.setE(SeParameterFactory.createRealParameter(m.getE()));
-                }
-                if (m.getF() != null) {
-                        this.setF(SeParameterFactory.createRealParameter(m.getF()));
-                }
-        }
+        
 
         /**
          * Get the A parameter of this {@code Matrix}, as defined in the 
@@ -432,27 +403,7 @@ public final class Matrix extends AbstractSymbolizerNode implements Transformati
                 }
         }
 
-        @Override
-        public JAXBElement<?> getJAXBElement() {
-                MatrixType m = this.getJAXBType();
-
-                ObjectFactory of = new ObjectFactory();
-                return of.createMatrix(m);
-        }
-
-        @Override
-        public MatrixType getJAXBType() {
-                MatrixType m = new MatrixType();
-                m.setA(a.getJAXBParameterValueType());
-                m.setB(b.getJAXBParameterValueType());
-                m.setC(c.getJAXBParameterValueType());
-                m.setD(d.getJAXBParameterValueType());
-                m.setE(e.getJAXBParameterValueType());
-                m.setF(f.getJAXBParameterValueType());
-
-                return m;
-        }
-
+       
         @Override
         public String toString() {
                 return "Matrix";

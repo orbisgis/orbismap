@@ -9,10 +9,12 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.ProgressMonitor;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.layerModel.MapContext;
 import org.orbisgis.coremap.layerModel.model.ILayer;
@@ -55,8 +57,6 @@ public class MapRenderer implements IRenderer{
         this.pm = pm;
     }  
     
-    
-
     public boolean addLayer(ILayer layer) throws LayerException {
         return mc.getLayerModel().addLayer(layer);
     }
@@ -67,20 +67,17 @@ public class MapRenderer implements IRenderer{
 
     /**
      * Draw the map
+     * @throws org.orbisgis.coremap.layerModel.LayerException
      */
     @Override
-    public void draw() {
+    public void draw() throws LayerException{
         if(mt.getAdjustedExtent()==null){
             mt.setExtent(mc.getLayerModel().getEnvelope());       
             mt.resizeImage(width, height);
         }
         BufferedImage image = mt.getImage();
-        Graphics2D g2 = image.createGraphics();
-        try {        
-            mc.getLayerModel().draw(g2, mt, getProgressMonitor()==null? new NullProgressMonitor():pm);
-        } catch (LayerException ex) {
-            Logger.getLogger(MapRenderer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Graphics2D g2 = image.createGraphics();    
+        mc.getLayerModel().draw(g2, mt, getProgressMonitor()==null? new NullProgressMonitor():pm);        
     }
 
     /**
@@ -123,7 +120,7 @@ public class MapRenderer implements IRenderer{
         }
         if (fileOut.exists() && delete) {
             BufferedImage image = mt.getImage();
-            return ImageIO.write(image, "png", fileOut);
+            return ImageIO.write(image, getExtension(fileOut), fileOut);
         } else if (!fileOut.exists()) {
             return ImageIO.write(mt.getImage(), getExtension(fileOut), fileOut);
         } else {
@@ -136,13 +133,29 @@ public class MapRenderer implements IRenderer{
      * @param file
      * @return 
      */
-    public  String getExtension(File file) {
+    private String getExtension(File file) {
         String path = file.getAbsolutePath();
         String extension = "";
         int i = path.lastIndexOf('.');
         if (i >= 0) {
-           return  extension = path.substring(i + 1).toLowerCase();
+           return  path.substring(i + 1).toLowerCase();
         }
         return extension;
+    }
+    
+    public void show(){
+        Icon icon = new ImageIcon(mt.getImage());
+        JLabel label = new JLabel(icon);
+
+        final JFrame f = new JFrame("Display map");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.getContentPane().add(label);
+        f.pack();
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run() {
+                f.setLocationRelativeTo(null);
+                f.setVisible(true);
+            }
+        });
     }
 }

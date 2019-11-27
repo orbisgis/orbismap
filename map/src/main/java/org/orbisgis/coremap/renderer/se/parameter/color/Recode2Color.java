@@ -39,16 +39,10 @@ package org.orbisgis.coremap.renderer.se.parameter.color;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.MapItemType;
-import net.opengis.se._2_0.core.RecodeType;
 
 
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.Recode;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
-import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
 
 /**
@@ -68,25 +62,7 @@ public class Recode2Color extends Recode<ColorParameter, ColorLiteral> implement
                 super(fallback, lookupValue);
         }
 
-        /**
-         * Creates a new instance of <code>Recode2Color</code>. All the needed objects
-         * will be created using the JAXB element given in parameter. Particularly,
-         * the <code>MapItem</code>s used in the current recode will be retrieved 
-         * from this XML representation.
-         * @param expr
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Recode2Color(JAXBElement<RecodeType> expr) throws InvalidStyle {
-                RecodeType t = expr.getValue();
-
-                this.setFallbackValue(new ColorLiteral(t.getFallbackValue()));
-                this.setLookupValue(SeParameterFactory.createStringParameter(t.getLookupValue()));
-
-                for (MapItemType mi : t.getMapItem()) {
-                        this.addMapItem(mi.getKey(),
-                                SeParameterFactory.createColorParameter(mi.getValue()));
-                }
-        }
+        
 
         @Override
         public Color getColor(ResultSet rs, long fid) throws ParameterException {

@@ -45,22 +45,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.AreaSymbolizerType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
-import org.orbisgis.coremap.renderer.se.parameter.geometry.GeometryAttribute;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
@@ -92,43 +85,7 @@ public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, 
                 name = "Area Symbolizer";
                 this.setFill(new SolidFill());
                 this.setStroke(new PenStroke());
-        }
-
-        /**
-         * Build a new <code>AreaSymbolizer</code>, using a JAXB element to fill its properties.
-         * @param st
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public AreaSymbolizer(JAXBElement<AreaSymbolizerType> st) throws InvalidStyle {
-                super(st);
-
-                AreaSymbolizerType ast = st.getValue();
-
-
-                if (ast.getGeometry() != null) {
-                        this.setGeometryAttribute(new GeometryAttribute(ast.getGeometry()));
-                }
-
-                if (ast.getUom() != null) {
-                        setUom(Uom.fromOgcURN(ast.getUom()));
-                }
-
-                if (ast.getPerpendicularOffset() != null) {
-                        this.setPerpendicularOffset(SeParameterFactory.createRealParameter(ast.getPerpendicularOffset()));
-                }
-
-                if (ast.getDisplacement() != null) {
-                        this.setTranslate(new Translate(ast.getDisplacement()));
-                }
-
-                if (ast.getFill() != null) {
-                        this.setFill(Fill.createFromJAXBElement(ast.getFill()));
-                }
-
-                if (ast.getStroke() != null) {
-                        this.setStroke(Stroke.createFromJAXBElement(ast.getStroke()));
-                }
-        }
+        }        
 
         @Override
         public void setStroke(Stroke stroke) {
@@ -244,40 +201,7 @@ public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, 
                 }
         }
 
-        @Override
-        public JAXBElement<AreaSymbolizerType> getJAXBElement() {
-                ObjectFactory of = new ObjectFactory();
-                AreaSymbolizerType s = of.createAreaSymbolizerType();
-
-                this.setJAXBProperty(s);
-
-                if (this.getGeometryAttribute() != null) {
-                        s.setGeometry(getGeometryAttribute().getJAXBGeometryType());
-                }
-
-                if (getUom() != null) {
-                        s.setUom(this.getUom().toURN());
-                }
-
-                if (getTranslate() != null) {
-                        s.setDisplacement(getTranslate().getJAXBType());
-                }
-
-                if (this.perpendicularOffset != null) {
-                        s.setPerpendicularOffset(perpendicularOffset.getJAXBParameterValueType());
-                }
-
-                if (fill != null) {
-                        s.setFill(fill.getJAXBElement());
-                }
-
-                if (stroke != null) {
-                        s.setStroke(stroke.getJAXBElement());
-                }
-
-                return of.createAreaSymbolizer(s);
-        }
-
+        
         @Override
         public List<SymbolizerNode> getChildren() {
                 List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>(4);
@@ -298,5 +222,4 @@ public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, 
                 }
                 return ls;
         }
-
 }

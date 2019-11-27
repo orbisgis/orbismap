@@ -56,6 +56,7 @@ import org.orbisgis.coremap.renderer.se.VectorSymbolizer;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
 import org.orbisgis.coremap.utils.progress.IProgressMonitor;
+import org.orbisgis.datamanager.JdbcSpatialTable;
 import org.orbisgis.datamanager.JdbcTable;
 import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
 
@@ -103,7 +104,8 @@ public class Layer extends AbstractLayer {
     public Envelope getEnvelope() {
         Envelope cachedEnvelope = envelope;
         if (cachedEnvelope.isNull()) {
-                return spatialTable.getEstimatedExtend().getEnvelopeInternal();                    
+               envelope = spatialTable.getEstimatedExtend().getEnvelopeInternal();      
+               return envelope;
         }
         return cachedEnvelope;
     }
@@ -118,8 +120,7 @@ public class Layer extends AbstractLayer {
     }
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mt, IProgressMonitor pm) throws LayerException {    
-        
+    public void draw(Graphics2D g2, MapTransform mt, IProgressMonitor pm) throws LayerException {   
         if(isVisible() && mt.getAdjustedExtent().intersects(envelope)){
         if (spatialTable == null && !(spatialTable instanceof JdbcTable)) {
             throw new LayerException("There is neither a ResultSetProviderFactory instance nor available DataSource in the vectorial layer");
@@ -138,7 +139,7 @@ public class Layer extends AbstractLayer {
                 Set<String> fields = fv.getResult();
                 fields.add(geomColumnName);
                 
-                ISpatialTable spatialTableQuery = ((JdbcTable) spatialTable).columns(fields.toArray(new String[0]))
+                JdbcSpatialTable spatialTableQuery = (JdbcSpatialTable) ((JdbcTable) spatialTable.columns(fields.toArray(new String[0])))
                         .where(geofilter.toString()).getSpatialTable();
 
                 IProgressMonitor rowSetProgress = rulesProgress.startTask("Drawing " + getName() + " (Rule " + r.getName() + ")", 1);

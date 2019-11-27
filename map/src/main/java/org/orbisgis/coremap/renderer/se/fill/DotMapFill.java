@@ -36,21 +36,16 @@
  */
 package org.orbisgis.coremap.renderer.se.fill;
 
-import net.opengis.se._2_0.thematic.DotMapFillType;
-import net.opengis.se._2_0.thematic.ObjectFactory;
 import org.slf4j.*;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
-import javax.xml.bind.JAXBElement;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -89,28 +84,7 @@ public final class DotMapFill extends Fill implements GraphicNode {
         rand = new Random();
     }
 
-    /**
-     * Creates a new DotMapFill using directly the values stored in the Jaxb tree.
-     * @param f
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public DotMapFill(JAXBElement<DotMapFillType> f) throws InvalidStyle {
-        this();
-        DotMapFillType dmf = f.getValue();
-
-        if (dmf.getGraphic() != null) {
-            this.setGraphicCollection(new GraphicCollection(dmf.getGraphic(), this));
-        }
-
-        if (dmf.getValuePerMark() != null) {
-            this.setQuantityPerMark(SeParameterFactory.createRealParameter(dmf.getValuePerMark()));
-        }
-
-        if (dmf.getValueToRepresent() != null) {
-            this.setTotalQuantity(SeParameterFactory.createRealParameter(dmf.getValueToRepresent()));
-        }
-    }
-
+    
     @Override
     public void setGraphicCollection(GraphicCollection mark) {
         if (mark != null) {
@@ -235,24 +209,7 @@ public final class DotMapFill extends Fill implements GraphicNode {
         return null;
     }
 
-    @Override
-    public DotMapFillType getJAXBType() {
-        DotMapFillType f = new DotMapFillType();
-
-        if (mark != null) {
-            f.setGraphic(mark.getJAXBElement());
-        }
-
-        if (quantityPerMark != null) {
-            f.setValuePerMark(quantityPerMark.getJAXBParameterValueType());
-        }
-
-        if (totalQuantity != null) {
-            f.setValueToRepresent(totalQuantity.getJAXBParameterValueType());
-        }
-
-        return f;
-    }
+    
 
     @Override
     public List<SymbolizerNode> getChildren() {
@@ -269,9 +226,5 @@ public final class DotMapFill extends Fill implements GraphicNode {
         return ls;
     }
 
-    @Override
-    public JAXBElement<DotMapFillType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createDotMapFill(this.getJAXBType());
-    }
+    
 }

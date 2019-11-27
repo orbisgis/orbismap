@@ -38,8 +38,6 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.fes._2.LiteralType;
 import org.orbisgis.coremap.renderer.se.parameter.Literal;
 
 /**
@@ -81,20 +79,7 @@ public class RealLiteral extends Literal implements RealParameter {
                 ctx = RealParameterContext.REAL_CONTEXT;
         }
 
-        /**
-         * Create a new RealLiteral with value <code>l</code>, by transforming l
-         * to a double, in a REAL_CONTEXT.
-         * @param l
-         */
-        public RealLiteral(JAXBElement<LiteralType> l) {
-                this(l.getValue().getContent().get(0).toString());
-                ctx = RealParameterContext.REAL_CONTEXT;
-        }
-
-        public RealLiteral(LiteralType l){
-                this(l.getContent().get(0).toString());
-                ctx = RealParameterContext.REAL_CONTEXT;
-        }
+       
 
         @Override
         public Double getValue(ResultSet rs, long fid) {

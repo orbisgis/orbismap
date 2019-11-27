@@ -38,10 +38,6 @@ package org.orbisgis.coremap.renderer.se.parameter;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
-import net.opengis.fes._2.LiteralType;
-import net.opengis.fes._2.ObjectFactory;
-import net.opengis.se._2_0.core.ParameterValueType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 
@@ -54,7 +50,7 @@ import org.orbisgis.coremap.renderer.se.SymbolizerNode;
  * @author Maxence Laurent
  * @author Bocher Erwan
  */
-public abstract class Literal extends AbstractSymbolizerNode implements Comparable, SeParameter {
+public abstract class Literal extends AbstractSymbolizerNode implements Comparable {
 
         private List<LiteralListener> listeners;
 
@@ -79,37 +75,12 @@ public abstract class Literal extends AbstractSymbolizerNode implements Comparab
          * Notify a change to the listeners associated to this <code>Literal</code>.
          */
         public void fireChange() {
-                for (LiteralListener l : listeners) {
-                        l.literalChanged();
-                }
+            listeners.forEach((l) -> {
+                l.literalChanged();
+            });
             update();
-        }
-
-        @Override
-        public ParameterValueType getJAXBParameterValueType() {
-                ParameterValueType pvt = new ParameterValueType();
-                pvt.getContent().add(this.toString());
-                return pvt;
-        }
-
-        /**
-         * As these literals can be seen as independants from ParameterValue, we
-         * provide a way to retrieve them as {@code LiteralType} instances.
-         * @return
-         */
-        public LiteralType getJAXBLiteralType() {
-                LiteralType t = new LiteralType();
-                t.getContent().add(this.toString());
-                return t;
-        }
-
-        @Override
-        public JAXBElement<?> getJAXBExpressionType() {
-                LiteralType l = new LiteralType();
-                l.getContent().add(this.toString());
-                ObjectFactory of = new ObjectFactory();
-                return of.createLiteral(l);
-        }
+        }       
+        
 
         @Override
         public List<SymbolizerNode> getChildren() {

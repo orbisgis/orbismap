@@ -45,12 +45,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.LineLabelType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.RelativeOrientation;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
@@ -77,26 +73,9 @@ public class LineLabel extends Label {
         setHorizontalAlign(HorizontalAlignment.CENTER);
     }
 
-    /**
-     * Build a {@code LineLabel} from a {@code LineLabelType}
-     * @param t
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public LineLabel(LineLabelType t) throws InvalidStyle {
-        super(t);
-        if(t.getRelativeOrientation() != null){
-            setOrientation(RelativeOrientation.readFromToken(t.getRelativeOrientation()));
-        }
-    }
+    
 
-    /**
-     * Build a {@code LineLabel} from a JAXBElement.
-     * @param l
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public LineLabel(JAXBElement<LineLabelType> l) throws InvalidStyle {
-        this(l.getValue());
-    }
+    
 
     /**
      * Gets the orientation of the characters along the line.
@@ -233,22 +212,8 @@ public class LineLabel extends Label {
         getLabel().drawOutlines(g2, outlines, map, selected, mt);
     }
 
-    @Override
-    public JAXBElement<LineLabelType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createLineLabel(this.getJAXBType());
-    }
-
-    /**
-     * Get a JAXB representation of this {@code LineLabelType}.
-     * @return 
-     */
-    public LineLabelType getJAXBType() {
-        LineLabelType ll = new LineLabelType();
-
-        setJAXBProperties(ll);
-        return ll;
-    }
+   
+    
 
         @Override
         public List<SymbolizerNode> getChildren() {

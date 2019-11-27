@@ -36,22 +36,16 @@
  */
 package org.orbisgis.coremap.renderer.se.fill;
 
-import net.opengis.se._2_0.thematic.DensityFillType;
-import net.opengis.se._2_0.thematic.ObjectFactory;
-
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 
-import javax.xml.bind.JAXBElement;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -95,31 +89,7 @@ public final class DensityFill extends Fill implements GraphicNode {
         this.setPercentageCovered(new RealLiteral(DEFAULT_PERCENTAGE));
     }
 
-    /**
-     * Build a new {@code DensityFill}, using the {@code JAXBElement} given in
-     * argument.
-     * @param f
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    DensityFill(JAXBElement<DensityFillType> f) throws InvalidStyle {
-
-        DensityFillType t = f.getValue();
-
-        if (t.getPenStroke() != null) {
-            this.setHatches(new PenStroke(t.getPenStroke()));
-
-            if (t.getOrientation() != null) {
-                this.setHatchesOrientation(SeParameterFactory.createRealParameter(t.getOrientation()));
-            }
-        } else if (t.getGraphic() != null) {
-            this.setGraphicCollection(new GraphicCollection(t.getGraphic(), this));
-        }
-
-        if (t.getPercentage() != null) {
-            this.setPercentageCovered(SeParameterFactory.createRealParameter(t.getPercentage()));
-        }
-    }
-
+    
     /**
      * Set the {@link PenStroke} used to draw the hatches in this {@code 
      * DensityFill}.
@@ -299,31 +269,7 @@ public final class DensityFill extends Fill implements GraphicNode {
         return size + ONE_HALF;
     }
 
-    @Override
-    public DensityFillType getJAXBType() {
-        DensityFillType f = new DensityFillType();
-
-        if (isHatched) {
-            if (hatches != null) {
-                f.setPenStroke(hatches.getJAXBType());
-            }
-            if (orientation != null) {
-                f.setOrientation(orientation.getJAXBParameterValueType());
-            }
-        } else {
-            if (mark != null) {
-                f.setGraphic(mark.getJAXBElement());
-            }
-        }
-
-        if (percentageCovered != null) {
-            f.setPercentage(percentageCovered.getJAXBParameterValueType());
-        }
-
-        return f;
-
-
-    }
+    
 
     @Override
     public List<SymbolizerNode> getChildren() {
@@ -345,10 +291,5 @@ public final class DensityFill extends Fill implements GraphicNode {
         }
         return ls;
     }
-
-    @Override
-    public JAXBElement<DensityFillType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createDensityFill(this.getJAXBType());
-    }
+   
 }

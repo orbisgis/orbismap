@@ -93,7 +93,7 @@ public class HatchIntesiveTest {
             assertTrue(hf.getDistance().getValue(null, 1) == 0);
     }
 
-    public void template(String shapefile, String title, String stylePath, String source,
+    /*public void template(String shapefile, String title, String stylePath, String source,
             String savePath, Envelope ext)
             throws IOException, InvalidStyle, SQLException, LayerException {
             ISpatialTable table = (ISpatialTable) h2GIS.load(new File(shapefile), true);        
@@ -141,4 +141,5 @@ public class HatchIntesiveTest {
         this.template("src/test/resources/org/orbisgis/core/renderer/se/HatchedFill/hatches_dataset.shp", "Hatches 315°",
                "src/test/resources/org/orbisgis/core/renderer/se/HatchedFill/hatches_315.se", null, "/tmp/hatches_315.png", null);
     }
+*/
 }

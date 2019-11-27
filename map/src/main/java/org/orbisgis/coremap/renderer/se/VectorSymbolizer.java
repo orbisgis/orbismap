@@ -45,11 +45,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.SymbolizerType;
 import org.slf4j.*;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.geometry.GeometryAttribute;
@@ -79,15 +76,7 @@ public abstract class VectorSymbolizer extends Symbolizer implements UomNode {
                 setUom(Uom.PX);
         }
 
-        /**
-         * Build a VectorSymbolizer from the inpur JAXB type.
-         * @param st
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        protected VectorSymbolizer(JAXBElement<? extends SymbolizerType> st) throws InvalidStyle {
-                super(st);
-        }
-
+       
         /**
          * Get the name of the column where the geometry data will be retrieved.
          * @return 

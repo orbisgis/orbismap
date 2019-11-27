@@ -39,11 +39,6 @@ package org.orbisgis.coremap.renderer.se.parameter;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.Map.Entry;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.MapItemType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.ParameterValueType;
-import net.opengis.se._2_0.core.RecodeType;
 import org.slf4j.*;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
@@ -57,8 +52,7 @@ import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
  * @param <FallbackType> The literal type associated to ToType. it is used to define the default value,
  * when an input value can't be processed for whatever reason.
  */
-public abstract class Recode<ToType extends SeParameter, FallbackType extends ToType> extends AbstractSymbolizerNode
-                implements SeParameter {
+public abstract class Recode<ToType extends SymbolizerNode, FallbackType extends ToType> extends AbstractSymbolizerNode{
     private static final Logger LOGGER = LoggerFactory.getLogger(Recode.class);
     
     private FallbackType fallbackValue;
@@ -291,39 +285,6 @@ public abstract class Recode<ToType extends SeParameter, FallbackType extends To
         }
         mapItems = lhm;
         update();
-    }
-
-    @Override
-    public ParameterValueType getJAXBParameterValueType()
-    {
-        ParameterValueType p = new ParameterValueType();
-        p.getContent().add(this.getJAXBExpressionType());
-        return p;
-    }
-
-    @Override
-    public JAXBElement<?> getJAXBExpressionType() {
-        RecodeType r = new RecodeType();
-
-        if (fallbackValue != null) {
-            r.setFallbackValue(fallbackValue.toString());
-        }
-        if (lookupValue != null) {
-            r.setLookupValue(lookupValue.getJAXBParameterValueType());
-        }
-
-        List<MapItemType> mi = r.getMapItem();
-        Iterator<Map.Entry<String, ToType>> it = mapItems.entrySet().iterator();
-        net.opengis.fes._2.ObjectFactory off = new net.opengis.fes._2.ObjectFactory();
-        while(it.hasNext()) {
-            Map.Entry<String, ToType> m = it.next();
-            MapItemType mt = new MapItemType();
-            mt.setValue(m.getValue().getJAXBParameterValueType());
-            mt.setKey(m.getKey());
-            mi.add(mt);
-        }
-        ObjectFactory of = new ObjectFactory();
-        return of.createRecode(r);
     }
 
     @Override

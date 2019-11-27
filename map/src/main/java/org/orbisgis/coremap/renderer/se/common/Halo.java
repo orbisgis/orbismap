@@ -46,19 +46,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.opengis.se._2_0.core.HaloType;
 import org.slf4j.*;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.graphic.ViewBox;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -99,29 +96,7 @@ public final class Halo extends AbstractSymbolizerNode implements  UomNode, Fill
         setRadius(radius);
     }
 
-    /**
-     * Build a new {@code Halo} from the given JAXB type element.
-     * @param halo
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public Halo(HaloType halo) throws InvalidStyle {
-        if (halo.getFill() != null) {
-            this.setFill(Fill.createFromJAXBElement(halo.getFill()));
-        } else {
-                this.setFill(getDefaultFill());
-        }
-
-        if (halo.getRadius() != null) {
-            this.setRadius(SeParameterFactory.createRealParameter(halo.getRadius()));
-        } else{
-                this.setRadius(new RealLiteral(DEFAULT_RADIUS));
-        }
-
-        if (halo.getUom() != null) {
-            this.setUom(Uom.fromOgcURN(halo.getUom()));
-        }
-    }
-
+    
     @Override
     public Uom getUom() {
         if (uom == null) {
@@ -272,28 +247,7 @@ public final class Halo extends AbstractSymbolizerNode implements  UomNode, Fill
             ls.add(fill);
             return ls;
     }
-
-    /**
-     * Get a JAXB rperesentation of this object.
-     * @return 
-     */
-    public HaloType getJAXBType() {
-        HaloType h = new HaloType();
-
-        if (fill != null) {
-            h.setFill(fill.getJAXBElement());
-        }
-
-        if (radius != null) {
-            h.setRadius(radius.getJAXBParameterValueType());
-        }
-
-        if (uom != null) {
-            h.setUom(uom.toURN());
-        }
-
-        return h;
-    }
+   
 
     /**
      * Default fill for the halo must be white and 100% opaque.

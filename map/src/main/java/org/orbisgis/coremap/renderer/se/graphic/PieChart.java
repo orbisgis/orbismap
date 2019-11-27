@@ -46,14 +46,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.thematic.ObjectFactory;
-import net.opengis.se._2_0.thematic.PieChartType;
-import net.opengis.se._2_0.thematic.PieSubtypeType;
-import net.opengis.se._2_0.thematic.SliceType;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
@@ -61,7 +55,6 @@ import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.label.StyledText;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -125,63 +118,7 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
         this.listeners = new ArrayList<SliceListener>();
     }
 
-    /**
-     * Build a new {@code PieChart} from the give {@code JAXBElement}.
-     * @param pieE
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    PieChart(JAXBElement<PieChartType> pieE) throws InvalidStyle {
-        this();
-
-        PieChartType t = pieE.getValue();
-
-        if (t.getUom() != null) {
-            this.setUom(Uom.fromOgcURN(t.getUom()));
-        }
-
-        if (t.getTransform() != null) {
-            this.setTransform(new Transform(t.getTransform()));
-        }
-
-        if (t.getRadius() != null) {
-            this.setRadius(SeParameterFactory.createRealParameter(t.getRadius()));
-        }
-
-        if (t.getHoleRadius() != null) {
-            this.setHoleRadius(SeParameterFactory.createRealParameter(t.getHoleRadius()));
-        }
-
-        if (t.getStroke() != null) {
-            this.setStroke(Stroke.createFromJAXBElement(t.getStroke()));
-        }
-
-        if (t.getPieSubtype() != null && t.getPieSubtype().value().equalsIgnoreCase("half")) {
-            this.setType(PieChartSubType.HALF);
-        } else {
-            this.setType(PieChartSubType.WHOLE);
-        }
-
-        for (SliceType st : t.getSlice()) {
-            Slice s = new Slice();
-
-            s.setName(st.getName());
-
-            if (st.getValue() != null) {
-                s.setValue(SeParameterFactory.createRealParameter(st.getValue()));
-            }
-
-            if (st.getFill() != null) {
-                s.setFill(Fill.createFromJAXBElement(st.getFill()));
-            }
-
-            if (st.getGap() != null) {
-                s.setGap(SeParameterFactory.createRealParameter(st.getGap()));
-            }
-
-            this.addSlice(s);
-        }
-
-    }
+    
 
     /**
      * Add a listener to this {@code PieChart}.
@@ -192,21 +129,21 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
     }
 
     public void fireSliceMoveDown(int i) {
-        for (SliceListener l : listeners) {
+        listeners.forEach((l) -> {
             l.sliceMoveDown(i);
-        }
+        });
     }
 
     public void fireSliceMoveUp(int i) {
-        for (SliceListener l : listeners) {
+        listeners.forEach((l) -> {
             l.sliceMoveUp(i);
-        }
+        });
     }
 
     public void fireSliceRemoved(int i) {
-        for (SliceListener l : listeners) {
+        listeners.forEach((l) -> {
             l.sliceRemoved(i);
-        }
+        });
     }
 
     @Override
@@ -604,46 +541,5 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
         ls.addAll(slices);
         return ls;
     }
-
-    @Override
-    public JAXBElement<PieChartType> getJAXBElement() {
-
-        PieChartType p = new PieChartType();
-
-        if (type != null) {
-            if (type == PieChartSubType.HALF) {
-                p.setPieSubtype(PieSubtypeType.HALF);
-            } else {
-                p.setPieSubtype(PieSubtypeType.WHOLE);
-            }
-        }
-
-        if (uom != null) {
-            p.setUom(uom.toURN());
-        }
-
-        if (transform != null) {
-            p.setTransform(this.transform.getJAXBType());
-        }
-
-        if (radius != null) {
-            p.setRadius(radius.getJAXBParameterValueType());
-        }
-
-        if (holeRadius != null) {
-            p.setHoleRadius(holeRadius.getJAXBParameterValueType());
-        }
-
-        if (stroke != null) {
-            p.setStroke(stroke.getJAXBElement());
-        }
-
-        List<SliceType> slcs = p.getSlice();
-        for (Slice s : slices) {
-            slcs.add(s.getJAXBType());
-        }
-
-        ObjectFactory of = new ObjectFactory();
-        return of.createPieChart(p);
-    }
+    
 }

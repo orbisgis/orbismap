@@ -36,22 +36,15 @@
  */
 package org.orbisgis.coremap.renderer.se.fill;
 
-import net.opengis.se._2_0.core.FillType;
-import net.opengis.se._2_0.core.HatchedFillType;
-import net.opengis.se._2_0.core.ObjectFactory;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
-
-import javax.xml.bind.JAXBElement;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -104,30 +97,7 @@ public final class HatchedFill extends Fill implements StrokeNode {
     public HatchedFill() {
         setStroke(new PenStroke());
     }
-
-
-    /**
-     * Creates a new {@code HatchedFill} using the JAXBElement given in argument.
-     * @param sf
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public HatchedFill(JAXBElement<HatchedFillType> sf) throws InvalidStyle {
-        if (sf.getValue().getAngle() != null) {
-            setAngle(SeParameterFactory.createRealParameter(sf.getValue().getAngle()));
-        }
-        if (sf.getValue().getDistance() != null) {
-            setDistance(SeParameterFactory.createRealParameter(sf.getValue().getDistance()));
-        }
-        if (sf.getValue().getOffset() != null) {
-            setOffset(SeParameterFactory.createRealParameter(sf.getValue().getOffset()));
-        }
-        if (sf.getValue().getStroke() != null) {
-            setStroke(Stroke.createFromJAXBElement(sf.getValue().getStroke()));
-        } else {
-            throw new InvalidStyle("Hatched Field request a stroke ");
-        }
-    }
-
+    
     @Override
     public void draw(Graphics2D g2, Map<String,Object> map, Shape shp, boolean selected, MapTransform mt) throws ParameterException, IOException {
 
@@ -508,40 +478,7 @@ public final class HatchedFill extends Fill implements StrokeNode {
     }
 
 
-    @Override
-    public JAXBElement<? extends FillType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createHatchedFill(this.getJAXBType());
-    }
-
-
-    @Override
-    public HatchedFillType getJAXBType() {
-        ObjectFactory of = new ObjectFactory();
-        HatchedFillType hf = of.createHatchedFillType();
-
-        if (getOwnUom() != null) {
-            hf.setUom(getOwnUom().toURN());
-        }
-        if (angle != null) {
-            hf.setAngle(angle.getJAXBParameterValueType());
-        }
-
-        if (distance != null) {
-            hf.setDistance(distance.getJAXBParameterValueType());
-        }
-
-        if (offset != null) {
-            hf.setOffset(offset.getJAXBParameterValueType());
-        }
-
-        if (stroke != null) {
-            hf.setStroke(stroke.getJAXBElement());
-        }
-
-        return hf;
-    }
-
+    
     @Override
     public List<SymbolizerNode> getChildren() {
         List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();

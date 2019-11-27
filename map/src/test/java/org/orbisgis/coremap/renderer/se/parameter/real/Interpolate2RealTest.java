@@ -36,7 +36,6 @@
  */
 package org.orbisgis.coremap.renderer.se.parameter.real;
 
-import net.opengis.se._2_0.core.ModeType;
 import org.orbisgis.coremap.renderer.se.parameter.Interpolate;
 import org.orbisgis.coremap.renderer.se.parameter.Interpolate.InterpolationMode;
 import org.orbisgis.coremap.renderer.se.parameter.InterpolationPoint;
@@ -50,28 +49,7 @@ import static org.junit.Assert.*;
  */
 public class Interpolate2RealTest {
 
-        @Test
-        public void testInterpolateWKN() throws Exception {
-                ModeType.fromValue(Interpolate.InterpolationMode.COSINE.toString().toLowerCase());
-                ModeType.fromValue(Interpolate.InterpolationMode.LINEAR.toString().toLowerCase());
-                ModeType.fromValue(Interpolate.InterpolationMode.CUBIC.toString().toLowerCase());
-                try{
-                        ModeType.fromValue(Interpolate.InterpolationMode.COSINE.toString());
-                        fail();
-                } catch (IllegalArgumentException e){
-                }
-                try{
-                        ModeType.fromValue(Interpolate.InterpolationMode.LINEAR.toString());
-                        fail();
-                } catch (IllegalArgumentException e){
-                }
-                try{
-                        ModeType.fromValue(Interpolate.InterpolationMode.CUBIC.toString());
-                        fail();
-                } catch (IllegalArgumentException e){
-                }
-                assertTrue(true);
-        }
+              
 
 	/**
 	 * Test of linear interpolation

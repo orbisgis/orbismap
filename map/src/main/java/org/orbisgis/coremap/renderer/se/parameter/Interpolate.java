@@ -39,8 +39,6 @@ package org.orbisgis.coremap.renderer.se.parameter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.*;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -61,8 +59,8 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
  * @todo find a nice way to compute interpolation for RealParameter and ColorParameter
  *
  */
-public abstract class Interpolate<ToType extends SeParameter, FallbackType extends ToType>  
-                extends AbstractSymbolizerNode implements SeParameter {
+public abstract class Interpolate <ToType extends SymbolizerNode, FallbackType extends ToType>  
+                extends AbstractSymbolizerNode  {
 
         private InterpolationMode mode;
         private RealParameter lookupValue;
@@ -85,7 +83,7 @@ public abstract class Interpolate<ToType extends SeParameter, FallbackType exten
                 this.iPoints = new ArrayList<InterpolationPoint<ToType>>();
                 mode = InterpolationMode.LINEAR;
         }
-
+        
         /**
          * Builds an <code>Interpolate</code> instance where the default value for
          * unprocessable cases is <code>fallbackValue</code>and the interpolation
@@ -98,6 +96,7 @@ public abstract class Interpolate<ToType extends SeParameter, FallbackType exten
                 mode = InterpolationMode.LINEAR;
         }
 
+        
         /**
          * Retrieve the mode that is used to process the interpolation.
          * @return 
@@ -217,43 +216,7 @@ public abstract class Interpolate<ToType extends SeParameter, FallbackType exten
                 Collections.sort(iPoints);
         }
 
-        @Override
-        public ParameterValueType getJAXBParameterValueType() {
-                ParameterValueType p = new ParameterValueType();
-                p.getContent().add(this.getJAXBExpressionType());
-                return p;
-        }
-
-        @Override
-        public JAXBElement<?> getJAXBExpressionType() {
-                InterpolateType i = new InterpolateType();
-
-                if (fallbackValue != null) {
-                        i.setFallbackValue(fallbackValue.toString());
-                }
-                if (lookupValue != null) {
-                        i.setLookupValue(lookupValue.getJAXBParameterValueType());
-                }
-
-                if (mode != null) {
-                        i.setMode(ModeType.fromValue(mode.toString().toLowerCase()));
-                }
-
-                List<InterpolationPointType> ips = i.getInterpolationPoint();
-
-
-                for (InterpolationPoint<ToType> ip : iPoints) {
-                        InterpolationPointType ipt = new InterpolationPointType();
-
-                        ipt.setValue(ip.getValue().getJAXBParameterValueType());
-                        ipt.setData(ip.getData());
-                        ips.add(ipt);
-                }
-
-                ObjectFactory of = new ObjectFactory();
-                return of.createInterpolate(i);
-        }
-
+        
         @Override
         public List<SymbolizerNode> getChildren() {
                 List<SymbolizerNode> ls =new ArrayList<SymbolizerNode>();

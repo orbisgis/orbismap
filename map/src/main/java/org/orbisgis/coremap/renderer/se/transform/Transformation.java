@@ -39,7 +39,6 @@ package org.orbisgis.coremap.renderer.se.transform;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
@@ -76,18 +75,5 @@ public interface Transformation extends SymbolizerNode{
      */
     AffineTransform getAffineTransform(Map<String,Object> map, Uom uom, MapTransform mt,
             Double width, Double height) throws ParameterException, IOException;
-
-    /**
-     * Get a JAXB representation of this {@code Label}
-     * @return
-     * A {@code JAXBElement} that contains a {@code LabelType} specialization.
-     */
-    JAXBElement<?> getJAXBElement();
-
-    /**
-     * Get a JAXB representation of this {@code Label}
-     * @return
-     * A {@code JAXBType} that represents a {@code LabelType} specialization.
-     */
-    Object getJAXBType();
+   
 }

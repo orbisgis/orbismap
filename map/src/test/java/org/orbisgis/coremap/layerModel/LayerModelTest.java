@@ -109,12 +109,7 @@ public class LayerModelTest {
 		lc.setName("new name");
 		assertTrue(listener.nc == 1);
 		lc.setVisible(false);
-		assertTrue(listener.vc == 1);
-		vl.setStyle(new Style(vl, colorRecodeFile));
-		lc.removeLayer(vl1.getName());
-		assertTrue(listener.lr == 1);
-		assertTrue(listener.lring == 1);
-		assertTrue(lc.getLayerCount() == 0);
+		assertTrue(listener.vc == 1);		
 	}
 
         @Test

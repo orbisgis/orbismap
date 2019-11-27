@@ -38,16 +38,9 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.*;
-import javax.xml.bind.JAXBElement;
-import net.opengis.fes._2.FunctionType;
-import net.opengis.fes._2.ObjectFactory;
-import net.opengis.se._2_0.core.ParameterValueType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameter;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 
 /**
  * Defines a function on real numbers. A function is defined with a operation and
@@ -61,7 +54,7 @@ import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
  *   * Neperian logarithm - <code>LN</code>
  * @author Maxence Laurent, Alexis Guéganno
  */
-public class RealFunction extends AbstractSymbolizerNode implements SeParameter, RealParameter {
+public class RealFunction extends AbstractSymbolizerNode implements  RealParameter {
 
     public enum Operators {
         ADD, MUL, DIV, SUB, SQRT, LOG, LN
@@ -92,32 +85,7 @@ public class RealFunction extends AbstractSymbolizerNode implements SeParameter,
         operands = new ArrayList<RealParameter>();
     }
 
-    /**
-     * Build a <code>RealFunction</code> from a <code>FunctionType</code> instance.
-     * As the <code>FunctionType</code>'s tree can contain informations to build both
-     * the operation and the operands, this constructor will naturally try to build them
-     * all.
-     * @param fcn
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public RealFunction(FunctionType fcn) throws InvalidStyle {
-        this(fcn.getName());
-        for (JAXBElement<? extends Object> expr : fcn.getExpression()) {
-            RealParameter rp =SeParameterFactory.createRealParameter(expr);
-            operands.add(rp);
-            rp.setParent(this);
-        }
-    }
-
-    /**
-     * Build a <code>RealFunction</code> from a <code>JAXBElement</code> instance.
-     * @param fcn
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public RealFunction(JAXBElement<FunctionType> fcn) throws InvalidStyle {
-        this(fcn.getValue());
-    }
-
+    
     /**
      * Get the instance of {@code Operators} associated to this {@code RealFunction}.
      * @return 
@@ -271,26 +239,7 @@ public class RealFunction extends AbstractSymbolizerNode implements SeParameter,
         return 0;
     }
 
-    @Override
-	public ParameterValueType getJAXBParameterValueType() {
-		ParameterValueType p = new ParameterValueType();
-		p.getContent().add(this.getJAXBExpressionType());
-		return p;
-	}
-
-    @Override
-    public JAXBElement<?> getJAXBExpressionType() {
-        FunctionType fcn = new FunctionType();
-        fcn.setName(op.name());
-        List<JAXBElement<?>> expression = fcn.getExpression();
-
-        for (RealParameter p : operands){
-            expression.add(p.getJAXBExpressionType());
-        }
-
-        ObjectFactory of = new ObjectFactory();
-        return of.createFunction(fcn);
-    }
+    
 
     @Override
     public List<SymbolizerNode> getChildren() {

@@ -38,7 +38,6 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.se._2_0.thematic.SliceType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
@@ -134,30 +133,7 @@ public class Slice extends AbstractSymbolizerNode implements FillNode {
                         value.setContext(RealParameterContext.REAL_CONTEXT);
                         value.setParent(this);
                 }
-        }
-
-        /**
-         * Get a {@code SliceType} that represents this {@code Slice}.
-         * @return
-         */
-        public SliceType getJAXBType() {
-                SliceType s = new SliceType();
-
-                if (fill != null) {
-                        s.setFill(fill.getJAXBElement());
-                }
-                if (gap != null) {
-                        s.setGap(gap.getJAXBParameterValueType());
-                }
-                if (name != null) {
-                        s.setName(name);
-                }
-                if (value != null) {
-                        s.setValue(value.getJAXBParameterValueType());
-                }
-
-                return s;
-        }
+        }        
 
         @Override
         public List<SymbolizerNode> getChildren() {

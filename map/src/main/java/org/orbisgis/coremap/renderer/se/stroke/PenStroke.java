@@ -40,14 +40,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.ParameterValueType;
-import net.opengis.se._2_0.core.PenStrokeType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
@@ -57,7 +52,6 @@ import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -104,14 +98,7 @@ public final class PenStroke extends Stroke implements FillNode {
     public enum LineCap {
 
         BUTT, ROUND, SQUARE;
-
-        /**
-         * Build a {@link ParameterValueType} from this {@code LineCap}.
-         * @return This LineCap in a ParameterValueType.
-         */
-        public ParameterValueType getParameterValueType() {
-            return SeParameterFactory.createParameterValueType(this.name().toLowerCase());
-        }
+       
     }
 
     /**
@@ -121,13 +108,6 @@ public final class PenStroke extends Stroke implements FillNode {
 
         MITRE, ROUND, BEVEL;
 
-        /**
-         * Build a {@link ParameterValueType} from this {@code LineJoin}.
-         * @return This LineJoin in a ParameterValueType.
-         */
-        public ParameterValueType getParameterValueType() {
-            return SeParameterFactory.createParameterValueType(this.name().toLowerCase());
-        }
     }
 
     /**
@@ -143,63 +123,8 @@ public final class PenStroke extends Stroke implements FillNode {
         setLineCap(DEFAULT_CAP);
         setLineJoin(DEFAULT_JOIN);
     }
+   
 
-    /**
-     * Build a PenStroke from the JaXB type given in argument.
-     * @param t The input JaXB element
-     */
-    public PenStroke(PenStrokeType t) throws InvalidStyle {
-        super(t);
-
-        if (t.getUom() != null) {
-            setUom(Uom.fromOgcURN(t.getUom()));
-        }
-
-        if (t.getFill() != null) {
-            this.setFill(Fill.createFromJAXBElement(t.getFill()));
-        } else {
-            this.setFill(new SolidFill(Color.BLACK,1.0));
-        }
-        //Null values are handled by the setter and resent by SeParameterFactory
-        this.setDashArray(SeParameterFactory.createStringParameter(t.getDashArray()));
-
-        if (t.getDashOffset() != null) {
-            this.setDashOffset(SeParameterFactory.createRealParameter(t.getDashOffset()));
-        }
-
-        if (t.getWidth() != null) {
-            this.setWidth(SeParameterFactory.createRealParameter(t.getWidth()));
-        } else {
-            setWidth(new RealLiteral(DEFAULT_WIDTH));
-        }
-
-        if (t.getLineCap() != null) {
-            try {
-                StringParameter lCap = SeParameterFactory.createStringParameter(t.getLineCap());
-                this.setLineCap(LineCap.valueOf(lCap.getValue(null, -1).toUpperCase()));
-            } catch (Exception ex) {
-                Logger.getLogger(PenStroke.class.getName()).log(Level.SEVERE, "Could not convert line cap", ex);
-            }
-        }
-
-        if (t.getLineJoin() != null) {
-            try {
-                StringParameter lJoin = SeParameterFactory.createStringParameter(t.getLineJoin());
-                this.setLineJoin(LineJoin.valueOf(lJoin.getValue(null, -1).toUpperCase()));
-            } catch (Exception ex) {
-                Logger.getLogger(PenStroke.class.getName()).log(Level.SEVERE, "Could not convert line join", ex);
-            }
-        }
-    }
-
-    /**
-     * Build a {@code PenStroke} from the JAXBElement given in argument.
-     * @param s The input JaXB element.
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public PenStroke(JAXBElement<PenStrokeType> s) throws InvalidStyle {
-        this(s.getValue());
-    }
 
     @Override
     public Double getNaturalLength(Map<String,Object> map, Shape shp, MapTransform mt) {
@@ -681,51 +606,5 @@ public final class PenStroke extends Stroke implements FillNode {
         }
 
         return length;
-    }
-
-    @Override
-    public JAXBElement<PenStrokeType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createPenStroke(this.getJAXBType());
-    }
-
-    /**
-     * Get a representation of this {@code PenStroke} as a jaxb type.
-     * @return 
-     */
-    public PenStrokeType getJAXBType() {
-        PenStrokeType s = new PenStrokeType();
-
-        this.setJAXBProperties(s);
-
-        if (this.getOwnUom()!= null) {
-            s.setUom(getOwnUom().toURN());
-        }
-
-        if (this.fill != null) {
-            s.setFill(fill.getJAXBElement());
-        }
-
-        if (this.dashArray != null) {
-            //s.setDashArray(null);
-            s.setDashArray(dashArray.getJAXBParameterValueType());
-        }
-
-        if (this.dashOffset != null) {
-            s.setDashOffset(this.dashOffset.getJAXBParameterValueType());
-        }
-
-        if (this.lineCap != null) {
-            s.setLineCap(this.lineCap.getParameterValueType());
-        }
-
-        if (this.lineJoin != null) {
-            s.setLineJoin(this.lineJoin.getParameterValueType());
-        }
-        if (this.width != null) {
-            s.setWidth(this.width.getJAXBParameterValueType());
-        }
-
-        return s;
-    }
+    }    
 }

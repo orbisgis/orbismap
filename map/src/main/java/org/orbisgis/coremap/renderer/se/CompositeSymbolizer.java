@@ -38,11 +38,6 @@ package org.orbisgis.coremap.renderer.se;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.CompositeSymbolizerType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.SymbolizerType;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 
 /**
@@ -61,56 +56,7 @@ public final class CompositeSymbolizer extends AbstractSymbolizerNode implements
         public CompositeSymbolizer() {
                 symbolizers = new ArrayList<Symbolizer>();
         }
-
-        /**
-         * Build a new <code>CompositeSymbolizer</code>, finding its attributes and inner
-         * elements in a JAXBElement.
-         * @param st
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public CompositeSymbolizer(JAXBElement<? extends SymbolizerType> st) throws InvalidStyle {
-                symbolizers = new ArrayList<Symbolizer>();
-
-                if (st.getDeclaredType() == net.opengis.se._2_0.core.CompositeSymbolizerType.class) {
-                        JAXBElement<CompositeSymbolizerType> jcs = (JAXBElement<CompositeSymbolizerType>) st;
-
-                        for (JAXBElement<? extends SymbolizerType> s : jcs.getValue().getSymbolizer()) {
-                                if (s.getDeclaredType() == net.opengis.se._2_0.core.CompositeSymbolizerType.class) {
-                                        // If the sub-symbolizer is another collection : inline all
-                                        CompositeSymbolizer cs2 = new CompositeSymbolizer(s);
-                                        for (Symbolizer s2 : cs2.symbolizers) {
-                                                this.addSymbolizer(s2);
-                                        }
-                                } else {
-                                        Symbolizer symb = Symbolizer.createSymbolizerFromJAXBElement(s);
-                                        this.addSymbolizer(symb);
-                                }
-                        }
-                } else {
-                        this.addSymbolizer(Symbolizer.createSymbolizerFromJAXBElement(st));
-                }
-        }
         
-        /**
-         * Get a Jaxb representation of this <code>CompositeSymbolizer</code>.
-         * @return 
-         */
-        public JAXBElement<? extends SymbolizerType> getJAXBElement() {
-                if (symbolizers.size() == 1) {
-                        return symbolizers.get(0).getJAXBElement();
-                } else if (symbolizers.size() > 1) {
-                        ObjectFactory of = new ObjectFactory();
-                        CompositeSymbolizerType cs = of.createCompositeSymbolizerType();
-                        List<JAXBElement<? extends SymbolizerType>> sList = cs.getSymbolizer();
-                        for (Symbolizer s : symbolizers) {
-                                sList.add(s.getJAXBElement());
-                        }
-
-                        return of.createCompositeSymbolizer(cs);
-                } else {
-                        return null;
-                }
-        }
 
         /**
          * Get the list of <code>Symbolizer</code>s contained in this <code>CompositeSymbolizer</code>

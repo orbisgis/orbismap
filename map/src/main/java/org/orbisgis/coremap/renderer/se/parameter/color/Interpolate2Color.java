@@ -39,17 +39,9 @@ package org.orbisgis.coremap.renderer.se.parameter.color;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.InterpolateType;
-import net.opengis.se._2_0.core.InterpolationPointType;
-import net.opengis.se._2_0.core.ModeType;
-
-
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.Interpolate;
 import org.orbisgis.coremap.renderer.se.parameter.InterpolationPoint;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 
 /**
  * Interpolate <code>Color</code> values from double values. Interpolation points must be
@@ -68,39 +60,7 @@ public final class Interpolate2Color extends Interpolate<ColorParameter, ColorLi
                 super(fallback);
         }
 
-        /**
-         * Create a new <code>Interpolate2Color</code> instance. All its inner 
-         * elements are computed from the <code>JAXBElement&lt;InterpolateType></code>
-         * given in argument.
-         * @param expr
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Interpolate2Color(JAXBElement<InterpolateType> expr) throws InvalidStyle {
-                InterpolateType t = expr.getValue();
-
-                this.setFallbackValue(new ColorLiteral(t.getFallbackValue()));
-
-                this.setLookupValue(SeParameterFactory.createRealParameter(t.getLookupValue()));
-
-                if (t.getMode() == ModeType.COSINE) {
-                        this.setInterpolationMode(InterpolationMode.COSINE);
-                } else if (t.getMode() == ModeType.CUBIC) {
-                        this.setInterpolationMode(InterpolationMode.CUBIC);
-                } else {
-                        System.out.println("Fallback to linear mode !");
-                        this.setInterpolationMode(InterpolationMode.LINEAR);
-                }
-
-                for (InterpolationPointType ipt : t.getInterpolationPoint()) {
-                        InterpolationPoint<ColorParameter> ip = new InterpolationPoint<ColorParameter>();
-
-                        ip.setData(ipt.getData());
-                        ip.setValue(SeParameterFactory.createColorParameter(ipt.getValue()));
-
-                        this.addInterpolationPoint(ip);
-                }
-
-        }
+        
 
         /**
          * Retrieve the <code>Color</code> that must be associated to the datum at index

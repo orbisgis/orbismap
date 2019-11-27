@@ -44,9 +44,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.*;
-import net.opengis.se._2_0.raster.RasterSymbolizerType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -84,41 +81,7 @@ public abstract class Symbolizer extends AbstractSymbolizerNode implements Symbo
         name = Symbolizer.DEFAULT_NAME;
         desc = "";
         level = -1;
-    }
-
-    /**
-     * Build a Symbolizer from a JAXB element. This constructor will only retrieve
-     * the name and description - it's up to the inheriting classes to retrieve the other 
-     * needed informations.
-     * @param st
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public Symbolizer(JAXBElement<? extends SymbolizerType> st) throws InvalidStyle {
-        SymbolizerType t = st.getValue();
-
-        if (t.getName() != null) {
-            this.name = t.getName();
-        } else {
-            this.name = Symbolizer.DEFAULT_NAME;
-        }
-
-        if (t.getVersion() != null && !t.getVersion().value().equals(Symbolizer.VERSION)) {
-            throw new InvalidStyle("Unsupported version !");
-        }
-
-        if (t.getDescription() != null) {
-            // TODO  implement ows:Description
-        }
-
-        if (t.getExtension() != null) {
-            for (ExtensionParameterType param : t.getExtension().getExtensionParameter()) {
-                if (param.getName().equalsIgnoreCase("level")) {
-                    level = Integer.parseInt(param.getContent());
-                    break;
-                }
-            }
-        }
-    }
+    }    
 
     /**
      * Gets the name of this Symbolizer.
@@ -181,42 +144,8 @@ public abstract class Symbolizer extends AbstractSymbolizerNode implements Symbo
      */
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    /**
-     * Fill the {@code SymbolizerType s} with the properties contained in this
-     * {@code Symbolizer}.
-     * @param s 
-     */
-    public void setJAXBProperty(SymbolizerType s) {
-        // TODO Load description from XML
-        s.setDescription(null);
-        s.setName(name);
-        s.setVersion(VersionType.VALUE_1);
-    }
+    }   
     
-    /**
-     * Using the given JAXBElement, this method tries to build the correct 
-     * spacialization of {@code Symbolizer}.
-     * @param st
-     * @return
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public static Symbolizer createSymbolizerFromJAXBElement(JAXBElement<? extends SymbolizerType> st) throws InvalidStyle {
-        if (st.getDeclaredType() == AreaSymbolizerType.class) {
-            return new AreaSymbolizer((JAXBElement<AreaSymbolizerType>) st);
-        } else if (st.getDeclaredType() == LineSymbolizerType.class) {
-            return new LineSymbolizer((JAXBElement<LineSymbolizerType>) st);
-        } else if (st.getDeclaredType() == PointSymbolizerType.class) {
-            return new PointSymbolizer((JAXBElement<PointSymbolizerType>) st);
-        } else if (st.getDeclaredType() == TextSymbolizerType.class) {
-            return new TextSymbolizer((JAXBElement<TextSymbolizerType>) st);
-        } else if (st.getDeclaredType() == RasterSymbolizerType.class) {
-            return new RasterSymbolizer((JAXBElement<RasterSymbolizerType>) st);
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Makes a comparison between this and o. Be aware that <b>this operation is absolutely
@@ -311,9 +240,4 @@ public abstract class Symbolizer extends AbstractSymbolizerNode implements Symbo
             boolean selected, MapTransform mt, Geometry theGeom)
             throws ParameterException, IOException, SQLException;
 
-    /**
-     * Get a JAXB representation of this Symbolizer.
-     * @return 
-     */
-    public abstract JAXBElement<? extends SymbolizerType> getJAXBElement();
 }

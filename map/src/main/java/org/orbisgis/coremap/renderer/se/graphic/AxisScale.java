@@ -38,11 +38,8 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.se._2_0.thematic.AxisScaleType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -57,18 +54,7 @@ public final class AxisScale extends AbstractSymbolizerNode {
     public AxisScale(){
         this.setAxisLength(new RealLiteral(DEFAULT_LENGTH));
         this.setMeasure(new RealLiteral(DEFAULT_MEASURE));
-    }
-
-    public AxisScale(AxisScaleType as) throws InvalidStyle {
-		
-       if (as.getAxisLength() != null){
-           this.setAxisLength(SeParameterFactory.createRealParameter(as.getAxisLength()));
-       }
-
-       if (as.getValue() != null){
-           this.setMeasure(SeParameterFactory.createRealParameter(as.getValue()));
-       }
-    }
+    }    
 
     public RealParameter getMeasureValue() {
         return measure;
@@ -101,21 +87,7 @@ public final class AxisScale extends AbstractSymbolizerNode {
             axisLength.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             axisLength.setParent(this);
         }
-    }
-
-    public AxisScaleType getJAXBType() {
-        AxisScaleType scale = new AxisScaleType();
-
-        if (axisLength != null) {
-            scale.setAxisLength(axisLength.getJAXBParameterValueType());
-
-        }
-        if (measure != null) {
-            scale.setValue(measure.getJAXBParameterValueType());
-        }
-
-        return scale;
-    }
+    }   
 
     @Override
     public List<SymbolizerNode> getChildren() {

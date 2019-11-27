@@ -39,8 +39,6 @@ package org.orbisgis.coremap.renderer.se.parameter.string;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.fes._2.LiteralType;
 
 
 import org.orbisgis.coremap.renderer.se.parameter.Literal;
@@ -68,12 +66,7 @@ public class StringLiteral extends Literal implements StringParameter{
         v = value;
     }
 
-    /**
-     * Builds a new {@code StringLiteral} from the given {@code JAXBElement.}.
-     */
-    public StringLiteral(JAXBElement<LiteralType> l) {
-        this(l.getValue().getContent().get(0).toString());
-    }
+    
 
     @Override
     public String getValue(ResultSet rs, long fid){

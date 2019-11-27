@@ -42,15 +42,11 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.raster.RasterSymbolizerType;
 
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.color.Categorize2Color;
 import org.orbisgis.coremap.renderer.se.parameter.color.Interpolate2Color;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -73,7 +69,6 @@ public class RasterSymbolizer extends Symbolizer implements UomNode {
     private boolean isColored; // true => use red, green and blue channels; false => use gray
     private OverlapBehavior overlapBehavior;
     private Interpolate2Color interpolatedColorMap;
-    private Categorize2Color categorizedColorMap;
     private boolean useInterpolationForColorMap; // true => interpolatedColorMap, False => CategorizedColorMap
     private ContrastEnhancement contrastEnhancement;
     private double gamma;
@@ -108,14 +103,6 @@ public class RasterSymbolizer extends Symbolizer implements UomNode {
 
     public void setBlueChannel(Channel blueChannel) {
         this.blueChannel = blueChannel;
-    }
-
-    public Categorize2Color getCategorizedColorMap() {
-        return categorizedColorMap;
-    }
-
-    public void setCategorizedColorMap(Categorize2Color categorizedColorMap) {
-        this.categorizedColorMap = categorizedColorMap;
     }
 
     public ContrastEnhancement getContrastEnhancement() {
@@ -233,24 +220,7 @@ public class RasterSymbolizer extends Symbolizer implements UomNode {
             this.uom = Uom.PX;
         }
     }
-
-    @Override
-    public JAXBElement<RasterSymbolizerType> getJAXBElement() {
-        return null;
-    }
-
-    public RasterSymbolizer(JAXBElement<RasterSymbolizerType> st) throws InvalidStyle {
-        super(st);
-        RasterSymbolizerType lst = st.getValue();
-        System.out.println("RasterSymb");
-
-        System.out.println("  Name: " + lst.getName());
-        System.out.println("  UoM: " + lst.getUom());
-        System.out.println("  Version: " + lst.getVersion());
-        System.out.println("  Desc: " + lst.getDescription());
-        System.out.println("  Geom: " + lst.getGeometry());
-    }
-
+    
     @Override
     public List<SymbolizerNode> getChildren() {
         throw new UnsupportedOperationException("Not supported yet.");

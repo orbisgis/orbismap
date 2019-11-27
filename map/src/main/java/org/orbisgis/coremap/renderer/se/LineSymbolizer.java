@@ -45,18 +45,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.LineSymbolizerType;
-import net.opengis.se._2_0.core.ObjectFactory;
-
-
-
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
-import org.orbisgis.coremap.renderer.se.parameter.geometry.GeometryAttribute;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
@@ -90,39 +81,7 @@ public final class LineSymbolizer extends VectorSymbolizer implements StrokeNode
                 super();
                 this.name = "Line Symbolizer";
                 setStroke(new PenStroke());
-        }
-
-        /**
-         * Build a new {@code LineSymbolizer} using the {@code JAXBElement} given in
-         * argument
-         * @param st
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public LineSymbolizer(JAXBElement<LineSymbolizerType> st) throws InvalidStyle {
-                super(st);
-                LineSymbolizerType ast = st.getValue();
-
-
-                if (ast.getGeometry() != null) {
-                        this.setGeometryAttribute(new GeometryAttribute(ast.getGeometry()));
-                }
-
-                if (ast.getUom() != null) {
-                        setUom(Uom.fromOgcURN(ast.getUom()));
-                }
-
-                if (ast.getPerpendicularOffset() != null) {
-                        this.setPerpendicularOffset(SeParameterFactory.createRealParameter(ast.getPerpendicularOffset()));
-                }
-
-                /*if (ast.getTranslate() != null) {
-                this.setTranslate(new Translate(ast.getTranslate()));
-                }*/
-
-                if (ast.getStroke() != null) {
-                        this.setStroke(Stroke.createFromJAXBElement(ast.getStroke()));
-                }
-        }
+        }        
 
         @Override
         public Stroke getStroke() {
@@ -184,38 +143,7 @@ public final class LineSymbolizer extends VectorSymbolizer implements StrokeNode
 
                         }
                 }
-        }
-
-        @Override
-        public JAXBElement<LineSymbolizerType> getJAXBElement() {
-                ObjectFactory of = new ObjectFactory();
-                LineSymbolizerType s = of.createLineSymbolizerType();
-
-                this.setJAXBProperty(s);
-
-                if (this.getGeometryAttribute() != null) {
-                        s.setGeometry(getGeometryAttribute().getJAXBGeometryType());
-                }
-
-                if (this.getUom() != null) {
-                        s.setUom(this.getUom().toURN());
-                }
-
-                /*if (translate != null) {
-                s.setTranslate(translate.getJAXBType());
-                }*/
-
-                if (this.perpendicularOffset != null) {
-                        s.setPerpendicularOffset(perpendicularOffset.getJAXBParameterValueType());
-                }
-
-                if (stroke != null) {
-                        s.setStroke(stroke.getJAXBElement());
-                }
-
-
-                return of.createLineSymbolizer(s);
-        }
+        }       
 
         @Override
         public List<SymbolizerNode> getChildren() {

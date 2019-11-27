@@ -46,18 +46,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.TextSymbolizerType;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.label.Label;
 import org.orbisgis.coremap.renderer.se.label.PointLabel;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
-import org.orbisgis.coremap.renderer.se.parameter.geometry.GeometryAttribute;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -75,32 +69,7 @@ public final class TextSymbolizer extends VectorSymbolizer {
         private RealParameter perpendicularOffset;
         private Label label;
 
-        /**
-         * Build a new {@code TextSymbolizer} using the informations contained 
-         * in the {@code JAXBElement} given in argument.
-         * @param st
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public TextSymbolizer(JAXBElement<TextSymbolizerType> st) throws InvalidStyle {
-                super(st);
-                TextSymbolizerType tst = st.getValue();
-
-                if (tst.getGeometry() != null) {
-                        this.setGeometryAttribute(new GeometryAttribute(tst.getGeometry()));
-                }
-
-                if (tst.getUom() != null) {
-                        setUom(Uom.fromOgcURN(tst.getUom()));
-                }
-
-                if (tst.getPerpendicularOffset() != null) {
-                        this.setPerpendicularOffset(SeParameterFactory.createRealParameter(tst.getPerpendicularOffset()));
-                }
-
-                if (tst.getLabel() != null) {
-                        this.setLabel(Label.createLabelFromJAXBElement(tst.getLabel()));
-                }
-        }
+        
 
         /**
          * Build a new {@code TextSymbolizer}, named {@code Label}. It is defined
@@ -175,36 +144,7 @@ public final class TextSymbolizer extends VectorSymbolizer {
                                 label.draw(g2, map, s, selected, mt);
                         }
                 }
-
-
-        }
-
-        @Override
-        public JAXBElement<TextSymbolizerType> getJAXBElement() {
-
-                ObjectFactory of = new ObjectFactory();
-                TextSymbolizerType s = of.createTextSymbolizerType();
-
-                this.setJAXBProperty(s);
-
-                if (this.getGeometryAttribute() != null) {
-                        s.setGeometry(getGeometryAttribute().getJAXBGeometryType());
-                }
-
-                if (this.getUom() != null) {
-                        s.setUom(this.getUom().toURN());
-                }
-
-                if (perpendicularOffset != null) {
-                        s.setPerpendicularOffset(perpendicularOffset.getJAXBParameterValueType());
-                }
-
-                if (label != null) {
-                        s.setLabel(label.getJAXBElement());
-                }
-
-                return of.createTextSymbolizer(s);
-        }
+        }       
 
         @Override
         public List<SymbolizerNode> getChildren() {

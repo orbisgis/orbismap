@@ -45,9 +45,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.GraphicStrokeType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
@@ -60,7 +57,6 @@ import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -83,42 +79,7 @@ public final class GraphicStroke extends Stroke implements GraphicNode, UomNode 
     private RelativeOrientation orientation;
     private RealParameter relativePosition;
 
-    /**
-     * Build a new {@code GraphicStroke} using the {@code JAXBElement} given in argument.
-     * @param elem
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    GraphicStroke(JAXBElement<GraphicStrokeType> elem) throws InvalidStyle {
-        this(elem.getValue());
-    }
-
-    /**
-     * Build a new {@code GraphicStroke} using the JAXB type given in argument.
-     * @param gst
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    GraphicStroke(GraphicStrokeType gst) throws InvalidStyle {
-        super(gst);
-
-        if (gst.getGraphic() != null) {
-            this.setGraphicCollection(new GraphicCollection(gst.getGraphic(), this));
-        }
-
-        if (gst.getLength() != null) {
-            this.setLength(SeParameterFactory.createRealParameter(gst.getLength()));
-        }
-
-        if (gst.getRelativeOrientation() != null) {
-            this.setRelativeOrientation(RelativeOrientation.readFromToken(gst.getRelativeOrientation()));
-        } else {
-            this.setRelativeOrientation(RelativeOrientation.NORMAL);
-        }
-
-        if (gst.getRelativePosition() != null) {
-            setRelativePosition(SeParameterFactory.createRealParameter(gst.getRelativePosition()));
-        }
-    }
-
+    
     /**
      * Build a new, default, {@code GraphicStroke}. It is defined with a default
      * {@link MarkGraphic}, as defined in {@link MarkGraphic#MarkGraphic() the default constructor}.
@@ -375,40 +336,6 @@ public final class GraphicStroke extends Stroke implements GraphicNode, UomNode 
         return ls;
     }
 
-    @Override
-    public JAXBElement<GraphicStrokeType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createGraphicStroke(this.getJAXBType());
-    }
-
-
-    private GraphicStrokeType getJAXBType() {
-        GraphicStrokeType s = new GraphicStrokeType();
-
-        this.setJAXBProperties(s);
-
-
-        if (getOwnUom() != null) {
-            s.setUom(getOwnUom().toURN());
-        }
-
-        if (graphic != null) {
-            s.setGraphic(graphic.getJAXBElement());
-        }
-
-        if (length != null) {
-            s.setLength(length.getJAXBParameterValueType());
-        }
-
-        if (orientation != null) {
-            s.setRelativeOrientation(orientation.getJAXBType());
-        }
-
-        if (relativePosition != null) {
-            s.setRelativePosition(relativePosition.getJAXBParameterValueType());
-        }
-        return s;
-    }
-
+    
 
 }

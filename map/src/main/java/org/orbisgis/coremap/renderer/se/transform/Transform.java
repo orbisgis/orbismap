@@ -41,10 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.opengis.se._2_0.core.*;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
@@ -87,42 +85,8 @@ public class Transform extends AbstractSymbolizerNode implements UomNode {
                 consolidated = null;
         }
 
-        /**
-         * Build a new {@code Transform}, that will conatin only the
-         * {@code Transformation} represented by {@code t}.
-         * @param t
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Transform(TransformType t) throws InvalidStyle {
-                transformations = new ArrayList<Transformation>();
-                consolidated = null;
-
-                if (t.getUom() != null) {
-                        this.setUom(Uom.fromOgcURN(t.getUom()));
-                }
-
-                for (Object o : t.getTranslateOrRotateOrScale()) {
-                        Transformation trans = getTransformationFromJAXB(o);
-                        if(trans != null){
-                                this.transformations.add(trans);
-                                trans.setParent(this);
-                        }
-                }
-        }
-
-        private Transformation getTransformationFromJAXB(Object o) throws InvalidStyle {
-                if (o instanceof TranslateType) {
-                        return new Translate((TranslateType) o);
-                } else if (o instanceof RotateType) {
-                        return new Rotate((RotateType) o);
-                } else if (o instanceof ScaleType) {
-                        return new Scale((ScaleType) o);
-                } else if (o instanceof MatrixType) {
-                        return new Matrix((MatrixType) o);
-                }
-                return null;
-
-        }
+        
+        
 
         /**
          * Move the ith {@code Transformation} up in this {@code Transform}.
@@ -247,26 +211,7 @@ public class Transform extends AbstractSymbolizerNode implements UomNode {
                 return transformations.get(i);
         }
 
-        /**
-         * Get a new representation of this {@code Transform} as a JAXB
-         * {@code TransformType}
-         * @return
-         */
-        public TransformType getJAXBType() {
-                TransformType t = new TransformType();
-
-                if (getOwnUom() != null) {
-                        t.setUom(getOwnUom().toURN());
-                }
-
-                List<Object> list = t.getTranslateOrRotateOrScale();
-
-                for (Transformation tr : transformations) {
-                        list.add(tr.getJAXBType());
-                }
-
-                return t;
-        }
+        
 
         @Override
         public List<SymbolizerNode> getChildren() {

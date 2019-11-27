@@ -38,9 +38,6 @@ package org.orbisgis.coremap.renderer.se.stroke;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.se._2_0.core.AlternativeStrokeElementsType;
-import net.opengis.se._2_0.core.StrokeElementType;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 
 /**
@@ -61,36 +58,9 @@ public class AlternativeStrokeElements extends CompoundStrokeElement {
                 elements = new ArrayList<StrokeElement>();
         }
 
-        /**
-         * Buld a new {@code AlternativeStrokeElement}, using the informations 
-         * stored in the JAXB {@code AlternativeStrokeElementType}.
-         * @param aset
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public AlternativeStrokeElements(AlternativeStrokeElementsType aset) throws InvalidStyle {
-                this();
-                for (StrokeElementType se : aset.getStrokeElement()) {
-                        StrokeElement strokeElement = new StrokeElement(se);
-                        strokeElement.setParent(this);
-                        elements.add(strokeElement);
-                }
-                if (elements.isEmpty()) {
-                        throw new InvalidStyle("Alternative Stroke Element must, at least, contains one stroke element");
-                }
-        }
+       
 
-        @Override
-        public Object getJAXBType() {
-                AlternativeStrokeElementsType aset = new AlternativeStrokeElementsType();
-
-                List<StrokeElementType> strokeElement = aset.getStrokeElement();
-
-                for (StrokeElement elem : this.elements) {
-                        strokeElement.add((StrokeElementType) elem.getJAXBType());
-                }
-
-                return aset;
-        }
+        
 
         @Override
         public List<SymbolizerNode> getChildren() {

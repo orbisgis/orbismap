@@ -43,12 +43,9 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import net.opengis.se._2_0.core.FontType;
-import net.opengis.se._2_0.core.StyledTextType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
@@ -57,7 +54,6 @@ import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.color.ColorLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -120,54 +116,7 @@ public final class StyledText extends AbstractSymbolizerNode implements UomNode,
         f.setColor(new ColorLiteral(Color.black));
 
         this.setFill(f);
-    }
-
-    /**
-     * Build a <code>StyledText</code> from the JAXB element given in argument.
-     * @param sl
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public StyledText(StyledTextType sl) throws InvalidStyle {
-        if (sl.getFill() != null) {
-            this.setFill(Fill.createFromJAXBElement(sl.getFill()));
-        }
-
-        if (sl.getStroke() != null) {
-            this.setStroke(Stroke.createFromJAXBElement(sl.getStroke()));
-        }
-
-        if (sl.getFont() != null) {
-            FontType font = sl.getFont();
-
-            if (font.getUom() != null) {
-                this.setUom(Uom.fromOgcURN(font.getUom()));
-            }
-
-            if (font.getFontSize() != null) {
-                this.setFontSize(SeParameterFactory.createRealParameter(font.getFontSize()));
-            }
-
-            if (font.getFontFamily() != null) {
-                this.setFontFamily(SeParameterFactory.createStringParameter(font.getFontFamily()));
-            }
-
-            if (font.getFontStyle() != null) {
-                this.setFontStyle(SeParameterFactory.createStringParameter(font.getFontStyle()));
-            }
-
-            if (font.getFontWeight() != null) {
-                this.setFontWeight(SeParameterFactory.createStringParameter(font.getFontWeight()));
-            }
-        }
-
-        if (sl.getHalo() != null) {
-            this.setHalo(new Halo(sl.getHalo()));
-        }
-
-        if (sl.getText() != null) {
-            this.setText(SeParameterFactory.createStringParameter(sl.getText()));
-        }
-    }
+    }    
 
     /**
      * Tries to retrieve the UOM of the font if any. If non can be found, return the UOM
@@ -611,44 +560,7 @@ public final class StyledText extends AbstractSymbolizerNode implements UomNode,
         return size / 2.0;
     }
 
-    /**
-     * Get a new JAXB representation of this {@code StyledText}.
-     * @return
-     * A {@code StyledTextType} representing this {@code StyledText}.
-     */
-    public StyledTextType getJAXBType() {
-        StyledTextType l = new StyledTextType();
-        if (text != null) {
-            l.setText(text.getJAXBParameterValueType());
-        }
-        if (halo != null) {
-            l.setHalo(halo.getJAXBType());
-        }
-        if (fill != null) {
-            l.setFill(fill.getJAXBElement());
-        }
-        if (stroke != null) {
-            l.setStroke(stroke.getJAXBElement());
-        }
-        FontType font = new FontType();
-        if (this.getOwnUom() != null) {
-            font.setUom(getOwnUom().toURN());
-        }
-        if (fontFamily != null) {
-            font.setFontFamily(fontFamily.getJAXBParameterValueType());
-        }
-        if (fontWeight != null) {
-            font.setFontWeight(fontWeight.getJAXBParameterValueType());
-        }
-        if (fontSize != null) {
-            font.setFontSize(fontSize.getJAXBParameterValueType());
-        }
-        if (fontStyle != null) {
-            font.setFontStyle(fontStyle.getJAXBParameterValueType());
-        }
-        l.setFont(font);
-        return l;
-    }
+    
 
     @Override
     public java.util.List<SymbolizerNode> getChildren() {

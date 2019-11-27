@@ -38,13 +38,7 @@ package org.orbisgis.coremap.renderer.se.label;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ExclusionRectangleType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -68,24 +62,7 @@ public final class ExclusionRectangle extends ExclusionZone {
         this.setY(new RealLiteral(3));
     }
 
-    /**
-     * Build a {@code ExclusionZone} from the JAXBElement given in argument. 
-     */
-    ExclusionRectangle(JAXBElement<ExclusionRectangleType> ert) throws InvalidStyle {
-        ExclusionRectangleType e = ert.getValue();
-
-        if (e.getX() != null){
-            setX(SeParameterFactory.createRealParameter(e.getX()));
-        }
-
-        if (e.getY() != null){
-            setY(SeParameterFactory.createRealParameter(e.getY()));
-        }
-
-        if (e.getUom() != null){
-            setUom(Uom.fromOgcURN(e.getUom()));
-        }
-    }
+    
 
     /**
      * Get the x-length of the rectangle.
@@ -127,28 +104,7 @@ public final class ExclusionRectangle extends ExclusionZone {
             y.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             y.setParent(this);
         }
-    }
-
-    @Override
-    public JAXBElement<ExclusionRectangleType> getJAXBElement() {
-        ExclusionRectangleType r = new ExclusionRectangleType();
-
-        if (getUom() != null) {
-            r.setUom(getUom().toString());
-        }
-
-        if (x != null) {
-            r.setX(x.getJAXBParameterValueType());
-        }
-
-        if (y != null) {
-            r.setY(y.getJAXBParameterValueType());
-        }
-
-        ObjectFactory of = new ObjectFactory();
-
-        return of.createExclusionRectangle(r);
-    }
+    }    
 
     @Override
     public List<SymbolizerNode> getChildren() {

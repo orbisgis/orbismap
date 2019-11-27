@@ -41,13 +41,6 @@ import java.awt.Paint;
 import java.awt.Shape;
 import java.io.IOException;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.FillType;
-import net.opengis.se._2_0.core.GraphicFillType;
-import net.opengis.se._2_0.core.HatchedFillType;
-import net.opengis.se._2_0.core.SolidFillType;
-import net.opengis.se._2_0.thematic.DensityFillType;
-import net.opengis.se._2_0.thematic.DotMapFillType;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
@@ -66,33 +59,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 public abstract class Fill extends AbstractSymbolizerNode implements UomNode {
 
     private Uom uom;
-    /**
-     * Create a new fill based on the jaxbelement
-     *
-     * @param f XML Fill
-     * @return Java SE Fill
-     */
-    public static Fill createFromJAXBElement(JAXBElement<? extends FillType> f) throws InvalidStyle{
-        if (f.getDeclaredType() == SolidFillType.class){
-            return new SolidFill((JAXBElement<SolidFillType>)f);
-        }
-        else if (f.getDeclaredType() == GraphicFillType.class){
-            return new GraphicFill((JAXBElement<GraphicFillType>)f);
-        }
-        else if (f.getDeclaredType() == DensityFillType.class){
-            return new DensityFill((JAXBElement<DensityFillType>)f);
-        }
-        else if (f.getDeclaredType() == DotMapFillType.class){
-            return new DotMapFill((JAXBElement<DotMapFillType>)f);
-        }
-        else if (f.getDeclaredType() == HatchedFillType.class){
-            return new HatchedFill((JAXBElement<HatchedFillType>) f);
-        }
-        else{
-            throw new InvalidStyle("This stroke is not supported: " + f.getDeclaredType());
-        }
-
-    }
+    
     
     @Override
     public void setUom(Uom u){
@@ -134,18 +101,6 @@ public abstract class Fill extends AbstractSymbolizerNode implements UomNode {
      */
 	public abstract Paint getPaint(Map<String,Object> map, boolean selected, MapTransform mt) throws ParameterException, IOException;
 
-
-    /**
-     * Serialise to JAXBElement
-     * @return
-     */
-    public abstract JAXBElement<? extends FillType> getJAXBElement();
-
-    /**
-     * Serialise to FillType
-     * @return
-     */
-    public abstract FillType getJAXBType();
 
 
 }

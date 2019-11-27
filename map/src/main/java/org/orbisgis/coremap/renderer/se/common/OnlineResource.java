@@ -54,10 +54,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import net.opengis.ows._2.OnlineResourceType;
-import net.opengis.se._2_0.core.ExternalGraphicType;
-import net.opengis.se._2_0.core.MarkGraphicType;
-import net.opengis.se._2_0.core.VariableOnlineResourceType;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
@@ -66,7 +62,6 @@ import org.orbisgis.coremap.renderer.se.graphic.ExternalGraphicSource;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphicSource;
 import org.orbisgis.coremap.renderer.se.graphic.ViewBox;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
 
@@ -109,19 +104,7 @@ public class OnlineResource extends AbstractSymbolizerNode implements ExternalGr
         svgIcon = null;
     }
 
-    /**
-     * Build an {@code OnlineResource} from the given {@code OnlineResourceType}
-     * .
-     * @param onlineResource
-     * @throws URISyntaxException
-     * If the href embedded in {@code onlineResource} can't be used to build an
-     * {@code URL} instance.
-     */
-    public OnlineResource(OnlineResourceType onlineResource) throws URISyntaxException {
-        this.uri = new URI(onlineResource.getHref());
-        svgIcon = null;
-    }
-
+    
     /**
      * Get the {@code URL} contained in this {@code OnlineResource}.
      * @return
@@ -372,15 +355,7 @@ public class OnlineResource extends AbstractSymbolizerNode implements ExternalGr
     }
 
    
-    @Override
-    public void setJAXBSource(ExternalGraphicType e) {
-        VariableOnlineResourceType o = new VariableOnlineResourceType();
-
-        
-        o.setHref(SeParameterFactory.createParameterValueType(uri.toString()));
-
-        e.setOnlineResource(o);
-    }
+   
 
     /**
      * Get the {@code Font} linked with this {@code OnlineResource}.
@@ -468,16 +443,7 @@ public class OnlineResource extends AbstractSymbolizerNode implements ExternalGr
 
         throw new ParameterException("Unknown MIME type: " + mimeType);
     }
-
-    //@Override
-    public void setJAXBSource(MarkGraphicType m) {
-        VariableOnlineResourceType o = new VariableOnlineResourceType();
-
-        o.setHref(SeParameterFactory.createParameterValueType(uri.toString()));
-
-        m.setOnlineResource(o);
-
-    }
+  
 
     @Override
     public double getDefaultMaxWidth(Map<String,Object> map,

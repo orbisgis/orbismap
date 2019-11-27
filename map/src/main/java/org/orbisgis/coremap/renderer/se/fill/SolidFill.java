@@ -43,14 +43,9 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.SolidFillType;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.color.ColorHelper;
 import org.orbisgis.coremap.renderer.se.parameter.color.ColorLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.color.ColorParameter;
@@ -117,24 +112,7 @@ public final class SolidFill extends Fill {
 		this.setOpacity(opacity);
 	}
 
-        /**
-         * Build a {@code SolidFill} using {@code sf}.
-         * @param sf
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public SolidFill(JAXBElement<SolidFillType> sf) throws InvalidStyle {
-                if (sf.getValue().getColor() != null) {
-                        setColor(SeParameterFactory.createColorParameter(sf.getValue().getColor()));
-                } else {
-                        setColor(new ColorLiteral(new Color(GRAY50_INT,GRAY50_INT,GRAY50_INT)));
-                }
-
-                if (sf.getValue().getOpacity() != null) {
-                            setOpacity(SeParameterFactory.createRealParameter(sf.getValue().getOpacity()));
-		} else {
-                            setOpacity(new RealLiteral(DEFAULT_OPACITY));
-                  }
-        }
+       
 
         /**
          * Set the colour value for this SolidFill.
@@ -221,19 +199,7 @@ public final class SolidFill extends Fill {
 		return "Color: " + color + " alpha: " + opacity;
 	}
 
-	@Override
-	public SolidFillType getJAXBType() {
-		SolidFillType f = new SolidFillType();
-
-		if (color != null) {
-			f.setColor(color.getJAXBParameterValueType());
-		}
-		if (opacity != null) {
-			f.setOpacity(opacity.getJAXBParameterValueType());
-		}
-
-		return f;
-	}
+	
 
         @Override
         public List<SymbolizerNode> getChildren() {
@@ -245,11 +211,5 @@ public final class SolidFill extends Fill {
                         ls.add(opacity);
                 }
                 return ls;
-        }
-
-	@Override
-	public JAXBElement<SolidFillType> getJAXBElement() {
-		ObjectFactory of = new ObjectFactory();
-		return of.createSolidFill(this.getJAXBType());
-	}
+        }	
 }

@@ -36,19 +36,15 @@
  */
 package org.orbisgis.coremap.renderer.se.graphic;
 
-import net.opengis.se._2_0.core.MarkGraphicType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.*;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Halo;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.common.VariableOnlineResource;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -58,13 +54,11 @@ import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
 
-import javax.xml.bind.JAXBElement;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -136,65 +130,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         ((RealLiteral) ((SolidFill) this.getFill()).getOpacity()).setValue(100.0);
         this.setStroke(new PenStroke());
     }
-
-    /**
-     * Build a new {@code MarkGraphic} from the given {@code JAXBElement}.
-     * @param markG The JAXB representation of a MarkGraphic
-     * @throws IOException
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    MarkGraphic(JAXBElement<MarkGraphicType> markG) throws IOException, InvalidStyle, URISyntaxException {
-        MarkGraphicType t = markG.getValue();
-
-        if (t.getUom() != null) {
-            this.setUom(Uom.fromOgcURN(t.getUom()));
-        }
-
-        if (t.getViewBox() != null) {
-            this.setViewBox(new ViewBox(t.getViewBox()));
-        }
-
-        if (t.getPerpendicularOffset() != null) {
-            this.setPerpendicularOffset(SeParameterFactory.createRealParameter(t.getPerpendicularOffset()));
-        }
-
-        if (t.getTransform() != null) {
-            this.setTransform(new Transform(t.getTransform()));
-        }
-
-        if (t.getHalo() != null) {
-            this.setHalo(new Halo(t.getHalo()));
-        }
-
-        if (t.getFill() != null) {
-            this.setFill(Fill.createFromJAXBElement(t.getFill()));
-        }
-
-        if (t.getStroke() != null) {
-            Stroke s = Stroke.createFromJAXBElement(t.getStroke());
-            this.setStroke(s);
-        }
-
-        // Source
-        if (t.getWellKnownName() != null) {
-            this.setWkn(SeParameterFactory.createStringParameter(t.getWellKnownName()));
-        } else {
-            if (t.getOnlineResource() != null) {
-
-                this.setOnlineResource(new VariableOnlineResource(t.getOnlineResource()));
-
-            } else if (t.getInlineContent() != null) {
-                // TODO Not yet implemented
-            }
-
-            if (t.getMarkIndex() != null) {
-                this.setMarkIndex(SeParameterFactory.createRealParameter(t.getMarkIndex()));
-            }
-
-            this.mimeType = t.getFormat();
-        }
-    }
-
+    
     @Override
     public Uom getUom() {
         if (uom != null) {
@@ -550,57 +486,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
             this.onlineResource = null;
             this.wkn.setParent(this);
         }
-    }
-
-    @Override
-    public JAXBElement<MarkGraphicType> getJAXBElement() {
-        MarkGraphicType m = new MarkGraphicType();
-
-        if (wkn != null) {
-            m.setWellKnownName(wkn.getJAXBParameterValueType());
-        } else if (onlineResource != null) {
-            onlineResource.setJAXBSource(m);
-        }
-
-        if (uom != null) {
-            m.setUom(uom.toURN());
-        }
-
-        if (markIndex != null) {
-            m.setMarkIndex(markIndex.getJAXBParameterValueType());
-        }
-
-        if (mimeType != null) {
-            m.setFormat(mimeType);
-        }
-
-        if (transform != null) {
-            m.setTransform(transform.getJAXBType());
-        }
-
-        if (pOffset != null) {
-            m.setPerpendicularOffset(pOffset.getJAXBParameterValueType());
-        }
-
-        if (halo != null) {
-            m.setHalo(halo.getJAXBType());
-        }
-
-        if (viewBox != null) {
-            m.setViewBox(viewBox.getJAXBType());
-        }
-
-        if (fill != null) {
-            m.setFill(fill.getJAXBElement());
-        }
-
-        if (stroke != null) {
-            m.setStroke(stroke.getJAXBElement());
-        }
-
-        ObjectFactory of = new ObjectFactory();
-        return of.createMarkGraphic(m);
-    }
+    }   
 
     @Override
     public List<SymbolizerNode> getChildren() {

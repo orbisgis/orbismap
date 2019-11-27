@@ -44,15 +44,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.PointLabelType;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -84,31 +79,6 @@ public final class PointLabel extends Label {
         setHorizontalAlign(HorizontalAlignment.CENTER);
     }
 
-
-    /**
-     * Creates a new {@code PointLabel} from a {@code PointLabelType} instance.
-     * @param plt The input JaXB type
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public PointLabel(PointLabelType plt) throws InvalidStyle {
-        super(plt);
-        if (plt.getExclusionZone() != null) {
-            setExclusionZone(ExclusionZone.createFromJAXBElement(plt.getExclusionZone()));
-        }
-        if (plt.getRotation() != null) {
-            setRotation(SeParameterFactory.createRealParameter(plt.getRotation()));
-        }
-    }
-
-
-    /**
-     * Creates a new {@code PointLabel} from a {@code JAXBElement} instance.
-     * @param pl The input JaXB type.
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    PointLabel(JAXBElement<PointLabelType> pl) throws InvalidStyle {
-        this(pl.getValue());
-    }
 
 
     /**
@@ -206,35 +176,7 @@ public final class PointLabel extends Label {
             default: return 0.0;
         }
     }
-
-
-    @Override
-    public JAXBElement<PointLabelType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createPointLabel(getJAXBType());
-    }
-
-
-    /**
-     * Get a JAXB representation of this element.
-     * @return This object as a PointLabelType instance.
-     */
-    public PointLabelType getJAXBType() {
-        PointLabelType pl = new PointLabelType();
-
-        setJAXBProperties(pl);
-
-        if (exclusionZone != null) {
-            pl.setExclusionZone(exclusionZone.getJAXBElement());
-        }
-
-        if (rotation != null) {
-            pl.setRotation(rotation.getJAXBParameterValueType());
-        }
-
-        return pl;
-    }
-
+   
         @Override
         public List<SymbolizerNode> getChildren() {
                 List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();

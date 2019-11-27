@@ -38,15 +38,12 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.se._2_0.thematic.CategoryType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 
@@ -84,33 +81,7 @@ public final class Category  extends AbstractSymbolizerNode implements FillNode,
                 graphic.setParent(this);
         }
 
-        /**
-         * Build a new {@code Category} from the given {@code CategoryType}.
-         * @param c
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Category(CategoryType c) throws InvalidStyle {
-                if (c.getFill() != null) {
-                        setFill(Fill.createFromJAXBElement(c.getFill()));
-                }
-
-                if (c.getGraphic() != null) {
-                        setGraphicCollection(new GraphicCollection(c.getGraphic(), this));
-                }
-
-                if (c.getStroke() != null) {
-                        setStroke(Stroke.createFromJAXBElement(c.getStroke()));
-                }
-
-                if (c.getValue() != null) {
-                        setMeasure(SeParameterFactory.createRealParameter(c.getValue()));
-                }
-
-                if (c.getName() != null) {
-                        setName(c.getName());
-                }
-        }
-
+        
         @Override
         public Fill getFill() {
                 return fill;
@@ -180,38 +151,7 @@ public final class Category  extends AbstractSymbolizerNode implements FillNode,
                 this.measure.setParent(this);
         }
 
-        /**
-         * Get a JAXB representation of this {@code Category}.
-         * @return
-         * A {@code CategoryType}, that has been built using the values embedded
-         * in this {@code Category} instance.
-         */
-        CategoryType getJAXBType() {
-                CategoryType ct = new CategoryType();
-
-                if (this.getFill() != null) {
-                        ct.setFill(this.getFill().getJAXBElement());
-                }
-
-                if (this.getStroke() != null) {
-                        ct.setStroke(getStroke().getJAXBElement());
-                }
-
-                if (this.getGraphicCollection() != null) {
-                        ct.setGraphic(getGraphicCollection().getJAXBElement());
-                }
-
-                if (this.getMeasure() != null) {
-                        ct.setValue(getMeasure().getJAXBParameterValueType());
-                }
-
-                if (this.getName() != null) {
-                        ct.setName(getName());
-                }
-
-                return ct;
-        }
-
+        
         @Override
         public List<SymbolizerNode> getChildren() {
             List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();

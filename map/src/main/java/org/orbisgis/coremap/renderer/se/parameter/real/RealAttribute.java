@@ -39,8 +39,6 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import net.opengis.fes._2.ValueReferenceType;
-
 
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -76,16 +74,7 @@ public class RealAttribute extends ValueReference implements RealParameter {
         ctx = RealParameterContext.REAL_CONTEXT;
     }
 
-    /**
-     * Create a new instance of {@code RealAttribute}, using a {@code JAXBElement} to retrieve
-     * all the needed informations.
-     * @param expr
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public RealAttribute(ValueReferenceType expr) throws InvalidStyle {
-        super(expr);
-        ctx = RealParameterContext.REAL_CONTEXT;
-    }
+    
 
     @Override
     public Double getValue(ResultSet rs, long fid) throws ParameterException {

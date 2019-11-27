@@ -41,10 +41,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.*;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.CompositeGraphicType;
-import net.opengis.se._2_0.core.GraphicType;
-import net.opengis.se._2_0.core.ObjectFactory;
 import org.slf4j.*;
 
 import org.orbisgis.coremap.map.MapTransform;
@@ -73,35 +69,7 @@ public final class GraphicCollection extends AbstractSymbolizerNode implements U
         graphics = new ArrayList<Graphic>();
     }
 
-    /**
-     * Create a new GraphicCollection, with parent node <code>parent</code>. The collection
-     * is filled using graphic elements found in <code>g</code>
-     * @param g
-     * @param parent
-     *          The parent node of this GraphicCollection
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public GraphicCollection(JAXBElement<? extends GraphicType> g, SymbolizerNode parent) throws InvalidStyle {
-        this();
-        this.setParent(parent);
-        if (g.getDeclaredType() == CompositeGraphicType.class) {
-            CompositeGraphicType cg = (CompositeGraphicType) g.getValue();
-            for (JAXBElement<? extends GraphicType> gte : cg.getGraphic()) {
-
-                if (gte.getDeclaredType() == CompositeGraphicType.class) {
-                    GraphicCollection collec2 = new GraphicCollection(gte, parent);
-                    for (Graphic newG : collec2.graphics) {
-                        this.addGraphic(newG);
-                    }
-                } else {
-                                                this.addGraphic(Graphic.createFromJAXBElement(gte));
-                }
-            }
-        } else {
-            this.addGraphic(Graphic.createFromJAXBElement(g));
-        }
-    }
-
+    
     /**
      * Get the number of inner graphic symbols.
      * @return 
@@ -298,31 +266,7 @@ public final class GraphicCollection extends AbstractSymbolizerNode implements U
         ls.addAll(graphics);
         return ls;
     }
-
-    /**
-     * Get a JAXB representation of this {@code GraphicCollection}, that will be
-     * useable for XML serialization.
-     * @return
-     * A {@code JAXBElement} that contains a {@code GraphicType} instance.
-     */
-    public JAXBElement<? extends GraphicType> getJAXBElement() {
-        if (graphics.size() > 0) {
-            if (graphics.size() == 1) {
-                return graphics.get(0).getJAXBElement();
-            } else {
-                CompositeGraphicType gc = new CompositeGraphicType();
-                List<JAXBElement<? extends GraphicType>> elems = gc.getGraphic();
-
-                for (Graphic g : graphics) {
-                    elems.add(g.getJAXBElement());
-                }
-                ObjectFactory of = new ObjectFactory();
-                return of.createCompositeGraphic(gc);
-            }
-        } else {
-            return null;
-        }
-    }
+   
 
     /**
      * Won't do anything : graphic collections are not intended to have a

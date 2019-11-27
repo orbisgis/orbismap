@@ -40,9 +40,6 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.RotateType;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
@@ -50,7 +47,6 @@ import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -94,25 +90,7 @@ public final class Rotate extends AbstractSymbolizerNode implements Transformati
                 setY(oy);
         }
 
-        /**
-         * Build a new {@code Rotate}, retrieving informations in the given
-         * {@code RotateType} instance.
-         * @param r
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        Rotate(RotateType r) throws InvalidStyle {
-                if (r.getAngle() != null) {
-                        setRotation(SeParameterFactory.createRealParameter(r.getAngle()));
-                }
-
-                if (r.getX() != null) {
-                        setX(SeParameterFactory.createRealParameter(r.getX()));
-                }
-
-                if (r.getY() != null) {
-                        setY(SeParameterFactory.createRealParameter(r.getY()));
-                }
-        }
+        
 
         /**
          * Get the rotation defined in this {@code Rotate} instance.
@@ -230,31 +208,7 @@ public final class Rotate extends AbstractSymbolizerNode implements Transformati
                 return AffineTransform.getRotateInstance(theta, ox, oy);
         }
 
-        @Override
-        public JAXBElement<?> getJAXBElement() {
-                RotateType r = this.getJAXBType();
-                ObjectFactory of = new ObjectFactory();
-                return of.createRotate(r);
-        }
-
-        @Override
-        public RotateType getJAXBType() {
-                RotateType r = new RotateType();
-
-                if (rotation != null) {
-                        r.setAngle(rotation.getJAXBParameterValueType());
-                }
-
-                if (x != null) {
-                        r.setX(x.getJAXBParameterValueType());
-                }
-
-                if (y != null) {
-                        r.setY(y.getJAXBParameterValueType());
-                }
-
-                return r;
-        }
+        
 
         @Override
         public String toString() {

@@ -40,9 +40,6 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.ScaleType;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
@@ -50,7 +47,6 @@ import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -87,24 +83,7 @@ public final class Scale extends AbstractSymbolizerNode implements Transformatio
         setY(xy);
     }
 
-    /**
-     * Build a new {@code Scale} with the given JAXB {@code ScaleType}.
-     * @param s
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    Scale(ScaleType s) throws InvalidStyle {
-        /*if (s.getXY() != null) {
-        setX(SeParameterFactory.createRealParameter(s.getXY()));
-        setY(SeParameterFactory.createRealParameter(s.getXY()));
-        } else {*/
-        if (s.getX() != null) {
-            setX(SeParameterFactory.createRealParameter(s.getX()));
-        }
-        if (s.getY() != null) {
-            setY(SeParameterFactory.createRealParameter(s.getY()));
-        }
-        //}
-    }
+    
 
     /**
      * Get the horizontal multiplication factor.
@@ -190,31 +169,6 @@ public final class Scale extends AbstractSymbolizerNode implements Transformatio
 
         return AffineTransform.getScaleInstance(sx, sy);
     }
-
-
-    @Override
-    public JAXBElement<?> getJAXBElement() {
-        ScaleType s = this.getJAXBType();
-
-        ObjectFactory of = new ObjectFactory();
-        return of.createScale(s);
-    }
-
-
-    @Override
-    public ScaleType getJAXBType() {
-        ScaleType s = new ScaleType();
-
-        if (x != null) {
-            s.setX(x.getJAXBParameterValueType());
-        }
-
-        if (y != null) {
-            s.setY(y.getJAXBParameterValueType());
-        }
-        return s;
-    }
-
 
     @Override
     public String toString() {

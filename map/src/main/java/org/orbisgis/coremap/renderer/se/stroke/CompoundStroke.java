@@ -42,18 +42,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.CompoundStrokeType;
-import net.opengis.se._2_0.core.ObjectFactory;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -85,53 +80,7 @@ public final class CompoundStroke extends Stroke implements UomNode {
         //annotations = new ArrayList<StrokeAnnotationGraphic>();
     }
 
-    /**
-     * Build a {@code CompoundStroke} using the JAXB type given in argument.
-     * @param s
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public CompoundStroke(CompoundStrokeType s) throws InvalidStyle {
-        super(s);
-
-        if (s.getUom() != null) {
-            setUom(Uom.fromOgcURN(s.getUom()));
-        }
-
-        if (s.getPreGap() != null) {
-            setPreGap(SeParameterFactory.createRealParameter(s.getPreGap()));
-        }
-
-        if (s.getPostGap() != null) {
-            setPostGap(SeParameterFactory.createRealParameter(s.getPostGap()));
-        }
-
-        elements = new ArrayList<CompoundStrokeElement>();
-        //annotations = new ArrayList<StrokeAnnotationGraphic>();
-        
-
-        if (s.getStrokeElementOrAlternativeStrokeElements() != null) {
-            for (Object o : s.getStrokeElementOrAlternativeStrokeElements()) {
-                CompoundStrokeElement cse = CompoundStrokeElement.createCompoundStrokeElement(o);
-                addCompoundStrokeElement(cse);
-            }
-        }
-
-        /*if (s.getStrokeAnnotationGraphic() != null) {
-            for (StrokeAnnotationGraphicType sagt : s.getStrokeAnnotationGraphic()) {
-                StrokeAnnotationGraphic sag = new StrokeAnnotationGraphic(sagt);
-                addStrokeAnnotationGraphic(sag);
-            }
-        }*/
-    }
-
-    /**
-     * Build a {@code CompoundStroke} using the JAXBElement given in argument.
-     * @param s
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public CompoundStroke(JAXBElement<CompoundStrokeType> s) throws InvalidStyle {
-        this(s.getValue());
-    }
+   
 
     /**
      * Set the PreGap used in this {@code CompoundStroke}, as a {@code RealParameter} instance.
@@ -463,52 +412,7 @@ public final class CompoundStroke extends Stroke implements UomNode {
         cse.setParent(this);
     }
 
-    /*private void addStrokeAnnotationGraphic(StrokeAnnotationGraphic sag) {
-        annotations.add(sag);
-        sag.setParent(this);
-    }*/
-
-    @Override
-    public JAXBElement<CompoundStrokeType> getJAXBElement() {
-        ObjectFactory of = new ObjectFactory();
-        return of.createCompoundStroke(this.getJAXBType());
-    }
-
-    /**
-     * Get a JAXB representation of this {@code CompoundStroke}.
-     * @return 
-     */
-    public CompoundStrokeType getJAXBType() {
-        CompoundStrokeType s = new CompoundStrokeType();
-
-        this.setJAXBProperties(s);
-
-        if (getOwnUom() != null) {
-            s.setUom(getOwnUom().toURN());
-        }
-
-        if (this.preGap != null) {
-            s.setPreGap(preGap.getJAXBParameterValueType());
-        }
-
-        if (this.postGap != null) {
-            s.setPostGap(postGap.getJAXBParameterValueType());
-        }
-
-
-        List<Object> sElem = s.getStrokeElementOrAlternativeStrokeElements();
-        //List<StrokeAnnotationGraphicType> sAnnot = s.getStrokeAnnotationGraphic();
-
-        for (CompoundStrokeElement elem : this.elements) {
-            sElem.add(elem.getJAXBType());
-        }
-
-        //for (StrokeAnnotationGraphic sag : annotations) {
-        //    sAnnot.add(sag.getJaxbType());
-        //}
-
-        return s;
-    }
+   
 
     /**
      * Add an annotation to the set associated to this {@code CompoundStroke}.

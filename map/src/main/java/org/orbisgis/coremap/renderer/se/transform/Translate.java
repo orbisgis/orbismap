@@ -40,9 +40,6 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.TranslateType;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
@@ -50,7 +47,6 @@ import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -80,20 +76,7 @@ public class Translate extends AbstractSymbolizerNode implements Transformation 
         public Translate(){
         }
 
-        /**
-         * Create a new <code>Translate</code>, using the informations contained in 
-         * <code>t</code>
-         * @param t
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Translate(TranslateType t) throws InvalidStyle {
-                if (t.getX() != null) {
-                        setX(SeParameterFactory.createRealParameter(t.getX()));
-                }
-                if (t.getY() != null) {
-                        setY(SeParameterFactory.createRealParameter(t.getY()));
-                }
-        }
+        
 
         @Override
         public boolean allowedForGeometries() {
@@ -128,27 +111,7 @@ public class Translate extends AbstractSymbolizerNode implements Transformation 
                 return ls;
         }
 
-        @Override
-        public JAXBElement<?> getJAXBElement() {
-                TranslateType t = this.getJAXBType();
-                ObjectFactory of = new ObjectFactory();
-                return of.createTranslate(t);
-        }
-
-        @Override
-        public TranslateType getJAXBType() {
-                TranslateType t = new TranslateType();
-
-                if (x != null) {
-                        t.setX(x.getJAXBParameterValueType());
-                }
-
-                if (y != null) {
-                        t.setY(y.getJAXBParameterValueType());
-                }
-
-                return t;
-        }
+        
 
         /**
          * Get the translation about the X-axis

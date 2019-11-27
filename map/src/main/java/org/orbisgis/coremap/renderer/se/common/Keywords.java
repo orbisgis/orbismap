@@ -40,10 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import net.opengis.ows._2.CodeType;
-import net.opengis.ows._2.KeywordsType;
-import net.opengis.ows._2.LanguageStringType;
-import net.opengis.ows._2.ObjectFactory;
 import org.orbisgis.coremap.renderer.se.label.StyledText;
 
 /**
@@ -75,23 +71,7 @@ public class Keywords {
         keywords = new TreeSet<LocalizedText>(comp);
     }
 
-    /**
-     * Build a new {@code Keywords} instance from the given JAXB object.
-     * @param kt
-     */
-    public Keywords(KeywordsType kt) {
-        this();
-        if(kt.getKeyword() != null){
-            for(LanguageStringType k : kt.getKeyword()){
-                keywords.add(new LocalizedText(k.getValue(), new Locale(k.getLang() == null ? "" : k.getLang())));
-            }
-        }
-        if(kt.getType() != null){
-            CodeType ct = kt.getType();
-            type = ct.getValue();
-        }
-    }
-
+   
     /**
      * Gets the code type of the keywords contained in {@code this}.
      * @return
@@ -142,25 +122,5 @@ public class Keywords {
      */
     public SortedSet<LocalizedText> getKeywords(){
         return keywords;
-    }
-
-    /**
-     * Gets the JAXB representation of this object.
-     * @return
-     */
-    public KeywordsType getJAXBType() {
-        ObjectFactory of = new ObjectFactory();
-        KeywordsType ret = of.createKeywordsType();
-        List<LanguageStringType> lsts = ret.getKeyword();
-        for(LocalizedText l : keywords){
-            lsts.add(l.getJAXBType());
-        }
-        if(type != null && !type.isEmpty()){
-            CodeType ct = of.createCodeType();
-            ct.setValue(type);
-            ret.setType(ct);
-        }
-        return ret;
-    }
-
+    }    
 }

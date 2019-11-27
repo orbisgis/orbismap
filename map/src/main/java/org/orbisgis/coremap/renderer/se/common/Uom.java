@@ -38,7 +38,6 @@ package org.orbisgis.coremap.renderer.se.common;
 
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 
-import java.util.Locale;
 
 /**
  * This enumeration contains all the units of measure that are allowed in 

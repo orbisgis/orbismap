@@ -40,14 +40,11 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.opengis.se._2_0.core.ViewBoxType;
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 
@@ -93,21 +90,7 @@ public final class ViewBox extends  AbstractSymbolizerNode {
             setHeight(height);
         }
 
-        /**
-         * Build a new {@code ViewBox} using the given JAXB type.
-         * @param viewBox
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public ViewBox(ViewBoxType viewBox) throws InvalidStyle {
-                if (viewBox.getHeight() != null) {
-                        this.setHeight(SeParameterFactory.createRealParameter(viewBox.getHeight()));
-                }
-
-                if (viewBox.getWidth() != null) {
-                        this.setWidth(SeParameterFactory.createRealParameter(viewBox.getWidth()));
-                }
-        }
-
+        
         /**
          * A {@code ViewBox} can be used if and only if one, at least, of its two parameters
          * has been set.
@@ -198,23 +181,6 @@ public final class ViewBox extends  AbstractSymbolizerNode {
                 return new Point2D.Double(dx, dy);
         }
 
-        /**
-         * Retrieve this {@code ViewBox} as a JAXB type.
-         * @return 
-         */
-        public ViewBoxType getJAXBType() {
-                ViewBoxType v = new ViewBoxType();
-
-                if (x != null) {
-                        v.setWidth(x.getJAXBParameterValueType());
-                }
-
-                if (y != null) {
-                        v.setHeight(y.getJAXBParameterValueType());
-                }
-
-                return v;
-        }
 
         /**
          * Gets a String representation of this {@code ViewBox}.

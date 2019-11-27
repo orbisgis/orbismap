@@ -38,25 +38,7 @@ package org.orbisgis.coremap.renderer.se;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.util.Set;
 import javax.swing.JPanel;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventLocator;
-import javax.xml.bind.util.ValidationEventCollector;
-import javax.xml.validation.Schema;
-import net.opengis.se._2_0.core.SymbolizerType;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.orbisgis.coremap.renderer.se.fill.SolidFill;
-import org.orbisgis.coremap.renderer.se.parameter.UsedAnalysis;
-import org.orbisgis.coremap.renderer.se.parameter.color.ColorLiteral;
-import org.orbisgis.coremap.renderer.se.parameter.color.Recode2Color;
-import org.orbisgis.coremap.renderer.se.parameter.string.StringAttribute;
-import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
-import org.orbisgis.coremap.renderer.se.visitors.UsedAnalysisVisitor;
 
 /**
  *
@@ -82,7 +64,7 @@ public class SymbolizerTest {
         }
     }
 
-    @Test
+    /*@Test
     public void testMarshallInvalidSeFile() throws Exception {
             //The following file contains an invalid markup that MUST NOT be recognized.
             String xml = SymbolizerTest.class.getResource("invalidCategorize.se").getFile();
@@ -151,5 +133,5 @@ public class SymbolizerTest {
         UsedAnalysis ua = uv.getUsedAnalysis();
         assertTrue(ua.isRecodeUsed());
         assertTrue(ua.getAnalysis().size()==1);
-    }
+    }*/
 }

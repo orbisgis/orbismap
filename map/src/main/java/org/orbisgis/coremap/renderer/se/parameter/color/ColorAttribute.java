@@ -40,7 +40,6 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
 import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.ValueReference;
@@ -67,14 +66,7 @@ public class ColorAttribute extends ValueReference implements ColorParameter {
         super(fieldName);
     }
 
-    /**
-     * Build a <code>colorAttribute</code> from its JAXB representation.
-     * @param expr
-     * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-     */
-    public ColorAttribute(JAXBElement<String> expr) throws InvalidStyle {
-        super(expr);
-    }
+   
 
     @Override
     public Color getColor(ResultSet rs, long fid) throws ParameterException {

@@ -5,13 +5,15 @@
  */
 package org.orbisgis.coremap.renderer;
 
+import org.orbisgis.coremap.layerModel.LayerException;
+
 /**
  *
- * @author ebocher
+ * @author Erwan Bocher
  */
 public interface IRenderer {
     
     
-    void draw() ;
+    void draw() throws LayerException ;
     
 }

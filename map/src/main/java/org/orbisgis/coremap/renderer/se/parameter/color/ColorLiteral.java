@@ -40,8 +40,6 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.Map;
 import java.util.Random;
-import javax.xml.bind.JAXBElement;
-import net.opengis.fes._2.LiteralType;
 
 
 import org.orbisgis.coremap.renderer.se.parameter.Literal;
@@ -95,13 +93,7 @@ public class ColorLiteral extends Literal implements ColorParameter{
         this.color = Color.decode(htmlColor.trim());
     }
 
-    /**
-     * Build a ColorLiteral from a Literal SE value.
-     * @param l 
-     */
-    public ColorLiteral(JAXBElement<LiteralType> l) {
-        this(l.getValue().getContent().get(0).toString());
-    }
+    
 
     @Override
     public Color getColor(ResultSet rs, long fid){

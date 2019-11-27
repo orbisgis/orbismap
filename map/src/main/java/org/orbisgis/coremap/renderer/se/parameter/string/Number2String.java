@@ -42,18 +42,11 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import net.opengis.se._2_0.core.FormatNumberType;
-import net.opengis.se._2_0.core.ObjectFactory;
-import net.opengis.se._2_0.core.ParameterValueType;
 
 
 import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameter;
-import org.orbisgis.coremap.renderer.se.parameter.SeParameterFactory;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 
 /**
@@ -65,7 +58,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
  * format the numbers retrieved by its inner {@code RealParameter}.
  * @author Alexis Guéganno
  */
-public class Number2String extends AbstractSymbolizerNode implements SeParameter, StringParameter {
+public class Number2String extends AbstractSymbolizerNode implements StringParameter {
 
         //We're currently forced to keep some duplicated informations about the
         //content of the formatting pattern. Indeed, it's not possible to
@@ -87,48 +80,7 @@ public class Number2String extends AbstractSymbolizerNode implements SeParameter
         //accessors.
         private DecimalFormat formatter;
 
-        /**
-         * Build a new Number2String, accorgind to the {@code FormatnumberType}
-         * given in argument.
-         * @param fnt
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Number2String(FormatNumberType fnt) throws InvalidStyle {
-                numericValue = SeParameterFactory.createRealParameter(fnt.getNumericValue());
-                formattingPattern = fnt.getPattern();
-                negativePattern = fnt.getNegativePattern();
-                groupingSeparator = fnt.getGroupingSeparator();
-                decimalPoint = fnt.getDecimalPoint();
-                String pattern;
-                if(negativePattern != null &&
-                        !negativePattern.isEmpty() &&
-                        !(negativePattern.equals(formattingPattern))){
-                        pattern = formattingPattern+";"+negativePattern;
-                } else {
-                        pattern =formattingPattern;
-                }
-                formatter = new DecimalFormat(pattern);
-                DecimalFormatSymbols dfs = formatter.getDecimalFormatSymbols();
-                if(decimalPoint != null &&
-                        !decimalPoint.isEmpty()){
-                        dfs.setDecimalSeparator(decimalPoint.charAt(0));
-                }
-                if(groupingSeparator != null && !groupingSeparator.isEmpty()){
-                        dfs.setGroupingSeparator(groupingSeparator.charAt(0));
-                }
-                formatter.setDecimalFormatSymbols(dfs);
-                numericValue.setParent(this);
-        }
-
-        /**
-         * Build a new {@code Number2String}, using the given {@code
-         * JAXBElement<FormatNumberType>} instance given in argument.
-         * @param je
-         * @throws org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle
-         */
-        public Number2String(JAXBElement<FormatNumberType> je) throws InvalidStyle {
-                this(je.getValue());
-        }
+        
 
         @Override
         public String getValue(ResultSet rs, long fid) throws ParameterException {
@@ -146,25 +98,8 @@ public class Number2String extends AbstractSymbolizerNode implements SeParameter
         public void setRestrictionTo(String[] list) {
         }
 
-        @Override
-        public ParameterValueType getJAXBParameterValueType() {
-                ParameterValueType p = new ParameterValueType();
-                p.getContent().add(this.getJAXBExpressionType());
-                return p;
-        }
-
-        @Override
-        public JAXBElement<?> getJAXBExpressionType() {
-                ObjectFactory of = new ObjectFactory();
-                FormatNumberType fnt = new FormatNumberType();
-                fnt.setDecimalPoint(decimalPoint);
-                fnt.setGroupingSeparator(groupingSeparator);
-                fnt.setNegativePattern(negativePattern);
-                fnt.setPattern(formattingPattern);
-                fnt.setNumericValue(numericValue.getJAXBParameterValueType());
-                return of.createFormatNumber(fnt);
-        }
-
+        
+       
         /**
          * Get the character that must be used to separate the integer and the
          * fraction part of the numbers that will be represented with this
