@@ -39,10 +39,10 @@ package org.orbisgis.coremap.renderer.se.parameter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Transformation of continuous values by a function defined on a number of nodes. 
@@ -59,8 +59,8 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
  * @todo find a nice way to compute interpolation for RealParameter and ColorParameter
  *
  */
-public abstract class Interpolate <ToType extends SymbolizerNode, FallbackType extends ToType>  
-                extends AbstractSymbolizerNode  {
+public abstract class Interpolate <ToType extends IStyleNode, FallbackType extends ToType>  
+                extends StyleNode  {
 
         private InterpolationMode mode;
         private RealParameter lookupValue;
@@ -218,12 +218,12 @@ public abstract class Interpolate <ToType extends SymbolizerNode, FallbackType e
 
         
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls =new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls =new ArrayList<IStyleNode>();
                 ls.add(lookupValue);
-                for(InterpolationPoint i : iPoints){
-                        ls.add(i.getValue());
-                }
+                iPoints.forEach((i) -> {
+                    ls.add(i.getValue());
+            });
                 return ls;
         }
 

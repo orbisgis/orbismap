@@ -40,15 +40,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ValueReference;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IStyleNodeVisitor;
 
 /**
  * Search for the names of the features that are used in the visited tree of
  * {@link SymbolizerNode} instances.
  * @author Alexis Guéganno
  */
-public class FeaturesVisitor implements ISymbolizerVisitor {
+public class FeaturesVisitor implements IStyleNodeVisitor {
 
         private Set<String> res = new HashSet<String>();
 
@@ -58,7 +59,7 @@ public class FeaturesVisitor implements ISymbolizerVisitor {
          * @param sn
          */
         @Override
-        public void visitSymbolizerNode(SymbolizerNode sn) {
+        public void visitSymbolizerNode(IStyleNode sn) {
                 if(!res.isEmpty()){
                         res = new HashSet<String>();
                 }
@@ -71,14 +72,14 @@ public class FeaturesVisitor implements ISymbolizerVisitor {
          * to use it directly, inherit this class.
          * @param sn
          */
-        protected void visitImpl(SymbolizerNode sn){
-                List<SymbolizerNode> children = sn.getChildren();
+        protected void visitImpl(IStyleNode sn){
+                List<IStyleNode> children = sn.getChildren();
                 if(sn instanceof ValueReference){
                         res.add(((ValueReference)sn).getColumnName());
                 }
-                for(SymbolizerNode c : children){
-                        visitImpl(c);
-                }
+                children.forEach((c) -> {
+                    visitImpl(c);
+            });
         }
 
         /**

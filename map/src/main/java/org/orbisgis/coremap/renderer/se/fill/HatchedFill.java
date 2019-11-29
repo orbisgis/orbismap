@@ -38,7 +38,6 @@ package org.orbisgis.coremap.renderer.se.fill;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -53,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A {@code HatchedFill} will fill a shape with hatches. It is configured according
@@ -480,8 +480,8 @@ public final class HatchedFill extends Fill implements StrokeNode {
 
     
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (angle != null) {
             ls.add(angle);
         }

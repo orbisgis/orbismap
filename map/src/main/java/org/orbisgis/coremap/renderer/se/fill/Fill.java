@@ -42,11 +42,10 @@ import java.awt.Shape;
 import java.io.IOException;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.StyleNode;
 
 
 /**
@@ -56,7 +55,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  *
  * @author Maxence Laurent
  */
-public abstract class Fill extends AbstractSymbolizerNode implements UomNode {
+public abstract class Fill extends StyleNode implements UomNode {
 
     private Uom uom;
     
@@ -90,14 +89,15 @@ public abstract class Fill extends AbstractSymbolizerNode implements UomNode {
 
 
     /**
-     * Return a Paint that correspond to the SE Fill type.
-     * If the fill type cannot be converted into a Painter, null is returned
+     * Return a Paint that correspond to the SE Fill type.If the fill type cannot be converted into a Painter, null is returned
      *
+     * @param map
      * @param selected is the feature selected ?
      * @param mt the map transform
      * @return the paint that correspond to the SE Fill or null if inconvertible (e.g hatched fill, dot map fill, etc)
      *
      * @throws ParameterException
+     * @throws java.io.IOException
      */
 	public abstract Paint getPaint(Map<String,Object> map, boolean selected, MapTransform mt) throws ParameterException, IOException;
 

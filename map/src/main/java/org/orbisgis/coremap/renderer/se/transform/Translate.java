@@ -42,20 +42,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Represents a translation in an euclidean plane. As it can be represented with
  * a 2D vector, it is defined by two <code>RealParameter</code>s.
  * @author Maxence Laurent
  */
-public class Translate extends AbstractSymbolizerNode implements Transformation {
+public class Translate extends StyleNode implements Transformation {
 
         private RealParameter x;
         private RealParameter y;
@@ -100,8 +99,8 @@ public class Translate extends AbstractSymbolizerNode implements Transformation 
         }
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (x != null) {
                         ls.add(x);
                 }

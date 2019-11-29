@@ -40,9 +40,9 @@ import java.sql.ResultSet;
 import java.util.*;
 import java.util.Map.Entry;
 import org.slf4j.*;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 /**
  * Recoding is defined as the "transformation of discrete values to any other values".
  * It is a way to map values of one type to values of another (but eventually the same)
@@ -52,7 +52,7 @@ import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
  * @param <FallbackType> The literal type associated to ToType. it is used to define the default value,
  * when an input value can't be processed for whatever reason.
  */
-public abstract class Recode<ToType extends SymbolizerNode, FallbackType extends ToType> extends AbstractSymbolizerNode{
+public abstract class Recode<ToType extends IStyleNode, FallbackType extends ToType> extends StyleNode{
     private static final Logger LOGGER = LoggerFactory.getLogger(Recode.class);
     
     private FallbackType fallbackValue;
@@ -248,7 +248,7 @@ public abstract class Recode<ToType extends SymbolizerNode, FallbackType extends
             key = lookupValue.getValue(map);
             ToType ret = getMapItemValue(key);
             return ret == null ? fallbackValue : ret;
-        } catch (Exception e) {
+        } catch (ParameterException e) {
             if(key.isEmpty()){
               LOGGER.warn("A fallback symbol is used for null or empty value",e);
             }
@@ -288,12 +288,12 @@ public abstract class Recode<ToType extends SymbolizerNode, FallbackType extends
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         ls.add(lookupValue);
-        for(Entry<String,ToType> e : mapItems.entrySet()){
-                ls.add(e.getValue());
-        }
+        mapItems.entrySet().forEach((e) -> {
+            ls.add(e.getValue());
+        });
         return ls;
     }
 

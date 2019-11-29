@@ -45,10 +45,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.label.LineLabel;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * {@code TexteStroke} is used to render text labels along a line. It is useful 
@@ -102,8 +101,8 @@ public final class TextStroke extends Stroke {
 
        
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (lineLabel != null) {
                         ls.add(lineLabel);
                 }

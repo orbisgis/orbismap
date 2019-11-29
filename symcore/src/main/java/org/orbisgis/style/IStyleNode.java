@@ -34,46 +34,46 @@
  * or contact directly:
  * info_at_ orbisgis.org
  */
-package org.orbisgis.coremap.renderer.se;
+package org.orbisgis.style;
 
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.visitors.ISymbolizerVisitor;
+
 
 /**
- * SymbolizerNode allow to browse the styling tree
- * It's mainly used to fetch the nearest Uom definition of any element.
+ * IStyleNode allow to browse the styling tree
  *
- * @author Maxence Laurent
+ * @author Erwan Bocher CNRS
+ * @author Maxence Laurent, HEIG-VD
  */
-public interface SymbolizerNode{
+public interface IStyleNode{
 
     /**
-     * get the parent of this current <code>SymbolizerNode</code>
+     * get the parent of this current <code>IStyleNode</code>
      * @return 
      */
-    SymbolizerNode getParent();
+    IStyleNode getParent();
 
     /**
-     * Set the parent of this <code>SymbolizerNode</code>
-     * @param node 
+     * Set the parent of this <code>IStyleNode</code>
+     * @param styleNode 
      */
-    void setParent(SymbolizerNode node);
+    void setParent(IStyleNode styleNode);
 
     /**
-     * Notify the parent of the node that cached values must be unset.
+     * Notify the parent of the {@code IStyleNode} that cached values must be unset.
      */
     void update();
 
     /**
-     * Get all the {@code SymbolizerNode} instances that are direct children
+     * Get all the {@code IStyleNode} instances that are direct children
      * of this.
      * @return
      */
-    List<SymbolizerNode> getChildren();
+    List<IStyleNode> getChildren();
 
     /**
-     * Accepts the visit of {@code visitor}.
-     * @param visitor
+     * Accepts the visit of {@code IStyleVisitor}.
+     * @param styleVisitor 
      */
-    void acceptVisitor(ISymbolizerVisitor visitor);
+    void acceptVisitor(IStyleNodeVisitor styleVisitor);
 }

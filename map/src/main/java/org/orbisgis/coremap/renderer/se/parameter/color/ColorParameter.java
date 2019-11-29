@@ -39,8 +39,8 @@ package org.orbisgis.coremap.renderer.se.parameter.color;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.util.Map;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 
 /**
@@ -50,7 +50,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  * at serialization time !
  * @author Maxence Laurent
  */
-public interface ColorParameter  extends SymbolizerNode{
+public interface ColorParameter  extends IStyleNode{
 
     /**
      * Retrieve the colour associated to this parameter, from the result set sds, at index fid.

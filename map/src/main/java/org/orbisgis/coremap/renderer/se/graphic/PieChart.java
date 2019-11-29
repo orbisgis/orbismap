@@ -49,7 +49,6 @@ import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
@@ -61,6 +60,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A PieChart is a way to render statistical informations directly in the map.
@@ -524,8 +524,8 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (radius != null) {
             ls.add(radius);
         }

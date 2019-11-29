@@ -40,15 +40,14 @@ import java.awt.geom.AffineTransform;
 import java.util.*;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Affine Transformation based on RealParameters
@@ -62,7 +61,7 @@ import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
  * 
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class Matrix extends AbstractSymbolizerNode implements Transformation {
+public final class Matrix extends StyleNode implements Transformation {
 
         private static final double DEF_A = 1.0;
         private static final double DEF_B = 0.0;
@@ -318,8 +317,8 @@ public final class Matrix extends AbstractSymbolizerNode implements Transformati
         }
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (a != null) {
                         ls.add(a);
                 }

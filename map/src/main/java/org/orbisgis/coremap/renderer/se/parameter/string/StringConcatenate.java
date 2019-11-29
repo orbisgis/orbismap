@@ -39,10 +39,9 @@ package org.orbisgis.coremap.renderer.se.parameter.string;
 import java.sql.ResultSet;
 import java.util.*;
 
-
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Implementation of the {@code Concatenate} SE function. This function takes at
@@ -53,7 +52,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  * processing of its content.
  * @author Alexis Guéganno
  */
-public class StringConcatenate extends AbstractSymbolizerNode implements StringParameter, Iterable<StringParameter> {
+public class StringConcatenate extends StyleNode implements StringParameter, Iterable<StringParameter> {
 
         private List<StringParameter> inputStrings;
 
@@ -203,8 +202,8 @@ public class StringConcatenate extends AbstractSymbolizerNode implements StringP
         }
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-            List<SymbolizerNode> ls =new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+            List<IStyleNode> ls =new ArrayList<IStyleNode>();
             ls.addAll(inputStrings);
             return ls;
         }

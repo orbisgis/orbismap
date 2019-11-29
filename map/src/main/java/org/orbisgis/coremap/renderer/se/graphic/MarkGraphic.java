@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
@@ -489,8 +490,8 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     }   
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (wkn != null) {
             ls .add(wkn);
         }

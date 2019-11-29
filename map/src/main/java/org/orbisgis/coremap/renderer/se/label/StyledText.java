@@ -44,10 +44,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Halo;
 import org.orbisgis.coremap.renderer.se.common.Uom;
@@ -61,6 +59,8 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * This class embed all the informations needed to represent text of any kind on a map.
@@ -74,7 +74,7 @@ import org.orbisgis.coremap.renderer.se.stroke.Stroke;
  * Color and opacity of the text are defined using a <code>Fill</code> instance
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class StyledText extends AbstractSymbolizerNode implements UomNode, FillNode, StrokeNode {
+public final class StyledText extends StyleNode implements UomNode, FillNode, StrokeNode {
     private StringParameter text;
     private StringParameter fontFamily;
     private StringParameter fontWeight;
@@ -563,8 +563,8 @@ public final class StyledText extends AbstractSymbolizerNode implements UomNode,
     
 
     @Override
-    public java.util.List<SymbolizerNode> getChildren() {
-        java.util.List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public java.util.List<IStyleNode> getChildren() {
+        java.util.List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (text != null) {
             ls.add(text);
         }

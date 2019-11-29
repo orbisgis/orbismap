@@ -37,13 +37,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Generic class to represent graphic symbols as defined in SE.
@@ -51,7 +49,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  * @todo create subclasses: AlternativeGraphic, GraphicReference
  * @author Maxence Laurent
  */
-public abstract class Graphic extends AbstractSymbolizerNode {
+public abstract class Graphic extends StyleNode {
 
     @Override
     public String toString() {

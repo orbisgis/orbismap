@@ -52,6 +52,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A {@code LineSymbolizer} is used to style a {@code Stroke} along a linear 
@@ -146,8 +147,8 @@ public final class LineSymbolizer extends VectorSymbolizer implements StrokeNode
         }       
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if(this.getGeometryAttribute()!=null){
                     ls.add(this.getGeometryAttribute());
                 }

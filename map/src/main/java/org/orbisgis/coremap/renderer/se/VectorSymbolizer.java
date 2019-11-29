@@ -111,9 +111,10 @@ public abstract class VectorSymbolizer extends Symbolizer implements UomNode {
 
         /**
          * If {@code theGeom} is null, get the {@code Geometry} stored in 
-         * {@code sds} at index {@code fid}. Otherwise, return {@code theGeom}.
+         * {@code sds} at index {@code fid}.Otherwise, return {@code theGeom}.
          * @param rs
          * @param fid
+         * @param theGeom
          * @return
          * @throws ParameterException
          * @throws SQLException
@@ -241,6 +242,7 @@ public abstract class VectorSymbolizer extends Symbolizer implements UomNode {
          * @param rs
          * @param fid
          * @param mt
+         * @param theGeom
          * @return
          * @throws ParameterException
          * @throws IOException

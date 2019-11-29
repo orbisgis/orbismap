@@ -49,7 +49,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.orbisgis.coremap.layerModel.model.AbstractLayer;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.Rule;
+import org.orbisgis.coremap.renderer.se.FeatureRule;
 import org.orbisgis.coremap.renderer.se.Style;
 import org.orbisgis.coremap.renderer.se.Symbolizer;
 import org.orbisgis.coremap.renderer.se.VectorSymbolizer;
@@ -133,7 +133,7 @@ public class Layer extends AbstractLayer {
             // i.e. TextSymbolizer are always drawn above all other layer !! Should now be handle with symbolizer level
             // Standard rules (with filter or no filter but not with elsefilter)
             IProgressMonitor rulesProgress = pm.startTask(style.getRules().size());
-            for (Rule r : style.getRules()) {
+            for (FeatureRule r : style.getRules()) {
                 FeaturesVisitor fv = new FeaturesVisitor();
                 fv.visitSymbolizerNode(r);
                 Set<String> fields = fv.getResult();

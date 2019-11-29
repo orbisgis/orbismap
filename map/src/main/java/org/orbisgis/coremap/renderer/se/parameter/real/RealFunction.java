@@ -38,9 +38,9 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.*;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Defines a function on real numbers. A function is defined with a operation and
@@ -54,7 +54,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  *   * Neperian logarithm - <code>LN</code>
  * @author Maxence Laurent, Alexis Guéganno
  */
-public class RealFunction extends AbstractSymbolizerNode implements  RealParameter {
+public class RealFunction extends StyleNode implements  RealParameter {
 
     public enum Operators {
         ADD, MUL, DIV, SUB, SQRT, LOG, LN
@@ -242,8 +242,8 @@ public class RealFunction extends AbstractSymbolizerNode implements  RealParamet
     
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls =new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls =new ArrayList<IStyleNode>();
         ls.addAll(operands);
         return ls;
     }

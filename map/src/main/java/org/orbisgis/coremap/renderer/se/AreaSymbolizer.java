@@ -59,6 +59,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.coremap.renderer.se.transform.Translate;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A "AreaSymbolizer" specifies the rendering of a polygon or other area/surface geometry, 
@@ -203,8 +204,8 @@ public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, 
 
         
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>(4);
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>(4);
                 if(this.getGeometryAttribute()!=null){
                     ls.add(this.getGeometryAttribute());
                 }

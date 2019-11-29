@@ -37,19 +37,17 @@
 package org.orbisgis.coremap.renderer.se.label;
 
 
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.style.StyleNode;
 
-import javax.xml.bind.JAXBElement;
 
 /**
  * An {@code ExclusionZone} defines an area around a {@code PointLabel} where other 
  * labels' displaying will be forbidden.
  * @author Alexis Guéganno, Maxence Laurent
  */
-public abstract class ExclusionZone extends AbstractSymbolizerNode implements UomNode {
+public abstract class ExclusionZone extends StyleNode implements UomNode {
         private Uom uom;
 
                 

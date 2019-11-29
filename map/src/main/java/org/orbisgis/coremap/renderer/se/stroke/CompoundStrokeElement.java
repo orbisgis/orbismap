@@ -36,7 +36,8 @@
  */
 package org.orbisgis.coremap.renderer.se.stroke;
 
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
+import org.orbisgis.style.StyleNode;
+
 
 /**
  * {@code CompoundStrokeElement} is an abstract class. Thanks to it, it becomes 
@@ -44,8 +45,7 @@ import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
  * instances equally in some places.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public abstract class CompoundStrokeElement extends AbstractSymbolizerNode {
-
+public abstract class CompoundStrokeElement extends StyleNode {
        
 
 }

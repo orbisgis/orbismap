@@ -41,10 +41,10 @@ import java.awt.Shape;
 import java.io.IOException;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Labels are used to provide text-label contents. A textSymbolizer must contain
@@ -53,7 +53,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  * about its alignment, vertical or horizontal.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public abstract class Label extends AbstractSymbolizerNode implements UomNode {
+public abstract class Label extends StyleNode implements UomNode {
     private Uom uom;
     private StyledText label;
     private HorizontalAlignment hAlign;

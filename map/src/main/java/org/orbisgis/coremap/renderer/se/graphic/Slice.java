@@ -38,12 +38,12 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * {@code Slice}s are used in {@code PieChart}s instances to determine the size
@@ -56,7 +56,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
  * </ul>
  * @author Alexis Guéganno
  */
-public class Slice extends AbstractSymbolizerNode implements FillNode {
+public class Slice extends StyleNode implements FillNode {
 
         private String name;
         private RealParameter value;
@@ -136,8 +136,8 @@ public class Slice extends AbstractSymbolizerNode implements FillNode {
         }        
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (fill != null) {
                         ls.add(fill);
                 }

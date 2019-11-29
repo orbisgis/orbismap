@@ -39,9 +39,9 @@ package org.orbisgis.coremap.renderer.se.stroke;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A {@code StrokeElement} is used to draw a "sub-stroke" of a render pattern. 
@@ -172,8 +172,8 @@ public final class StrokeElement extends CompoundStrokeElement implements Stroke
 
         
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (length != null) {
                         ls.add(length);
                 }

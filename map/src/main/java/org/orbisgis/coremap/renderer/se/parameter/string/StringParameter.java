@@ -38,8 +38,8 @@ package org.orbisgis.coremap.renderer.se.parameter.string;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 
 /**
@@ -49,7 +49,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  * @author Maxence Laurent, Alexis Guéganno.
  * @todo implement 05-077r4 11.6.1, 11.6.2, 11.6.3 (String, number and date formating)
  */
-public interface StringParameter extends SymbolizerNode {
+public interface StringParameter extends IStyleNode {
     
     
     //TODO Is (DataSet, featureId) the right way to access a feature ?

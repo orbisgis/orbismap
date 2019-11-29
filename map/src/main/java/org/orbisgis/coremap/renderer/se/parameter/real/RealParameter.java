@@ -38,15 +38,15 @@ package org.orbisgis.coremap.renderer.se.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A {@code RealParameter} is a SE node that contains a numeric value, or that 
  * provides a direct mechanism to retrieve one in an external source.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public interface RealParameter extends   SymbolizerNode, Comparable {
+public interface RealParameter extends IStyleNode, Comparable {
 
 
         /**

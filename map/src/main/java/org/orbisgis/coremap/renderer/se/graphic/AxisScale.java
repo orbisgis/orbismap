@@ -38,13 +38,13 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
-public final class AxisScale extends AbstractSymbolizerNode {
+public final class AxisScale extends StyleNode {
 
     public static final double DEFAULT_LENGTH = 40;
     public static final double DEFAULT_MEASURE = 40;
@@ -90,8 +90,8 @@ public final class AxisScale extends AbstractSymbolizerNode {
     }   
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (axisLength != null) {
             ls.add(axisLength);
         }

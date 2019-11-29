@@ -38,10 +38,10 @@ package org.orbisgis.coremap.renderer.se.label;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * An {@code ExclusionZone} where the forbidden area is defined as a rectangle. It is 
@@ -107,8 +107,8 @@ public final class ExclusionRectangle extends ExclusionZone {
     }    
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (x != null) {
                 ls.add(x);
         }

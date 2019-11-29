@@ -39,6 +39,8 @@ package org.orbisgis.coremap.renderer.se;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * This is the entry point of the <code>Symbolizer</code>'s structure in a <code>Rule</code>
@@ -46,7 +48,7 @@ import org.orbisgis.coremap.renderer.se.common.Uom;
  * and that is not directly associated to any rendering or representation hint.
  * @author Maxence Laurent
  */
-public final class CompositeSymbolizer extends AbstractSymbolizerNode implements UomNode {
+public final class CompositeSymbolizer extends StyleNode implements UomNode {
 
         private ArrayList<Symbolizer> symbolizers;
         
@@ -152,8 +154,8 @@ public final class CompositeSymbolizer extends AbstractSymbolizerNode implements
 
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 ls.addAll(symbolizers);
                 return ls;
         }

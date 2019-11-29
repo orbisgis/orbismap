@@ -44,10 +44,10 @@ import java.util.List;
 import java.util.Map;
 
 
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * This class is used to embed {@code DecimalFormat} in a {@code
@@ -58,7 +58,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
  * format the numbers retrieved by its inner {@code RealParameter}.
  * @author Alexis Guéganno
  */
-public class Number2String extends AbstractSymbolizerNode implements StringParameter {
+public class Number2String extends StyleNode implements StringParameter {
 
         //We're currently forced to keep some duplicated informations about the
         //content of the formatting pattern. Indeed, it's not possible to
@@ -231,8 +231,8 @@ public class Number2String extends AbstractSymbolizerNode implements StringParam
         }
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 ls.add(numericValue);
                 return ls;
         }

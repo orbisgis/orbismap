@@ -41,12 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
@@ -57,6 +53,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * Basic stroke for linear features. It is designed according to :
@@ -163,8 +160,8 @@ public final class PenStroke extends Stroke implements FillNode {
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (fill != null) {
             ls.add(fill);
         }
@@ -538,10 +535,9 @@ public final class PenStroke extends Stroke implements FillNode {
                         List<Shape> ses = ShapeHelper.perpendicularOffset(shp, offset);
                         for (Shape oShp : ses) {
                             if (oShp != null) {
-
                                 if (paint != null) {
-                                    //g2.setStroke(stroke);
-                                    //g2.setPaint(paint);
+                                    g2.setStroke(stroke);
+                                    g2.setPaint(paint);
                                     g2.draw(oShp);
                                 } else {
                                     Shape outline = stroke.createStrokedShape(oShp);
@@ -553,8 +549,8 @@ public final class PenStroke extends Stroke implements FillNode {
                         if (paint != null) {
                             // Some fill type can be converted to a texture paint or a solid color
 
-                            //g2.setStroke(stroke);
-                            //g2.setPaint(paint);
+                            g2.setStroke(stroke);
+                            g2.setPaint(paint);
                             g2.draw(shp);
                         } else {
                             // Others can't -> create the ares to fill

@@ -5,7 +5,10 @@
  */
 package org.orbisgis.coremap.renderer.se;
 
+import java.awt.Color;
 import org.orbisgis.coremap.layerModel.model.ILayer;
+import org.orbisgis.coremap.renderer.se.fill.SolidFill;
+import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 
 /**
  *
@@ -20,7 +23,7 @@ public class StyleFactory {
      */
     public static Style createPointSymbolizerStyle(ILayer layer) {
         Style style = new Style(layer,true);
-        Rule rule = style.getRules().get(0);
+        FeatureRule rule = style.getRules().get(0);
         rule.getCompositeSymbolizer().addSymbolizer(new PointSymbolizer());
         return style;
     }
@@ -32,9 +35,13 @@ public class StyleFactory {
      */
     public static Style createLineSymbolizerStyle(ILayer layer) {
         Style style = new Style(layer,true);
-        Rule rule = style.getRules().get(0);
+        FeatureRule rule = style.getRules().get(0);
         rule.getCompositeSymbolizer().getSymbolizerList().remove(0);
-        rule.getCompositeSymbolizer().addSymbolizer(new LineSymbolizer());
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        PenStroke ps = new PenStroke();
+        ps.setFill(new SolidFill(Color.BLUE));
+        lineSymbolizer.setStroke(ps);
+        rule.getCompositeSymbolizer().addSymbolizer(lineSymbolizer);
         return style;
     }
     

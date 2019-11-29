@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import org.locationtech.jts.geom.Envelope;
 import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.layerModel.MapContext;
 import org.orbisgis.coremap.layerModel.model.ILayer;
@@ -29,13 +30,13 @@ import org.orbisgis.coremap.utils.progress.NullProgressMonitor;
 public class MapRenderer implements IRenderer{
 
     int width = 800;
-    int height = 300;
+    int height = 800;
     private MapContext mc;
     private MapTransform mt;
     private IProgressMonitor pm;
 
     public MapRenderer() {
-        this(600, 600);
+        this(800, 800);
     }
 
     public MapRenderer(int width, int height) {
@@ -146,7 +147,6 @@ public class MapRenderer implements IRenderer{
     public void show(){
         Icon icon = new ImageIcon(mt.getImage());
         JLabel label = new JLabel(icon);
-
         final JFrame f = new JFrame("Display map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.getContentPane().add(label);
@@ -157,5 +157,10 @@ public class MapRenderer implements IRenderer{
                 f.setVisible(true);
             }
         });
+    }
+
+    public void setEnvelope(Envelope envelope) {
+        mt.setExtent(envelope);
+        mt.resizeImage(width, height);
     }
 }

@@ -40,13 +40,13 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * {@code ViewBox} supplies a simple and convenient method to change the view box of a graphic,
@@ -63,7 +63,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
  * happens, the coordinate of the rendered graphic will be flipped.
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class ViewBox extends  AbstractSymbolizerNode {
+public final class ViewBox extends  StyleNode {
         private RealParameter x;
         private RealParameter y;
 
@@ -200,8 +200,8 @@ public final class ViewBox extends  AbstractSymbolizerNode {
         }
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (y != null) {
                         ls.add(y);
                 }

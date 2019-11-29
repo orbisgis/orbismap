@@ -6,7 +6,6 @@
 package org.orbisgis.coremap;
 
 import org.orbisgis.coremap.renderer.MapRenderer;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -30,10 +29,16 @@ public class OrbisMap {
      */
     public static void main(String[] args) throws LayerException, IOException, SQLException, SeExceptions.InvalidStyle {
         
-        //Data
+        runISpatialRenderer();      
+    }
+    
+   
+
+    private static void runISpatialRenderer() throws LayerException {
+   //Data
         String inputFile = "/home/ebocher/Autres/data/jgb/landcover2000.shp";
-        //inputFile ="/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
-        //inputFile="/home/ebocher/Autres/data/admin/communes.shp";
+        inputFile ="/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
+        inputFile = "/home/ebocher/Autres/data/admin/communes.shp";
         inputFile="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";    
         //inputFile = "/home/ebocher/Autres/data/admin/cantons.shp";
         
@@ -46,14 +51,22 @@ public class OrbisMap {
         H2GIS h2GIS = H2GIS.open(map);
         
         long draw = System.currentTimeMillis();
-        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "LANDCOVER", true);
+        //ISpatialTable spatialTable = (ISpatialTable) h2GIS.load(new File(inputFile), "LANDCOVER");
 
+        ISpatialTable spatialTable = h2GIS.getSpatialTable("LANDCOVER");
         Layer layer = new Layer(spatialTable);
         layer.setStyle(StyleFactory.createLineSymbolizerStyle(layer));
         //layer.setStyle(new Style(layer,stylePath));
+        
+        //ISpatialTable spatialTable2 = (ISpatialTable) h2GIS.link(new File(inputFile2), "LANDCOVER2", true);
+
+        //Layer layer2 = new Layer(spatialTable2);
+        //layer2.setStyle(StyleFactory.createLineSymbolizerStyle(layer));
 
         MapRenderer mapRenderer = new MapRenderer();
         mapRenderer.addLayer(layer);
+        //mapRenderer.addLayer(layer2);
+        //mapRenderer.setEnvelope(layer.getEnvelope());
 
 
         mapRenderer.draw();        
@@ -68,17 +81,6 @@ public class OrbisMap {
         /*mapRenderer.save("/tmp/orbisgis_carte.png");
 
         System.out.println("Save file : " + (System.currentTimeMillis() - end));*/
-
-        
-    }
-    
-    public static void testMap(){
-        /*Map map = new Map();   //Default size     
-        map.addLayer(new Layer(spatialTable, style));
-        map.removeLayer();
-        map.getLayers()
-        map.draw();*/
-        
     }
     
 }

@@ -38,14 +38,14 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * A {@code Category} is a part of an {@link AxisChart}. It embeds a value, and
@@ -60,7 +60,7 @@ import org.orbisgis.coremap.renderer.se.stroke.Stroke;
  * @author Maxence Laurent
  * @todo add support for stacked bar (means category fill / stroke are mandatory) and others are forbiden
  */
-public final class Category  extends AbstractSymbolizerNode implements FillNode, StrokeNode, GraphicNode {
+public final class Category  extends StyleNode implements FillNode, StrokeNode, GraphicNode {
 
         private RealParameter measure;
 
@@ -153,8 +153,8 @@ public final class Category  extends AbstractSymbolizerNode implements FillNode,
 
         
         @Override
-        public List<SymbolizerNode> getChildren() {
-            List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+            List<IStyleNode> ls = new ArrayList<IStyleNode>();
             if (this.getFill() != null) {
                 ls.add(this.getFill());
             }

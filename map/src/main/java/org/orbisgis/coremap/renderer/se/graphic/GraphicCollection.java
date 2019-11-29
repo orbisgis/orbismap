@@ -44,19 +44,18 @@ import java.util.*;
 import org.slf4j.*;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * This class doesn't exists within XSD. Actually, it the CompositeGraphic element which has been move up
  * It is a set of graphic symbols, as defined in SE.
  * @author Maxence Laurent
  */
-public final class GraphicCollection extends AbstractSymbolizerNode implements UomNode {
+public final class GraphicCollection extends StyleNode implements UomNode {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphicCollection.class);
     
@@ -261,8 +260,8 @@ public final class GraphicCollection extends AbstractSymbolizerNode implements U
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         ls.addAll(graphics);
         return ls;
     }

@@ -40,13 +40,15 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.common.Description;
 import org.orbisgis.coremap.renderer.se.graphic.ExternalGraphic;
 import org.orbisgis.coremap.renderer.se.graphic.Graphic;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.IRule;
 
 /**
  * Rules are used to group rendering instructions by feature-property conditions and map scales.
@@ -58,7 +60,7 @@ import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
  * @author Maxence Laurent
  * @author Erwan Bocher
  */
-public final class Rule extends AbstractSymbolizerNode {
+public final class FeatureRule  extends StyleNode implements IRule {
 
     /**
      * The name set to every rule, if not set externally.
@@ -74,7 +76,7 @@ public final class Rule extends AbstractSymbolizerNode {
     /**
      * Create a default, empty Rule, with a default inner (and empty) CompositeSymbolizer.
      */
-    public Rule() {
+    public FeatureRule() {
         symbolizer = new CompositeSymbolizer();
         symbolizer.setParent(this);
     }
@@ -96,7 +98,7 @@ public final class Rule extends AbstractSymbolizerNode {
      * and a <code>PointSymbolizer</code> otherwise.
      * @param layer The layer that will receive a new default symbolizer.
      */
-    public Rule(ILayer layer) {
+    public FeatureRule(ILayer layer) {
         this();
         this.name = "Default Rule";
         createSymbolizer(layer);
@@ -303,8 +305,8 @@ public final class Rule extends AbstractSymbolizerNode {
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-            List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+            List<IStyleNode> ls = new ArrayList<IStyleNode>();
             ls.add(getCompositeSymbolizer());
             return ls;
     }

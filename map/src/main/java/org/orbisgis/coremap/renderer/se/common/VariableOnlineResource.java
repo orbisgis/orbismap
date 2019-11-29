@@ -56,9 +56,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.graphic.ExternalGraphicSource;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphicSource;
 import org.orbisgis.coremap.renderer.se.graphic.ViewBox;
@@ -66,6 +63,8 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * This class intends to make the link between an online image and the current symbolizing tree. It can be used for
@@ -77,7 +76,7 @@ import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
  * @author Maxence Laurent
  * @author Alexis Guéganno
  */
-public class VariableOnlineResource extends AbstractSymbolizerNode implements ExternalGraphicSource, MarkGraphicSource {
+public class VariableOnlineResource extends StyleNode implements ExternalGraphicSource, MarkGraphicSource {
 
     private StringParameter url;
     private Map<URL,BufferedImage> imageCache = new HashMap<URL,BufferedImage>();
@@ -433,7 +432,7 @@ public class VariableOnlineResource extends AbstractSymbolizerNode implements Ex
         jaiBounds = new HashMap<URL,Rectangle2D.Double>();
         svgCache = new HashMap<URI,SVGIcon>();
         imageCache = new HashMap<URL,BufferedImage>();
-        SymbolizerNode par = getParent();
+        IStyleNode par = getParent();
         if(par != null) {
             getParent().update();
         }
@@ -495,8 +494,8 @@ public class VariableOnlineResource extends AbstractSymbolizerNode implements Ex
 
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ret = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ret = new ArrayList<IStyleNode>();
         ret.add(url);
         return ret;
     }

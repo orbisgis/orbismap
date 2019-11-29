@@ -45,9 +45,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Entry point for all kind of symbolizer
@@ -56,7 +57,7 @@ import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
  * @todo Add a general draw method that fit well for vectors and raster; implement fetch default geometry
  * @author Maxence Laurent, Alexis Guéganno
  */
-public abstract class Symbolizer extends AbstractSymbolizerNode implements SymbolizerNode, Comparable {
+public abstract class Symbolizer extends StyleNode implements  Comparable {
 
     /**
      * The default name affected to a new Symbolizer instance.
@@ -176,13 +177,13 @@ public abstract class Symbolizer extends AbstractSymbolizerNode implements Symbo
     /**
      * Go through parents and return the rule
      */
-    public Rule getRule() {
-        SymbolizerNode pIt = getParent();
-        while (pIt != null && !(pIt instanceof Rule)) {
+    public FeatureRule getRule() {
+        IStyleNode pIt = getParent();
+        while (pIt != null && !(pIt instanceof FeatureRule)) {
             pIt = pIt.getParent();
         }
 
-        return (Rule) pIt;
+        return (FeatureRule) pIt;
     }
 
     /**
@@ -239,5 +240,7 @@ public abstract class Symbolizer extends AbstractSymbolizerNode implements Symbo
     public abstract void draw(Graphics2D g2, ResultSet rs, long fid,
             boolean selected, MapTransform mt, Geometry theGeom)
             throws ParameterException, IOException, SQLException;
+    
+    
 
 }

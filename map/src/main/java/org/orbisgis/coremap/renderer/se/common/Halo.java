@@ -48,9 +48,7 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.*;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
@@ -59,6 +57,8 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 
 /**
@@ -66,7 +66,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
  * It is mainly used to improve the readability of text labels on the map.
  * @author Alexis Guéganno
  */
-public final class Halo extends AbstractSymbolizerNode implements  UomNode, FillNode {
+public final class Halo extends StyleNode implements  UomNode, FillNode {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Halo.class);
         /**
@@ -241,8 +241,8 @@ public final class Halo extends AbstractSymbolizerNode implements  UomNode, Fill
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-            List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+            List<IStyleNode> ls = new ArrayList<IStyleNode>();
             ls.add(radius);
             ls.add(fill);
             return ls;

@@ -41,8 +41,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 /**
  *
@@ -50,7 +50,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  * @author Alexis Guéganno
  * @todo implement in InlineContent
  */
-public interface ExternalGraphicSource extends SymbolizerNode{
+public interface ExternalGraphicSource extends IStyleNode{
 
 
         /**

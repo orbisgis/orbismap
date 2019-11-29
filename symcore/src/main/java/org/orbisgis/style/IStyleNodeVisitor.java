@@ -34,19 +34,22 @@
  * or contact directly:
  * info_at_ orbisgis.org
  */
-package org.orbisgis.coremap.renderer.legend.carto;
-public class Interval {
+package org.orbisgis.style;
 
-	private Object start;
-	private Object end;
-	private boolean minIncluded;
-	private boolean maxIncluded;
 
-	public Interval(Object start, boolean minIncluded, Object end,
-			boolean maxIncluded) {
-		this.start = start;
-		this.minIncluded = minIncluded;
-		this.end = end;
-		this.maxIncluded = maxIncluded;
-	}
+/**
+ * Visitor implementation for the Symbology core structure. It will be useful to process
+ * analysis on the rendering tree from an outside library.
+ *
+ * @author Erwan Bocher, CNRS
+ * @author Alexis Guéganno, CNRS
+ */
+public interface IStyleNodeVisitor {
+
+        /**
+         * Default visiting method : it can be called on each node of the tree
+         * that is a IStyleNode.
+         * @param styleNode to visit
+         */
+        void visitSymbolizerNode(IStyleNode styleNode);
 }

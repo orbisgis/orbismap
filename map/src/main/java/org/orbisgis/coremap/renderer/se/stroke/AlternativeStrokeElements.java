@@ -38,7 +38,7 @@ package org.orbisgis.coremap.renderer.se.stroke;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * {@code AlternativeStrokeElements} provides the option for the rendering system to 
@@ -63,8 +63,8 @@ public class AlternativeStrokeElements extends CompoundStrokeElement {
         
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 ls.addAll(elements);
                 return ls;
         }

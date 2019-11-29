@@ -44,6 +44,8 @@ import java.util.List;
 import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.common.Description;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 import org.slf4j.*;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -55,13 +57,13 @@ import org.slf4j.*;
  * @author Maxence Laurent
  * @author Alexis Guéganno
  */
-public final class Style extends AbstractSymbolizerNode {
+public final class Style extends StyleNode {
 
     public static final String PROP_VISIBLE = "visible";
     private static final String DEFAULT_NAME = "Unnamed Style";
     private static final Logger LOGGER = LoggerFactory.getLogger(Style.class);
     private String name;
-    private ArrayList<Rule> rules;
+    private ArrayList<FeatureRule> rules;
     private ILayer layer;
     private boolean visible = true;
     private Description description = new Description();
@@ -76,11 +78,11 @@ public final class Style extends AbstractSymbolizerNode {
      * @param addDefaultRule
      */
     public Style(ILayer layer, boolean addDefaultRule) {
-        rules = new ArrayList<Rule>();
+        rules = new ArrayList<FeatureRule>();
         this.layer = layer;
         name = DEFAULT_NAME;
         if (addDefaultRule) {
-            this.addRule(new Rule(layer));
+            this.addRule(new FeatureRule(layer));
         }
     }
     
@@ -105,7 +107,7 @@ public final class Style extends AbstractSymbolizerNode {
     public void merge(Style style) {
         int offset = findBiggestLevel();
 
-        for (Rule r : style.getRules()) {
+        for (FeatureRule r : style.getRules()) {
             this.addRule(r);
             for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
                 s.setLevel(s.getLevel() + offset);
@@ -116,7 +118,7 @@ public final class Style extends AbstractSymbolizerNode {
     private int findBiggestLevel() {
         int level = 0;
 
-        for (Rule r : rules) {
+        for (FeatureRule r : rules) {
             for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
                 level = Math.max(level, s.getLevel());
             }
@@ -146,10 +148,10 @@ public final class Style extends AbstractSymbolizerNode {
     public void getSymbolizers(MapTransform mt,
             List<Symbolizer> layerSymbolizers,
             //ArrayList<Symbolizer> overlaySymbolizers,
-            List<Rule> rules,
-            List<Rule> fallbackRules) {
+            List<FeatureRule> rules,
+            List<FeatureRule> fallbackRules) {
         if(visible){
-            for (Rule r : this.rules) {
+            for (FeatureRule r : this.rules) {
             // Only process visible rules with valid domain
                 if (r.isDomainAllowed(mt)) {
                     // Split standard rules and elseFilter rules
@@ -173,7 +175,7 @@ public final class Style extends AbstractSymbolizerNode {
     public void resetSymbolizerLevels() {
         int level = 1;
 
-        for (Rule r : rules) {
+        for (FeatureRule r : rules) {
             for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
                 if (s instanceof TextSymbolizer) {
                     s.setLevel(Integer.MAX_VALUE);
@@ -202,12 +204,12 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     @Override
-    public SymbolizerNode getParent() {
+    public IStyleNode getParent() {
         return null;
     }
 
     @Override
-    public void setParent(SymbolizerNode node) {
+    public void setParent(IStyleNode node) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -232,22 +234,22 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     /**
-     * Gets the list of {@link Rule} contained in this Style.
+     * Gets the list of {@link FeatureRule} contained in this Style.
      * @return
      */
-    public List<Rule> getRules() {
+    public List<FeatureRule> getRules() {
         return rules;
     }
 
     /**
-     * Moves the ith {@link Rule} to position i-1 in the list of rules.
+     * Moves the ith {@link FeatureRule} to position i-1 in the list of rules.
      * @param i
      * @return
      */
     public boolean moveRuleUp(int i) {
         try {
             if (i > 0) {
-                Rule r = rules.remove(i);
+                FeatureRule r = rules.remove(i);
                 rules.add(i - 1, r);
                 return true;
             }
@@ -257,14 +259,14 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     /**
-     * Moves the ith {@link Rule} to position i+1 in the list of rules.
+     * Moves the ith {@link FeatureRule} to position i+1 in the list of rules.
      * @param i
      * @return
      */
     public boolean moveRuleDown(int i) {
         try {
             if (i < rules.size() - 1) {
-                Rule r = rules.remove(i);
+                FeatureRule r = rules.remove(i);
                 rules.add(i + 1, r);
                 return true;
             }
@@ -275,10 +277,10 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     /**
-     * Add a {@link Rule} to this {@code Style}.
+     * Add a {@link FeatureRule} to this {@code Style}.
      * @param r
      */
-    public void addRule(Rule r) {
+    public void addRule(FeatureRule r) {
         if (r != null) {
             r.setParent(this);
             rules.add(r);
@@ -286,11 +288,11 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     /**
-     * Add a {@link Rule} to this {@code Style} at position {@code index}.
+     * Add a {@link FeatureRule} to this {@code Style} at position {@code index}.
      * @param index
      * @param r
      */
-    public void addRule(int index, Rule r) {
+    public void addRule(int index, FeatureRule r) {
         if (r != null) {
             r.setParent(this);
             rules.add(index, r);
@@ -298,7 +300,7 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     /**
-     * Delete the ith {@link Rule} from this {@code Style}.
+     * Delete the ith {@link FeatureRule} from this {@code Style}.
      * @param i
      * @return
      */
@@ -312,8 +314,8 @@ public final class Style extends AbstractSymbolizerNode {
     }
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-            List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+            List<IStyleNode> ls = new ArrayList<IStyleNode>();
             ls.addAll(rules);
             return ls;
     }

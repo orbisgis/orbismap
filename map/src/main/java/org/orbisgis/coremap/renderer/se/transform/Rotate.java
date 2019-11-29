@@ -42,13 +42,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * {@code Rotate} is a transformation that performs a rotation of the affected
@@ -60,7 +59,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
  * <li>The rotation angle, in clockwise degrees.</li></ul>
  * @author Maxence Laurent
  */
-public final class Rotate extends AbstractSymbolizerNode implements Transformation {
+public final class Rotate extends StyleNode implements Transformation {
 
         private RealParameter x;
         private RealParameter y;
@@ -174,8 +173,8 @@ public final class Rotate extends AbstractSymbolizerNode implements Transformati
         }
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 if (x != null) {
                         ls.add(x);
                 }

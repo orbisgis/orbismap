@@ -38,7 +38,6 @@ package org.orbisgis.coremap.renderer.se.fill;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
@@ -52,6 +51,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * A {@code Fill} implementation where the content of a shape is painted according 
@@ -272,8 +272,8 @@ public final class DensityFill extends Fill implements GraphicNode {
     
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (isHatched) {
             if (hatches != null) {
                 ls.add(hatches);

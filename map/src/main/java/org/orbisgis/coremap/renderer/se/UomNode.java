@@ -37,13 +37,14 @@
 package org.orbisgis.coremap.renderer.se;
 
 import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * Defines unit of measure management.
  *
  * @author Maxence Laurent
  */
-public interface UomNode extends SymbolizerNode {
+public interface UomNode extends IStyleNode {
         /**
          * Associates a unit of measure to this node
          * @param u 

@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.ViewBoxNode;
 import org.orbisgis.coremap.renderer.se.common.Halo;
@@ -54,6 +53,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * An external graphic is an image such as JPG, PNG, SVG.
@@ -369,8 +369,8 @@ public final class ExternalGraphic extends Graphic implements UomNode, Transform
     }*/
 
     @Override
-    public List<SymbolizerNode> getChildren() {
-        List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (halo != null) {
             ls.add(halo);
         }

@@ -38,8 +38,8 @@ package org.orbisgis.coremap.renderer.se.parameter;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * <code>Literal</code>s are the concrete realizations of <code>SeParameter</code>.
@@ -50,7 +50,7 @@ import org.orbisgis.coremap.renderer.se.SymbolizerNode;
  * @author Maxence Laurent
  * @author Bocher Erwan
  */
-public abstract class Literal extends AbstractSymbolizerNode implements Comparable {
+public abstract class Literal extends StyleNode implements Comparable {
 
         private List<LiteralListener> listeners;
 
@@ -83,7 +83,7 @@ public abstract class Literal extends AbstractSymbolizerNode implements Comparab
         
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                return new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                return new ArrayList<IStyleNode>();
         }
 }

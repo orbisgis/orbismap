@@ -42,11 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  *
@@ -54,7 +54,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  *
  * @author Maxence Laurent, Alexis Guéganno
  */
-public class Transform extends AbstractSymbolizerNode implements UomNode {
+public class Transform extends StyleNode implements UomNode {
 
         private Uom uom;
         private AffineTransform consolidated;
@@ -214,8 +214,8 @@ public class Transform extends AbstractSymbolizerNode implements UomNode {
         
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                List<SymbolizerNode> ls = new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                List<IStyleNode> ls = new ArrayList<IStyleNode>();
                 ls.addAll(transformations);
                 return ls;
         }

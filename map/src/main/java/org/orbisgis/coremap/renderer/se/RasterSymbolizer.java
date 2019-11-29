@@ -53,6 +53,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.raster.Channel;
 import org.orbisgis.coremap.renderer.se.raster.ContrastEnhancement;
 import org.orbisgis.coremap.renderer.se.raster.OverlapBehavior;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * @ todo implements almost all...
@@ -222,7 +223,7 @@ public class RasterSymbolizer extends Symbolizer implements UomNode {
     }
     
     @Override
-    public List<SymbolizerNode> getChildren() {
+    public List<IStyleNode> getChildren() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

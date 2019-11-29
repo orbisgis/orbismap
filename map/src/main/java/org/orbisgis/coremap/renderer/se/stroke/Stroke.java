@@ -41,17 +41,17 @@ import java.awt.Shape;
 import java.io.IOException;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
 import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.StyleNode;
 
 /**
  * Style description for linear features (Area or Line)
  *
  * @author Maxence Laurent, Alexis Guéganno.
  */
-public abstract class Stroke extends AbstractSymbolizerNode implements UomNode {
+public abstract class Stroke extends StyleNode implements UomNode {
 
     private Uom uom;
     private boolean linearRapport;

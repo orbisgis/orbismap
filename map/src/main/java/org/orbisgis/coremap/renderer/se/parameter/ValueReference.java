@@ -42,9 +42,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.orbisgis.coremap.renderer.se.AbstractSymbolizerNode;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * An (abstract) representation of a Value in a table. 
@@ -52,7 +51,7 @@ import org.orbisgis.coremap.renderer.se.SymbolizerNode;
  * @author Alexis Guéganno
  * @author Erwan Bocher
  */
-public abstract class ValueReference extends AbstractSymbolizerNode{
+public abstract class ValueReference extends StyleNode{
 
         
 	private String fieldName;
@@ -165,8 +164,8 @@ public abstract class ValueReference extends AbstractSymbolizerNode{
 
 
         @Override
-        public List<SymbolizerNode> getChildren() {
-                return new ArrayList<SymbolizerNode>();
+        public List<IStyleNode> getChildren() {
+                return new ArrayList<IStyleNode>();
         }
 
 

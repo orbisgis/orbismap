@@ -40,9 +40,9 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
 import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 /**
  * Each implementation represent an affine transformation base on RealParameter.
@@ -50,7 +50,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  *
  * @author Maxence Laurent
  */
-public interface Transformation extends SymbolizerNode{
+public interface Transformation extends IStyleNode{
 
     /**
          * This method whall return {@code true} if the transformation can be

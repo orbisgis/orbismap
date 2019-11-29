@@ -34,24 +34,24 @@
  * or contact directly:
  * info_at_ orbisgis.org
  */
-package org.orbisgis.coremap.renderer.se;
+package org.orbisgis.style;
 
-import org.orbisgis.coremap.renderer.se.visitors.ISymbolizerVisitor;
 
 /**
- * Base of all SymbolizerNodes concrete implementations.
- * @author Alexis Guéganno
+ * Base of all style element concrete implementations.
+ * @author Alexis Guéganno, CNRS
+ * @author erwan Bocher, CNRS
  */
-public abstract class AbstractSymbolizerNode implements SymbolizerNode {
-        private SymbolizerNode parent;
+public abstract class StyleNode implements IStyleNode {
+        private IStyleNode parent;
 
         @Override
-        public SymbolizerNode getParent() {
+        public IStyleNode getParent() {
                 return parent;
         }
 
         @Override
-        public void setParent(SymbolizerNode parent) {
+        public void setParent(IStyleNode parent) {
                 this.parent = parent;
                 update();
         }
@@ -64,7 +64,7 @@ public abstract class AbstractSymbolizerNode implements SymbolizerNode {
         }
 
         @Override
-        public void acceptVisitor(ISymbolizerVisitor visitor){
+        public void acceptVisitor(IStyleNodeVisitor visitor){
                 visitor.visitSymbolizerNode(this);
         }
 

@@ -34,22 +34,16 @@
  * or contact directly:
  * info_at_ orbisgis.org
  */
-package org.orbisgis.coremap.renderer.se.visitors;
 
-import org.orbisgis.coremap.renderer.se.SymbolizerNode;
+package org.orbisgis.style;
 
 /**
- * Visitor implementation for the SE structure. It will be useful to process
- * analysis on the rendering tree from an outside library.
- *
- * @author Alexis Guéganno
+ * <code>LiteralListener</code> are listeners dedicated to <code>Literal</code> objects.
+ * @author Maxence Laurent
  */
-public interface ISymbolizerVisitor {
-
+public interface LiteralListener {
         /**
-         * Default visiting method : it can be called on each node of the tree
-         * that is a SymbolizerNode.
-         * @param sn
+         * Notify a change to the classes spying the <code>Literal</code> instance(s).
          */
-        void visitSymbolizerNode(SymbolizerNode sn);
+	void literalChanged();
 }
