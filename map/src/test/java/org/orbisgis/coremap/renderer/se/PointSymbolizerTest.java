@@ -39,9 +39,9 @@ package org.orbisgis.coremap.renderer.se;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.Uom;
 
 /**
  *

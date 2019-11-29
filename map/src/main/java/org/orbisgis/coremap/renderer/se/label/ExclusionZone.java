@@ -37,9 +37,9 @@
 package org.orbisgis.coremap.renderer.se.label;
 
 
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 
 /**
@@ -47,7 +47,7 @@ import org.orbisgis.style.StyleNode;
  * labels' displaying will be forbidden.
  * @author Alexis Guéganno, Maxence Laurent
  */
-public abstract class ExclusionZone extends StyleNode implements UomNode {
+public abstract class ExclusionZone extends StyleNode implements IUom {
         private Uom uom;
 
                 
@@ -55,8 +55,8 @@ public abstract class ExclusionZone extends StyleNode implements UomNode {
         public Uom getUom() {
                 if (uom != null) {
                         return uom;
-                } else if(getParent() instanceof UomNode){
-                        return ((UomNode)getParent()).getUom();
+                } else if(getParent() instanceof IUom){
+                        return ((IUom)getParent()).getUom();
                 } else {
                         return Uom.PX;
                 }

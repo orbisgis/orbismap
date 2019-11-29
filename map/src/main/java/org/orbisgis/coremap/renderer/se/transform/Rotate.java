@@ -42,12 +42,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * {@code Rotate} is a transformation that performs a rotation of the affected
@@ -192,12 +193,12 @@ public final class Rotate extends StyleNode implements Transformation {
                         MapTransform mt, Double width, Double height) throws ParameterException {
                 double ox = 0.0;
                 if (x != null) {
-                        ox = Uom.toPixel(x.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), width);
+                        ox = UomUtils.toPixel(x.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), width);
                 }
 
                 double oy = 0.0;
                 if (y != null) {
-                        oy = Uom.toPixel(y.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), height);
+                        oy = UomUtils.toPixel(y.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), height);
                 }
 
                 double theta = 0.0;

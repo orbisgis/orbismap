@@ -36,24 +36,9 @@
  */
 package org.orbisgis.coremap.renderer.se.graphic;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.RenderedImage;
-import java.awt.image.renderable.RenderContext;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.PointSymbolizer;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.Style;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 
@@ -64,7 +49,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
  */
 public class ProportionalSymbolsTest {
 
-    private Style fts;
+    private FeatureStyle fts;
 
     /**
      * Proportional symbols are drawn using ViewBox instances, most of the time.

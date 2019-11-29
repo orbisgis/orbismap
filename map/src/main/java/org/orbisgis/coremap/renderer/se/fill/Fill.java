@@ -42,10 +42,10 @@ import java.awt.Shape;
 import java.io.IOException;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 
 /**
@@ -55,7 +55,7 @@ import org.orbisgis.style.StyleNode;
  *
  * @author Maxence Laurent
  */
-public abstract class Fill extends StyleNode implements UomNode {
+public abstract class Fill extends StyleNode implements IUom {
 
     private Uom uom;
     
@@ -72,7 +72,7 @@ public abstract class Fill extends StyleNode implements UomNode {
 
     @Override
     public Uom getUom(){
-        return uom == null ? ((UomNode)getParent()).getUom() : uom;
+        return uom == null ? ((IUom)getParent()).getUom() : uom;
     }
 
     /**

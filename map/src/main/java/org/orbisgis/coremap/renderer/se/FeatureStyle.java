@@ -40,11 +40,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 //import org.slf4j.*;
-import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.common.Description;
+import org.orbisgis.style.IRule;
+import org.orbisgis.style.IStyle;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.ISymbolizer;
 import org.orbisgis.style.StyleNode;
 import org.slf4j.*;
 //import org.slf4j.Logger;
@@ -57,74 +60,26 @@ import org.slf4j.*;
  * @author Maxence Laurent
  * @author Alexis Guéganno
  */
-public final class Style extends StyleNode {
+public final class FeatureStyle extends StyleNode implements IStyle{
 
     public static final String PROP_VISIBLE = "visible";
     private static final String DEFAULT_NAME = "Unnamed Style";
-    private static final Logger LOGGER = LoggerFactory.getLogger(Style.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeatureStyle.class);
     private String name;
-    private ArrayList<FeatureRule> rules;
-    private ILayer layer;
+    private ArrayList<IRule> rules;
     private boolean visible = true;
     private Description description = new Description();
 
     protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);    
     
     /**
-     * Create a new {@code Style} associated to the given {@code ILayer}. If the
-     * given boolean is tru, a default {@code Rule} will be added to the Style.
-     * If not, the {@code Style} will be let empty.
-     * @param layer
-     * @param addDefaultRule
+     * Create a new {@code Style} with a default {@code Rule}.
      */
-    public Style(ILayer layer, boolean addDefaultRule) {
-        rules = new ArrayList<FeatureRule>();
-        this.layer = layer;
+    public FeatureStyle() {        
         name = DEFAULT_NAME;
-        if (addDefaultRule) {
-            this.addRule(new FeatureRule(layer));
-        }
+        rules = new ArrayList<IRule>();        
     }
-    
-    /**
-     * Gets the description associated to this style.
-     * @return The description associated to this style.
-     */
-    public Description getDescription(){
-        return description;
-    }
-
-    /**
-     *  This method copies all rules from given style and merge them within the current
-     * style. Resulting style is done by stacking new rules over rules from current style.
-     * (i.e. symbolizer level of new style > level from current one)
-     *
-     * This may alter the behaviour of ElseRules !
-     * @todo let the layer have several style ?
-     *
-     * @param style
-     */
-    public void merge(Style style) {
-        int offset = findBiggestLevel();
-
-        for (FeatureRule r : style.getRules()) {
-            this.addRule(r);
-            for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
-                s.setLevel(s.getLevel() + offset);
-            }
-        }
-    }
-
-    private int findBiggestLevel() {
-        int level = 0;
-
-        for (FeatureRule r : rules) {
-            for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
-                level = Math.max(level, s.getLevel());
-            }
-        }
-        return level;
-    }
+      
 
     /**
      * This method remove everything in this feature type style
@@ -146,19 +101,20 @@ public final class Style extends StyleNode {
      * @todo take into account domain constraint
      */
     public void getSymbolizers(MapTransform mt,
-            List<Symbolizer> layerSymbolizers,
+            List<ISymbolizer> layerSymbolizers,
             //ArrayList<Symbolizer> overlaySymbolizers,
             List<FeatureRule> rules,
             List<FeatureRule> fallbackRules) {
         if(visible){
-            for (FeatureRule r : this.rules) {
+            for (IRule r : this.rules) {
+               FeatureRule featureRule = (FeatureRule) r;
             // Only process visible rules with valid domain
-                if (r.isDomainAllowed(mt)) {
+                if (featureRule.isDomainAllowed(mt)) {
                     // Split standard rules and elseFilter rules
                     
-                        rules.add(r);
+                        rules.add(featureRule);
                     
-                        r.getCompositeSymbolizer().getSymbolizerList().forEach((s) -> {
+                        featureRule.getSymbolizers().forEach((s) -> {
                             // Extract TextSymbolizer into specific set =>
                             // Label are always drawn on top
                             //if (s instanceof TextSymbolizer) {
@@ -172,37 +128,7 @@ public final class Style extends StyleNode {
         }
     }
 
-    public void resetSymbolizerLevels() {
-        int level = 1;
-
-        for (FeatureRule r : rules) {
-            for (Symbolizer s : r.getCompositeSymbolizer().getSymbolizerList()) {
-                if (s instanceof TextSymbolizer) {
-                    s.setLevel(Integer.MAX_VALUE);
-                } else {
-                    s.setLevel(level);
-                    level++;
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets the {@code Layer} associated to this {@code Style}.
-     * @return
-     */
-    public ILayer getLayer() {
-        return layer;
-    }
-
-    /**
-     * Sets the {@code Layer} associated to this {@code Style}.
-     * @param layer
-     */
-    public void setLayer(ILayer layer) {
-        this.layer = layer;
-    }
-
+  
     @Override
     public IStyleNode getParent() {
         return null;
@@ -217,27 +143,20 @@ public final class Style extends StyleNode {
     public void update() {
     }
 
-    /**
-     * Gets the name of this Style.
-     * @return
-     */
+    
+    @Override
     public String getName() {
         return name;
     }
-
-    /**
-    * Sets the name of this Style.
-    * @param name
-    */
+    
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets the list of {@link FeatureRule} contained in this Style.
-     * @return
-     */
-    public List<FeatureRule> getRules() {
+    
+    @Override
+    public List<IRule> getRules() {
         return rules;
     }
 
@@ -249,7 +168,7 @@ public final class Style extends StyleNode {
     public boolean moveRuleUp(int i) {
         try {
             if (i > 0) {
-                FeatureRule r = rules.remove(i);
+                IRule r = rules.remove(i);
                 rules.add(i - 1, r);
                 return true;
             }
@@ -258,15 +177,11 @@ public final class Style extends StyleNode {
         return false;
     }
 
-    /**
-     * Moves the ith {@link FeatureRule} to position i+1 in the list of rules.
-     * @param i
-     * @return
-     */
+    @Override
     public boolean moveRuleDown(int i) {
         try {
             if (i < rules.size() - 1) {
-                FeatureRule r = rules.remove(i);
+                IRule r = rules.remove(i);
                 rules.add(i + 1, r);
                 return true;
             }
@@ -276,37 +191,29 @@ public final class Style extends StyleNode {
         return false;
     }
 
-    /**
-     * Add a {@link FeatureRule} to this {@code Style}.
-     * @param r
-     */
-    public void addRule(FeatureRule r) {
-        if (r != null) {
-            r.setParent(this);
-            rules.add(r);
+   
+    @Override
+    public void addRule(IRule rule) {
+        if (rule != null) {
+            rule.setParent(this);
+            rules.add(rule);
         }
     }
 
-    /**
-     * Add a {@link FeatureRule} to this {@code Style} at position {@code index}.
-     * @param index
-     * @param r
-     */
-    public void addRule(int index, FeatureRule r) {
-        if (r != null) {
-            r.setParent(this);
-            rules.add(index, r);
+    
+    @Override
+    public void addRule(int index, IRule rule) {
+        if (rule != null) {
+            rule.setParent(this);
+            rules.add(index, rule);
         }
     }
 
-    /**
-     * Delete the ith {@link FeatureRule} from this {@code Style}.
-     * @param i
-     * @return
-     */
-    public boolean deleteRule(int i) {
+    
+    @Override
+    public boolean deleteRule(int index) {
         try {
-            rules.remove(i);
+            rules.remove(index);
             return true;
         } catch (IndexOutOfBoundsException ex) {
             return false;
@@ -378,4 +285,24 @@ public final class Style extends StyleNode {
     public void removePropertyChangeListener(String prop,PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(prop,listener);
     }    
+
+    @Override
+    public String getTitle(Locale locale) {
+            return description.getTitle(locale);
+    }
+
+    @Override
+    public String addTitle(Locale locale, String text) {
+        return description.addTitle(locale, text);
+    }
+
+    @Override
+    public String getAbstract(Locale locale) {
+        return description.getAbstract(locale);
+    }
+
+    @Override
+    public String addAbstract(Locale locale, String text) {
+         return description.addAbstract(locale, text);
+    }
 }

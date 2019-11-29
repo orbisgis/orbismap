@@ -43,8 +43,8 @@ import java.util.List;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -137,7 +137,7 @@ public final class PenStroke extends Stroke implements FillNode {
                 String[] splitDash = sDash.split(" ");
                     int size = splitDash.length;
                     for (int i = 0; i < size; i++) {
-                        sum += Uom.toPixel(Double.parseDouble(splitDash[i]), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        sum += UomUtils.toPixel(Double.parseDouble(splitDash[i]), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                     }
 
                     if (size % 2 == 1) {
@@ -342,7 +342,7 @@ public final class PenStroke extends Stroke implements FillNode {
 
         if (width != null) {
             w = width.getValue(map);
-            w = Uom.toPixel(w, getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // 100% based on view box height or width ? TODO
+            w = UomUtils.toPixel(w, getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // 100% based on view box height or width ? TODO
         }
 
 
@@ -356,12 +356,12 @@ public final class PenStroke extends Stroke implements FillNode {
             int dashSize = splitedDash.length;
             dashA = new double[dashSize];
             for (int i = 0; i < dashSize; i++) {
-                dashA[i] = Uom.toPixel(Double.parseDouble(splitedDash[i]), getUom(),
+                dashA[i] = UomUtils.toPixel(Double.parseDouble(splitedDash[i]), getUom(),
                         mt.getDpi(), mt.getScaleDenominator(), v100p);
             }
 
             if (this.dashOffset != null) {
-                dashO = Uom.toPixel(this.dashOffset.getValue(map), getUom(),
+                dashO = UomUtils.toPixel(this.dashOffset.getValue(map), getUom(),
                         mt.getDpi(), mt.getScaleDenominator(), v100p);
             }
 
@@ -476,7 +476,7 @@ public final class PenStroke extends Stroke implements FillNode {
                     int splitSize = split.length;
                     double dashLengths[] = new double[splitSize];
                     for (int i = 0; i < splitSize; i++) {
-                        dashLengths[i] = Uom.toPixel(Double.parseDouble(split[i]), getUom(),
+                        dashLengths[i] = UomUtils.toPixel(Double.parseDouble(split[i]), getUom(),
                                 mt.getDpi(), mt.getScaleDenominator(), null);
                     }
 
@@ -572,7 +572,7 @@ public final class PenStroke extends Stroke implements FillNode {
      */
     public double getWidthInPixel(Map<String,Object> map, MapTransform mt) throws ParameterException {
         if (this.width != null) {
-            return Uom.toPixel(width.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+            return UomUtils.toPixel(width.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
         } else {
             return DEFAULT_WIDTH_PX;
         }
@@ -593,7 +593,7 @@ public final class PenStroke extends Stroke implements FillNode {
             String[] splitedDash = sDash.split(" ");
             int size = splitedDash.length;
             for (int i = 0; i < size; i++) {
-                length += Uom.toPixel(Double.parseDouble(splitedDash[i]), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                length += UomUtils.toPixel(Double.parseDouble(splitedDash[i]), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
             }
         }
 

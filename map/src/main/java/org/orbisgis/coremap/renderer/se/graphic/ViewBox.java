@@ -40,12 +40,12 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 
 /**
@@ -170,8 +170,8 @@ public final class ViewBox extends  StyleNode {
                 }
 
 
-                dx = Uom.toPixel(dx, ((UomNode)getParent()).getUom(), dpi, scale, width);
-                dy = Uom.toPixel(dy, ((UomNode)getParent()).getUom(), dpi, scale, height);
+                dx = UomUtils.toPixel(dx, ((IUom)getParent()).getUom(), dpi, scale, width);
+                dy = UomUtils.toPixel(dy, ((IUom)getParent()).getUom(), dpi, scale, height);
 
                 if (Math.abs(dx) <= 0.00021 || Math.abs(dy) <= 0.00021) {
                         dx=0;

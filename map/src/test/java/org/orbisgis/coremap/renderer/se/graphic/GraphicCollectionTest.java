@@ -37,24 +37,10 @@
 package org.orbisgis.coremap.renderer.se.graphic;
 
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.PointSymbolizer;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.Style;
-import org.orbisgis.coremap.renderer.se.common.Uom;
-import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 
 /**
  *
@@ -62,7 +48,7 @@ import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
  */
 public class GraphicCollectionTest {
 
-    private Style fts;
+    private FeatureStyle fts;
 
     /*
     public void variousGraphicDisplay() throws IOException, ParameterException, InvalidStyle {

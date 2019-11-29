@@ -24,20 +24,8 @@ package org.orbisgis.style;
  *
  * @author Erwan Bocher
  */
-interface ISymbolizer extends IName, IStyleNode {
-
-    /**
-     * Unit of measure
-     *
-     * @return
-     */
-    Uom getUom();
-
-    /**
-     *
-     * @param uom
-     */
-    void setUom(Uom uom);
+public interface ISymbolizer extends IUom, IName, IStyleNode {
+    
 
     /**
      * Return a level order for this symbol
@@ -52,18 +40,5 @@ interface ISymbolizer extends IName, IStyleNode {
      * @param level
      */
     void setLevel(int level);
-    
-    /**
-     * The parameter value that defines
-     * the geometry to apply the symbol
-     * @return a parameter value
-     */
-    IParameterValue getGeometryParameter();
-   
-     /**
-     * A symbolizer must be related to a parameter value that defines
-     * the geometry to apply the symbol
-     */
-    void setGeometryParameter(IParameterValue parameterValue);
 
 }

@@ -50,21 +50,22 @@ import org.locationtech.jts.geom.Geometry;
 import org.orbisgis.coremap.layerModel.model.AbstractLayer;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FeatureRule;
-import org.orbisgis.coremap.renderer.se.Style;
-import org.orbisgis.coremap.renderer.se.Symbolizer;
-import org.orbisgis.coremap.renderer.se.VectorSymbolizer;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
+import org.orbisgis.coremap.renderer.se.FeatureSymbolizer;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
 import org.orbisgis.coremap.utils.progress.IProgressMonitor;
 import org.orbisgis.datamanager.JdbcSpatialTable;
 import org.orbisgis.datamanager.JdbcTable;
 import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
+import org.orbisgis.style.IRule;
+import org.orbisgis.style.ISymbolizer;
 
 public class Layer extends AbstractLayer {
 
     private ISpatialTable spatialTable;
     private Envelope envelope = new Envelope();
-    private Style style;
+    private FeatureStyle style;
 
     public Layer(String name, ISpatialTable spatialTable) {
         super(name);
@@ -76,16 +77,16 @@ public class Layer extends AbstractLayer {
         this.spatialTable = spatialTable;        
     }
     
-    public Layer(ISpatialTable spatialTable, Style style) {
+    public Layer(ISpatialTable spatialTable, FeatureStyle style) {
         super(spatialTable.getName());
         this.spatialTable = spatialTable;
     }
 
-    public Style getStyle() {
+    public FeatureStyle getStyle() {
         return style;
     }
 
-    public void setStyle(Style style) {
+    public void setStyle(FeatureStyle style) {
         this.style = style;
     }
     
@@ -133,7 +134,7 @@ public class Layer extends AbstractLayer {
             // i.e. TextSymbolizer are always drawn above all other layer !! Should now be handle with symbolizer level
             // Standard rules (with filter or no filter but not with elsefilter)
             IProgressMonitor rulesProgress = pm.startTask(style.getRules().size());
-            for (FeatureRule r : style.getRules()) {
+            for (IRule r : style.getRules()) {
                 FeaturesVisitor fv = new FeaturesVisitor();
                 fv.visitSymbolizerNode(r);
                 Set<String> fields = fv.getResult();
@@ -160,8 +161,8 @@ public class Layer extends AbstractLayer {
                         row++;
                         //End workaround
                         boolean selected = false;
-                        List<Symbolizer> sl = r.getCompositeSymbolizer().getSymbolizerList();
-                        for (Symbolizer s : sl) {
+                        List<ISymbolizer> sl = r.getSymbolizers();
+                        for (ISymbolizer s : sl) {
                             boolean res = drawFeature(s, theGeom, spatialTableQuery, row,
                                      mt.getAdjustedExtent(), selected, mt, g2);
                         }
@@ -177,7 +178,7 @@ public class Layer extends AbstractLayer {
         }
     }
     
-     private boolean drawFeature(Symbolizer s, Geometry geom, ResultSet rs,
+     private boolean drawFeature(ISymbolizer s, Geometry geom, ResultSet rs,
             long rowIdentifier, Envelope extent, boolean selected,
             MapTransform mt, Graphics2D g2) throws ParameterException,
             IOException, SQLException {
@@ -187,14 +188,15 @@ public class Layer extends AbstractLayer {
             //We try to retrieve a geometry. If we fail, an
             //exception will be thrown by the call to draw,
             //and a message will be shown to the user...
-            VectorSymbolizer vs = (VectorSymbolizer) s;
+            FeatureSymbolizer vs = (FeatureSymbolizer) s;
             theGeom = vs.getGeometry(rs, rowIdentifier);
             if (theGeom != null && theGeom.getEnvelopeInternal().intersects(extent)) {
                 somethingReached = true;
             }
         }
         if (somethingReached || theGeom != null) {
-            s.draw(g2, rs, rowIdentifier, selected, mt, theGeom);
+           FeatureSymbolizer featureSymbolizer = (FeatureSymbolizer) s;
+           featureSymbolizer.draw(g2, rs, rowIdentifier, selected, mt, theGeom);
             return true;
         } else {
             return false;

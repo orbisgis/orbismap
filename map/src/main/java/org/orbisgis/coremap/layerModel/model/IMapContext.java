@@ -41,7 +41,7 @@ import java.net.URI;
 import org.cts.crs.CoordinateReferenceSystem;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 import org.orbisgis.coremap.renderer.se.common.Description;
 import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.layerModel.MapContextListener;

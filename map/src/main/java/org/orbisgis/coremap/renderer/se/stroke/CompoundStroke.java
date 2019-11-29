@@ -44,13 +44,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.UomNode;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 
 /**
  * A {@code CompoundStroke} allows to combine multiple strokes. This way, it becomes possible 
@@ -62,7 +62,7 @@ import org.orbisgis.style.IStyleNode;
  * <li>A list of {@link StrokeAnnotationGraphic} used to decorate the line</li></ul>
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class CompoundStroke extends Stroke implements UomNode {
+public final class CompoundStroke extends Stroke implements IUom {
 
     private RealParameter preGap;
     private RealParameter postGap;
@@ -180,7 +180,7 @@ public final class CompoundStroke extends Stroke implements UomNode {
         for (Shape shp : shapes) {
 
             if (preGap != null) {
-                initGap = Uom.toPixel(preGap.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                initGap = UomUtils.toPixel(preGap.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 if (initGap > 0.0) {
                     
                     List<Shape> splitLine = ShapeHelper.splitLine(shp, initGap);
@@ -194,7 +194,7 @@ public final class CompoundStroke extends Stroke implements UomNode {
 
             if (shp != null) {
                 if (postGap != null) {
-                    endGap = Uom.toPixel(postGap.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                    endGap = UomUtils.toPixel(postGap.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                     if (endGap > 0.0) {
                         double lineLength = ShapeHelper.getLineLength(shp);
                         shp = ShapeHelper.splitLine(shp, lineLength - endGap).get(0);
@@ -229,21 +229,21 @@ public final class CompoundStroke extends Stroke implements UomNode {
                     strokes[i] = sElem.getStroke();
 
                     if (sElem.getLength() != null) {
-                        lengths[i] = Uom.toPixel(sElem.getLength().getValue(map),
+                        lengths[i] = UomUtils.toPixel(sElem.getLength().getValue(map),
                                 getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                     } else {
                         lengths[i] = sElem.getStroke().getNaturalLengthForCompound(map, shp, mt);
                     }
 
                     if (sElem.getPreGap() != null) {
-                        preGaps[i] = Uom.toPixel(sElem.getPreGap().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        preGaps[i] = UomUtils.toPixel(sElem.getPreGap().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                         remainingLength -= preGaps[i];
                     } else {
                         preGaps[i] = null;
                     }
 
                     if (sElem.getPostGap() != null) {
-                        postGaps[i] = Uom.toPixel(sElem.getPostGap().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        postGaps[i] = UomUtils.toPixel(sElem.getPostGap().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                         remainingLength -= postGaps[i];
                     } else {
                         postGaps[i] = null;

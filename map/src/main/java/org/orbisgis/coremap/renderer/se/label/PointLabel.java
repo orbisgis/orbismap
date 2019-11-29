@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -145,15 +145,15 @@ public final class PointLabel extends Label {
         if (this.exclusionZone != null) {
             if (this.exclusionZone instanceof ExclusionRadius) {
                 double radius = ((ExclusionRadius) (this.exclusionZone)).getRadius().getValue(map);
-                radius = Uom.toPixel(radius, getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                radius = UomUtils.toPixel(radius, getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 deltaX = radius;
                 deltaY = radius;
             } else {
                 deltaX = ((ExclusionRectangle) (this.exclusionZone)).getX().getValue(map);
                 deltaY = ((ExclusionRectangle) (this.exclusionZone)).getY().getValue(map);
 
-                deltaX = Uom.toPixel(deltaX, getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-                deltaY = Uom.toPixel(deltaY, getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                deltaX = UomUtils.toPixel(deltaX, getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                deltaY = UomUtils.toPixel(deltaY, getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
             }
         }
 

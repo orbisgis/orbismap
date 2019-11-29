@@ -38,7 +38,6 @@ package org.orbisgis.coremap.renderer.se.fill;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
@@ -52,6 +51,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.style.IStyleNode;
 
 /**
@@ -108,7 +108,7 @@ public final class HatchedFill extends Fill implements StrokeNode {
                 double pDist;
                 pDist = DEFAULT_PDIST;
                 if (this.distance != null) {
-                    pDist = Uom.toPixel(this.distance.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                    pDist = UomUtils.toPixel(this.distance.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 }
 
                 double alpha = DEFAULT_ALPHA;
@@ -118,7 +118,7 @@ public final class HatchedFill extends Fill implements StrokeNode {
 
                 double hOffset = 0.0;
                 if (this.offset != null) {
-                    hOffset = Uom.toPixel(this.offset.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                    hOffset = UomUtils.toPixel(this.offset.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 }
 
                 drawHatch(g2, map, shp, selected, mt, alpha, pDist, stroke, hOffset);

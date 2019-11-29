@@ -41,7 +41,7 @@ import org.slf4j.*;
 import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
-import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 import org.orbisgis.coremap.renderer.se.common.VariableOnlineResource;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
@@ -52,7 +52,7 @@ import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
  */
 public class StrokeRapportTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(StrokeRapportTest.class);
-    private Style fts;
+    private FeatureStyle fts;
 
     @Before
     public void setUp() throws Exception {

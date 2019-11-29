@@ -37,25 +37,12 @@
 package org.orbisgis.coremap.renderer.se.stroke;
 
 //import com.sun.media.jai.widget.DisplayJAI;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.PointSymbolizer;
-import org.orbisgis.coremap.renderer.se.SeExceptions.InvalidStyle;
-import org.orbisgis.coremap.renderer.se.Style;
-import org.orbisgis.coremap.renderer.se.common.Uom;
-import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
-import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
+import org.orbisgis.style.Uom;
 
 /**
  *
@@ -63,7 +50,7 @@ import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
  */
 public class StrokeTest {
 
-    private Style fts;
+    private FeatureStyle fts;
 
     @Test
     public void testDashLengthOdd() {

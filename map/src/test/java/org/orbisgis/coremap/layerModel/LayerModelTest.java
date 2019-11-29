@@ -52,7 +52,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 import org.orbisgis.coremap.renderer.se.common.Description;
 
 import org.orbisgis.datamanager.h2gis.H2GIS;

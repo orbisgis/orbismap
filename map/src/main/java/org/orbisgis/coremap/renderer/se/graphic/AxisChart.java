@@ -52,9 +52,8 @@ import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.UomNode;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -62,6 +61,8 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.Uom;
 
 /**
  * {@code AxisChart} references all the supported types of chart that uses axis
@@ -83,7 +84,7 @@ import org.orbisgis.style.IStyleNode;
  * @author Maxence Laurent
  * @todo Implements drawGraphic
  */
-public final class AxisChart extends Graphic implements UomNode, FillNode,
+public final class AxisChart extends Graphic implements IUom, FillNode,
         StrokeNode, TransformNode {
 
         private List<CategoryListener> listeners;
@@ -138,8 +139,8 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
         public Uom getUom() {
                 if (uom != null) {
                         return uom;
-                } else if(getParent() instanceof UomNode){
-                        return ((UomNode)getParent()).getUom();
+                } else if(getParent() instanceof IUom){
+                        return ((IUom)getParent()).getUom();
                 } else {
                         return Uom.PX;
                 }
@@ -341,7 +342,7 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
         }
 
         private double[] getMeasuresInPixel(Map<String,Object> map, MapTransform mt) throws ParameterException {
-                double rLength = Uom.toPixel(axisScale.getAxisLength().getValue(map),
+                double rLength = UomUtils.toPixel(axisScale.getAxisLength().getValue(map),
                         getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 double rMesure = axisScale.getMeasureValue().getValue(map);
 
@@ -443,13 +444,13 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
 
                 double cGap = DEFAULT_GAP_PX;
                 if (categoryGap != null) {
-                        cGap = Uom.toPixel(categoryGap.getValue(map), getUom(), mt.getDpi(),
+                        cGap = UomUtils.toPixel(categoryGap.getValue(map), getUom(), mt.getDpi(),
                                 mt.getScaleDenominator(), null);
                 }
 
                 double cWidth = DEFAULT_WIDTH_PX;
                 if (categoryWidth != null) {
-                        cWidth = Uom.toPixel(categoryWidth.getValue(map), getUom(), mt.getDpi(),
+                        cWidth = UomUtils.toPixel(categoryWidth.getValue(map), getUom(), mt.getDpi(),
                                 mt.getScaleDenominator(), null);
                 }
 
@@ -754,7 +755,7 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
                 double width = AxisChart.DEFAULT_WIDTH_PX;
 
                 if (categoryWidth != null) {
-                        width = Uom.toPixel(categoryWidth.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        width = UomUtils.toPixel(categoryWidth.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 }
                 width += AxisChart.INITIAL_GAP_PX;
 
@@ -776,7 +777,7 @@ public final class AxisChart extends Graphic implements UomNode, FillNode,
                 double width = AxisChart.DEFAULT_WIDTH_PX;
 
                 if (categoryWidth != null) {
-                        width = Uom.toPixel(categoryWidth.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        width = UomUtils.toPixel(categoryWidth.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 }
                 width *= categories.size();
                 width += AxisChart.INITIAL_GAP_PX;

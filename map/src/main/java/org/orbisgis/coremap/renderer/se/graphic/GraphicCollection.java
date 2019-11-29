@@ -44,18 +44,18 @@ import java.util.*;
 import org.slf4j.*;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * This class doesn't exists within XSD. Actually, it the CompositeGraphic element which has been move up
  * It is a set of graphic symbols, as defined in SE.
  * @author Maxence Laurent
  */
-public final class GraphicCollection extends StyleNode implements UomNode {
+public final class GraphicCollection extends StyleNode implements IUom {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphicCollection.class);
     
@@ -288,8 +288,8 @@ public final class GraphicCollection extends StyleNode implements UomNode {
 
     @Override
     public Uom getUom() {
-            if(getParent() instanceof UomNode){
-                    return ((UomNode)getParent()).getUom();
+            if(getParent() instanceof IUom){
+                    return ((IUom)getParent()).getUom();
             } else {
                     return Uom.PX;
             }

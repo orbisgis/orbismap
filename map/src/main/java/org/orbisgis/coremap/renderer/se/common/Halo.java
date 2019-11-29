@@ -49,7 +49,7 @@ import java.util.Map;
 import org.slf4j.*;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
-import org.orbisgis.coremap.renderer.se.UomNode;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.graphic.ViewBox;
@@ -58,7 +58,9 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 
 /**
@@ -66,7 +68,7 @@ import org.orbisgis.style.StyleNode;
  * It is mainly used to improve the readability of text labels on the map.
  * @author Alexis Guéganno
  */
-public final class Halo extends StyleNode implements  UomNode, FillNode {
+public final class Halo extends StyleNode implements  IUom, FillNode {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Halo.class);
         /**
@@ -100,7 +102,7 @@ public final class Halo extends StyleNode implements  UomNode, FillNode {
     @Override
     public Uom getUom() {
         if (uom == null) {
-            return ((UomNode)getParent()).getUom();
+            return ((IUom)getParent()).getUom();
         } else {
             return uom;
         }
@@ -111,10 +113,7 @@ public final class Halo extends StyleNode implements  UomNode, FillNode {
         return uom;
     }
 
-    @Override
-    public void setUom(Uom uom) {
-        this.uom = uom;
-    }
+   
 
     @Override
     public void setFill(Fill fill) {
@@ -157,7 +156,7 @@ public final class Halo extends StyleNode implements  UomNode, FillNode {
      * @throws ParameterException
      */
     public double getHaloRadius(Map<String,Object> map, MapTransform mt) throws ParameterException {
-        return Uom.toPixel(radius.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // TODO 100%
+        return UomUtils.toPixel(radius.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // TODO 100%
     }
 
     /**
@@ -255,6 +254,11 @@ public final class Halo extends StyleNode implements  UomNode, FillNode {
      */
     private Fill getDefaultFill() {
             return new SolidFill(Color.WHITE, 1);
+    }
+
+    @Override
+    public void setUom(org.orbisgis.style.Uom uom) {
+        this.uom = uom;
     }
 
 }

@@ -39,10 +39,10 @@ package org.orbisgis.coremap.renderer.se.transform;
 import java.awt.geom.AffineTransform;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.orbisgis.style.Uom;
 
 /**
  *

@@ -46,13 +46,7 @@ package org.orbisgis.style;
  */
 public enum Uom {
 
-        PX, IN, MM, PT, PERCENT, GM, GFT;
-
-        private static final double PT_IN_INCH = 72.0;
-        private static final double MM_IN_INCH = 25.4;
-        private static final double IN_IN_FOOT = 12;
-        private static final double ONE_THOUSAND = 1000;
-        private static final double ONE_HUNDRED = 100;
+        PX, IN, MM, PT, PERCENT, GM, GFT;      
 
         /**
          * Gets an array containing the string representation of all the units

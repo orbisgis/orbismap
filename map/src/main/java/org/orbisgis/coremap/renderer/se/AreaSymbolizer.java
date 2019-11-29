@@ -46,11 +46,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-
-
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -70,7 +67,7 @@ import org.orbisgis.style.IStyleNode;
  * as a <code>FillNode</code>).
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, StrokeNode {
+public final class AreaSymbolizer extends FeatureSymbolizer implements FillNode, StrokeNode {
 
         private Translate translate;
         private RealParameter perpendicularOffset;
@@ -83,7 +80,7 @@ public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, 
          */
         public AreaSymbolizer() {
                 super();
-                name = "Area Symbolizer";
+                setName("Area Symbolizer");
                 this.setFill(new SolidFill());
                 this.setStroke(new PenStroke());
         }        
@@ -193,7 +190,7 @@ public final class AreaSymbolizer extends VectorSymbolizer implements FillNode, 
                                 if (stroke != null) {
                                         double offset = 0.0;
                                         if (perpendicularOffset != null) {
-                                                offset = Uom.toPixel(perpendicularOffset.getValue(rs, fid),
+                                                offset = UomUtils.toPixel(perpendicularOffset.getValue(rs, fid),
                                                         getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                                         }
                                         stroke.draw(g2, map, shp, selected, mt, offset);

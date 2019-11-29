@@ -38,7 +38,6 @@ package org.orbisgis.coremap.renderer.se.fill;
 
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -53,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.style.IStyleNode;
 
 /**
@@ -185,8 +185,8 @@ public final class GraphicFill extends Fill {
         }
 
         Rectangle2D bounds = graphic.getBounds(map, selected, mt);
-        gX = Uom.toPixel(gX, getUom(), mt.getDpi(), mt.getScaleDenominator(), bounds.getWidth());
-        gY = Uom.toPixel(gY, getUom(), mt.getDpi(), mt.getScaleDenominator(), bounds.getHeight());
+        gX = UomUtils.toPixel(gX, getUom(), mt.getDpi(), mt.getScaleDenominator(), bounds.getWidth());
+        gY = UomUtils.toPixel(gY, getUom(), mt.getDpi(), mt.getScaleDenominator(), bounds.getHeight());
 
         return getPaint(map, selected, mt, graphic, gX, gY, bounds);
     }

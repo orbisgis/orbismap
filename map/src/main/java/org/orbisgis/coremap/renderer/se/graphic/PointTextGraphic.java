@@ -46,13 +46,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.label.PointLabel;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.Uom;
 
 /**
  * A {@code PointTextGraphic} is used to paint a text label using a given translation. It is consequently
@@ -62,7 +63,7 @@ import org.orbisgis.style.IStyleNode;
  * <li>A {@code PointLabel}</li></ul>
  * @author Alexis Guéganno
  */
-public final class PointTextGraphic extends Graphic implements UomNode {
+public final class PointTextGraphic extends Graphic implements IUom {
 
         private Uom uom;
         private PointLabel pointLabel;
@@ -81,8 +82,8 @@ public final class PointTextGraphic extends Graphic implements UomNode {
         public Uom getUom() {
                 if (uom != null) {
                           return uom;
-                } else if(getParent() instanceof UomNode){
-                          return ((UomNode)getParent()).getUom();
+                } else if(getParent() instanceof IUom){
+                          return ((IUom)getParent()).getUom();
                 } else {
                         return Uom.PX;
                 }
@@ -131,10 +132,10 @@ public final class PointTextGraphic extends Graphic implements UomNode {
                 double py = 0;
 
                 if (getX() != null) {
-                        px = Uom.toPixel(getX().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        px = UomUtils.toPixel(getX().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 }
                 if (getY() != null) {
-                        py = Uom.toPixel(getY().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        py = UomUtils.toPixel(getY().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                 }
 
                 Rectangle2D.Double bounds = new Rectangle2D.Double(px - 5, py - 5, 10, 10);

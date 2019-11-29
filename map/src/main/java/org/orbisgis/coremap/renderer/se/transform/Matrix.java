@@ -40,7 +40,7 @@ import java.awt.geom.AffineTransform;
 import java.util.*;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
@@ -48,6 +48,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * Affine Transformation based on RealParameters
@@ -352,8 +353,8 @@ public final class Matrix extends StyleNode implements Transformation {
                         //Uom.toPixel(c.getValue(feat), uom, mt.getDpi(), mt.getScaleDenominator(), null),
                         //Uom.toPixel(d.getValue(feat), uom, mt.getDpi(), mt.getScaleDenominator(), null),
                         d.getValue(map),
-                        Uom.toPixel(e.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), width),
-                        Uom.toPixel(f.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), height));
+                        UomUtils.toPixel(e.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), width),
+                        UomUtils.toPixel(f.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), height));
         }
 
         @Override

@@ -48,16 +48,16 @@ import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.GraphicNode;
-import org.orbisgis.coremap.renderer.se.UomNode;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.common.RelativeOrientation;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 
 /**
  * A {@code GraphicStroke} is used essentially to repeat a a graphic along a line. It is dependant 
@@ -69,7 +69,7 @@ import org.orbisgis.style.IStyleNode;
  * <li>A relative orientation, as defined in {@link RelativeOrientation}.</li></ul>
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class GraphicStroke extends Stroke implements GraphicNode, UomNode {
+public final class GraphicStroke extends Stroke implements GraphicNode, IUom {
 
     public static final double MIN_LENGTH = 1; // In pixel !
 
@@ -168,7 +168,7 @@ public final class GraphicStroke extends Stroke implements GraphicNode, UomNode 
             double lineLength = ShapeHelper.getLineLength(shp);
             Double value = length.getValue(map);
             if (value != null) {
-                naturalLength = Uom.toPixel(value, getUom(), mt.getDpi(), mt.getScaleDenominator(), lineLength);
+                naturalLength = UomUtils.toPixel(value, getUom(), mt.getDpi(), mt.getScaleDenominator(), lineLength);
                 //if (naturalLength <= GraphicStroke.MIN_LENGTH || naturalLength > lineLength) {
                 if (naturalLength < 1e-5 || Double.isInfinite(naturalLength)){
                     return Double.POSITIVE_INFINITY;

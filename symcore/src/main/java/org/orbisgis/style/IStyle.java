@@ -31,7 +31,6 @@ public interface IStyle extends IDescription, IName{
     
            
 
-
     /**
      * Gets the list of {@link IRule} contained in this Style.
      *
@@ -58,5 +57,12 @@ public interface IStyle extends IDescription, IName{
      * @return true if the rule has been deleted
      */
      boolean deleteRule(int index);
+     
+      /**
+     * Moves the ith {@link IRule} to position i+1 in the list of rules.
+     * @param index of the rule
+     * @return
+     */
+     public boolean moveRuleDown(int index);
 
 }

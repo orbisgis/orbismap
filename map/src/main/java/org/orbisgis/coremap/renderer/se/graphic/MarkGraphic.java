@@ -40,7 +40,6 @@ package org.orbisgis.coremap.renderer.se.graphic;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.*;
 import org.orbisgis.coremap.renderer.se.common.Halo;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.common.VariableOnlineResource;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
@@ -62,7 +61,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.Uom;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
@@ -89,7 +91,7 @@ import org.orbisgis.style.IStyleNode;
  * @author Maxence Laurent, Alexis Guéganno
  */
 public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
-        ViewBoxNode, UomNode, TransformNode {
+        ViewBoxNode, IUom, TransformNode {
 
         /**
          * The default size used to build {@code MarkGraphic} instances.
@@ -136,8 +138,8 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     public Uom getUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof UomNode){
-            return ((UomNode)getParent()).getUom();
+        } else if(getParent() instanceof IUom){
+            return ((IUom)getParent()).getUom();
         } else {
             return Uom.PX;
         }
@@ -379,7 +381,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         if (stroke != null) {
             double offset = 0.0;
             if (pOffset != null) {
-                offset = Uom.toPixel(pOffset.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                offset = UomUtils.toPixel(pOffset.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
             }
             stroke.draw(g2, map, atShp, selected, mt, offset);
         }

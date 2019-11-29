@@ -42,11 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  *
@@ -54,7 +54,7 @@ import org.orbisgis.style.StyleNode;
  *
  * @author Maxence Laurent, Alexis Guéganno
  */
-public class Transform extends StyleNode implements UomNode {
+public class Transform extends StyleNode implements IUom {
 
         private Uom uom;
         private AffineTransform consolidated;
@@ -224,13 +224,14 @@ public class Transform extends StyleNode implements UomNode {
         public Uom getUom() {
                 if (uom != null) {
                         return uom;
-                } else if(getParent() instanceof UomNode){
-                        return ((UomNode)getParent()).getUom();
+                } else if(getParent() instanceof IUom){
+                        return ((IUom)getParent()).getUom();
                 } else {
                         return Uom.PX;
                 }
         }
 
+        
         @Override
         public Uom getOwnUom() {
                 return uom;

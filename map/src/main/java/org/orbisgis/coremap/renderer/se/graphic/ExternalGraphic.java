@@ -45,15 +45,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.UomNode;
 import org.orbisgis.coremap.renderer.se.ViewBoxNode;
 import org.orbisgis.coremap.renderer.se.common.Halo;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.Uom;
 
 /**
  * An external graphic is an image such as JPG, PNG, SVG.
@@ -78,7 +78,7 @@ import org.orbisgis.style.IStyleNode;
  * @see MarkGraphic, Graphic, ViewBox
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class ExternalGraphic extends Graphic implements UomNode, TransformNode,
+public final class ExternalGraphic extends Graphic implements IUom, TransformNode,
         ViewBoxNode {
 
     private ExternalGraphicSource source;
@@ -98,8 +98,8 @@ public final class ExternalGraphic extends Graphic implements UomNode, Transform
     public Uom getUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof UomNode){
-            return ((UomNode)getParent()).getUom();
+        } else if(getParent() instanceof IUom){
+            return ((IUom)getParent()).getUom();
         } else {
             return Uom.PX;
         }

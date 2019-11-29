@@ -5,15 +5,6 @@
  */
 package org.orbisgis.coremap.renderer.legend;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import org.orbisgis.coremap.renderer.se.AreaSymbolizer;
-import org.orbisgis.coremap.renderer.se.LineSymbolizer;
-import org.orbisgis.coremap.renderer.se.PointSymbolizer;
-import org.orbisgis.coremap.renderer.se.FeatureRule;
-import org.orbisgis.coremap.renderer.se.Symbolizer;
-import org.orbisgis.coremap.renderer.se.TextSymbolizer;
-
 /**
  *
  * @author ebocher

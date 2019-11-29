@@ -38,15 +38,10 @@ package org.orbisgis.coremap.renderer.se;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.common.Description;
-import org.orbisgis.coremap.renderer.se.graphic.ExternalGraphic;
-import org.orbisgis.coremap.renderer.se.graphic.Graphic;
-import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
-import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
-import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.ISymbolizer;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.IRule;
 
@@ -60,7 +55,7 @@ import org.orbisgis.style.IRule;
  * @author Maxence Laurent
  * @author Erwan Bocher
  */
-public final class FeatureRule  extends StyleNode implements IRule {
+public final class FeatureRule extends StyleNode implements IRule {
 
     /**
      * The name set to every rule, if not set externally.
@@ -71,14 +66,13 @@ public final class FeatureRule  extends StyleNode implements IRule {
     private String where;
     private Double minScaleDenom = null;
     private Double maxScaleDenom = null;
-    private CompositeSymbolizer symbolizer;
+    private ArrayList<ISymbolizer> symbolizers;
 
     /**
      * Create a default, empty Rule, with a default inner (and empty) CompositeSymbolizer.
      */
     public FeatureRule() {
-        symbolizer = new CompositeSymbolizer();
-        symbolizer.setParent(this);
+        symbolizers = new ArrayList<ISymbolizer>();
     }
 
     @Override
@@ -90,47 +84,6 @@ public final class FeatureRule  extends StyleNode implements IRule {
         }
     }
 
-    /**
-     * Build a Rule using a ILayer. This contains a CompositeSymbolizer, populated 
-     * according to the first found geometry in the DataSet  embedded in the ILayer.
-     * That means we'll obtain a <code>LineSymbolizer</code> if this first geometry is of 
-     * dimension 1, a <code>PolygonSymbolizer</code> if it is of dimension 2,
-     * and a <code>PointSymbolizer</code> otherwise.
-     * @param layer The layer that will receive a new default symbolizer.
-     */
-    public FeatureRule(ILayer layer) {
-        this();
-        this.name = "Default Rule";
-        createSymbolizer(layer);
-
-    }
-
-    /**
-     * Short circuit to create a default point symbolizer 
-     * @param layer The layer that will receive a new default symbolizer.
-     */
-    public void createSymbolizer(ILayer layer) {
-        if (layer != null) {
-           symbolizer.addSymbolizer(new PointSymbolizer());                    
-        }
-    }    
-
-    /**
-     * Replace the current inner <code>CompositeSymbolizer</code> with <code>cs</code>
-     * @param cs The new inner {@link CompositeSymbolizer}.
-     */
-    public void setCompositeSymbolizer(CompositeSymbolizer cs) {
-        this.symbolizer = cs;
-        cs.setParent(this);
-    }
-
-    /**
-     * Get the inner <code>CompositeSymbolizer</code>
-     * @return The inner {@link CompositeSymbolizer}.
-     */
-    public CompositeSymbolizer getCompositeSymbolizer() {
-        return symbolizer;
-    }
     
     /**
      * Get the <code>where</code> clause associated to this rule.
@@ -149,51 +102,11 @@ public final class FeatureRule  extends StyleNode implements IRule {
         this.where = where;
     }
 
-    /**
-     * Build a OrderBy clause to be used to optimize SQL queries.
-     * @return The "order by" clause
-     */
-    private String getOrderBy() {
-        for (Symbolizer s : getCompositeSymbolizer().getSymbolizerList()) {
-            if (s instanceof PointSymbolizer) {
-                PointSymbolizer ps = (PointSymbolizer) s;
-                GraphicCollection gc = ps.getGraphicCollection();
-                int i;
-                StringBuilder f = new StringBuilder();
-                for (i = 0; i < gc.getNumGraphics(); i++) {
-                    Graphic g = gc.getGraphic(i);
-                    if (g instanceof MarkGraphic) {
-                        MarkGraphic mark = (MarkGraphic) g;
-                        if (mark.getViewBox() != null) {
-                            FeaturesVisitor fv = new FeaturesVisitor();
-                            mark.getViewBox().acceptVisitor(fv);
-                            f.append(" ");
-                            f.append(fv.getResult());
-                        }
-                    } else if (g instanceof ExternalGraphic) {
-                        ExternalGraphic extG = (ExternalGraphic) g;
-                        if (extG.getViewBox() != null) {
-                            FeaturesVisitor fv = new FeaturesVisitor();
-                            extG.getViewBox().acceptVisitor(fv);
-                            f.append(" ");
-                            f.append(fv.getResult());
-                        }
-                    }
-                    // TODO add others cases !
-                }
 
-                // If view box depends on features => order by 
-                String result = f.toString().trim();
-                if (!result.isEmpty()) {
-                    String[] split = result.split(" ");
-                    return " ORDER BY " + split[0] + " DESC";
-                } else {
-                    return "";
-                }
-            }
-        }
-        return "";
-    }   
+    @Override
+    public  List<ISymbolizer> getSymbolizers() {
+        return symbolizers;
+    }
 
     /**
      * Gets the maximum scale for which this <code>Rule</code> (and the features it is applied on)
@@ -307,9 +220,17 @@ public final class FeatureRule  extends StyleNode implements IRule {
     @Override
     public List<IStyleNode> getChildren() {
             List<IStyleNode> ls = new ArrayList<IStyleNode>();
-            ls.add(getCompositeSymbolizer());
+            ls.addAll(symbolizers);
             return ls;
     }
 
+    @Override
+    public void addSymbolizer(ISymbolizer iSymbolizer) {
+        symbolizers.add(iSymbolizer);
+    }
 
+    @Override
+    public void addSymbolizer(int i, ISymbolizer iSymbolizer) {
+        symbolizers.add(i, iSymbolizer);
+    }
 }

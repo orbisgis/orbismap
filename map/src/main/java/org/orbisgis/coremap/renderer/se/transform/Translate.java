@@ -42,12 +42,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * Represents a translation in an euclidean plane. As it can be represented with
@@ -87,12 +88,12 @@ public class Translate extends StyleNode implements Transformation {
             MapTransform mt, Double width100p, Double height100p) throws ParameterException {
                 double tx = 0.0;
                 if (x != null) {
-                        tx = Uom.toPixel(x.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), width100p);
+                        tx = UomUtils.toPixel(x.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), width100p);
                 }
 
                 double ty = 0.0;
                 if (y != null) {
-                        ty = Uom.toPixel(y.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), height100p);
+                        ty = UomUtils.toPixel(y.getValue(map), uom, mt.getDpi(), mt.getScaleDenominator(), height100p);
                 }
 
                 return AffineTransform.getTranslateInstance(tx, ty);

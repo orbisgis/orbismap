@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.FeatureUtils;
 import org.orbisgis.coremap.renderer.se.graphic.GraphicCollection;
 import org.orbisgis.coremap.renderer.se.graphic.MarkGraphic;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -74,7 +74,7 @@ import org.orbisgis.style.IStyleNode;
  * 
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class PointSymbolizer extends VectorSymbolizer implements GraphicNode {
+public final class PointSymbolizer extends FeatureSymbolizer implements GraphicNode {
     private static final String MODE_VERTEX = "vertex";
     private GraphicCollection graphic;
     private boolean onVertex;
@@ -86,7 +86,7 @@ public final class PointSymbolizer extends VectorSymbolizer implements GraphicNo
      */
     public PointSymbolizer() {
         super();
-        this.name = "Point Symbolizer";
+        setName("Point Symbolizer");
         setGraphicCollection(new GraphicCollection());
         MarkGraphic mark = new MarkGraphic();
         graphic.addGraphic(mark);
@@ -113,14 +113,14 @@ public final class PointSymbolizer extends VectorSymbolizer implements GraphicNo
                 double x,y;
                 Map<String,Object> map = getFeaturesMap(rs, fid);
                 if (onVertex) {
-                    List<Point2D> points = getPoints(rs, fid, mt, the_geom);
+                    List<Point2D> points = FeatureUtils.getPoints(mt, the_geom);
                     for (Point2D pt : points) {
                     x = pt.getX();
                     y = pt.getY();
                     graphic.draw(g2, map, selected, mt, AffineTransform.getTranslateInstance(x, y));
                     }
                 } else {
-                    Point2D pt = getPointShape(rs, fid, mt, the_geom);
+                    Point2D pt = FeatureUtils.getPointShape( mt, the_geom);
 
                     x = pt.getX();
                     y = pt.getY();

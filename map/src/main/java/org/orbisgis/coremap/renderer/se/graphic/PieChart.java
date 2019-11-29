@@ -49,8 +49,7 @@ import java.util.Map;
 
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.UomNode;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.label.StyledText;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -61,6 +60,8 @@ import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.coremap.renderer.se.transform.Transform;
 import org.orbisgis.coremap.renderer.se.visitors.FeaturesVisitor;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.Uom;
 
 /**
  * A PieChart is a way to render statistical informations directly in the map.
@@ -85,7 +86,7 @@ import org.orbisgis.style.IStyleNode;
  * change their display order
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class PieChart extends Graphic implements StrokeNode, UomNode,
+public final class PieChart extends Graphic implements StrokeNode, IUom,
         TransformNode {
 
     private ArrayList<SliceListener> listeners;
@@ -150,8 +151,8 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
     public Uom getUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof UomNode){
-            return ((UomNode)getParent()).getUom();
+        } else if(getParent() instanceof IUom){
+            return ((IUom)getParent()).getUom();
         } else {
             return Uom.PX;
         }
@@ -362,7 +363,7 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
 
         double r = DEFAULT_RADIUS_PX;
         if (radius != null) {
-            r = Uom.toPixel(radius.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+            r = UomUtils.toPixel(radius.getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
         }
 
         Rectangle2D bounds = new Rectangle2D.Double(-r, -r, 2 * r, 2 * r);
@@ -390,14 +391,14 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
         double r = PieChart.DEFAULT_RADIUS_PX; // 30px by default
 
         if (radius != null) {
-            r = Uom.toPixel(this.getRadius().getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // TODO 100%
+            r = UomUtils.toPixel(this.getRadius().getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // TODO 100%
         }
 
         double holeR = 0.0;
 
         Area hole = null;
         if (this.holeRadius != null) {
-            holeR = Uom.toPixel(this.getHoleRadius().getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), r);
+            holeR = UomUtils.toPixel(this.getHoleRadius().getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), r);
             hole = new Area(new Arc2D.Double(-holeR, -holeR, 2 * holeR, 2 * holeR, 0, 360, Arc2D.CHORD));
         }
 
@@ -408,7 +409,7 @@ public final class PieChart extends Graphic implements StrokeNode, UomNode,
             stackedValues[i] = total;
             RealParameter gap = slc.getGap();
             if (gap != null) {
-                gaps[i] = Uom.toPixel(slc.getGap().getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), r);
+                gaps[i] = UomUtils.toPixel(slc.getGap().getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), r);
             } else {
                 gaps[i] = 0.0;
             }

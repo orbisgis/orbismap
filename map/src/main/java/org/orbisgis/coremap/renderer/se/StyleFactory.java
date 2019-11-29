@@ -9,6 +9,7 @@ import java.awt.Color;
 import org.orbisgis.coremap.layerModel.model.ILayer;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
+import org.orbisgis.style.IRule;
 
 /**
  *
@@ -21,10 +22,11 @@ public class StyleFactory {
      * @param layer
      * @return a  <code>Style</code>
      */
-    public static Style createPointSymbolizerStyle(ILayer layer) {
-        Style style = new Style(layer,true);
-        FeatureRule rule = style.getRules().get(0);
-        rule.getCompositeSymbolizer().addSymbolizer(new PointSymbolizer());
+    public static FeatureStyle createPointSymbolizerStyle(ILayer layer) {
+        FeatureStyle style = new FeatureStyle();
+        style.addRule(new FeatureRule());
+        IRule rule = style.getRules().get(0);
+        rule.addSymbolizer(new PointSymbolizer());
         return style;
     }
     
@@ -33,15 +35,15 @@ public class StyleFactory {
      * @param layer
      * @return a  <code>Style</code>
      */
-    public static Style createLineSymbolizerStyle(ILayer layer) {
-        Style style = new Style(layer,true);
-        FeatureRule rule = style.getRules().get(0);
-        rule.getCompositeSymbolizer().getSymbolizerList().remove(0);
+    public static FeatureStyle createLineSymbolizerStyle(ILayer layer) {
+        FeatureStyle style = new FeatureStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         PenStroke ps = new PenStroke();
         ps.setFill(new SolidFill(Color.BLUE));
         lineSymbolizer.setStroke(ps);
-        rule.getCompositeSymbolizer().addSymbolizer(lineSymbolizer);
+        FeatureRule rule = new FeatureRule();
+        rule.addSymbolizer(lineSymbolizer);
+        style.addRule(rule);
         return style;
     }
     

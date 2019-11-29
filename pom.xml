@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>map</module>
-	<module>symcore</module>
+        <module>symcore</module>
     </modules>
 
     <!-- Properties -->

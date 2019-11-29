@@ -46,18 +46,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.coremap.renderer.se.stroke.PenStroke;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * A {@code LineSymbolizer} is used to style a {@code Stroke} along a linear 
  * geometry type (a LineString, for instance). It is dependant upon the same
- * parameters as {@link VectorSymbolizer}, and upon two others :
+ * parameters as {@link FeatureSymbolizer}, and upon two others :
  * <ul><li>PerpendicularOffset : Used to draw lines in parallel to the original
  * geometry</li>
  * <li>Stroke : defines the way to render the line, as described in {@link Stroke}
@@ -66,9 +67,11 @@ import org.orbisgis.style.IStyleNode;
  *
  * @todo add perpendicular offset
  *
- * @author Alexis Guéganno, Maxence Laurent
+ * @author Erwan Bocher, CNRS
+ * @author Alexis Guéganno, CNRS
+ * @author Maxence Laurent, HEIG-VD
  */
-public final class LineSymbolizer extends VectorSymbolizer implements StrokeNode {
+public final class LineSymbolizer extends FeatureSymbolizer implements StrokeNode {
 
         private RealParameter perpendicularOffset;
         private Stroke stroke;
@@ -80,7 +83,7 @@ public final class LineSymbolizer extends VectorSymbolizer implements StrokeNode
          */
         public LineSymbolizer() {
                 super();
-                this.name = "Line Symbolizer";
+                setName("Line Symbolizer");
                 setStroke(new PenStroke());
         }        
 
@@ -134,7 +137,7 @@ public final class LineSymbolizer extends VectorSymbolizer implements StrokeNode
                         Shape shp = mt.getShape(the_geom, true);
                         double offset = 0.0;
                         if (perpendicularOffset != null) {
-                                offset = Uom.toPixel(perpendicularOffset.getValue(rs, fid),
+                                offset = UomUtils.toPixel(perpendicularOffset.getValue(rs, fid),
                                         getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
                         }
 

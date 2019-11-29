@@ -46,9 +46,8 @@ import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.FillNode;
 import org.orbisgis.coremap.renderer.se.StrokeNode;
-import org.orbisgis.coremap.renderer.se.UomNode;
+import org.orbisgis.coremap.renderer.se.Utils.UomUtils;
 import org.orbisgis.coremap.renderer.se.common.Halo;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.fill.Fill;
 import org.orbisgis.coremap.renderer.se.fill.SolidFill;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
@@ -60,7 +59,9 @@ import org.orbisgis.coremap.renderer.se.parameter.string.StringLiteral;
 import org.orbisgis.coremap.renderer.se.parameter.string.StringParameter;
 import org.orbisgis.coremap.renderer.se.stroke.Stroke;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * This class embed all the informations needed to represent text of any kind on a map.
@@ -74,7 +75,7 @@ import org.orbisgis.style.StyleNode;
  * Color and opacity of the text are defined using a <code>Fill</code> instance
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class StyledText extends StyleNode implements UomNode, FillNode, StrokeNode {
+public final class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
     private StringParameter text;
     private StringParameter fontFamily;
     private StringParameter fontWeight;
@@ -126,8 +127,8 @@ public final class StyledText extends StyleNode implements UomNode, FillNode, St
     public Uom getFontUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof UomNode){
-            return ((UomNode)getParent()).getUom();
+        } else if(getParent() instanceof IUom){
+            return ((IUom)getParent()).getUom();
         } else {
                 return Uom.PX;
         }
@@ -136,7 +137,7 @@ public final class StyledText extends StyleNode implements UomNode, FillNode, St
     @Override
     public Uom getUom() {
         // Note: this.uom only affect font size
-        return ((UomNode)getParent()).getUom();
+        return ((IUom)getParent()).getUom();
     }
 
     @Override
@@ -318,7 +319,7 @@ public final class StyledText extends StyleNode implements UomNode, FillNode, St
         //double size = Uom.toPixel(12, Uom.PT, mt.getDpi(), mt.getScaleDenominator(), null);
         double size = 12.0;
         if (fontSize != null) {
-            size = Uom.toPixel(fontSize.getValue(map), getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+            size = UomUtils.toPixel(fontSize.getValue(map), getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
         }
 
         int st = Font.PLAIN;
@@ -553,9 +554,9 @@ public final class StyledText extends StyleNode implements UomNode, FillNode, St
      * @throws ParameterException
      */
     public double getEmInPixel(Map<String, Object> map, MapTransform mt) throws ParameterException {
-        double size = Uom.toPixel(12, Uom.PT, mt.getDpi(), mt.getScaleDenominator(), null);
+        double size = UomUtils.toPixel(12, Uom.PT, mt.getDpi(), mt.getScaleDenominator(), null);
         if (fontSize != null) {
-            size = Uom.toPixel(fontSize.getValue(map), getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+            size = UomUtils.toPixel(fontSize.getValue(map), getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
         }
         return size / 2.0;
     }

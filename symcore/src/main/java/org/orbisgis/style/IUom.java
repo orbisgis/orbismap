@@ -16,34 +16,29 @@
  */
 package org.orbisgis.style;
 
-import java.util.List;
-
 /**
- * Rule is used to organize symbolizing instructions and potentially to define
- * conditions of application of these associated symbolizers (e.g.,
- * feature-property conditions or map scales).
  *
  * @author Erwan Bocher
  */
-public interface IRule extends IName, IStyleNode{
-    
-    
+public interface IUom extends IStyleNode{
     
     /**
-     * Gets the list of {@link ISymbolizer} contained in this Rule.
-     *
-     * @return
-     */
-    List<ISymbolizer> getSymbolizers();
-
-    /**
-     * Adds a <code>ISymbolizer</code> to the list of symbolizer at position
-     * index.
-     *
-     * @param index of the symbolizer
-     * @param symbolizer to add
-     */
-    void addSymbolizer(int index, ISymbolizer symbolizer);
-
-    void addSymbolizer(ISymbolizer symbolizer);
+         * Associates a unit of measure to this style node
+         * @param u 
+         */
+	void setUom(Uom u);
+        /**
+         * Get the Uom associated to this node. It differs from {@code getUom}
+         * in the sense that the method in SymbolizerNode will search for the nearest
+         * Uom int the tree of Nodes, if this node does not contain one, while this
+         * method is expected to return null if it can't find an Uom directly.
+         * @return 
+         * A Uom instance, if this has got one, null otherwise.
+         */
+	Uom getOwnUom();
+        /**
+         * Get the unit of measure associated with the current node.
+         * @return
+         */
+        Uom getUom();
 }

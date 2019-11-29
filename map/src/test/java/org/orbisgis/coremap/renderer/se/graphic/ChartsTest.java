@@ -39,7 +39,7 @@ package org.orbisgis.coremap.renderer.se.graphic;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.orbisgis.coremap.renderer.se.Style;
+import org.orbisgis.coremap.renderer.se.FeatureStyle;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
 
@@ -49,7 +49,7 @@ import org.orbisgis.coremap.renderer.se.parameter.real.RealLiteral;
  */
 public class ChartsTest {
 
-    private Style fts;
+    private FeatureStyle fts;
 
 
     @Test

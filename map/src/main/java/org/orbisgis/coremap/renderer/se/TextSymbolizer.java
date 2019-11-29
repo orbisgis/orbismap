@@ -48,24 +48,24 @@ import java.util.List;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.coremap.renderer.se.common.ShapeHelper;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.label.Label;
 import org.orbisgis.coremap.renderer.se.label.PointLabel;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
 import org.orbisgis.coremap.renderer.se.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * {@code TextSymbolizer} instances are used to style text labels. In addition to
- * the {@link VectorSymbolizer} parameters, it is computed given these arguments :
+ * the {@link FeatureSymbolizer} parameters, it is computed given these arguments :
  * <ul><li>Perpendicular Offset : Transformation according a line parallel to the
  * original geometry</li>
  * <li>A {@link Label} that gathers all the informations needed to print the 
  * text. This element is compulsory.</li></ul>
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class TextSymbolizer extends VectorSymbolizer {
+public final class TextSymbolizer extends FeatureSymbolizer {
 
         private RealParameter perpendicularOffset;
         private Label label;
@@ -79,7 +79,7 @@ public final class TextSymbolizer extends VectorSymbolizer {
          */
         public TextSymbolizer() {
                 super();
-                this.name = "Label";
+                setName("Label");
                 setLabel(new PointLabel());
                 setUom(Uom.MM);
         }

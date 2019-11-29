@@ -40,9 +40,9 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.renderer.se.common.Uom;
 import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.Uom;
 
 /**
  * Each implementation represent an affine transformation base on RealParameter.
