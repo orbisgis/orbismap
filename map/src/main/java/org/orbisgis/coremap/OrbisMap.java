@@ -5,17 +5,18 @@
  */
 package org.orbisgis.coremap;
 
+import java.io.File;
 import org.orbisgis.coremap.renderer.MapRenderer;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import org.orbisgis.coremap.layerModel.Layer;
-import org.orbisgis.coremap.layerModel.LayerException;
-import org.orbisgis.coremap.renderer.se.SeExceptions;
-import org.orbisgis.coremap.renderer.se.StyleFactory;
-import org.orbisgis.datamanager.h2gis.H2GIS;
-import org.orbisgis.datamanagerapi.dataset.ISpatialTable;
+import org.orbisgis.coremap.layerModel.StyledLayer;
+import org.orbisgis.style.SeExceptions;
+import org.orbisgis.style.StyleFactory;
+import org.orbisgis.map.api.LayerException;
+import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS;
 import org.osgi.service.jdbc.DataSourceFactory;
 
 /**
@@ -34,15 +35,15 @@ public class OrbisMap {
     
    
 
-    private static void runISpatialRenderer() throws LayerException {
+    private static void runISpatialRenderer() throws LayerException, SQLException {
    //Data
         String inputFile = "/home/ebocher/Autres/data/jgb/landcover2000.shp";
         inputFile ="/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
         inputFile = "/home/ebocher/Autres/data/admin/communes.shp";
-        inputFile="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";    
+        //inputFile="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";    
         //inputFile = "/home/ebocher/Autres/data/admin/cantons.shp";
         
-       String stylePath ="/home/ebocher/Autres/codes/orbismap/map/src/test/resources/org/orbisgis/coremap/renderer/se/symbol_prop_canton_interpol_sqrt.se";
+        String stylePath ="/home/ebocher/Autres/codes/orbismap/map/src/test/resources/org/orbisgis/coremap/renderer/se/symbol_prop_canton_interpol_sqrt.se";
         
         //stylePath ="/tmp/routes.se";
         
@@ -51,11 +52,14 @@ public class OrbisMap {
         H2GIS h2GIS = H2GIS.open(map);
         
         long draw = System.currentTimeMillis();
-        //ISpatialTable spatialTable = (ISpatialTable) h2GIS.load(new File(inputFile), "LANDCOVER");
+        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "LANDCOVER", true);
 
-        ISpatialTable spatialTable = h2GIS.getSpatialTable("LANDCOVER");
-        Layer layer = new Layer(spatialTable);
-        layer.setStyle(StyleFactory.createLineSymbolizerStyle(layer));
+        //h2GIS.execute("create spatial index on LANDCOVER(THE_GEOM)");
+        //ISpatialTable spatialTable = h2GIS.getSpatialTable("LANDCOVER");
+        StyledLayer layer = new StyledLayer(spatialTable);
+        layer.setStyle(StyleFactory.createAreaSymbolizerStyle());
+        //layer.setStyle(StyleFactory.createAreaSymbolizerStyle(layer));
+        
         //layer.setStyle(new Style(layer,stylePath));
         
         //ISpatialTable spatialTable2 = (ISpatialTable) h2GIS.link(new File(inputFile2), "LANDCOVER2", true);

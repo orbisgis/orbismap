@@ -57,11 +57,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.orbisgis.coremap.layerModel.MapEnvelope;
+import org.orbisgis.map.api.IMapTransform;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapTransform implements PointTransformation {
+public class MapTransform implements PointTransformation,IMapTransform<MapEnvelope> {
         private static final Logger LOGGER = LoggerFactory.getLogger(MapTransform.class);
         private static RenderingHints screenHints;
         private boolean adjustExtent;
@@ -69,7 +71,7 @@ public class MapTransform implements PointTransformation {
         private Envelope adjustedExtent = null;
         private AffineTransform trans = new AffineTransform();
         private AffineTransform transInv = new AffineTransform();
-        private Envelope extent;
+        private MapEnvelope extent;
         private ArrayList<TransformListener> listeners = new ArrayList<TransformListener>();
         private ShapeWriter converter;
         private double dpi;
@@ -127,10 +129,8 @@ public class MapTransform implements PointTransformation {
             screenHints.put(renderingKey, renderingValue);
         }
 
-        /**
-         * Gets the current {@code RenderingHints}
-         * @return the current {@link RenderingHints}
-         */
+        
+        @Override
         public RenderingHints getRenderingHints() {
                 return screenHints;
         }
@@ -144,9 +144,8 @@ public class MapTransform implements PointTransformation {
                 return image;
         }
 
-        /**
-         * @return The currently configured dot-per-inch measure.
-         */
+        
+        @Override
         public double getDpi() {
                 return dpi;
         }
@@ -262,7 +261,8 @@ public class MapTransform implements PointTransformation {
          *
          * @param newExtent The new base extent.
          */
-        public void setExtent(Envelope newExtent) {
+        @Override
+        public void setExtent(MapEnvelope newExtent) {
                 if ((newExtent != null)
                         && ((newExtent.getWidth() == 0) || (newExtent.getHeight() == 0))) {
                         newExtent.expandBy(10);
@@ -309,11 +309,8 @@ public class MapTransform implements PointTransformation {
         
         
 
-        /**
-         * Gets this transformation
-         *
-         * @return
-         */
+        
+        @Override
         public AffineTransform getAffineTransform() {
                 return trans;
         }
@@ -323,7 +320,7 @@ public class MapTransform implements PointTransformation {
          *
          * @return
          */
-        public Envelope getExtent() {
+        public MapEnvelope getExtent() {
                 return extent;
         }
 
@@ -389,7 +386,7 @@ public class MapTransform implements PointTransformation {
                         double expandFactor = (denominator/currentScale);
                         Envelope nextScaleEnvelope = new Envelope(center);
                         nextScaleEnvelope.expandBy(expandFactor*getExtent().getWidth()/2.,expandFactor*getExtent().getHeight()/2.);
-                        setExtent(nextScaleEnvelope);
+                        setExtent(new MapEnvelope(nextScaleEnvelope));
                 }
         }
         /**
@@ -400,13 +397,8 @@ public class MapTransform implements PointTransformation {
                 double metersByPixel = 0.0254 / dpi;
                 return getWidth() * metersByPixel;
         }
-        /**
-         * Gets the scale denominator. If the scale is 1:1000 this method returns
-         * 1000. The scale is not absolutely precise and errors of 2% have been
-         * measured.
-         *
-         * @return
-         */
+        
+        @Override
         public double getScaleDenominator() {
                 if (adjustedExtent.isNull()) {
                         return 0;

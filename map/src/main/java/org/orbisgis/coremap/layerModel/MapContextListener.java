@@ -36,7 +36,7 @@
  */
 package org.orbisgis.coremap.layerModel;
 
-import org.orbisgis.coremap.layerModel.model.IMapContext;
+import org.orbisgis.map.api.IMapContext;
 
 
 public interface MapContextListener {

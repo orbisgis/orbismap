@@ -45,8 +45,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.h2gis.utilities.TableLocation;
-import org.orbisgis.coremap.renderer.se.parameter.ParameterException;
-import org.orbisgis.coremap.renderer.se.parameter.real.RealParameter;
+import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.parameter.real.RealParameter;
 
 /**
  * Some methods used for classification...

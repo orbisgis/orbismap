@@ -90,11 +90,4 @@ public interface LayerListener {
 	 */
 	void layerMoved(LayerCollectionEvent e);
 
-	/**
-	 * The row selection of the layer has changed
-	 * 
-	 * @param e
-	 */
-	void selectionChanged(SelectionEvent e);
-
 }

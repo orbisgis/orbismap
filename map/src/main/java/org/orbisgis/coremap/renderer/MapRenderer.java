@@ -5,6 +5,7 @@
  */
 package org.orbisgis.coremap.renderer;
 
+import org.orbisgis.map.api.IRenderer;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,12 +17,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import org.locationtech.jts.geom.Envelope;
-import org.orbisgis.coremap.layerModel.LayerException;
 import org.orbisgis.coremap.layerModel.MapContext;
-import org.orbisgis.coremap.layerModel.model.ILayer;
+import org.orbisgis.coremap.layerModel.MapEnvelope;
+import org.orbisgis.map.api.ILayer;
 import org.orbisgis.coremap.map.MapTransform;
-import org.orbisgis.coremap.utils.progress.IProgressMonitor;
 import org.orbisgis.coremap.utils.progress.NullProgressMonitor;
+import org.orbisgis.map.api.LayerException;
 
 /**
  *
@@ -33,7 +34,6 @@ public class MapRenderer implements IRenderer{
     int height = 800;
     private MapContext mc;
     private MapTransform mt;
-    private IProgressMonitor pm;
 
     public MapRenderer() {
         this(800, 800);
@@ -49,36 +49,33 @@ public class MapRenderer implements IRenderer{
         mc = new MapContext();
         mt = new MapTransform();
     }
-
-    public IProgressMonitor getProgressMonitor () {
-        return pm;
-    }
-
-    public void setProgressMonitor (IProgressMonitor pm) {
-        this.pm = pm;
-    }  
     
-    public boolean addLayer(ILayer layer) throws LayerException {
-        return mc.getLayerModel().addLayer(layer);
+    public void addLayer(ILayer layer) throws LayerException {
+         mc.add(layer);
     }
 
-    public boolean removeLayer(ILayer layer) throws LayerException {
-        return mc.getLayerModel().removeLayer(layer);
+    public void removeLayer(ILayer layer) throws LayerException {
+         mc.remove(layer);
+    }
+    
+    void setExtend(Envelope envelope){
+        mt.setExtent(new MapEnvelope(envelope));
+        mt.resizeImage(width, height);
     }
 
     /**
      * Draw the map
-     * @throws org.orbisgis.coremap.layerModel.LayerException
+     * @throws org.orbisgis.map.api.LayerException
      */
     @Override
     public void draw() throws LayerException{
         if(mt.getAdjustedExtent()==null){
-            mt.setExtent(mc.getLayerModel().getEnvelope());       
+            mt.setExtent((MapEnvelope) mc.getLayerModel().getEnvelope());       
             mt.resizeImage(width, height);
         }
         BufferedImage image = mt.getImage();
         Graphics2D g2 = image.createGraphics();    
-        mc.getLayerModel().draw(g2, mt, getProgressMonitor()==null? new NullProgressMonitor():pm);        
+        mc.getLayerModel().draw(g2, mt, new NullProgressMonitor());        
     }
 
     /**
@@ -159,7 +156,7 @@ public class MapRenderer implements IRenderer{
         });
     }
 
-    public void setEnvelope(Envelope envelope) {
+    public void setEnvelope(MapEnvelope envelope) {
         mt.setExtent(envelope);
         mt.resizeImage(width, height);
     }

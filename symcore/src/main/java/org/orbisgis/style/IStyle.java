@@ -19,15 +19,16 @@ package org.orbisgis.style;
 import java.util.List;
 
 /**
- * This class is the root concept of the Symbology Conceptual Core Model. This
- * class organizes the rules of symbolizing instructions to be applied by a
- * rendering engine on a layer of geographic features (e.g., vector based
- * spatial data or raster data). As an abstract class, it is designed to be
- * extended (e.g., the FeatureTypeStyle extension for vector data).
+ * This class is the root concept of the Symbology Conceptual Core Model.This
+ class organizes the rules of symbolizing instructions to be applied by a
+ rendering engine on a layer of geographic features (e.g., vector based
+ spatial data or raster data). As an abstract class, it is designed to be
+ extended (e.g., the FeatureTypeStyle extension for vector data).
  *
  * @author Erwan Bocher
+ * @param <T>
  */
-public interface IStyle extends IDescription, IName{
+public interface IStyle<T extends IRule> extends IDescription, IName{
     
            
 
@@ -36,20 +37,20 @@ public interface IStyle extends IDescription, IName{
      *
      * @return
      */
-    List<IRule> getRules();  
+    List<T> getRules();  
     
     /**
      * Add a {@link IRule} to this {@code IStyle}.
      * @param rule to add
      */
-    void addRule(IRule rule);
+    void addRule(T rule);
     
     /**
      * Add a {@link IRule} to this {@code IStyle} at position {@code index}.
      * @param index of the rule
      * @param rule to add
      */
-     void addRule(int index, IRule rule);
+     void addRule(int index, T rule);
      
      /**
      * Delete the {@link IRule} from this {@code IStyle}.

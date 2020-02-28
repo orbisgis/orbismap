@@ -24,17 +24,17 @@ import java.util.List;
  * feature-property conditions or map scales).
  *
  * @author Erwan Bocher
+ * @param <T>
  */
-public interface IRule extends IName, IStyleNode{
-    
-    
+public interface IRule<T extends ISymbolizer> extends IName, IStyleNode{
+        
     
     /**
      * Gets the list of {@link ISymbolizer} contained in this Rule.
      *
      * @return
      */
-    List<ISymbolizer> getSymbolizers();
+    List<T> getSymbolizers();
 
     /**
      * Adds a <code>ISymbolizer</code> to the list of symbolizer at position
@@ -43,7 +43,7 @@ public interface IRule extends IName, IStyleNode{
      * @param index of the symbolizer
      * @param symbolizer to add
      */
-    void addSymbolizer(int index, ISymbolizer symbolizer);
+    void addSymbolizer(int index, T symbolizer);
 
-    void addSymbolizer(ISymbolizer symbolizer);
+    void addSymbolizer(T symbolizer);
 }

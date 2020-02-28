@@ -37,6 +37,7 @@
 package org.orbisgis.coremap.utils.progress;
 
 import java.beans.PropertyChangeListener;
+import org.orbisgis.map.api.IProgressMonitor;
 
 /**
  * Empty ProgressMonitor
@@ -47,6 +48,7 @@ import java.beans.PropertyChangeListener;
  * @author Antoine Gourlay <antoine@gourlay.fr>
  */
 public class NullProgressMonitor implements IProgressMonitor {
+    
     @Override
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
     }

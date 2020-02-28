@@ -40,5 +40,7 @@ public interface ISymbolizer extends IUom, IName, IStyleNode {
      * @param level
      */
     void setLevel(int level);
+    
+    
 
 }

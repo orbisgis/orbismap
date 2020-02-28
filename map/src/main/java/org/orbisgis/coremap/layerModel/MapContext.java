@@ -33,11 +33,12 @@
  */
 package org.orbisgis.coremap.layerModel;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
-import org.cts.crs.CoordinateReferenceSystem;
+import java.beans.PropertyChangeSupport;
+import org.locationtech.jts.geom.Envelope;
 import org.slf4j.*;
-import org.orbisgis.coremap.layerModel.model.ILayer;
+import org.orbisgis.map.api.ILayer;
+import org.orbisgis.map.api.IMapContext;
+import org.orbisgis.map.api.LayerException;
 
 /**
  * Class that contains the status of the Map .
@@ -45,49 +46,46 @@ import org.orbisgis.coremap.layerModel.model.ILayer;
  *
  *
  */
-public final class MapContext extends BeanMapContext {
+public final class MapContext implements IMapContext<Description, MapEnvelope> {
+
+    public static final String PROP_BOUNDINGBOX = "boundingBox";
+    public static final String PROP_SELECTEDLAYERS = "selectedLayers";
+    public static final String PROP_SELECTEDSTYLES = "selectedStyles";
+    public static final String PROP_ACTIVELAYER = "activeLayer";
+    public static final String PROP_LAYERMODEL = "layerModel";
+    public static final String PROP_COORDINATEREFERENCESYSTEM = "coordinateReferenceSystem";
+    public static final String PROP_DESCRIPTION = "description";
+    public static final String PROP_LOCATION = "location";
+    //Listener container
+    protected transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapContext.class);
-    private ArrayList<MapContextListener> listeners = new ArrayList<MapContextListener>();
-    
+
     private long idTime;
+
+    protected Description description = new Description();
+    private ILayer layerModel;
+    protected MapEnvelope boundingBox = null;
+
+    protected int epsg_code = 0;
 
     /**
      * Default constructor
      */
     public MapContext() {
-        setRootLayer(createLayerCollection("root"));
+        setRootLayer(new LayerCollection("root"));
         idTime = System.currentTimeMillis();
     }
 
-
-    @Override
-    public ILayer createLayerCollection(String layerName) {
-        return new LayerCollection(layerName);
-    }
-
     private void setRootLayer(ILayer newRoot) {
-        super.setLayerModel(newRoot);
-    }
-
-    @Override
-    protected void setLayerModel(ILayer newRoot) {
-        setRootLayer(newRoot);
-    }
-
-    @Override
-    public void addMapContextListener(MapContextListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void removeMapContextListener(MapContextListener listener) {
-        listeners.remove(listener);
+        ILayer oldLayerModel = this.layerModel;
+        this.layerModel = newRoot;
+        propertyChangeSupport.firePropertyChange(PROP_LAYERMODEL, oldLayerModel, layerModel);
     }
 
     @Override
     public ILayer getLayerModel() {
-        return super.getLayerModel();
+        return layerModel;
     }
 
     @Override
@@ -96,83 +94,67 @@ public final class MapContext extends BeanMapContext {
     }
 
     @Override
-    public ILayer[] getLayers() {
-        return getLayerModel().getLayersRecursively();
+    public void add(ILayer layer) throws LayerException {
+         getLayerModel().add(layer);
     }
 
     @Override
-    public ILayer[] getSelectedLayers() {
-        
-        return super.getSelectedLayers();
+    public void remove(ILayer layer) {
+         getLayerModel().remove(layer);
     }
 
     @Override
-    public void setSelectedLayers(ILayer[] selectedLayers) {
-        ArrayList<ILayer> filtered = new ArrayList<ILayer>();
-        for (ILayer layer : selectedLayers) {
-            if (layerModel.getLayerByName(layer.getName()) != null) {
-                filtered.add(layer);
-            }
+    public Description getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(Description description) {
+        Description oldDescription = this.description;
+        this.description = description;
+        propertyChangeSupport.firePropertyChange(PROP_DESCRIPTION, oldDescription, description);
+    }
+
+    @Override
+    public String getTitle() {
+        return description.getDefaultTitle();
+    }
+
+    @Override
+    public MapEnvelope getBoundingBox() {
+        return boundingBox;
+    }
+
+    @Override
+    public void setBoundingBox(MapEnvelope bBox) {
+        if ((bBox == null && boundingBox != null)
+                || (bBox != null && !bBox.equals(this.boundingBox))) {
+            Envelope oldBoundingBox = this.boundingBox;
+            this.boundingBox = bBox;
+            propertyChangeSupport.firePropertyChange(PROP_BOUNDINGBOX, oldBoundingBox, bBox);
         }
-        super.setSelectedLayers(filtered.toArray(new ILayer[filtered.size()]));
+    }
 
-        //DEPRECATED LISTENERS
-        listeners.forEach((listener) -> {
-            listener.layerSelectionChanged(this);
-        });
+    /**
+     * Get the value of the EPSG code
+     *
+     * @return the value of the EPSG code
+     */
+    public int getCoordinateReferenceSystem() {
+        return epsg_code;
+    }
+
+    /**
+     * Set the value of the EPSG code
+     *
+     * @param epsg new value of the EPSG code
+     */
+    public void setCoordinateReferenceSystem(int epsg) {
+        int oldEPSG_code = this.epsg_code;
+        this.epsg_code = oldEPSG_code;
+        propertyChangeSupport.firePropertyChange(PROP_COORDINATEREFERENCESYSTEM, oldEPSG_code, epsg);
     }
 
     
-    @Override
-    public boolean isLayerModelSpatial() {
-        ILayer[] layers = getLayers();
-        for (ILayer l : layers) {
-            if (!l.acceptsChilds()) {
-                return true;
-            }
-        }
-        return false;
-    }  
 
-    
-
-    @Override
-    public ILayer getActiveLayer() {
-        return activeLayer;
-    }
-
-    @Override
-    public void setActiveLayer(ILayer activeLayer) {
-        ILayer lastActive = this.activeLayer;
-        this.activeLayer = activeLayer;
-
-        propertyChangeSupport.firePropertyChange(PROP_ACTIVELAYER, lastActive, activeLayer);
-    }
-
-
-    @Override
-    public void addLayer(ILayer layer) {
-        try {
-            getLayerModel().addLayer(layer);
-        } catch (LayerException ex) {
-            java.util.logging.Logger.getLogger(MapContext.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    @Override
-    public boolean removeLayer(ILayer layer) {
-         try {
-            return getLayerModel().removeLayer(layer);         
-         } catch (LayerException ex) {
-            java.util.logging.Logger.getLogger(MapContext.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         return false;
-    }
-
-    @Override
-    public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-        
 }

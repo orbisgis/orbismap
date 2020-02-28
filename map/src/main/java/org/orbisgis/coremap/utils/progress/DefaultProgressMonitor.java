@@ -37,6 +37,7 @@
 package org.orbisgis.coremap.utils.progress;
 
 import java.beans.PropertyChangeListener;
+import org.orbisgis.map.api.IProgressMonitor;
 
 /**
  * Default implementation of an ProgressMonitor.

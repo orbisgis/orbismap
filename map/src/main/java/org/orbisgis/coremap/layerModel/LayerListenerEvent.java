@@ -36,7 +36,7 @@
  */
 package org.orbisgis.coremap.layerModel;
 
-import org.orbisgis.coremap.layerModel.model.ILayer;
+import org.orbisgis.map.api.ILayer;
 
 public class LayerListenerEvent {
 	private ILayer affectedLayer;
