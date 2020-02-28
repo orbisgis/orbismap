@@ -39,7 +39,7 @@ public class OrbisMap {
    //Data
         String inputFile = "/home/ebocher/Autres/data/jgb/landcover2000.shp";
         inputFile ="/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
-        inputFile = "/home/ebocher/Autres/data/admin/communes.shp";
+        //inputFile = "/home/ebocher/Autres/data/admin/communes.shp";
         //inputFile="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";    
         //inputFile = "/home/ebocher/Autres/data/admin/cantons.shp";
         
@@ -49,15 +49,16 @@ public class OrbisMap {
         
         Map<String, String> map = new HashMap<>();
         map.put(DataSourceFactory.JDBC_DATABASE_NAME, "./target/" + OrbisMap.class.getName());
-        H2GIS h2GIS = H2GIS.open(map);
-        
+        H2GIS h2GIS = H2GIS.open(map);        
         long draw = System.currentTimeMillis();
         ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "LANDCOVER", true);
-
+        
+        
         //h2GIS.execute("create spatial index on LANDCOVER(THE_GEOM)");
         //ISpatialTable spatialTable = h2GIS.getSpatialTable("LANDCOVER");
         StyledLayer layer = new StyledLayer(spatialTable);
         layer.setStyle(StyleFactory.createAreaSymbolizerStyle());
+        //layer.setStyle(StyleFactory.createLineSymbolizerStyle());
         //layer.setStyle(StyleFactory.createAreaSymbolizerStyle(layer));
         
         //layer.setStyle(new Style(layer,stylePath));

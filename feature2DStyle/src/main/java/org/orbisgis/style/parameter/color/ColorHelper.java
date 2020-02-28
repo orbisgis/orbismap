@@ -37,6 +37,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  *
@@ -265,5 +266,9 @@ public final class ColorHelper {
         int g = (int) (rndGenerator.nextFloat() * 255);
         int b = (int) (rndGenerator.nextFloat() * 255);
         return new Color(r, g, b);
+    }
+    
+    public static ExpressionParameter toExpressionParameter(Color color){
+        return new ExpressionParameter("'"+toHex(color)+"'");
     }
 }

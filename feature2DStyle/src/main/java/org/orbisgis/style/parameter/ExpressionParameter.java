@@ -13,6 +13,18 @@ public class ExpressionParameter  extends StyleNode implements IParameterValue, 
     public ExpressionParameter(String expression){
         this.expression =expression;
     }
+    
+    public ExpressionParameter(double expression){
+        this.expression =String.valueOf(expression);
+    }
+    
+    public ExpressionParameter(int expression) {
+        this.expression = String.valueOf(expression);
+    }
+    
+    public ExpressionParameter(boolean expression) {
+        this.expression = String.valueOf(expression);
+    }
 
     public String getExpression() {
         return expression;

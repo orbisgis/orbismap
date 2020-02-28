@@ -63,6 +63,7 @@ import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.color.ColorHelper;
 import org.orbisgis.style.parameter.color.ColorParameter;
 
 /**
@@ -116,7 +117,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
 
         SolidFill f = new SolidFill();
         f.setOpacity(new ExpressionParameter("1.0"));
-        f.setColor(new ColorParameter(Color.black));
+        f.setColor(new ExpressionParameter(ColorHelper.toHex(Color.black)));
 
         this.setFill(f);
     }    

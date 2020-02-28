@@ -42,10 +42,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.color.ColorParameter;
 import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.color.ColorHelper;
 
 /**
  * A solid fill fills a shape with a solid color (+opacity)
@@ -54,7 +54,7 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public final class SolidFill extends Fill {
 
-    private ColorParameter color;
+    private ExpressionParameter color;
     private ExpressionParameter opacity;
 
     /**
@@ -75,7 +75,7 @@ public final class SolidFill extends Fill {
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(new ColorParameter(), new ExpressionParameter("-1"));
+        this(ColorHelper.toExpressionParameter(ColorHelper.getRandomColor()), new ExpressionParameter("-1"));
     }
 
     /**
@@ -84,7 +84,7 @@ public final class SolidFill extends Fill {
      * @param c
      */
     public SolidFill(Color c) {
-        this(new ColorParameter(c), new ExpressionParameter("-1"));
+        this(ColorHelper.toExpressionParameter(c), new ExpressionParameter("-1"));
     }
 
     /**
@@ -94,7 +94,7 @@ public final class SolidFill extends Fill {
      * @param opacity
      */
     public SolidFill(Color c, double opacity) {
-        this(new ColorParameter(c), new ExpressionParameter(String.valueOf(opacity)));
+        this(ColorHelper.toExpressionParameter(c), new ExpressionParameter(String.valueOf(opacity)));
     }
 
     /**
@@ -103,7 +103,7 @@ public final class SolidFill extends Fill {
      * @param c
      * @param opacity
      */
-    public SolidFill(ColorParameter c, ExpressionParameter opacity) {
+    public SolidFill(ExpressionParameter c, ExpressionParameter opacity) {
         this.setColor(c);
         this.setOpacity(opacity);
     }
@@ -113,7 +113,7 @@ public final class SolidFill extends Fill {
      *
      * @param color
      */
-    public void setColor(ColorParameter color) {
+    public void setColor(ExpressionParameter color) {
         this.color = color;
         if (this.color != null) {
             this.color.setParent(this);
@@ -125,7 +125,7 @@ public final class SolidFill extends Fill {
      *
      * @return
      */
-    public ColorParameter getColor() {
+    public ExpressionParameter getColor() {
         return color;
     }
 
@@ -146,7 +146,7 @@ public final class SolidFill extends Fill {
      */
     public ExpressionParameter getOpacity() {
         return opacity;
-    }    
+    }
 
     @Override
     public String toString() {

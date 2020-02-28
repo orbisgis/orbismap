@@ -54,6 +54,7 @@ import org.orbisgis.style.parameter.string.StringLiteral;
 import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * Basic stroke for linear features. It is designed according to :
@@ -72,7 +73,7 @@ import org.orbisgis.style.IStyleNode;
  */
 public final class PenStroke extends Stroke implements FillNode {
 
-    private static final double DEFAULT_WIDTH_PX = 1.0;
+    public static final double DEFAULT_WIDTH_PX = 1.0;
     public static final double DEFAULT_WIDTH = .25;
     /**
      * The cap used by default. Value is {@code LineCap.BUTT}.
@@ -83,7 +84,7 @@ public final class PenStroke extends Stroke implements FillNode {
      */
     public static final LineJoin DEFAULT_JOIN = LineJoin.MITRE;
     private Fill fill;
-    private RealParameter width;
+    private ExpressionParameter width;
     private LineJoin lineJoin;
     private LineCap lineCap;
     private StringParameter dashArray;
@@ -113,7 +114,7 @@ public final class PenStroke extends Stroke implements FillNode {
     public PenStroke() {
         super();
         setFill(getDefaultFill());
-        setWidth(new RealLiteral(DEFAULT_WIDTH));
+        setWidth(new ExpressionParameter(DEFAULT_WIDTH));
         setUom(null);
         setDashArray(new StringLiteral(""));
         setDashOffset(new RealLiteral(0));
@@ -242,10 +243,9 @@ public final class PenStroke extends Stroke implements FillNode {
      * Set the width used to draw the lines with this {@code PenStroke}.
      * @param width The new width. If null, will be replaced with {@link PenStroke#DEFAULT_WIDTH}, as specified in SE 2.0.
      */
-    public void setWidth(RealParameter width) {
-        this.width = width == null ? new RealLiteral(DEFAULT_WIDTH) : width;
+    public void setWidth(ExpressionParameter width) {
+        this.width = width == null ? new ExpressionParameter(DEFAULT_WIDTH) : width;
         if (width != null) {
-            width.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             width.setParent(this);
         }
     }
@@ -254,7 +254,7 @@ public final class PenStroke extends Stroke implements FillNode {
      * Gets the width used to draw the lines with this PenStroke.
      * @return 
      */
-    public RealParameter getWidth() {
+    public ExpressionParameter getWidth() {
         return this.width;
     }
 
@@ -298,108 +298,7 @@ public final class PenStroke extends Stroke implements FillNode {
         this.dashArray = dashArray == null ? new StringLiteral("") : dashArray;
         this.dashArray.setParent(this);
     }
-
-    private BasicStroke createBasicStroke(Map<String,Object> map,
-            Shape shp, IMapTransform mt, Double v100p, boolean useDash) throws ParameterException {
-
-        int cap;
-        if (this.lineCap == null) {
-            cap = BasicStroke.CAP_BUTT;
-        } else {
-            switch (this.lineCap) {
-                case ROUND:
-                    cap = BasicStroke.CAP_ROUND;
-                    break;
-                case SQUARE:
-                    cap = BasicStroke.CAP_SQUARE;
-                    break;
-                default:
-                case BUTT:
-                    cap = BasicStroke.CAP_BUTT;
-                    break;
-            }
-        }
-
-        int join;
-        if (this.lineJoin == null) {
-            join = BasicStroke.JOIN_ROUND;
-        } else {
-            switch (this.lineJoin) {
-                case BEVEL:
-                    join = BasicStroke.JOIN_BEVEL;
-                    break;
-                case MITRE:
-                    join = BasicStroke.JOIN_MITER;
-                    break;
-                case ROUND:
-                default:
-                    join = BasicStroke.JOIN_ROUND;
-                    break;
-            }
-        }
-
-        double w = DEFAULT_WIDTH_PX;
-
-        if (width != null) {
-            w = width.getValue(map);
-            w = UomUtils.toPixel(w, getUom(), mt.getDpi(), mt.getScaleDenominator(), null); // 100% based on view box height or width ? TODO
-        }
-
-
-        if (useDash && this.dashArray != null && !this.dashArray.getValue(map).isEmpty()) {
-
-            double dashO = 0.0;
-            double[] dashA;
-
-            String sDash = this.dashArray.getValue(map);
-            String[] splitedDash = sDash.split(" ");
-            int dashSize = splitedDash.length;
-            dashA = new double[dashSize];
-            for (int i = 0; i < dashSize; i++) {
-                dashA[i] = UomUtils.toPixel(Double.parseDouble(splitedDash[i]), getUom(),
-                        mt.getDpi(), mt.getScaleDenominator(), v100p);
-            }
-
-            if (this.dashOffset != null) {
-                dashO = UomUtils.toPixel(this.dashOffset.getValue(map), getUom(),
-                        mt.getDpi(), mt.getScaleDenominator(), v100p);
-            }
-
-            if (this.isLengthRapport()) {
-                scaleDashArrayLength(dashA, shp);
-            }
-
-            float[] dashes = new float[dashA.length];
-            int dashesSize = dashes.length;
-            for (int i = 0; i < dashesSize; i++) {
-                dashes[i] = (float) dashA[i];
-                if(dashes[i] < 0){
-                        throw new IllegalArgumentException("Dash array must be made "
-                                + "of positive numbers separated with spaces.");
-                }
-            }
-
-
-            return new BasicStroke((float) w, cap, join, 10.0f, dashes, (float) dashO);
-        } else {
-            return new BasicStroke((float) w, cap, join);
-        }
-    }
-
-    /**
-     * Get an AWT {@code BasicStroke} that is representative of this {@code 
-     * PenStroke}
-     * @param map
-     * @param mt
-     * @param v100p
-     * @return
-     * @throws ParameterException
-     * @throws IllegalArgumentException If the embedded dash pattern is invalid
-     * (eg. if it contains negative numbers).
-     */
-    public BasicStroke getBasicStroke(Map<String,Object> map, IMapTransform mt, Double v100p) throws ParameterException {
-        return this.createBasicStroke(map, null, mt, v100p, true);
-    }
+   
 
     private void scaleDashArrayLength(double[] dashes, Shape shp) {
         if (shp == null) {
@@ -435,118 +334,6 @@ public final class PenStroke extends Stroke implements FillNode {
              IMapTransform mt, double offset)
             throws ParameterException, IOException {
 
-
-        if (this.fill != null && width.getValue(map) > 0) {
-
-            List<Shape> shapes;
-            // if not using offset rapport, compute perpendicular offset first
-            if (!this.isOffsetRapport() && Math.abs(offset) > 0.0) {
-                shapes = ShapeHelper.perpendicularOffset(shape, offset);
-                // Setting offset to 0.0 let be sure the offset will never been applied twice!
-                offset = 0.0;
-            } else {
-                shapes = new ArrayList<Shape>();
-                shapes.add(shape);
-            }
-
-            Paint paint = fill.getPaint(map, mt);
-
-            for (Shape shp : shapes) {
-                if (this.dashArray != null && !this.dashArray.getValue(map).isEmpty() && Math.abs(offset) > 0.0) {
-                    String value = dashArray.getValue(map);
-                    String[] split = value.split("\\s+");
-                    Shape chute = shp;
-                    List<Shape> fragments = new ArrayList<Shape>();
-                    BasicStroke bs = createBasicStroke(map, shp, mt, null, false);
-
-                    int splitSize = split.length;
-                    double dashLengths[] = new double[splitSize];
-                    for (int i = 0; i < splitSize; i++) {
-                        dashLengths[i] = UomUtils.toPixel(Double.parseDouble(split[i]), getUom(),
-                                mt.getDpi(), mt.getScaleDenominator(), null);
-                    }
-
-                    if (this.isLengthRapport()) {
-                        scaleDashArrayLength(dashLengths, shp);
-                    }
-
-                    int i = 0;
-                    int j = 0;
-
-                    //while (ShapeHelper.getLineLength(chute) > 0) {
-                    while (chute != null) {
-                        List<Shape> splitLine = ShapeHelper.splitLine(chute, dashLengths[j]);
-                        Shape seg = splitLine.remove(0);
-                        if (splitLine.size() > 0) {
-                            chute = splitLine.remove(0);
-                        } else {
-                            chute = null;
-                        }
-                        if (i % 2 == 0) {
-                            // i.e seg to draw
-                            fragments.add(seg);
-                        } // else means blank space
-
-                        j = (j + 1) % split.length;
-                        i++;
-                    }
-
-                    if (paint != null) {
-                        g2.setPaint(paint);
-                        g2.setStroke(bs);
-                    }
-
-                    for (Shape seg : fragments) {
-                        List<Shape> ses = ShapeHelper.perpendicularOffset(seg, offset);
-                        for (Shape oSeg : ses) {
-                            if (oSeg != null) {
-                                if (paint != null) {
-                                    g2.draw(oSeg);
-                                } else {
-                                    Shape outline = bs.createStrokedShape(oSeg);
-                                    fill.draw(g2, map, outline, mt);
-                                }
-                            }
-                        }
-                    }
-                } else {
-
-                    BasicStroke stroke;
-
-                    stroke = this.createBasicStroke(map, shp, mt, null /*ShapeHelper.getAreaPerimeterLength(shp)*/, true);
-                    g2.setPaint(paint);
-                    g2.setStroke(stroke);
-
-                    if (Math.abs(offset) > 0.0) {
-                        List<Shape> ses = ShapeHelper.perpendicularOffset(shp, offset);
-                        for (Shape oShp : ses) {
-                            if (oShp != null) {
-                                if (paint != null) {
-                                    g2.setStroke(stroke);
-                                    g2.setPaint(paint);
-                                    g2.draw(oShp);
-                                } else {
-                                    Shape outline = stroke.createStrokedShape(oShp);
-                                    fill.draw(g2, map, outline, mt);
-                                }
-                            }
-                        }
-                    } else {
-                        if (paint != null) {
-                            // Some fill type can be converted to a texture paint or a solid color
-
-                            g2.setStroke(stroke);
-                            g2.setPaint(paint);
-                            g2.draw(shp);
-                        } else {
-                            // Others can't -> create the ares to fill
-                            Shape outline = stroke.createStrokedShape(shp);
-                            fill.draw(g2, map, outline, mt);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -558,7 +345,7 @@ public final class PenStroke extends Stroke implements FillNode {
      */
     public double getWidthInPixel(Map<String,Object> map, IMapTransform mt) throws ParameterException {
         if (this.width != null) {
-            return UomUtils.toPixel(width.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+            return DEFAULT_WIDTH_PX;//UomUtils.toPixel(width.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
         } else {
             return DEFAULT_WIDTH_PX;
         }

@@ -8,7 +8,6 @@ package org.orbisgis.coremap.renderer.featureStyle;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.locationtech.jts.geom.Geometry;
 import org.orbisgis.coremap.map.MapTransform;
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.Feature2DRule;
@@ -92,6 +91,7 @@ public class FeatureStyleRenderer {
              if(featureSymbolizer instanceof AreaSymbolizer){
                  symbolizerToDraw[i] = new AreaSymbolizerRenderer((AreaSymbolizer) featureSymbolizer);
              }else if(featureSymbolizer instanceof LineSymbolizer){
+                 symbolizerToDraw[i] = new LineSymbolizerRenderer((LineSymbolizer) featureSymbolizer);
                  
              }else if(featureSymbolizer instanceof PointSymbolizer){
                  

@@ -8,7 +8,7 @@ package org.orbisgis.coremap.renderer.featureStyle;
 import java.awt.Graphics2D;
 import java.sql.SQLException;
 import org.orbisgis.map.api.IMapTransform;
-import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
@@ -19,5 +19,5 @@ import org.orbisgis.style.parameter.ParameterException;
 public interface ISymbolizerDraw< MT extends IMapTransform> {
  
     
-    void draw(ISpatialTable sp, Graphics2D g2, MT mapTransform  ) throws ParameterException, SQLException;
+    void draw(JdbcSpatialTable sp, Graphics2D g2, MT mapTransform  ) throws ParameterException, SQLException;
 }
