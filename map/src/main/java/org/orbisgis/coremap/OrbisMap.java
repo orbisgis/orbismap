@@ -5,6 +5,7 @@
  */
 package org.orbisgis.coremap;
 
+import java.awt.Color;
 import java.io.File;
 import org.orbisgis.coremap.renderer.MapRenderer;
 import java.io.IOException;
@@ -17,6 +18,12 @@ import org.orbisgis.style.StyleFactory;
 import org.orbisgis.map.api.LayerException;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS;
+import org.orbisgis.style.AreaSymbolizer;
+import org.orbisgis.style.Feature2DRule;
+import org.orbisgis.style.Feature2DStyle;
+import org.orbisgis.style.fill.SolidFill;
+import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.stroke.PenStroke;
 import org.osgi.service.jdbc.DataSourceFactory;
 
 /**
@@ -50,14 +57,14 @@ public class OrbisMap {
         Map<String, String> map = new HashMap<>();
         map.put(DataSourceFactory.JDBC_DATABASE_NAME, "./target/" + OrbisMap.class.getName());
         H2GIS h2GIS = H2GIS.open(map);        
-        long draw = System.currentTimeMillis();
+                
         ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "LANDCOVER", true);
-        
-        
+        long draw = System.currentTimeMillis();
+        System.out.println("Start drawing ");
         //h2GIS.execute("create spatial index on LANDCOVER(THE_GEOM)");
         //ISpatialTable spatialTable = h2GIS.getSpatialTable("LANDCOVER");
         StyledLayer layer = new StyledLayer(spatialTable);
-        layer.setStyle(StyleFactory.createAreaSymbolizerStyle());
+        layer.setStyle(createAreaSymbolizerStyleColorExpression());
         //layer.setStyle(StyleFactory.createLineSymbolizerStyle());
         //layer.setStyle(StyleFactory.createAreaSymbolizerStyle(layer));
         
@@ -86,6 +93,29 @@ public class OrbisMap {
         /*mapRenderer.save("/tmp/orbisgis_carte.png");
 
         System.out.println("Save file : " + (System.currentTimeMillis() - end));*/
+    }
+    
+    
+    /**
+     * Create a style with one <code>AreaSymbolizer</code>
+     * @return a  <code>Style</code>
+     */
+    public static Feature2DStyle createAreaSymbolizerStyleColorExpression() {
+        Feature2DStyle style = new Feature2DStyle();
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        ExpressionParameter colorExpression = new ExpressionParameter(""
+                + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        ExpressionParameter opacity = new ExpressionParameter("1");
+        SolidFill solidFill = new SolidFill(colorExpression, opacity);
+        areaSymbolizer.setFill(solidFill);
+        PenStroke ps = new PenStroke();
+        SolidFill psFill = new SolidFill(Color.BLUE);
+        ps.setFill(psFill);
+        areaSymbolizer.setStroke(ps);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(areaSymbolizer);
+        style.addRule(rule);
+        return style;
     }
     
 }

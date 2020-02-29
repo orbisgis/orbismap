@@ -131,7 +131,6 @@ public class StrokeRender {
                     } else {*/
                         if (paint != null) {
                             // Some fill type can be converted to a texture paint or a solid color
-
                             g2.setStroke(stroke);
                             g2.setPaint(paint);
                             g2.draw(shp);
