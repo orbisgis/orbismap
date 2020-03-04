@@ -36,6 +36,7 @@
  */
 package org.orbisgis.style.graphic;
 
+import org.orbisgis.style.parameter.TransformParameter;
 import org.orbisgis.style.transform.Transform;
 
 /**
@@ -45,14 +46,14 @@ import org.orbisgis.style.transform.Transform;
 public interface TransformNode {
 
         /**
-         * Set the inner {@link Transform} associated to this node to {@code t}.
+         * Set the inner {@link TransformParameter} associated to this node to {@code t}.
          * @param t 
          */
-        void setTransform(Transform t);
+        void setTransform(TransformParameter t);
 
         /**
-         * Get the {@link Transform} associated to this node.
+         * Get the {@link TransformParameter} associated to this node.
          * @return 
          */
-        Transform getTransform();
+        TransformParameter getTransform();
 }

@@ -36,19 +36,12 @@
  */
 package org.orbisgis.style.transform;
 
-import java.awt.geom.AffineTransform;
 import java.util.*;
-import org.orbisgis.map.api.IMapTransform;
-
-import org.orbisgis.style.utils.UomUtils;
-import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealLiteral;
 import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.style.visitors.FeaturesVisitor;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.Uom;
 
 /**
  * Affine Transformation based on RealParameters
@@ -347,48 +340,6 @@ public final class Matrix extends StyleNode implements Transformation {
         public boolean allowedForGeometries() {
                 return false;
         }
-
-        /**
-         * This method simplifiy the matrix.
-         * Every matrix element which doesn't depends on a feature is converted to a single RealLiteral
-         *
-         * @throws ParameterException when something went wrong...
-         */
-        public void simplify() throws ParameterException {
-                FeaturesVisitor vis = new FeaturesVisitor();
-                a.acceptVisitor(vis);
-                Set<String> sa = vis.getResult();
-                b.acceptVisitor(vis);
-                Set<String> sb = vis.getResult();
-                c.acceptVisitor(vis);
-                Set<String> sc = vis.getResult();
-                d.acceptVisitor(vis);
-                Set<String> sd = vis.getResult();
-                e.acceptVisitor(vis);
-                Set<String> se = vis.getResult();
-                f.acceptVisitor(vis);
-                Set<String> sf = vis.getResult();
-
-                if (sa != null && !sa.isEmpty()) {
-                        setA(new RealLiteral(a.getValue(null, -1)));
-                }
-                if (sb != null && !sb.isEmpty()) {
-                        setB(new RealLiteral(b.getValue(null, -1)));
-                }
-                if (sc != null && !sc.isEmpty()) {
-                        setC(new RealLiteral(c.getValue(null, -1)));
-                }
-                if (sd != null && !sd.isEmpty()) {
-                        setD(new RealLiteral(d.getValue(null, -1)));
-                }
-                if (se != null && !se.isEmpty()) {
-                        setE(new RealLiteral(e.getValue(null, -1)));
-                }
-                if (sf != null && !sf.isEmpty()) {
-                        setF(new RealLiteral(f.getValue(null, -1)));
-                }
-        }
-
        
         @Override
         public String toString() {

@@ -5,6 +5,9 @@
  */
 package org.orbisgis.style.parameter;
 
+import java.awt.Color;
+import static org.orbisgis.style.parameter.color.ColorHelper.toHex;
+
 /**
  *
  * @author ebocher
@@ -12,6 +15,8 @@ package org.orbisgis.style.parameter;
 public class ExpressionHelper {
     
     
-    
+     public static ExpressionParameter toExpressionParameter(Color color){
+        return new ExpressionParameter("'"+toHex(color)+"'");
+    }
     
 }

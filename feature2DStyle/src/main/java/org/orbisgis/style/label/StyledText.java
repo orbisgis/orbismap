@@ -46,11 +46,9 @@ import java.util.Map;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.utils.UomUtils;
-import org.orbisgis.style.common.Halo;
-import org.orbisgis.style.fill.Fill;
+import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.color.ColorLiteral;
 import org.orbisgis.style.parameter.real.RealLiteral;
 import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
@@ -58,13 +56,13 @@ import org.orbisgis.style.parameter.string.StringLiteral;
 import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.map.api.IMapTransform;
+import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.color.ColorHelper;
-import org.orbisgis.style.parameter.color.ColorParameter;
 
 /**
  * This class embed all the informations needed to represent text of any kind on a map.
@@ -85,7 +83,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
     private StringParameter fontStyle;
     private RealParameter fontSize;
     private Stroke stroke;
-    private Fill fill;
+    private IFill fill;
     private Halo halo;
     private Uom uom;
     private String[] weights = {"Normal", "Bold"};
@@ -154,12 +152,12 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
     }
 
     @Override
-    public Fill getFill() {
+    public IFill getFill() {
         return fill;
     }
 
     @Override
-    public void setFill(Fill fill) {
+    public void setFill(IFill fill) {
         this.fill = fill;
         if (fill != null) {
             fill.setParent(this);
@@ -300,250 +298,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
             this.fontWeight.setParent(this);
         }
     }
-
-    private Font getFont(Map<String, Object> map, IMapTransform mt) throws ParameterException, IOException {
-        String family = "Arial";
-        if (fontFamily != null) {
-            family = fontFamily.getValue(map);
-        }
-
-        // TODO Family is comma delimeted list of fonts family. Choose the first available
-
-        String weight = "normal";
-        if (fontWeight != null) {
-            weight = fontWeight.getValue(map);
-        }
-
-        String style = "normal";
-        if (fontStyle != null) {
-            style = fontStyle.getValue(map);
-        }
-
-        //double size = Uom.toPixel(12, Uom.PT, mt.getDpi(), mt.getScaleDenominator(), null);
-        double size = 12.0;
-        if (fontSize != null) {
-            size = UomUtils.toPixel(fontSize.getValue(map), getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-        }
-
-        int st = Font.PLAIN;
-
-        if (weight.equalsIgnoreCase("bold")) {
-            st = Font.BOLD;
-        }
-
-        if (style.equalsIgnoreCase("italic")) {
-            if (st == Font.PLAIN) {
-                st |= Font.ITALIC;
-            } else {
-                st = Font.ITALIC;
-            }
-        }
-
-        return new Font(family, st, (int) size);
-    }
-
-    /**
-     * Get the minimal {@code Rectangle2D} that contains this {@code StyledText}.
-     * @param g2 The graphics we draw with
-     * @param map The map of input values
-     * @param mt The current IMapTransform
-     * @throws ParameterException If we can't get the input parameters
-     * @throws IOException If something goes wrong while handling fonts
-     */
-    public Rectangle2D getBounds(Graphics2D g2, Map<String, Object> map,
-            IMapTransform mt) throws ParameterException, IOException {
-        String txt = this.text.getValue(map);
-        return getBounds(g2, txt, map, mt);
-    }
-
-    /**
-     * Get the minimal {@code Rectangle2D} that contains this {@code StyledText}.
-     * @param g2 The graphics we draw with
-     * @param text The text for which we need the bounds.
-     * @param map The map of input values
-     * @param mt The current IMapTransform
-     * @return The bounds of the text
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public Rectangle2D getBounds(Graphics2D g2, String text, Map<String, Object> map,
-            IMapTransform mt) throws ParameterException, IOException {
-
-        Font font = getFont(map, mt);
-        FontMetrics metrics = g2.getFontMetrics(font);
-        return metrics.getStringBounds(text, null);
-    }
-
-    /**
-     * Draw this {@code StyledText} in the {@code Graphics2D g2}.
-     * @param g2 The graphics we draw with
-     * @param map The map of input values
-     * @param mt The current IMapTransform
-     * @param at The configured affine transformation
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public void draw(Graphics2D g2, Map<String, Object> map,
-            IMapTransform mt, AffineTransform at) throws ParameterException, IOException {
-        String txt = this.text.getValue(map);
-        draw(g2, txt, map, mt, at, Label.VerticalAlignment.TOP);
-    }
-
-    /**
-     * Draw this {@code StyledText} in the {@code Graphics2D g2}.
-     * @param g2 The graphics we draw with
-     * @param map The map of input values
-     * @param mt The current IMapTransform
-     * @param at The configured affine transformation
-     * @param va The needed vertical alignment
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public void draw(Graphics2D g2, Map<String, Object> map,
-            IMapTransform mt, AffineTransform at,
-            Label.VerticalAlignment va) throws ParameterException, IOException {
-        String txt = this.text.getValue(map);
-        draw(g2, txt, map, mt, at, va);
-    }
-
-    /**
-     * Gets the outline of the given {@code String} as a shape. This shapes is
-     * made of the boundary(ies) of the text, that will have to be stroked and
-     * fill, with the default vertical alignment
-     * ({@code VerticalAlignment.TOP}).
-     * @param g2
-     * The {@code Graphics2D} instance used to render the map we are drawing.
-     * @param text
-     * The text we want to compute the outline of.
-     * @param map     The map of input values
-     * @param mt
-     * Used to compute the font's size.
-     * @param at
-     * The AffineTransform that we must apply to the shape before returning it.
-     * @return The needed Shape
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public Shape getOutline(Graphics2D g2, String text, Map<String, Object> map,
-            IMapTransform mt, AffineTransform at)
-            throws ParameterException, IOException {
-        return getOutline(g2, text, map, mt, at, Label.VerticalAlignment.TOP);
-    }
-
-    /**
-     * Gets the outline of the given {@code String} as a shape. This shapes is
-     * made of the boundary(ies) of the text, that will have to be stroked and
-     * fill.
-     * @param g2
-     * The {@code Graphics2D} instance used to render the map we are drawing.
-     * @param text
-     * The text we want to compute the outline of.
-     * @param map     The map of input values
-     * @param mt
-     * Used to compute the font's size.
-     * @param at
-     * The AffineTransform that we must apply to the shape before returning it.
-     * @param va
-     * The {@code Label.VerticalAlignment} we must use to determine where to put
-     * the baseline of {@code text}.
-     * @return The needed Shape
-     * @throws ParameterException
-     * If we fail to retrieve a parameter used to configure this {@code
-     * StyledText}.
-     * @throws IOException
-     * If an error occurred while retrieving the {@code Font}.
-     */
-    public Shape getOutline(Graphics2D g2, String text, Map<String, Object> map,
-            IMapTransform mt, AffineTransform at, Label.VerticalAlignment va)
-            throws ParameterException, IOException {
-        Font font = getFont(map, mt);
-        TextLayout tl = new TextLayout(text, font, g2.getFontRenderContext());
-        FontMetrics metrics = g2.getFontMetrics(font);
-        double dy=0;
-        switch(va){
-            case BASELINE:
-                break;
-            case BOTTOM:
-                dy = metrics.getAscent();
-                break;
-            case TOP:
-                dy = -metrics.getDescent();
-                break;
-            case MIDDLE:
-            default:
-                dy = (metrics.getAscent() - metrics.getDescent()) / 2.0;
-        }
-        AffineTransform rat;
-        if (at != null) {
-            rat = new AffineTransform(at);
-        } else {
-            rat = new AffineTransform();
-        }
-        //We apply the translation used to manage the height of the text on the
-        //line BEFORE to apply at : we use concatenate.
-        rat.concatenate(AffineTransform.getTranslateInstance(0, dy));
-        return tl.getOutline(rat);
-    }
-
-    /**
-     * Draw the list of given "outlines", that is the list of characters already
-     * transformed to {@code Shape} instances. We'll use for that, of course,
-     * the inner {@code Fill}, {@code Halo} and {@code Stroke} instances. If
-     * they are not set, a simple default {@code SolidFill} will be used.
-     * @param g2 The graphics we draw with
-     * @param map The map of input values
-     *
-     * @param outlines  The list of needed outlines
-     * @param mt
-     * Used to compute the font's size.
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public void drawOutlines(Graphics2D g2, ArrayList<Shape> outlines, Map<String, Object> map,
-            IMapTransform mt) throws ParameterException, IOException {
-        if (halo != null) {
-            for (Shape outline : outlines) {
-                halo.draw(g2, map, outline, mt, true);
-            }
-        }
-        for (Shape outline : outlines) {
-            /**
-             * No fill and no stroke : apply default SolidFill !
-             */
-            if (fill == null && stroke == null) {
-                SolidFill sf = new SolidFill(Color.BLACK, 1.0);
-                sf.setParent(this);
-                sf.draw(g2, map, outline, mt);
-            }
-            if (fill != null) {
-                fill.draw(g2, map, outline, mt);
-            }
-            if (stroke != null) {
-                stroke.draw(g2, map, outline, mt, 0.0);
-            }
-        }
-    }
-
-    /**
-     * Draw this {@code StyledText} in the {@code Graphics2D g2}.
-     * @param g2 The graphics we draw with
-     * @param text The text we want to draw
-     * @param map The map of input values
-     * @param mt The current IMapTransform
-     * @param at The configured affine transformation
-     * @param va The needed vertical alignment
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public void draw(Graphics2D g2, String text, Map<String, Object> map,
-             IMapTransform mt, AffineTransform at,
-            Label.VerticalAlignment va) throws ParameterException, IOException {
-
-        ArrayList<Shape> outlines = new ArrayList<Shape>();
-        outlines.add(getOutline(g2, text, map, mt, at, va));
-        drawOutlines(g2, outlines, map, mt);
-    }
-
+    
     /**
      *
      * @param map

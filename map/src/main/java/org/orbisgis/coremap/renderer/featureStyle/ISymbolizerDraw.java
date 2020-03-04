@@ -5,19 +5,13 @@
  */
 package org.orbisgis.coremap.renderer.featureStyle;
 
-import java.awt.Graphics2D;
-import java.sql.SQLException;
-import org.orbisgis.map.api.IMapTransform;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
-import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.IStyleNode;
 
 /**
  *
  * @author ebocher
- * @param <MT>
  */
-public interface ISymbolizerDraw< MT extends IMapTransform> {
+public interface ISymbolizerDraw<T extends IStyleNode> extends IStyleDrawer <T>{
  
     
-    void draw(JdbcSpatialTable sp, Graphics2D g2, MT mapTransform  ) throws ParameterException, SQLException;
 }

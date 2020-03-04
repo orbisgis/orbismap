@@ -245,20 +245,5 @@ public abstract class Label extends StyleNode implements IUom {
             this.vAlign = vAlign;
         }
     }
-    
-
-    /**
-     * Draw this {@code Label} in {@code g2}.
-     * @param g2
-     * @param feat
-     * @param shp
-     * @param mt
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public abstract void draw(Graphics2D g2, Map<String, Object> feat,
-            Shape shp,  IMapTransform mt)
-            throws ParameterException, IOException;
-
 
 }

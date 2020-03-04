@@ -105,54 +105,7 @@ public abstract class Stroke extends StyleNode implements IUom {
     public void setOffsetRapport(boolean offsetRapport) {
         this.offsetRapport = offsetRapport;
     }
-
-    /**
-     * Apply the present Stroke to the geometry stored in sds, at index fid, in
-     * graphics g2.
-     * @param g2 draw within this graphics2d
-     * @param map
-     * @param shp stroke this shape (note this is note a JTS Geometry, because
-     *        stroke can be used to delineate graphics (such as MarkGraphic,
-     *        PieChart or AxisChart)
-     * @param mt the well known IMapTransform 
-     * @param  offset perpendicular offset to apply
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public abstract void draw(Graphics2D g2, Map<String,Object> map, Shape shp,
-             IMapTransform mt, double offset) throws ParameterException, IOException;
-
     
-    /**
-     * Returns the stroke pattern natural length, in pixel unit
-     * @param map
-     * @param shp
-     * @param mt
-     * @return
-     * @throws ParameterException
-     * @throws IOException
-     */
-    public abstract Double getNaturalLength(Map<String,Object> map,
-            Shape shp, IMapTransform mt) throws ParameterException, IOException;
-
-    /**
-     * same as getNaturalLength, but in some case (i.e. PenStroke) the natural length
-     * to use in not the same as returned by the latter : Especially for PenStroke : 
-     * To compute a tile for hatching, we need to know the length of the pen stroke
-     * (i.e. only when the stroke is dashed...), but to embed such a stroke in a compound, 
-     * the natural length shall be +Inf
-     * 
-     * @param map
-     * @param shp
-     * @param mt
-     * @return
-     * @throws ParameterException
-     * @throws IOException 
-     */
-    public Double getNaturalLengthForCompound(Map<String,Object> map,
-            Shape shp, IMapTransform mt) throws ParameterException, IOException {
-        return getNaturalLength(map, shp, mt);
-    }
 
     @Override
     public Uom getUom() {

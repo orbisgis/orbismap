@@ -43,7 +43,6 @@ import org.orbisgis.style.parameter.ExpressionParameter;
 
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IStyleNodeVisitor;
-import org.orbisgis.style.parameter.color.ColorParameter;
 
 /**
  * Search for the names of the features that are used in the visited tree of
@@ -54,6 +53,8 @@ import org.orbisgis.style.parameter.color.ColorParameter;
 public class ParameterValueVisitor implements IStyleNodeVisitor {
 
     private HashMap<String, String> res = new HashMap<String, String>();
+    
+    private int count=0;
 
     /**
      * Recursively visits {@code sn} and all its children, searching for
@@ -87,11 +88,13 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
             ExpressionParameter exp = (ExpressionParameter) sn;
             Expression expParsed = CCJSqlParserUtil.parseExpression(exp.getExpression(), false);
             String formatedExp = expParsed.toString();
-            String identifier = "id_" + UUID.randomUUID().toString().replaceAll("-", "_");
-            exp.setExpression(formatedExp);
-            exp.setIdentifier(identifier);
-            if (!res.containsValue(formatedExp)) {
-                res.put(identifier, formatedExp);
+            String identifier = "parameter_" + count++;
+            exp.setExpression(formatedExp);            
+            if (!res.containsKey(formatedExp)) {
+                res.put(formatedExp,identifier);
+                exp.setIdentifier(identifier);
+            }else{
+                exp.setIdentifier(res.get(formatedExp));
             }
         }
         children.forEach((c) -> {
@@ -115,7 +118,7 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
 
     public String getResultAsString() {
         return res.entrySet().stream().
-                map(entrySet -> entrySet.getValue() + " as " + entrySet.getKey()).
+                map(entrySet -> entrySet.getKey()+ " as " + entrySet.getValue()).
                 collect(Collectors.joining(","));
     }
 

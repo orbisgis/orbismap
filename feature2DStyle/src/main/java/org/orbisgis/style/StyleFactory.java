@@ -5,6 +5,9 @@
  */
 package org.orbisgis.style;
 
+import org.orbisgis.style.symbolizer.PointSymbolizer;
+import org.orbisgis.style.symbolizer.LineSymbolizer;
+import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import java.awt.Color;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.stroke.PenStroke;

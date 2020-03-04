@@ -39,4 +39,10 @@ public class ExpressionParserTest {
         expr = CCJSqlParserUtil.parseExpression(" test ", false);         
         System.out.println(expr.toString());
     }
+    
+    public static void transformExpression() throws JSQLParserException{
+        Expression expr = CCJSqlParserUtil.parseExpression("scale(rotate(), 12,12)", false);        
+        System.out.println(expr.toString());  
+        
+    }
 }

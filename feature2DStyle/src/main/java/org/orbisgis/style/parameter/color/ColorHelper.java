@@ -266,9 +266,6 @@ public final class ColorHelper {
         int g = (int) (rndGenerator.nextFloat() * 255);
         int b = (int) (rndGenerator.nextFloat() * 255);
         return new Color(r, g, b);
-    }
-    
-    public static ExpressionParameter toExpressionParameter(Color color){
-        return new ExpressionParameter("'"+toHex(color)+"'");
-    }
+    }    
+   
 }

@@ -122,52 +122,9 @@ public class Transform extends StyleNode implements IUom {
                 }
         }
 
-        /**
-         * Return an affine transformation for java Shape object.
-         * The purpose is to transfom se.graphics
-         * @param isForSpatialFeatures
-         * @param map
-         * @param mt
-         * @param width
-         * @param height
-         * @return
-         * @throws ParameterException
-         * @throws IOException
-         */
-        public AffineTransform getGraphicalAffineTransform(boolean isForSpatialFeatures, 
-                    Map<String,Object> map, IMapTransform mt, Double width, Double height)
-                    throws ParameterException, IOException {
-                //return consolidateTrasformations(false).getGraphicalAffineTransform();
-                this.consolidateTransformations(map, isForSpatialFeatures, mt, width, height);
-                return consolidated;
-        }
+        
 
-        /**
-         * Ensure that this {@code Transform} instance contains actually the
-         * representation of the combination of its inner {@code Transformation}
-         * instances.
-         * This method must be called after each modification of one of its transformations !
-         * @param sds
-         * @param fid
-         * @param forGeometries
-         * @param mt
-         * @param width
-         * @param height
-         * @throws ParameterException
-         * @throws IOException
-         */
-        public void consolidateTransformations(Map<String,Object> map, boolean forGeometries,
-                IMapTransform mt, Double width, Double height) throws ParameterException, IOException {
-
-                // Result is Identity
-                consolidated = new AffineTransform();
-                for (Transformation t : transformations) {
-                        if (!forGeometries || t.allowedForGeometries()) {
-                                AffineTransform at = null;//t.getAffineTransform(map, this.getUom(), mt, width, height);
-                                consolidated.preConcatenate(at);
-                        }
-                }
-        }
+        
 
         /**
          * Add a {@code Transformation} to this {@code Transform}.

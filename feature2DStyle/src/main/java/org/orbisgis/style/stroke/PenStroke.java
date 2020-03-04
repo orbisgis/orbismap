@@ -43,8 +43,6 @@ import java.util.List;
 import java.util.Map;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.utils.UomUtils;
-import org.orbisgis.style.common.ShapeHelper;
-import org.orbisgis.style.fill.Fill;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealLiteral;
@@ -53,7 +51,9 @@ import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.parameter.string.StringLiteral;
 import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.map.api.IMapTransform;
+import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
@@ -83,7 +83,7 @@ public final class PenStroke extends Stroke implements FillNode {
      * The join used by default. Value is {@code LineCap.MITRE}.
      */
     public static final LineJoin DEFAULT_JOIN = LineJoin.MITRE;
-    private Fill fill;
+    private IFill fill;
     private ExpressionParameter width;
     private LineJoin lineJoin;
     private LineCap lineCap;
@@ -115,7 +115,7 @@ public final class PenStroke extends Stroke implements FillNode {
         super();
         setFill(getDefaultFill());
         setWidth(new ExpressionParameter(DEFAULT_WIDTH));
-        setUom(null);
+        setUom(Uom.PX);
         setDashArray(new StringLiteral(""));
         setDashOffset(new RealLiteral(0));
         setLineCap(DEFAULT_CAP);
@@ -123,17 +123,14 @@ public final class PenStroke extends Stroke implements FillNode {
     }
    
 
-
-    @Override
     public Double getNaturalLength(Map<String,Object> map, Shape shp, IMapTransform mt) {
-
         if (dashArray != null) {
             // A dashed PenStroke has a length
             // This is required to compute hatches tile but will break the compound stroke natural length logic
             // for infinite PenStroke element ! For this reason, compound stroke use getNaturalLengthForCompound
             try {
                 double sum = 0.0;
-                String sDash = this.dashArray.getValue(map);
+                String sDash = dashArray.getValue(map);
                 if(!sDash.isEmpty()){
                 String[] splitDash = sDash.split(" ");
                     int size = splitDash.length;
@@ -154,11 +151,6 @@ public final class PenStroke extends Stroke implements FillNode {
         return Double.POSITIVE_INFINITY;
     }
 
-    @Override
-    public Double getNaturalLengthForCompound(Map<String,Object> map,
-            Shape shp, IMapTransform mt) throws ParameterException, IOException {
-        return Double.POSITIVE_INFINITY;
-    }
 
     @Override
     public List<IStyleNode> getChildren() {
@@ -179,7 +171,7 @@ public final class PenStroke extends Stroke implements FillNode {
     }
 
     @Override
-    public Fill getFill() {
+    public IFill getFill() {
         return fill;
     }
 
@@ -189,12 +181,12 @@ public final class PenStroke extends Stroke implements FillNode {
      *             is 100%.
      */
     @Override
-    public void setFill(Fill fill) {
+    public void setFill(IFill fill) {
         this.fill = fill == null ? getDefaultFill() : fill;
         this.fill.setParent(this);
     }
 
-    private Fill getDefaultFill(){
+    private IFill getDefaultFill(){
         return new SolidFill(Color.BLACK, 1.0);
     }
 
@@ -297,58 +289,6 @@ public final class PenStroke extends Stroke implements FillNode {
     public void setDashArray(StringParameter dashArray) {
         this.dashArray = dashArray == null ? new StringLiteral("") : dashArray;
         this.dashArray.setParent(this);
-    }
-   
-
-    private void scaleDashArrayLength(double[] dashes, Shape shp) {
-        if (shp == null) {
-            return;
-        }
-
-        double lineLength = ShapeHelper.getLineLength(shp);
-
-        double sum = 0.0;
-        for (double dash : dashes) {
-            sum += dash;
-        }
-
-        int dashesSize = dashes.length;
-        // number of element is odd => x2
-        if ((dashesSize % 2) == 1) {
-            sum *= 2;
-        }
-
-        double nbPattern = (int) ((lineLength / sum));
-
-        if (nbPattern > 0) {
-            double f = lineLength / (sum * nbPattern);
-            for (int i = 0; i < dashesSize; i++) {
-                dashes[i] *= f;
-            }
-        }
-    }
-
-    
-    @Override
-    public void draw(Graphics2D g2, Map<String,Object> map, Shape shape,
-             IMapTransform mt, double offset)
-            throws ParameterException, IOException {
-
-    }
-
-    /**
-     * Gets the width, in pixels, of the lines that will be drawn using this {@code PenStroke}.
-     * @param map
-     * @param mt
-     * @return
-     * @throws ParameterException 
-     */
-    public double getWidthInPixel(Map<String,Object> map, IMapTransform mt) throws ParameterException {
-        if (this.width != null) {
-            return DEFAULT_WIDTH_PX;//UomUtils.toPixel(width.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-        } else {
-            return DEFAULT_WIDTH_PX;
-        }
     }
 
     /**

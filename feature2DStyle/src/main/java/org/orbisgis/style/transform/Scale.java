@@ -36,18 +36,12 @@
  */
 package org.orbisgis.style.transform;
 
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.Uom;
 
 /**
  * {@code Scale} is used to apply an homothetic transformation on a Graphic. It

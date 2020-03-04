@@ -36,11 +36,9 @@
  */
 package org.orbisgis.style.common;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.orbisgis.style.label.StyledText;
 
 /**
  * Keywords are list of {@code LocalizedText}, associated with an optional
@@ -116,7 +114,7 @@ public class Keywords {
     }
 
     /**
-     * Gets all the {@link StyledText} associated to this {@code Keywords}
+     * Gets all the {@link LocalizedText} associated to this {@code Keywords}
      * instance.
      * @return
      */

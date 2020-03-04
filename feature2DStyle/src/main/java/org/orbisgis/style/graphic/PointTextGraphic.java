@@ -118,30 +118,16 @@ public final class PointTextGraphic extends Graphic implements IUom {
                 }
         }
 
-        @Override
+        //@Override
         public Rectangle2D getBounds(Map<String,Object> map, IMapTransform mt) throws ParameterException, IOException {
                 throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        @Override
+        //@Override
         public void draw(Graphics2D g2, Map<String,Object> map,
                 IMapTransform mt, AffineTransform fat) throws ParameterException, IOException {
 
-                AffineTransform at = new AffineTransform(fat);
-                double px = 0;
-                double py = 0;
-
-                if (getX() != null) {
-                        px = UomUtils.toPixel(getX().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-                }
-                if (getY() != null) {
-                        py = UomUtils.toPixel(getY().getValue(map), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-                }
-
-                Rectangle2D.Double bounds = new Rectangle2D.Double(px - 5, py - 5, 10, 10);
-                Shape atShp = at.createTransformedShape(bounds);
-
-                pointLabel.draw(g2, map, atShp, mt);
+                
         }
 
         
@@ -186,9 +172,6 @@ public final class PointTextGraphic extends Graphic implements IUom {
                 }
         }
 
-        @Override
-        public void updateGraphic() {
-        }
 
         @Override
         public List<IStyleNode> getChildren() {

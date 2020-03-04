@@ -36,26 +36,20 @@
  */
 package org.orbisgis.style.fill;
 
-import org.slf4j.*;
 
-import org.orbisgis.style.GraphicNode;
-import org.orbisgis.style.graphic.GraphicCollection;
-import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import org.orbisgis.map.api.IMapTransform;
+import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IGraphicNode;
+import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
+import org.orbisgis.style.UomNode;
+import org.orbisgis.style.graphic.Graphic;
 
 /**
  * Descriptor for dot maps. Each point represents a given quantity. Points are randomly placed
@@ -66,27 +60,25 @@ import org.orbisgis.style.IStyleNode;
  *   * The symbol associated to each single dot.
  * @author Alexis Guéganno
  */
-public final class DotMapFill extends Fill implements GraphicNode {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DotMapFill.class);
+public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNode {
+   
     
-    static final int MAX_ATTEMPT = 100;
-
-    private GraphicCollection mark;
+    private Graphic mark;
     private RealParameter quantityPerMark;
     private RealParameter totalQuantity;
     private Random rand;
+    private Uom uom;
 
     /**
      * Creates a new DotMapFill, with uninstanciated values.
      */
     public DotMapFill() {
-        rand = new Random();
+        
     }
 
     
     @Override
-    public void setGraphicCollection(GraphicCollection mark) {
+    public void setGraphic(Graphic mark) {
         if (mark != null) {
             this.mark = mark;
             mark.setParent(this);
@@ -94,7 +86,7 @@ public final class DotMapFill extends Fill implements GraphicNode {
     }
 
     @Override
-    public GraphicCollection getGraphicCollection() {
+    public Graphic getGraphic() {
         return mark;
     }
 
@@ -114,7 +106,7 @@ public final class DotMapFill extends Fill implements GraphicNode {
      * Get the quantity represented by a single dot.
      * @return The quantity represented by a single dot
      */
-    public RealParameter getQantityPerMark() {
+    public RealParameter getQuantityPerMark() {
         return quantityPerMark;
     }
 
@@ -134,81 +126,9 @@ public final class DotMapFill extends Fill implements GraphicNode {
      * Set the total quantity to be represented for this symbolizer.
      * @return 
      */
-    public RealParameter getTotalQantity() {
+    public RealParameter getTotalQuantity() {
         return totalQuantity;
-    }
-
-    /**
-     * Return null since an hatched fill cannot be converted into a native java fill
-     * @param map
-     * @param mt
-     * @return null
-     * @throws ParameterException
-     */
-    @Override
-    public Paint getPaint(Map<String,Object> map,
-             IMapTransform mt) throws ParameterException {
-        return null;
-    }
-
-    @Override
-    public void draw(Graphics2D g2, Map<String,Object> map, Shape shp,IMapTransform mt)
-            throws ParameterException, IOException {
-
-        //RenderedImage m = this.mark.getGraphic(map, selected, mt).createRendering(mt.getCurrentRenderContext());
-
-
-        Double perMark = null;
-        if (quantityPerMark != null) {
-            perMark = this.quantityPerMark.getValue(map);
-        }
-
-        Double total = null;
-        if (totalQuantity != null) {
-            total = this.totalQuantity.getValue(map);
-        }
-
-        if (perMark == null || total == null) {
-            throw new ParameterException("Dot Map Fill: missing parameters !!!");
-        }
-
-        int nb = (int) Math.round(total / perMark);
-
-        //Area area = new Area(shapes.get(0));
-        Area area = new Area(shp);
-
-        // setting the seed to the scale denom will ensure that mark will not move when panning
-        rand.setSeed((long) mt.getScaleDenominator());
-        for (int i = 0; i < nb; i++) {
-            Point2D.Double pos = findMarkPosition(area);
-            if (pos != null) {
-                mark.draw(g2, map, mt, AffineTransform.getTranslateInstance(pos.x, pos.y));
-            } else {
-                LOGGER.error("Could not find position for mark within area");
-            }
-        }
-    }
-
-    /**
-     * Ugly version to find a random point which stand within the area
-     * @param area
-     * @return
-     */
-    private Point2D.Double findMarkPosition(Area area) {
-        Rectangle2D bounds2D = area.getBounds2D();
-
-        for (int i = 0; i < MAX_ATTEMPT; i++) {
-            double x = rand.nextDouble() * bounds2D.getWidth() + bounds2D.getMinX();
-            double y = rand.nextDouble() * bounds2D.getHeight() + bounds2D.getMinY();
-
-            if (area.contains(x, y)) {
-                return new Point2D.Double(x, y);
-            }
-        }
-        return null;
-    }
-
-    
+    }    
 
     @Override
     public List<IStyleNode> getChildren() {
@@ -223,6 +143,21 @@ public final class DotMapFill extends Fill implements GraphicNode {
             ls.add(totalQuantity);
         }
         return ls;
+    }
+
+    @Override
+    public Uom getUom() {
+        return uom == null ? ((UomNode)getParent()).getUom() : uom;
+    }
+
+    @Override
+    public void setUom(Uom uom) {
+        this.uom =uom;
+     }    
+
+    @Override
+    public Uom getOwnUom() {
+        return uom;
     }
 
     

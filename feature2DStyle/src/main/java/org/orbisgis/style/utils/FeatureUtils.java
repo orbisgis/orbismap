@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateList;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.Point;
@@ -178,7 +179,8 @@ public class FeatureUtils {
 
     /**
      * Return all vertices of the geometry
-     *
+     * //Take distance....
+     * //Bounding box pour ne pas prendre tous les points
      * @param mt
      * @param theGeom
      * @return
@@ -189,10 +191,12 @@ public class FeatureUtils {
     public static List<Point2D> getPoints(IMapTransform mt, Geometry theGeom) throws ParameterException, IOException, SQLException {
         //geom = ShapeHelper.clipToExtent(geom, mt.getAdjustedExtent());
         LinkedList<Point2D> points = new LinkedList<Point2D>();
+        Envelope envelope = new Envelope();
 
         AffineTransform at = mt.getAffineTransform();
-        Coordinate[] coordinates = theGeom.getCoordinates();
+        Coordinate[] coordinates = theGeom.getCoordinates();        
         for (Coordinate coord : coordinates) {
+           
             points.add(at.transform(new Point2D.Double(coord.x, coord.y), null));
         }
 

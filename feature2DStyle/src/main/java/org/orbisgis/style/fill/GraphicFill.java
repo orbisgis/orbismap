@@ -37,23 +37,18 @@
 package org.orbisgis.style.fill;
 
 
-import org.orbisgis.style.graphic.GraphicCollection;
-import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.orbisgis.style.utils.UomUtils;
-import org.orbisgis.map.api.IMapTransform;
+import org.orbisgis.style.IFill;
+import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
+import org.orbisgis.style.UomNode;
+import org.orbisgis.style.graphic.Graphic;
 
 /**
  * A "GraphicFill" defines repeated-graphic filling (stippling) pattern for an area geometry.
@@ -62,9 +57,9 @@ import org.orbisgis.style.IStyleNode;
  * stored as <code>RealParameter</code> instances.
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class GraphicFill extends Fill {
+public final class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNode{
 
-    private GraphicCollection graphic;
+    private Graphic graphic;
     /**
      * Distance between two graphics in the fill, in X direction.
      */
@@ -73,6 +68,7 @@ public final class GraphicFill extends Fill {
      * Distance between two graphics in the fill, in Y direction.
      */
     private RealParameter gapY;
+    private Uom uom;
 
     /**
      * Creates a new GraphicFill, with the gap's measures set to null.
@@ -85,10 +81,12 @@ public final class GraphicFill extends Fill {
     
     
     /**
-     * Set the GraphicCollection embedded in this GraphicFill. This is set as the parent of <code>graphic</code>
+     * Set the GraphicCollection embedded in this GraphicFill.This is set as the parent of <code>graphic</code>
+     * @param graphic
      * @return 
      */
-    public void setGraphic(GraphicCollection graphic) {
+    @Override
+    public void setGraphic(Graphic graphic) {
         this.graphic = graphic;
         graphic.setParent(this);
     }
@@ -97,7 +95,8 @@ public final class GraphicFill extends Fill {
      * Get the GraphicCollection embedded in this GraphicFill.
      * @return 
      */
-    public GraphicCollection getGraphic() {
+    @Override
+    public Graphic getGraphic() {
         return graphic;
     }
 
@@ -127,108 +126,21 @@ public final class GraphicFill extends Fill {
 
 
     /**
-     * Get the gap, upon X direction, between two symbols.
-     * @param gap 
+     * Get the gap, upon X direction, between two symbols. 
+     * @return  
      */
     public RealParameter getGapX() {
         return gapX;
     }
 
     /**
-     * Get the gap, upon Y direction, between two symbols.
-     * @param gap 
+     * Get the gap, upon Y direction, between two symbols. 
+     * @return  
      */
     public RealParameter getGapY() {
         return gapY;
     }
-
-    /**
-     * see Fill
-     */
-    @Override
-    public void draw(Graphics2D g2, Map<String,Object> map, Shape shp, IMapTransform mt) throws ParameterException, IOException {
-        Paint stipple = this.getPaint(map, mt);
-
-        // TODO handle selected ! 
-        if (stipple != null) {
-            g2.setPaint(stipple);
-            g2.fill(shp);
-        }
-    }
-
-    /**
-     * Create a new TexturePaint according to this GraphicFill
-     * 
-     * @param ds DataSet
-     * @param fid feature id
-     * @return a TexturePain ready to be used
-     * @throws ParameterException
-     * @throws IOException
-     */
-    @Override
-    public Paint getPaint(Map<String,Object> map, IMapTransform mt) throws ParameterException, IOException {
-        double gX = 0.0;
-        double gY = 0.0;
-
-        if (gapX != null) {
-            gX = gapX.getValue(map);
-            if (gX < 0.0) {
-                gX = 0.0;
-            }
-        }
-
-        if (gapY != null) {
-            gY = gapY.getValue(map);
-            if (gY < 0.0) {
-                gY = 0.0;
-            }
-        }
-
-        Rectangle2D bounds = graphic.getBounds(map, mt);
-        gX = UomUtils.toPixel(gX, getUom(), mt.getDpi(), mt.getScaleDenominator(), bounds.getWidth());
-        gY = UomUtils.toPixel(gY, getUom(), mt.getDpi(), mt.getScaleDenominator(), bounds.getHeight());
-
-        return getPaint(map, mt, graphic, gX, gY, bounds);
-    }
-
-    public static Paint getPaint(Map<String,Object> map,
-            IMapTransform mt, GraphicCollection graphic, double gX, double gY, Rectangle2D bounds)
-            throws ParameterException, IOException {
-
-        if (bounds != null) {
-
-            Point2D.Double geoRef = new Point2D.Double(0, 0);
-            Point2D ref = mt.getAffineTransform().transform(geoRef, null);
-
-            int tWidth = (int) (bounds.getWidth() + gX);
-            int tHeight = (int) (bounds.getHeight() + gY);
-
-            int deltaX = (int) (ref.getX() - Math.ceil(ref.getX() / tWidth) * tWidth);
-            int deltaY = (int) (ref.getY() - Math.ceil(ref.getY() / tHeight) * tHeight);
-
-
-            BufferedImage i = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D tile = i.createGraphics();
-            tile.setRenderingHints(mt.getRenderingHints());
-
-            int ix;
-            int iy;
-            for (ix = 0; ix < 2; ix++) {
-                for (iy = 0; iy < 2; iy++) {
-                    graphic.draw(tile, map, mt,
-                            AffineTransform.getTranslateInstance(
-                            -bounds.getMinX() + gX / 2.0 + deltaX + tWidth * ix,
-                            -bounds.getMinY() + gY / 2.0 + deltaY + tHeight * iy));
-                }
-            }
-
-            return new TexturePaint(i, new Rectangle2D.Double(0, 0, i.getWidth(), i.getHeight()));
-        } else {
-            return null;
-        }
-
-    }
-
+    
     
 
     @Override
@@ -244,6 +156,21 @@ public final class GraphicFill extends Fill {
             ls.add(gapY);
         }
         return ls;
+    }
+
+    @Override
+    public Uom getUom() {
+        return uom == null ? ((UomNode)getParent()).getUom() : uom;
+    }
+
+    @Override
+    public void setUom(Uom uom) {
+        this.uom =uom;
+     }    
+
+    @Override
+    public Uom getOwnUom() {
+        return uom;
     }
 
    

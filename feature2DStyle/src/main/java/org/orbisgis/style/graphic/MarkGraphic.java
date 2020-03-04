@@ -37,9 +37,8 @@
 package org.orbisgis.style.graphic;
 
 
-import org.orbisgis.style.common.Halo;
+import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.common.VariableOnlineResource;
-import org.orbisgis.style.fill.Fill;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealLiteral;
@@ -52,22 +51,20 @@ import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Transform;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.FillNode;
+import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.ViewBoxNode;
 import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.TransformParameter;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
@@ -102,13 +99,13 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     public static final double DEFAULT_SIZE = 3;
     //private MarkGraphicSource source;
     private Uom uom;
-    private Transform transform;
+    private TransformParameter transform;
     private StringParameter wkn;
     private VariableOnlineResource onlineResource;
     private ViewBox viewBox;
     private RealParameter pOffset;
     private Halo halo;
-    private Fill fill;
+    private IFill fill;
     private Stroke stroke;
     private RealParameter markIndex;
     // cached shape : only available with shape that doesn't depends on features
@@ -159,12 +156,12 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     }
 
     @Override
-    public Transform getTransform() {
+    public TransformParameter getTransform() {
         return transform;
     }
 
     @Override
-    public void setTransform(Transform transform) {
+    public void setTransform(TransformParameter transform) {
         this.transform = transform;
         if (transform != null) {
             transform.setParent(this);
@@ -172,12 +169,12 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     }
 
     @Override
-    public Fill getFill() {
+    public IFill getFill() {
         return fill;
     }
 
     @Override
-    public void setFill(Fill fill) {
+    public void setFill(IFill fill) {
         this.fill = fill;
         if (fill != null) {
             fill.setParent(this);
@@ -269,20 +266,14 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         this.markIndex.setParent(this);
     }
 
-    /*
-     * This method must be called after each modification of uom, view box, source
-     *
-     */
-    @Override
-    public void updateGraphic() {
-        /*try {
-        shape = getShape(null, -1, null);
-        } catch (Exception e) {
-        Services.getErrorManager().error("Could not update graphic", e);
-        shape = null;
-        }*/
-        shape = null;
+    public RealParameter getMarkIndex() {
+        return markIndex;
     }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+    
 
     /**
      * Tries to retrieve the source that defines this {@code MarkGraphic} in the 
@@ -319,140 +310,6 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         }
     }
 
-    @Override
-    public Rectangle2D getBounds(Map<String,Object> map,
-            IMapTransform mt) throws ParameterException, IOException {
-        Shape shp;
-
-        
-        // If the shape doesn't depends on feature (i.e. not null), we used the cached one
-        if (shape == null) {
-            shp = getShape(map, mt);
-        } else {
-            shp = shape;
-        }
-
-        if (shp == null) {
-            shp = WellKnownName.CIRCLE.getShape(viewBox, map, mt.getScaleDenominator(), mt.getDpi(), markIndex, mimeType);
-        }
-
-        /*if (transform != null) {
-            return this.transform.getGraphicalAffineTransform(false, map, mt, shp.getBounds().getWidth(),
-                    shp.getBounds().getHeight()).createTransformedShape(shp).getBounds2D();
-        } else {*/
-            return shp.getBounds2D();/*
-        }*/
-    }
-    
-    @Override
-    public void draw(Graphics2D g2, Map<String,Object> map,
-            IMapTransform mt, AffineTransform fat) throws ParameterException, IOException {
-        Shape shp;
-
-        AffineTransform at = new AffineTransform(fat);
-
-        // If the shape doesn't depends on feature (i.e. not null), we used the cached one
-        if (shape == null) {
-            shp = getShape(map, mt);
-        } else {
-            shp = shape;
-        }
-
-        if (shp == null) {
-            shp = WellKnownName.CIRCLE.getShape(viewBox, map, mt.getScaleDenominator(), mt.getDpi(), markIndex, mimeType);
-        }
-
-
-        if (transform != null) {
-            at.concatenate(this.transform.getGraphicalAffineTransform(false, map, mt, shp.getBounds().getWidth(), shp.getBounds().getHeight()));
-        }
-
-        Shape atShp = at.createTransformedShape(shp);
-
-        //We give the raw shape to the drawHalo method in order not to lose the 
-        //type of the original Shape - It will be easier to compute the halo.
-        //We give the transformed shape too... This way we are sure we won't
-        //compute it twice, as it is a complicated operation.
-        if (halo != null) {
-            drawHalo(g2, map,  shp, atShp, mt, at);
-        }
-
-        if (fill != null) {
-            fill.draw(g2, map, atShp,  mt);
-        }
-
-        if (stroke != null) {
-            double offset = 0.0;
-            if (pOffset != null) {
-                offset = UomUtils.toPixel(pOffset.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-            }
-            stroke.draw(g2, map, atShp,  mt, offset);
-        }
-    }
-
-    private void drawHalo(Graphics2D g2, Map<String,Object> map,
-              Shape shp,Shape atShp, IMapTransform mt, 
-            AffineTransform fat) throws ParameterException, IOException {
-        //If we are dealing with a WKN, and if it is a Circle or a half-circle, 
-        //we must be a little more clever...
-        if(shp instanceof Arc2D){
-            halo.drawCircle(g2, map,  (Arc2D)shp, atShp, mt, true, viewBox, fat);
-        } else {
-            halo.draw(g2, map,  atShp, mt, true);
-        }
-    
-    }
-    
-    /**
-     * compute required extra space. This extra space equals the max bw stroke width and halo radius
-     * @param ds
-     * @param fid
-     * @return
-     * @throws ParameterException
-     * @throws IOException
-     */
-    /*private double getMargin(DataSet sds, long fid, IMapTransform mt) throws ParameterException, IOException {
-    double sWidth = 0.0;
-    double haloR = 0.0;
-    double offset = 0.0;
-
-    if (stroke != null) {
-    sWidth += stroke.getMaxWidth(map, mt);
-    }
-
-    if (this.halo != null) {
-    haloR = halo.getHaloRadius(map, mt);
-    }
-
-    if (this.pOffset != null) {
-    offset = Uom.toPixel(pOffset.getValue(map), this.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-    }
-
-    double max = Math.max(sWidth, haloR);
-    return Math.max(max, 2 * offset);
-    }*/
-
-    /*
-    @Override
-    public double getMaxWidth(DataSet sds, long fid, IMapTransform mt) throws ParameterException, IOException {
-    double delta = 0.0;
-
-    if (viewBox != null && viewBox.usable()) {
-    Point2D dim = viewBox.getDimensionInPixel(map, DEFAULT_SIZE, DEFAULT_SIZE, mt.getScaleDenominator(), mt.getDpi());
-    delta = Math.max(dim.getX(), dim.getY());
-    } else {
-    MarkGraphicSource source = getSource(map);
-    if (source != null) {
-    delta = source.getDefaultMaxWidth(map, delta, delta, markIndex, mimeType);
-    } else {
-    delta = WellKnownName.CIRCLE.getDefaultMaxWidth(map, delta, delta, markIndex, mimeType);
-    }
-    }
-
-    delta += this.getMargin(map, mt);
-
-    return delta;
-    }*/
     /**
      * Get the online resource that defines this {@code MarkGraphic}.
      * @return The online resource that defines this {@code MarkGraphic}.
@@ -526,4 +383,6 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         }
         return ls;
     }
+
+    
 }

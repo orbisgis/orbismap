@@ -36,7 +36,6 @@
  */
 package org.orbisgis.style.stroke;
 
-import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -91,15 +90,7 @@ public final class TextStroke extends Stroke {
                 }
         }
 
-        @Override
-        public void draw(Graphics2D g2, Map<String,Object> map, Shape shp,
-                         IMapTransform mt, double offset) throws ParameterException, IOException {
-                if (this.lineLabel != null) {
-                        lineLabel.draw(g2, map, shp, mt);
-                }
-        }
-
-       
+              
         @Override
         public List<IStyleNode> getChildren() {
                 List<IStyleNode> ls = new ArrayList<IStyleNode>();
@@ -109,11 +100,11 @@ public final class TextStroke extends Stroke {
                 return ls;
         }
 
-        @Override
+        /*@Override
         public Double getNaturalLength(Map<String,Object> map,
                         Shape shp, IMapTransform mt) throws ParameterException, IOException {
                 Rectangle2D bounds = lineLabel.getLabel().getBounds(null, map, mt);
                 return bounds.getWidth();
-        }
+        }*/
 
 }

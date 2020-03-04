@@ -75,6 +75,7 @@ public class MapRenderer implements IRenderer{
         }
         BufferedImage image = mt.getImage();
         Graphics2D g2 = image.createGraphics();    
+        g2.setRenderingHints(mt.getRenderingHints());
         mc.getLayerModel().draw(g2, mt, new NullProgressMonitor());        
     }
 

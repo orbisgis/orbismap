@@ -34,16 +34,14 @@
 package org.orbisgis.style.fill;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Shape;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.map.api.IMapTransform;
+import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.Uom;
+import org.orbisgis.style.UomNode;
+import org.orbisgis.style.parameter.ExpressionHelper;
 import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.color.ColorHelper;
 
@@ -52,7 +50,7 @@ import org.orbisgis.style.parameter.color.ColorHelper;
  *
  * @author Maxence Laurent
  */
-public final class SolidFill extends Fill {
+public final class SolidFill extends StyleNode implements IFill , UomNode {
 
     private ExpressionParameter color;
     private ExpressionParameter opacity;
@@ -70,12 +68,14 @@ public final class SolidFill extends Fill {
      * Default colour value as an int :
      */
     public static final int GRAY50_INT = 128;
+    
+    private Uom uom = Uom.PX;
 
     /**
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(ColorHelper.toExpressionParameter(ColorHelper.getRandomColor()), new ExpressionParameter("-1"));
+        this(ExpressionHelper.toExpressionParameter(ColorHelper.getRandomColor()), new ExpressionParameter("-1"));
     }
 
     /**
@@ -84,7 +84,7 @@ public final class SolidFill extends Fill {
      * @param c
      */
     public SolidFill(Color c) {
-        this(ColorHelper.toExpressionParameter(c), new ExpressionParameter("-1"));
+        this(ExpressionHelper.toExpressionParameter(c), new ExpressionParameter("-1"));
     }
 
     /**
@@ -94,7 +94,7 @@ public final class SolidFill extends Fill {
      * @param opacity
      */
     public SolidFill(Color c, double opacity) {
-        this(ColorHelper.toExpressionParameter(c), new ExpressionParameter(String.valueOf(opacity)));
+        this(ExpressionHelper.toExpressionParameter(c), new ExpressionParameter(String.valueOf(opacity)));
     }
 
     /**
@@ -166,12 +166,17 @@ public final class SolidFill extends Fill {
     }
 
     @Override
-    public void draw(Graphics2D g2, Map<String, Object> map, Shape shp, IMapTransform mt) throws ParameterException, IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Uom getUom() {
+        return uom == null ? ((UomNode)getParent()).getUom() : uom;
     }
 
     @Override
-    public Paint getPaint(Map<String, Object> map, IMapTransform mt) throws ParameterException, IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setUom(Uom uom) {
+        this.uom =uom;
+     }    
+
+    @Override
+    public Uom getOwnUom() {
+        return uom;
     }
 }

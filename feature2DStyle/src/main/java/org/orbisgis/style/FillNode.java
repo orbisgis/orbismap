@@ -36,26 +36,26 @@
  */
 package org.orbisgis.style;
 
-import org.orbisgis.style.fill.Fill;
 
 /**
- * Interface to be implemented by every node that can contain a <code>Fill</code> element.
- * @author Maxence Laurent, Alexis Guéganno
+ * Interface to be implemented by every node that can contain a <code>IFill</code> element.
+ * @author Erwan Bocher, CNRS
+ * 
  */
 public interface FillNode {
 
         /**
          * Replace the current fill with the one given in argument.
-         * @param f 
-         * A {@link Fill} implementation. It's up to the realization to decide
+         * @param fill 
+         * A {@link IFill} implementation. It's up to the realization to decide
          * if it can be null or not.
          */
-	void setFill(Fill f);
+	void setFill(IFill fill);
         
         /**
-         * Gets the {@code Fill} associated to this {@code FillNode}.
+         * Gets the {@code IFill} associated to this {@code FillNode}.
          * @return 
-         * A {@link Fill} instance.
+         * A {@link IFill} instance.
          */
-	Fill getFill();
+	IFill getFill();
 }
