@@ -37,8 +37,6 @@
 package org.orbisgis.style.fill;
 
 import org.orbisgis.style.StrokeNode;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import java.util.ArrayList;
@@ -48,6 +46,7 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * A {@code HatchedFill} will fill a shape with hatches. It is configured according
@@ -77,9 +76,9 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * 
      */
     public static final double DEFAULT_NATURAL_LENGTH = 100;
-    private RealParameter angle;
-    private RealParameter distance;
-    private RealParameter offset;
+    private ExpressionParameter angle;
+    private ExpressionParameter distance;
+    private ExpressionParameter offset;
     private Stroke stroke;
     private Uom uom;
 
@@ -89,25 +88,26 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      */
     public HatchedFill() {
         setStroke(new PenStroke());
+        setDistance(new ExpressionParameter(DEFAULT_PDIST));
+        setAngle(new ExpressionParameter(DEFAULT_ALPHA));
     }
 
     /**
      * Get the orientation of the hatches.
      * @return 
      */
-    public RealParameter getAngle() {
+    public ExpressionParameter getAngle() {
         return angle;
     }
 
 
     /**
-     * Set the orientation of the hatches.
-     * @return 
+     * Set the orientation of the hatches. 
+     * @param angle
      */
-    public void setAngle(RealParameter angle) {
+    public void setAngle(ExpressionParameter angle) {
         this.angle = angle;
         if (angle != null) {
-            angle.setContext(RealParameterContext.REAL_CONTEXT);
             angle.setParent(this);
         }
     }
@@ -117,7 +117,7 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Get the perpendicular distance between two hatches
      * @return 
      */
-    public RealParameter getDistance() {
+    public ExpressionParameter getDistance() {
         return distance;
     }
 
@@ -126,10 +126,9 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Set the perpendicular distance between two hatches
      * @return 
      */
-    public void setDistance(RealParameter distance) {
+    public void setDistance(ExpressionParameter distance) {
         this.distance = distance;
         if (distance != null) {
-            this.distance.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             this.distance.setParent(this);
         }
 
@@ -140,7 +139,7 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Get the offset of the hatches.
      * @return 
      */
-    public RealParameter getOffset() {
+    public ExpressionParameter getOffset() {
         return offset;
     }
 
@@ -149,10 +148,9 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Set the offset of the hatches.
      * @param offset 
      */
-    public void setOffset(RealParameter offset) {
+    public void setOffset(ExpressionParameter offset) {
         this.offset = offset;
         if (offset != null) {
-            offset.setContext(RealParameterContext.REAL_CONTEXT);
             offset.setParent(this);
         }
     }

@@ -45,7 +45,7 @@ import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
-import org.orbisgis.style.parameter.GeometryParameter;
+import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
  * A {@code LineSymbolizer} is used to style a {@code Stroke} along a linear
@@ -71,7 +71,7 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
     private String name;
     private String desc;
     private int level;
-    public static final String DEFAULT_NAME = "Line Symbolizer";
+    public static final String DEFAULT_NAME = "Line symbolizer";
     private Uom uom;
 
     /**
@@ -92,8 +92,8 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
     }
 
     @Override
-    public void setGeometryParameter(String geometryExpression) {
-        this.geometryExpression = new GeometryParameter(geometryExpression);
+    public void setGeometryParameter(GeometryParameter geometryExpression) {
+        this.geometryExpression = geometryExpression;
     }
 
     @Override

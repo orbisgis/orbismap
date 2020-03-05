@@ -5,7 +5,7 @@
  */
 package org.orbisgis.style;
 
-import org.orbisgis.style.parameter.GeometryParameter;
+import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
  *
@@ -15,6 +15,6 @@ public interface IFeatureSymbolizer extends ISymbolizer, Comparable{
     
     GeometryParameter getGeometryParameter();
 
-    void setGeometryParameter(String geometryExpression);
+    void setGeometryParameter(GeometryParameter geometryExpression);
     
 }

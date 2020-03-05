@@ -38,6 +38,7 @@ package org.orbisgis.style.parameter.real;
 
 import java.sql.ResultSet;
 import java.util.Map;
+import org.orbisgis.style.IParameterValue;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.IStyleNode;
 
@@ -46,7 +47,7 @@ import org.orbisgis.style.IStyleNode;
  * provides a direct mechanism to retrieve one in an external source.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public interface RealParameter extends IStyleNode, Comparable {
+public interface RealParameter extends IStyleNode, Comparable, IParameterValue {
 
 
         /**

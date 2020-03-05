@@ -37,14 +37,11 @@
 package org.orbisgis.style.label;
 
 import java.awt.*;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.StrokeNode;
+import org.orbisgis.style.utils.ExpressionHelper;
 import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
@@ -62,7 +59,6 @@ import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.ExpressionParameter;
-import org.orbisgis.style.parameter.color.ColorHelper;
 
 /**
  * This class embed all the informations needed to represent text of any kind on a map.
@@ -77,7 +73,7 @@ import org.orbisgis.style.parameter.color.ColorHelper;
  * @author Maxence Laurent, Alexis Guéganno
  */
 public final class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
-    private StringParameter text;
+    private ExpressionParameter text;
     private StringParameter fontFamily;
     private StringParameter fontWeight;
     private StringParameter fontStyle;
@@ -106,7 +102,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @param label 
      */
     public StyledText(String label) {
-        setText(new StringLiteral(label));
+        setText(new ExpressionParameter(label));
         setFontFamily(new StringLiteral("Arial"));
         setFontWeight(new StringLiteral("Normal"));
         setFontStyle(new StringLiteral("Normal"));
@@ -115,7 +111,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
 
         SolidFill f = new SolidFill();
         f.setOpacity(new ExpressionParameter("1.0"));
-        f.setColor(new ExpressionParameter(ColorHelper.toHex(Color.black)));
+        f.setColor(ExpressionHelper.toExpressionParameter(Color.black));
 
         this.setFill(f);
     }    
@@ -188,7 +184,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Get the text contained in this <code>StyledText</code>
      * @return the text contained in this <code>StyledText</code> as a <code>StringParameter</code> instance.
      */
-    public StringParameter getText() {
+    public ExpressionParameter getText() {
         return text;
     }
 
@@ -196,7 +192,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the text contained in this <code>StyledText</code>
      * @param text 
      */
-    public void setText(StringParameter text) {
+    public void setText(ExpressionParameter text) {
         if (text != null) {
             this.text = text;
             this.text.setParent(this);

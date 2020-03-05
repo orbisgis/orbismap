@@ -38,9 +38,7 @@ package org.orbisgis.style.graphic;
 
 
 import org.orbisgis.style.fill.Halo;
-import org.orbisgis.style.common.VariableOnlineResource;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.real.RealLiteral;
 import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
@@ -51,11 +49,8 @@ import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Transform;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
@@ -65,21 +60,13 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.ViewBoxNode;
 import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.TransformParameter;
+import org.orbisgis.style.parameter.WKNExpression;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
  * It is built using the following parameters :
  * <ul><li>A definition of the contained graphic, that can be exclusively of one of these types :
  *      <ul><li> WellKnownText : as defined in {@link WellKnownName}.</li>
- *      <li>An online resource, defined with an URI (to a TrueType font, for instance,
- *          particularly if associated with a markindex value</li>
- *      <li>An inlineContent, ie a nested mark description</li>
- *      </ul></li>
- * <li>A Format, describing the MIME-type. This parameter is compulsory when
- * using an online or inline mark, as it is essential to handle efficiently
- * the desired objects.</li>
- * <li>A MarkIndex, used to retrieve the desired mark in a remote collection (a glyph
- * within a font, for instance).</li>
  * <li>A unit of measure</li>
  * <li>A viewbox, as described in {@link ViewBox}</li>
  * <li>A {@link Transform}, that describes an affine transformation that must be applied on the mark.</li>
@@ -88,7 +75,9 @@ import org.orbisgis.style.parameter.TransformParameter;
  * <li>A {@link Stroke}</li>
  * <li>A perpendicular offset</li>
  * </ul>
- * @author Maxence Laurent, Alexis Guéganno
+ * @author Maxence Laurent
+ * @author Alexis Guéganno
+ * @author Erwan Bocher, CNRS
  */
 public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         ViewBoxNode, IUom, TransformNode {
@@ -100,17 +89,12 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     //private MarkGraphicSource source;
     private Uom uom;
     private TransformParameter transform;
-    private StringParameter wkn;
-    private VariableOnlineResource onlineResource;
+    private ExpressionParameter wkn;
     private ViewBox viewBox;
     private RealParameter pOffset;
     private Halo halo;
     private IFill fill;
     private Stroke stroke;
-    private RealParameter markIndex;
-    // cached shape : only available with shape that doesn't depends on features
-    private Shape shape;
-    private String mimeType;
 
     /**
      * Build a default {@code MarkGraphic}. It is built using the {@link WellKnownName#CIRCLE}
@@ -126,8 +110,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      */
     public void setTo3mmCircle() {
         this.setUom(Uom.MM);
-        this.setWkn(new StringLiteral("circle"));
-
+        this.setWkn(new ExpressionParameter("circle"));
         this.setViewBox(new ViewBox(new RealLiteral(DEFAULT_SIZE), new RealLiteral(DEFAULT_SIZE)));
         this.setFill(new SolidFill());
         ((ExpressionParameter) ((SolidFill) this.getFill()).getOpacity()).setExpression("100.0");
@@ -220,21 +203,13 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
 
     @Override
     public void setViewBox(ViewBox viewBox) {
-
         if (viewBox == null) {
             viewBox = new ViewBox();
         }
-
         this.viewBox = viewBox;
-
         viewBox.setParent(this);
-        //updateGraphic();
     }
-
-    /*
-    public MarkGraphicSource getSource() {
-    return source;
-    }*/
+    
     /**
      * Get the perpendicular offset applied to this {@code MarkGraphic} before rendering.
      * @return The perpendicular offset
@@ -255,86 +230,12 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         }
     }
 
-    /**
-     * Gets the index where to retrieve the mark in the collection associated to
-     * this {@code MarkGraphic}.
-     * @param mIndex The index of the mark
-     */
-    private void setMarkIndex(RealParameter mIndex) {
-        this.markIndex = mIndex;
-        this.markIndex.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
-        this.markIndex.setParent(this);
-    }
-
-    public RealParameter getMarkIndex() {
-        return markIndex;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
     
-
-    /**
-     * Tries to retrieve the source that defines this {@code MarkGraphic} in the 
-     * DataSet, at the given index.
-     * @param map The map of input values
-     * @return The source that defines this MarkGraphic
-     * @throws ParameterException 
-     */
-    private MarkGraphicSource getSource(Map<String,Object> map) throws ParameterException {
-        if (wkn != null) {
-            return WellKnownName.fromString(wkn.getValue(map));
-        } else if (onlineResource != null) {
-            return onlineResource;
-        }
-        return null;
-    }
-
-    private Shape getShape(Map<String,Object> map, IMapTransform mt) throws ParameterException, IOException {
-
-        Double dpi = null;
-        Double scaleDenom = null;
-
-        if (mt != null) {
-            dpi = mt.getDpi();
-            scaleDenom = mt.getScaleDenominator();
-        }
-
-        MarkGraphicSource source = getSource(map);
-
-        if (source != null) {
-            return source.getShape(viewBox, map, scaleDenom, dpi, markIndex, mimeType);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Get the online resource that defines this {@code MarkGraphic}.
-     * @return The online resource that defines this {@code MarkGraphic}.
-     */
-    public VariableOnlineResource getOnlineResource() {
-        return onlineResource;
-    }
-
-    /**
-     * Set the online resource that defines this {@code MarkGraphic}.
-     * @param onlineResource the online resource that defines this {@code MarkGraphic}.
-     */
-    public void setOnlineResource(VariableOnlineResource onlineResource) {
-        this.onlineResource = onlineResource;
-        if (onlineResource != null) {
-            wkn = null;
-            onlineResource.setParent(this);
-        }
-    }
-
     /**
      * Gets the WellKnownName defining this {@code MarkGraphic}.
      * @return the well-known name currently used, as a StringParameter.
      */
-    public StringParameter getWkn() {
+    public ExpressionParameter getWkn() {
         return wkn;
     }
 
@@ -342,11 +243,9 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * Sets the WellKnownName defining this {@code MarkGraphic}.
      * @param wkn The new well-known name to use, as a StringParameter.
      */
-    public void setWkn(StringParameter wkn) {
+    public void setWkn(ExpressionParameter wkn) {
         this.wkn = wkn;
         if (this.wkn != null) {
-            this.wkn.setRestrictionTo(WellKnownName.getValues());
-            this.onlineResource = null;
             this.wkn.setParent(this);
         }
     }   
@@ -374,12 +273,6 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         }
         if (transform != null) {
             ls .add(transform);
-        }
-        if (markIndex != null) {
-            ls .add(markIndex);
-        }
-        if(onlineResource != null){
-            ls.add(onlineResource);
         }
         return ls;
     }

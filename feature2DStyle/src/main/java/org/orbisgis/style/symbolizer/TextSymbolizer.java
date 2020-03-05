@@ -52,7 +52,7 @@ import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.parameter.GeometryParameter;
+import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
  * {@code TextSymbolizer} instances are used to style text labels. In addition
@@ -74,7 +74,7 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
     private String name;
     private String desc;
     private int level;
-    public static final String DEFAULT_NAME = "Text Symbolizer";
+    public static final String DEFAULT_NAME = "Text symbolizer";
     private Uom uom;
 
     /**
@@ -97,8 +97,8 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
     }
 
     @Override
-    public void setGeometryParameter(String geometryExpression) {
-        this.geometryExpression = new GeometryParameter(geometryExpression);
+    public void setGeometryParameter(GeometryParameter geometryExpression) {
+        this.geometryExpression = geometryExpression;
     }
 
     /**

@@ -37,20 +37,10 @@
 package org.orbisgis.style.stroke;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.orbisgis.style.FillNode;
-import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.style.parameter.string.StringLiteral;
-import org.orbisgis.style.parameter.string.StringParameter;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.Uom;
@@ -87,8 +77,8 @@ public final class PenStroke extends Stroke implements FillNode {
     private ExpressionParameter width;
     private LineJoin lineJoin;
     private LineCap lineCap;
-    private StringParameter dashArray;
-    private RealParameter dashOffset;
+    private ExpressionParameter dashArray;
+    private ExpressionParameter dashOffset;
 
     /**
      * There are three ways to draw the end of a line : butt, round and square.
@@ -116,41 +106,10 @@ public final class PenStroke extends Stroke implements FillNode {
         setFill(getDefaultFill());
         setWidth(new ExpressionParameter(DEFAULT_WIDTH));
         setUom(Uom.PX);
-        setDashArray(new StringLiteral(""));
-        setDashOffset(new RealLiteral(0));
+        setDashOffset(new ExpressionParameter(0.0));
         setLineCap(DEFAULT_CAP);
         setLineJoin(DEFAULT_JOIN);
     }
-   
-
-    public Double getNaturalLength(Map<String,Object> map, Shape shp, IMapTransform mt) {
-        if (dashArray != null) {
-            // A dashed PenStroke has a length
-            // This is required to compute hatches tile but will break the compound stroke natural length logic
-            // for infinite PenStroke element ! For this reason, compound stroke use getNaturalLengthForCompound
-            try {
-                double sum = 0.0;
-                String sDash = dashArray.getValue(map);
-                if(!sDash.isEmpty()){
-                String[] splitDash = sDash.split(" ");
-                    int size = splitDash.length;
-                    for (int i = 0; i < size; i++) {
-                        sum += UomUtils.toPixel(Double.parseDouble(splitDash[i]), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-                    }
-
-                    if (size % 2 == 1) {
-                        // # pattern item is odd -> 2* to close the pattern
-                        sum *= 2;
-                    }
-                    return sum;
-                }
-            } catch (ParameterException ex) {
-                return Double.POSITIVE_INFINITY;
-            }
-        }
-        return Double.POSITIVE_INFINITY;
-    }
-
 
     @Override
     public List<IStyleNode> getChildren() {
@@ -247,24 +206,23 @@ public final class PenStroke extends Stroke implements FillNode {
      * @return 
      */
     public ExpressionParameter getWidth() {
-        return this.width;
+        return width;
     }
 
     /**
      * Gets the offset let before drawing the first dash.
      * @return  The offset let before drawing the first dash.
      */
-    public RealParameter getDashOffset() {
+    public ExpressionParameter getDashOffset() {
         return dashOffset;
     }
 
     /**
      * Sets the offset let before drawing the first dash.
-     * @param dashOffset If null, will be defaulted to 0.
+     * @param dashOffset.
      */
-    public void setDashOffset(RealParameter dashOffset) {
-        this.dashOffset = dashOffset == null ? new RealLiteral(0) : dashOffset;
-        this.dashOffset.setContext(RealParameterContext.REAL_CONTEXT);
+    public void setDashOffset(ExpressionParameter dashOffset) {
+        this.dashOffset = dashOffset;
         this.dashOffset.setParent(this);
     }
 
@@ -275,7 +233,7 @@ public final class PenStroke extends Stroke implements FillNode {
      * and transparent (odd elements of the array) parts of the lines to draw.
      * @return 
      */
-    public StringParameter getDashArray() {
+    public ExpressionParameter getDashArray() {
         return dashArray;
     }
 
@@ -284,36 +242,10 @@ public final class PenStroke extends Stroke implements FillNode {
      * is in fact stored as a string parameter, filled with space separated double values.</p>
      * <p>These values represent the length (in the inner UOM) of the opaque (even elements of the array)
      * and transparent (odd elements of the array) parts of the lines to draw.
-     * @param dashArray The new dash array. If null, will be replaced by a StringLiteral built with the empty string.
+     * @param dashArray The new dash array.
      */
-    public void setDashArray(StringParameter dashArray) {
-        this.dashArray = dashArray == null ? new StringLiteral("") : dashArray;
+    public void setDashArray(ExpressionParameter dashArray) {
+        this.dashArray = dashArray;
         this.dashArray.setParent(this);
     }
-
-    /**
-     * Get the minimal length needed to display a complete dash pattern, including
-     * the dash offset.
-     * @param map
-     * @param mt
-     * @return
-     * @throws ParameterException 
-     */
-    public double getMinLength(Map<String,Object> map, IMapTransform mt) throws ParameterException {
-        double length = 0;
-        if (dashArray != null) {
-            String sDash = this.dashArray.getValue(map);
-            String[] splitedDash = sDash.split(" ");
-            int size = splitedDash.length;
-            for (int i = 0; i < size; i++) {
-                length += UomUtils.toPixel(Double.parseDouble(splitedDash[i]), getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-            }
-        }
-
-        if (dashOffset != null) {
-            length += dashOffset.getValue(map);
-        }
-
-        return length;
-    }    
 }

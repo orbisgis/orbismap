@@ -46,7 +46,7 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.parameter.GeometryParameter;
+import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
  * {@code PointSymbolizer} are used to draw a graphic at a point. As a symbolizer, 
@@ -71,14 +71,13 @@ import org.orbisgis.style.parameter.GeometryParameter;
  * 
  */
 public final class PointSymbolizer extends StyleNode  implements IGraphicNode,Comparable, IFeatureSymbolizer, UomNode {
-    private static final String MODE_VERTEX = "vertex";
     private Graphic graphic;
     private boolean onVertex;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
     private String desc;
     private int level;
-    public static final String DEFAULT_NAME = "Point Symbolizer";
+    public static final String DEFAULT_NAME = "Point symbolizer";
     private Uom uom;
 
     /**
@@ -101,8 +100,8 @@ public final class PointSymbolizer extends StyleNode  implements IGraphicNode,Co
     }
 
     @Override
-    public void setGeometryParameter(String geometryExpression) {
-        this.geometryExpression = new GeometryParameter(geometryExpression);
+    public void setGeometryParameter(GeometryParameter geometryExpression) {
+        this.geometryExpression = geometryExpression;
     }
 
     @Override

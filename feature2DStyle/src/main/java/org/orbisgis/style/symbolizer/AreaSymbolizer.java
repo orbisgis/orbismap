@@ -48,7 +48,7 @@ import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Translate;
-import org.orbisgis.style.parameter.GeometryParameter;
+import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
  * A "AreaSymbolizer" specifies the rendering of a polygon or other area/surface
@@ -71,7 +71,7 @@ public final class AreaSymbolizer extends StyleNode implements FillNode, StrokeN
     private String name;
     private String desc;
     private int level;
-    public static final String DEFAULT_NAME = "Area Symbolizer";
+    public static final String DEFAULT_NAME = "Area symbolizer";
     private Uom uom;
 
     /**
@@ -92,8 +92,8 @@ public final class AreaSymbolizer extends StyleNode implements FillNode, StrokeN
     }
 
     @Override
-    public void setGeometryParameter(String geometryExpression) {
-        this.geometryExpression = new GeometryParameter(geometryExpression);
+    public void setGeometryParameter(GeometryParameter geometryExpression) {
+        this.geometryExpression = geometryExpression;
     }
 
     @Override

@@ -11,7 +11,7 @@ public class ExpressionParameter  extends StyleNode implements IParameterValue, 
     String expression ="";
     private String identifier;
     public ExpressionParameter(String expression){
-        this.expression =expression;
+        this.expression = expression;
     }
     
     public ExpressionParameter(double expression){

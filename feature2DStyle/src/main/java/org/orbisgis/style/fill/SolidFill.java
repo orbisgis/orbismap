@@ -41,7 +41,7 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
-import org.orbisgis.style.parameter.ExpressionHelper;
+import org.orbisgis.style.utils.ExpressionHelper;
 import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.color.ColorHelper;
 
@@ -75,7 +75,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(ExpressionHelper.toExpressionParameter(ColorHelper.getRandomColor()), new ExpressionParameter("-1"));
+        this(ExpressionHelper.toExpressionParameter(ColorHelper.getRandomColor()), new ExpressionParameter("1"));
     }
 
     /**
@@ -84,7 +84,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param c
      */
     public SolidFill(Color c) {
-        this(ExpressionHelper.toExpressionParameter(c), new ExpressionParameter("-1"));
+        this(ExpressionHelper.toExpressionParameter(c), new ExpressionParameter("1"));
     }
 
     /**

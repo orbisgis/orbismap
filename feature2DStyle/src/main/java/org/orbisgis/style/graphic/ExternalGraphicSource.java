@@ -36,12 +36,6 @@
  */
 package org.orbisgis.style.graphic;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.util.Map;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 
 /**
@@ -52,35 +46,5 @@ import org.orbisgis.style.IStyleNode;
  */
 public interface ExternalGraphicSource extends IStyleNode{
 
-
-        /**
-         * {@code ExternalGraphicSource} realizations are dependant upon a cache.
-         * Using this method, this cache is updated, and the image contained in
-         * the {@code ExternalGraphicSource} may have changed - and it is the
-         * same for its boundaries. This method is intended to update the cache
-         * and will return the bounding box of the associated image as a
-         * {@code Rectangle2D.Double} instance.
-         * @param viewBox
-         * @param map
-         * @param mt
-         * @param mimeType
-         * @return
-         * @throws ParameterException
-         */
-    Rectangle2D.Double updateCacheAndGetBounds(ViewBox viewBox, 
-            Map<String,Object> map, IMapTransform mt, String mimeType) throws ParameterException;
-
-    /**
-     * Draws the graphic on the map.
-     * @param g2 The Graphics used to draw the symbol.
-     * @param map The input parameters.
-     * @param at The AffineTransform used on the input image
-     * @param mt The MapTransform used to put the resulting image on the map.
-     * @param opacity The opacity of the image.
-     * @param mimeType The MIME type of the image.
-     * @throws ParameterException
-     */
-    void draw(Graphics2D g2, Map<String,Object> map, AffineTransform at, IMapTransform mt,
-              double opacity, String mimeType) throws ParameterException;
 
 }
