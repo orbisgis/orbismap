@@ -33,17 +33,8 @@
  */
 package org.orbisgis.style.symbolizer;
 
-import org.locationtech.jts.geom.Geometry;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.label.Label;
 import org.orbisgis.style.label.PointLabel;
 import org.orbisgis.style.parameter.real.RealParameter;

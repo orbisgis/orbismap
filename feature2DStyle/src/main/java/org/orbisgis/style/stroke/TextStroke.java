@@ -36,16 +36,10 @@
  */
 package org.orbisgis.style.stroke;
 
-import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.orbisgis.style.label.LineLabel;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 
 /**

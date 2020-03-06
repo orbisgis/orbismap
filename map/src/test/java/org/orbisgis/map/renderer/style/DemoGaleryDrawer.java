@@ -106,7 +106,7 @@ public class DemoGaleryDrawer {
         this.template(inputFile, "TextSymbolizer", style, true, null);
     }
     
-    //@Test TODO
+    @Test //TODO move fill to textsymbolizer
     public void testTextSymbolizerColorExpression() throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StyleFactoryTest.createTextSymbolizerColorExpression();
@@ -133,5 +133,13 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerHatchedColorExpression();
         this.template(inputFile, "AreaSymbolizerHatchedColorExpression", style, true, null);
     }
+    
+    @Test
+    public void testAreaSymbolizerRuleExpression() throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerRuleExpression();
+        this.template(inputFile, "AreaSymbolizerRuleExpression", style, true, null);
+    }
+          
     
 }

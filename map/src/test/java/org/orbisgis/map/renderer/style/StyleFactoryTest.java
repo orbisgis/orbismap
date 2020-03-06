@@ -193,7 +193,13 @@ public class StyleFactoryTest {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
         PointLabel pointLabel = new PointLabel();
-        pointLabel.setLabel(new StyledText("type"));
+        StyledText styledText = new StyledText("type");
+        ExpressionParameter colorExpression = new ExpressionParameter(""
+                + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        ExpressionParameter opacity = new ExpressionParameter("1");
+        SolidFill solidFill = new SolidFill(colorExpression, opacity);
+        styledText.setFill(solidFill);
+        pointLabel.setLabel(styledText);
         textSymbolizer.setLabel(pointLabel);
         Feature2DRule rule = new Feature2DRule();
         rule.addSymbolizer(textSymbolizer);
@@ -217,5 +223,20 @@ public class StyleFactoryTest {
         return style;
     }
 
+     public static Feature2DStyle createAreaSymbolizerRuleExpression() {
+        Feature2DStyle style = new Feature2DStyle();
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        SolidFill solidFill = new SolidFill(Color.YELLOW);
+        areaSymbolizer.setFill(solidFill);
+        PenStroke ps = new PenStroke();
+        SolidFill psFill = new SolidFill(Color.BLUE);
+        ps.setFill(psFill);
+        areaSymbolizer.setStroke(ps);
+        Feature2DRule rule = new Feature2DRule();
+        rule.setExpression(new ExpressionParameter("st_area(the_geom) < 5000"));
+        rule.addSymbolizer(areaSymbolizer);
+        style.addRule(rule);
+        return style;
+    }
     
 }

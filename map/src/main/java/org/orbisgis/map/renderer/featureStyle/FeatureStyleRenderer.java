@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.sf.jsqlparser.JSQLParserException;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.symbolizer.PointSymbolizerDrawer;
 import org.orbisgis.map.renderer.featureStyle.symbolizer.TextSymbolizerDrawer;
@@ -22,6 +23,7 @@ import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.map.renderer.featureStyle.visitor.ParameterValueVisitor;
 import org.orbisgis.map.api.IProgressMonitor;
+import org.orbisgis.map.renderer.featureStyle.utils.ExpressionParser;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.JdbcTable;
@@ -45,17 +47,22 @@ public class FeatureStyleRenderer {
         this.fs = fs;
     }
 
-    public String prepareRule(Feature2DRule rule) {
+    public String prepareSymbolizerExpression(Feature2DRule rule) {
         ParameterValueVisitor pvv = new ParameterValueVisitor();
         pvv.visitSymbolizerNode(rule);
         return pvv.getResultAsString();
+    }
+    
+    public void formatRuleExpression(Feature2DRule rule) throws JSQLParserException {
+        rule.setExpression(ExpressionParser.formatConditionalExpression(rule.getExpression()));
     }
 
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
         List<String> geometryColumns = spatialTable.getGeometricColumns();
         for (Feature2DRule rule : fs.getRules()) {
             if (rule.isDomainAllowed(mt.getScaleDenominator())) {
-                String allExpressions = prepareRule(rule);
+                formatRuleExpression(rule);
+                String allExpressions = prepareSymbolizerExpression(rule);
                 List<IFeatureSymbolizer> sl = rule.getSymbolizers();
                 GeometryParameterVisitor gp = new GeometryParameterVisitor(sl);
                 gp.visit(geometryColumns);
@@ -73,12 +80,20 @@ public class FeatureStyleRenderer {
                     geofilter.append("'").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
                     String geomFilter = geofilter.toString();
 
-                    String wherefilter = gp.getGeometryColumns().stream()
+                    String spatialWherefilter = gp.getGeometryColumns().stream()
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
+                    
+                    String ruleFilter = rule.getExpression().getExpression();
+                    
+                    if(!ruleFilter.isEmpty()){                        
+                        ruleFilter += " and " ;
+                    }
+                    ruleFilter += spatialWherefilter;
+
 
                     JdbcSpatialTable spatialTableQuery = (JdbcSpatialTable) ((JdbcTable) spatialTable.columns(query))
-                            .where(wherefilter).getSpatialTable();
+                            .where(ruleFilter).getSpatialTable();
 
                     Map<String, Object> properties = new HashMap<>();
                     Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl);

@@ -92,9 +92,10 @@ public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymb
 
     /**
      * Replace the current inner <code>where</code> clause.
+     * @param expression
      */
-    public void setExpression(String expression) {
-        this.expressionParameter = new ExpressionParameter(expression);
+    public void setExpression(ExpressionParameter expression) {
+        this.expressionParameter = expression;
     }
 
 

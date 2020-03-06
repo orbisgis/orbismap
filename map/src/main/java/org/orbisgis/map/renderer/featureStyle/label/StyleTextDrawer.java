@@ -76,9 +76,11 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * inner {@code Fill}, {@code Halo} and {@code Stroke} instances.If they are
      * not set, a simple default {@code SolidFill} will be used.
      *
+     * @param sp
      * @param g2 The graphics we draw with
      *
      * @param outlines The list of needed outlines
+     * @param mapTransform
      * @throws ParameterException
      */
     public void drawOutlines(JdbcSpatialTable sp, Graphics2D g2, ArrayList<Shape> outlines, Map<String, Object> properties,

@@ -7,11 +7,6 @@ package org.orbisgis.map.renderer.style;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
-
-import static org.junit.jupiter.api.Assertions.*;
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.map.renderer.featureStyle.visitor.ParameterValueVisitor;
 
@@ -25,12 +20,10 @@ public class StyleParameterExpressionVisitor {
      * Test the {@link DataSourceLocation#asType(Class)} method.
      */
     @Test
-    public void parseExpressionParameter1() {
-        
+    public void parseExpressionParameter1() {        
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerStyleColorExpression();        
         ParameterValueVisitor pvv = new ParameterValueVisitor();
-        pvv.visitSymbolizerNode(style.getRules().get(0));
-        
+        pvv.visitSymbolizerNode(style.getRules().get(0));        
         System.out.println(pvv.getResultAsString());
        
     }
@@ -39,13 +32,21 @@ public class StyleParameterExpressionVisitor {
      * Test the {@link DataSourceLocation#asType(Class)} method.
      */
     @Test
-    public void parseExpressionParameter2() {
-        
+    public void parseExpressionParameter2() {        
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerHatched();        
         ParameterValueVisitor pvv = new ParameterValueVisitor();
-        pvv.visitSymbolizerNode(style.getRules().get(0));
-        
-        System.out.println(pvv.getResultAsString());
-       
+        pvv.visitSymbolizerNode(style.getRules().get(0));        
+        System.out.println(pvv.getResultAsString());       
+    }
+    
+     /**
+     * Test the {@link DataSourceLocation#asType(Class)} method.
+     */
+    @Test
+    public void parseExpressionParameter3() {        
+        Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerRuleExpression();        
+        ParameterValueVisitor pvv = new ParameterValueVisitor();
+        pvv.visitSymbolizerNode(style.getRules().get(0));        
+        System.out.println(pvv.getResultAsString());       
     }
 }
