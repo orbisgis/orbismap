@@ -7,8 +7,8 @@ package org.orbisgis.map.renderer.featureStyle.utils;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
@@ -16,13 +16,12 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.orbisgis.map.layerModel.MapTransform;
-import org.orbisgis.style.parameter.ParameterException;
 
 /**
  *
  * @author ebocher
  */
-public class GeometryUtils {
+public class GeometryHelper {
     
      /**
      * Return all vertices of the geometry 
@@ -43,6 +42,28 @@ public class GeometryUtils {
             }
         }
         return points;
+    }
+    
+    /**
+     * Return all vertices of the geometry 
+     * TODO : Take distance to remove redundant points
+     *
+     * @param envelope
+     * @param theGeom
+     * @return
+     */
+    public static Geometry getPoints(Envelope envelope, Geometry theGeom) {        
+        ArrayList<Coordinate> finalCoords = new ArrayList<>();
+        Coordinate[] coords = theGeom.getCoordinates();    
+        for (Coordinate coord : coords) {
+            if (envelope.intersects(coord)) {
+                finalCoords.add(coord);
+            }
+        }
+        if(finalCoords.size()==1){
+            return theGeom.getFactory().createPoint(finalCoords.get(0));
+        }
+        return theGeom.getFactory().createMultiPointFromCoords(finalCoords.toArray(new Coordinate[0]));
     }
     
      /**

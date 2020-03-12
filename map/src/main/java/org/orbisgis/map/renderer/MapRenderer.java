@@ -5,6 +5,7 @@
  */
 package org.orbisgis.map.renderer;
 
+import java.awt.Color;
 import org.orbisgis.map.api.IRenderer;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -75,9 +76,11 @@ public class MapRenderer implements IRenderer{
             mt.resizeImage(width, height);
         }
         image = mt.getImage();
-        Graphics2D g2 = image.createGraphics();    
-        g2.setRenderingHints(mt.getRenderingHints());
-        mc.getLayerModel().draw(g2, mt, new NullProgressMonitor());        
+        Graphics2D g2 = image.createGraphics();
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, 0, width, height);
+        g2.addRenderingHints(mt.getRenderingHints());                
+        mc.getLayerModel().draw(g2, mt, new NullProgressMonitor());
     }
 
     public BufferedImage getImage() {
@@ -124,8 +127,7 @@ public class MapRenderer implements IRenderer{
             return false;
         }
         if (fileOut.exists() && delete) {
-            BufferedImage image = mt.getImage();
-            return ImageIO.write(image, getExtension(fileOut), fileOut);
+            return ImageIO.write(mt.getImage(), getExtension(fileOut), fileOut);
         } else if (!fileOut.exists()) {
             return ImageIO.write(mt.getImage(), getExtension(fileOut), fileOut);
         } else {

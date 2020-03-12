@@ -76,4 +76,5 @@ public interface IStyleNode{
      * @param styleVisitor 
      */
     void acceptVisitor(IStyleNodeVisitor styleVisitor);
+
 }

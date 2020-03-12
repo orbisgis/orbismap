@@ -10,6 +10,7 @@ import org.orbisgis.style.IStyleNode;
 /**
  *
  * @author ebocher
+ * @param <T>
  */
 public interface ISymbolizerDraw<T extends IStyleNode> extends IStyleDrawer <T>{
  

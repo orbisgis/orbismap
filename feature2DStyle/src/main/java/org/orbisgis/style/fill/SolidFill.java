@@ -43,7 +43,6 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.utils.ExpressionHelper;
 import org.orbisgis.style.parameter.ExpressionParameter;
-import org.orbisgis.style.parameter.color.ColorHelper;
 
 /**
  * A solid fill fills a shape with a solid color (+opacity)
@@ -75,7 +74,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(ExpressionHelper.toExpressionParameter(ColorHelper.getRandomColor()), new ExpressionParameter("1"));
+        this(ExpressionHelper.randomColor(), new ExpressionParameter(1d));
     }
 
     /**
@@ -84,7 +83,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param c
      */
     public SolidFill(Color c) {
-        this(ExpressionHelper.toExpressionParameter(c), new ExpressionParameter("1"));
+        this(ExpressionHelper.toExpression(c), new ExpressionParameter(1d));
     }
 
     /**
@@ -94,7 +93,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param opacity
      */
     public SolidFill(Color c, double opacity) {
-        this(ExpressionHelper.toExpressionParameter(c), new ExpressionParameter(String.valueOf(opacity)));
+        this(ExpressionHelper.toExpression(c), new ExpressionParameter(opacity));
     }
 
     /**
@@ -135,7 +134,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param opacity
      */
     public void setOpacity(ExpressionParameter opacity) {
-        this.opacity = opacity == null ? new ExpressionParameter("1") : opacity;
+        this.opacity = opacity == null ? new ExpressionParameter(1) : opacity;
         this.opacity.setParent(this);
     }
 

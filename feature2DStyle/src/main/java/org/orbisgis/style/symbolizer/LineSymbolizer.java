@@ -41,8 +41,7 @@ import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
+import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
@@ -65,7 +64,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  */
 public final class LineSymbolizer extends StyleNode implements Comparable, StrokeNode, IFeatureSymbolizer, UomNode {
 
-    private RealParameter perpendicularOffset;
+    private ExpressionParameter perpendicularOffset;
     private Stroke stroke;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
@@ -112,7 +111,7 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
      *
      * @return
      */
-    public RealParameter getPerpendicularOffset() {
+    public ExpressionParameter getPerpendicularOffset() {
         return perpendicularOffset;
     }
 
@@ -122,10 +121,9 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
      *
      * @param perpendicularOffset
      */
-    public void setPerpendicularOffset(RealParameter perpendicularOffset) {
+    public void setPerpendicularOffset(ExpressionParameter perpendicularOffset) {
         this.perpendicularOffset = perpendicularOffset;
         if (this.perpendicularOffset != null) {
-            this.perpendicularOffset.setContext(RealParameterContext.REAL_CONTEXT);
             this.perpendicularOffset.setParent(this);
         }
     }

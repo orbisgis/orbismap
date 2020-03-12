@@ -34,16 +34,17 @@
  * or contact directly:
  * info_at_ orbisgis.org
  */
-
 package org.orbisgis.style;
 
 /**
- * <code>LiteralListener</code> are listeners dedicated to <code>Literal</code> objects.
- * @author Maxence Laurent
+ * <code>Literal</code>s are the concrete realizations of <code>IParameterValue</code>.
+ *
+ * @author Bocher Erwan
+ * @param <T>
  */
-public interface LiteralListener {
-        /**
-         * Notify a change to the classes spying the <code>Literal</code> instance(s).
-         */
-	void literalChanged();
+public interface  ILiteral<T extends Object> extends IParameterValue, Comparable {
+
+    T getValue();
+    
+    void setValue(T value);
 }

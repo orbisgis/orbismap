@@ -56,7 +56,7 @@ public class GeometryParameterVisitor {
     private HashMap<String, String> res = new HashMap<String, String>();
     private final List<IFeatureSymbolizer> feature2DSymbolizers;
     final Set<String> geometryColumnsValid = new HashSet<String>();
-     private int count=0;
+    private int count=0;
     
     public GeometryParameterVisitor(List<IFeatureSymbolizer> feature2DSymbolizers) {
         this.feature2DSymbolizers = feature2DSymbolizers;
@@ -84,8 +84,8 @@ public class GeometryParameterVisitor {
                 String formatedExp = expParsed.toString();
                 String identifier = "geom_" + count++;
                 gp.setExpression(formatedExp);
-                if (!res.containsKey(formatedExp)) {
-                    res.put(formatedExp,identifier);
+                if (!res.containsValue(formatedExp)) {
+                    res.put(identifier,formatedExp);
                     gp.setIdentifier(identifier);
                 }
                 else{
@@ -105,7 +105,7 @@ public class GeometryParameterVisitor {
 
     public String getResultAsString() {
         return res.entrySet().stream().
-                map(entrySet -> entrySet.getKey() + " as " + entrySet.getValue()).
+                map(entrySet -> entrySet.getValue()+ " as " + entrySet.getKey()).
                 collect(Collectors.joining(","));
     }
 

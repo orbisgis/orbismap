@@ -38,21 +38,12 @@ package org.orbisgis.style.label;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Map;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.utils.ExpressionHelper;
-import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.style.parameter.string.StringLiteral;
-import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.style.stroke.Stroke;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
@@ -74,16 +65,14 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public final class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
     private ExpressionParameter text;
-    private StringParameter fontFamily;
-    private StringParameter fontWeight;
-    private StringParameter fontStyle;
-    private RealParameter fontSize;
+    private ExpressionParameter fontFamily;
+    private ExpressionParameter fontWeight;
+    private ExpressionParameter fontStyle;
+    private ExpressionParameter fontSize;
     private Stroke stroke;
     private IFill fill;
     private Halo halo;
     private Uom uom;
-    private String[] weights = {"Normal", "Bold"};
-    private String[] styles = {"Normal", "Italic", "Oblique"};
 
     /**
      * Fill a new StyledText with default values. Inner text is <code>Label</code>,
@@ -103,15 +92,15 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      */
     public StyledText(String label) {
         setText(new ExpressionParameter(label));
-        setFontFamily(new StringLiteral("Arial"));
-        setFontWeight(new StringLiteral("Normal"));
-        setFontStyle(new StringLiteral("Normal"));
-        setFontSize(new RealLiteral(12));
+        setFontFamily(new ExpressionParameter("Arial"));
+        setFontWeight(new ExpressionParameter("Normal"));
+        setFontStyle(new ExpressionParameter("Normal"));
+        setFontSize(new ExpressionParameter(12));
         setUom(Uom.PT);
 
         SolidFill f = new SolidFill();
-        f.setOpacity(new ExpressionParameter("1.0"));
-        f.setColor(ExpressionHelper.toExpressionParameter(Color.black));
+        f.setOpacity(new ExpressionParameter(1.0));
+        f.setColor(ExpressionHelper.toExpression(Color.black));
 
         this.setFill(f);
     }    
@@ -217,7 +206,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The fontFamily as a <code>StringParameter</code>
      */
-    public StringParameter getFontFamily() {
+    public ExpressionParameter getFontFamily() {
         return fontFamily;
     }
 
@@ -225,7 +214,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font family used to represent this <code>StyledText</code>
      * @param fontFamily 
      */
-    public void setFontFamily(StringParameter fontFamily) {
+    public void setFontFamily(ExpressionParameter fontFamily) {
         if (fontFamily != null) {
             this.fontFamily = fontFamily;
             this.fontFamily.setParent(this);
@@ -237,7 +226,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The font size as a <code>RealParameter</code>
      */
-    public RealParameter getFontSize() {
+    public ExpressionParameter getFontSize() {
         return fontSize;
     }
 
@@ -245,10 +234,9 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font size used to represent this <code>StyledText</code>
      * @param fontSize The new font's size
      */
-    public void setFontSize(RealParameter fontSize) {
+    public void setFontSize(ExpressionParameter fontSize) {
         this.fontSize = fontSize;
         if (this.fontSize != null) {
-            this.fontSize.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             this.fontSize.setParent(this);
         }
     }
@@ -258,7 +246,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The font style as a <code>StringParameter</code>
      */
-    public StringParameter getFontStyle() {
+    public ExpressionParameter getFontStyle() {
         return fontStyle;
     }
 
@@ -266,10 +254,9 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font style used to represent this <code>StyledText</code>
      * @param fontStyle The new font's style
      */
-    public void setFontStyle(StringParameter fontStyle) {
+    public void setFontStyle(ExpressionParameter fontStyle) {
         if (fontStyle != null) {
             this.fontStyle = fontStyle;
-            this.fontStyle.setRestrictionTo(styles);
             this.fontStyle.setParent(this);
         }
     }
@@ -279,7 +266,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The font weight as a <code>StringParameter</code>
      */
-    public StringParameter getFontWeight() {
+    public ExpressionParameter getFontWeight() {
         return fontWeight;
     }
 
@@ -287,29 +274,12 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font weight used to represent this <code>StyledText</code>
      * @param fontWeight The new font's weight
      */
-    public void setFontWeight(StringParameter fontWeight) {
+    public void setFontWeight(ExpressionParameter fontWeight) {
         if (fontWeight != null) {
             this.fontWeight = fontWeight;
-            this.fontWeight.setRestrictionTo(weights);
             this.fontWeight.setParent(this);
         }
     }
-    
-    /**
-     *
-     * @param map
-     * @param mt
-     * @return
-     * @throws ParameterException
-     */
-    public double getEmInPixel(Map<String, Object> map, IMapTransform mt) throws ParameterException {
-        double size = UomUtils.toPixel(12, Uom.PT, mt.getDpi(), mt.getScaleDenominator(), null);
-        if (fontSize != null) {
-            size = UomUtils.toPixel(fontSize.getValue(map), getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-        }
-        return size / 2.0;
-    }
-
     
 
     @Override

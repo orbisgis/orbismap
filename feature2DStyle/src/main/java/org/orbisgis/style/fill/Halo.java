@@ -42,13 +42,11 @@ import java.util.List;
 import org.slf4j.*;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFill;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 
 /**
@@ -66,7 +64,7 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
     public static final double DEFAULT_RADIUS = 1.0;
 
     private Uom uom;
-    private RealParameter radius;
+    private ExpressionParameter radius;
     private IFill fill;
     
     /**
@@ -74,7 +72,7 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
      */
     public Halo() {
         setFill(getDefaultFill());
-        setRadius(new RealLiteral(DEFAULT_RADIUS));
+        setRadius(new ExpressionParameter(DEFAULT_RADIUS));
     }
 
     /**
@@ -82,7 +80,7 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
      * @param fill
      * @param radius 
      */
-    public Halo(IFill fill, RealParameter radius) {
+    public Halo(IFill fill, ExpressionParameter radius) {
         setFill(fill);
         setRadius(radius);
     }
@@ -120,7 +118,7 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
      * @return 
      * The radius of this {@code Halo} as a {@code RealParameter}.
      */
-    public RealParameter getRadius() {
+    public ExpressionParameter getRadius() {
         return radius;
     }
 
@@ -128,12 +126,11 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
      * Set the radius of this {@code Halo}.
      * @param radius 
      */
-    public void setRadius(RealParameter radius) {
+    public void setRadius(ExpressionParameter radius) {
         if (radius != null) {
             this.radius = radius;
-            this.radius.setContext(RealParameterContext.REAL_CONTEXT);
         } else {
-            this.radius = new RealLiteral(DEFAULT_RADIUS);
+            this.radius = new ExpressionParameter(DEFAULT_RADIUS);
         }
         this.radius.setParent(this);
     }

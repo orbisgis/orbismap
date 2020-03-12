@@ -35,10 +35,8 @@ package org.orbisgis.style.label;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * An {@code ExclusionZone} where the forbidden area is defined as a circle. It
@@ -50,13 +48,13 @@ import org.orbisgis.style.IStyleNode;
  */
 public final class ExclusionRadius extends ExclusionZone {
 
-    private RealParameter radius;
+    private ExpressionParameter radius;
 
     /**
      * Build a new {@code ExclusionRadius} with radius 3.
      */
     public ExclusionRadius() {
-        setRadius(new RealLiteral(3));
+        setRadius(new ExpressionParameter(3));
     }
 
     /**
@@ -66,7 +64,7 @@ public final class ExclusionRadius extends ExclusionZone {
      * @param radius
      */
     public ExclusionRadius(double radius) {
-        setRadius(new RealLiteral(radius));
+        setRadius(new ExpressionParameter(radius));
     }
 
     /**
@@ -74,7 +72,7 @@ public final class ExclusionRadius extends ExclusionZone {
      *
      * @return The radius as a {@code RealParameter}.
      */
-    public RealParameter getRadius() {
+    public ExpressionParameter getRadius() {
         return radius;
     }
 
@@ -83,10 +81,9 @@ public final class ExclusionRadius extends ExclusionZone {
      *
      * @param radius
      */
-    public void setRadius(RealParameter radius) {
+    public void setRadius(ExpressionParameter radius) {
         this.radius = radius;
         if (this.radius != null) {
-            this.radius.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             this.radius.setParent(this);
         }
     }    

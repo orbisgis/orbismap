@@ -8,7 +8,6 @@ package org.orbisgis.map.renderer.featureStyle;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.parameter.ParameterException;
 
@@ -20,5 +19,5 @@ import org.orbisgis.style.parameter.ParameterException;
 public interface IGraphicDrawer <T extends StyleNode> extends IStyleDrawer <T>{
     
     
-    public Rectangle2D getBounds(JdbcSpatialTable sp,  MapTransform mapTransform, T styleNode, Map<String, Object> properties) throws ParameterException;
+    public Rectangle2D getBounds(MapTransform mapTransform, T styleNode, Map<String, Object> properties) throws ParameterException;
 }

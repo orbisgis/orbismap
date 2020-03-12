@@ -45,8 +45,7 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
+import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.stroke.PenStroke;
 
@@ -66,9 +65,9 @@ public final class DensityFill extends StyleNode implements IGraphicNode, IFill,
 
     private boolean isHatched;
     private PenStroke hatches;
-    private RealParameter orientation;
+    private ExpressionParameter orientation;
     private Graphic mark;
-    private RealParameter percentageCovered;
+    private ExpressionParameter percentageCovered;
     //Some constants we don't want to be considered as magic numbers.
     public static final double ONE_HUNDRED = 100;
     public static final double FIFTY = 50;
@@ -85,8 +84,8 @@ public final class DensityFill extends StyleNode implements IGraphicNode, IFill,
      */
     public DensityFill() {
         this.setHatches(new PenStroke());
-        this.setHatchesOrientation(new RealLiteral(HatchedFill.DEFAULT_ALPHA));
-        this.setPercentageCovered(new RealLiteral(DEFAULT_PERCENTAGE));
+        this.setHatchesOrientation(new ExpressionParameter(HatchedFill.DEFAULT_ALPHA));
+        this.setPercentageCovered(new ExpressionParameter(DEFAULT_PERCENTAGE));
     }    
 
     /**
@@ -116,10 +115,9 @@ public final class DensityFill extends StyleNode implements IGraphicNode, IFill,
      * Set the orientation of the hatches associated to this {@code DensityFill}.
      * @param orientation angle in degree
      */
-    public void setHatchesOrientation(RealParameter orientation) {
+    public void setHatchesOrientation(ExpressionParameter orientation) {
         this.orientation = orientation;
         if (this.orientation != null) {
-            this.orientation.setContext(RealParameterContext.REAL_CONTEXT);
             this.orientation.setParent(this);
         }
     }
@@ -128,7 +126,7 @@ public final class DensityFill extends StyleNode implements IGraphicNode, IFill,
      * Get the orientation of the hatches associated to this {@code DensityFill}.
      * @return 
      */
-    public RealParameter getHatchesOrientation() {
+    public ExpressionParameter getHatchesOrientation() {
         return orientation;
     }
 
@@ -168,10 +166,9 @@ public final class DensityFill extends StyleNode implements IGraphicNode, IFill,
      *
      * @param percent percentage covered by the marks/hatches [0;100]
      */
-    public void setPercentageCovered(RealParameter percent) {
+    public void setPercentageCovered(ExpressionParameter percent) {
         this.percentageCovered = percent;
         if (this.percentageCovered != null) {
-            this.percentageCovered.setContext(RealParameterContext.PERCENTAGE_CONTEXT);
             this.percentageCovered.setParent(this);
         }
     }
@@ -182,7 +179,7 @@ public final class DensityFill extends StyleNode implements IGraphicNode, IFill,
      * A {@code RealParameter} that is in a {@link RealParameterContext#PERCENTAGE_CONTEXT}
      * if not null.
      */
-    public RealParameter getPercentageCovered() {
+    public ExpressionParameter getPercentageCovered() {
         return percentageCovered;
     }
 

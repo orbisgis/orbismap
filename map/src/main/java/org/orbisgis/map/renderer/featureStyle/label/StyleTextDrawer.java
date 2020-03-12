@@ -24,17 +24,12 @@ import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
-import org.orbisgis.map.api.IMapTransform;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.label.Label;
 import org.orbisgis.style.label.StyledText;
-import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.utils.UomUtils;
@@ -52,10 +47,11 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
         drawerMap.put(PenStroke.class, new PenStrokeDrawer());
     }
+    private Shape shape;
 
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, StyledText styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-            String txt = ValueHelper.getString(sp, styleNode.getText());
+    public void draw( Graphics2D g2, MapTransform mapTransform, StyledText styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+            String txt = ValueHelper.getAsString(properties, styleNode.getText());
             if (txt != null) {
             Label.VerticalAlignment va  = (Label.VerticalAlignment) properties.get("verticalalignment");
 
@@ -65,8 +61,8 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
             AffineTransform at = (AffineTransform) properties.get("affinetransform");
 
             ArrayList<Shape> outlines = new ArrayList<Shape>();
-            outlines.add(getOutline(sp, g2, txt, properties, mapTransform, at, va, styleNode));
-            drawOutlines(sp, g2, outlines, properties, mapTransform, styleNode);
+            outlines.add(getOutline( g2, txt, properties, mapTransform, at, va, styleNode));
+            drawOutlines(g2, outlines, properties, mapTransform, styleNode);
         }
     }
 
@@ -83,7 +79,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @param mapTransform
      * @throws ParameterException
      */
-    public void drawOutlines(JdbcSpatialTable sp, Graphics2D g2, ArrayList<Shape> outlines, Map<String, Object> properties,
+    public void drawOutlines(Graphics2D g2, ArrayList<Shape> outlines, Map<String, Object> properties,
             MapTransform mapTransform, StyledText styleNode) throws ParameterException, SQLException {
 
         Halo halo = styleNode.getHalo();
@@ -92,8 +88,8 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
             if (drawerMap.containsKey(halo.getClass())) {
                 IStyleDrawer haloDrawer = drawerMap.get(halo.getClass());
                 for (Shape outline : outlines) {
-                    properties.put("shape", outline);
-                    haloDrawer.draw(sp, g2, mapTransform, halo, properties);
+                    haloDrawer.setShape(outline);
+                    haloDrawer.draw( g2, mapTransform, halo, properties);
                 }
             }
         }
@@ -121,17 +117,18 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
                 if (fillDrawer == null && strokeDrawer == null) {
                     SolidFill sf = new SolidFill(Color.BLACK, 1.0);
                     sf.setParent(styleNode);
-                    properties.put("shape", outline);
-                    new SolidFillDrawer().draw(sp, g2, mapTransform, sf, properties);
+                    SolidFillDrawer drawer = new SolidFillDrawer();
+                    drawer.setShape(outline);
+                   drawer.draw(g2, mapTransform, sf, properties);
                 }
                 if (fillDrawer != null) {
-                    properties.put("shape", outline);
-                    fillDrawer.draw(sp, g2, mapTransform, fill, properties);
+                    fillDrawer.setShape(outline);
+                    fillDrawer.draw( g2, mapTransform, fill, properties);
                 }
                 if (strokeDrawer != null) {
-                    properties.put("shape", outline);
+                    strokeDrawer.setShape(outline);
                     properties.put("offset", 0.0);
-                    strokeDrawer.draw(sp, g2, mapTransform, stroke, properties);
+                    strokeDrawer.draw(g2, mapTransform, stroke, properties);
                 }
             }
 
@@ -150,10 +147,10 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException
      * @throws IOException
      */
-    public Rectangle2D getBounds(JdbcSpatialTable sp, Graphics2D g2, String text, Map<String, Object> map,
+    public Rectangle2D getBounds(Graphics2D g2, String text, Map<String, Object> map,
             MapTransform mt, StyledText styleNode) throws ParameterException {
 
-        Font font = getFont(sp, map, mt, styleNode);
+        Font font = getFont(map, mt, styleNode);
         FontMetrics metrics = g2.getFontMetrics(font);
         return metrics.getStringBounds(text, null);
     }
@@ -179,10 +176,10 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws IOException If an error occurred while retrieving the
      * {@code Font}.
      */
-    public Shape getOutline(JdbcSpatialTable sp, Graphics2D g2, String text, Map<String, Object> map,
+    public Shape getOutline( Graphics2D g2, String text, Map<String, Object> map,
             MapTransform mt, AffineTransform at, Label.VerticalAlignment va, StyledText styleNode)
             throws ParameterException {
-        Font font = getFont(sp, map, mt, styleNode);
+        Font font = getFont(map, mt, styleNode);
         TextLayout tl = new TextLayout(text, font, g2.getFontRenderContext());
         FontMetrics metrics = g2.getFontMetrics(font);
         double dy = 0;
@@ -221,40 +218,36 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException
      * @throws IOException
      */
-    private Font getFont(JdbcSpatialTable sp, Map<String, Object> map, MapTransform mt, StyledText styleNode) throws ParameterException {
-        String family = "Arial";
-        StringParameter fontFamily = styleNode.getFontFamily();
-        if (fontFamily != null) {
-            family = fontFamily.getValue(map);
+    private Font getFont( Map<String, Object> properties, MapTransform mt, StyledText styleNode) throws ParameterException {
+        String fontFamily = ValueHelper.getAsString(properties,styleNode.getFontFamily());
+        if (fontFamily == null) {
+            throw new ParameterException("The font family cannot be null");
         }
 
         // TODO Family is comma delimeted list of fonts family. Choose the first available
-        StringParameter fontWeight = styleNode.getFontWeight();
-        String weight = "normal";
-        if (fontWeight != null) {
-            weight = fontWeight.getValue(map);
+        String fontWeight = ValueHelper.getAsString(properties,styleNode.getFontWeight());
+        if (fontWeight == null) {
+            throw new ParameterException("The font weight cannot be null");
         }
 
-        String style = "normal";
-        StringParameter fontStyle = styleNode.getFontStyle();
-        if (fontStyle != null) {
-            style = fontStyle.getValue(map);
+        String fontStyle = ValueHelper.getAsString(properties,styleNode.getFontStyle());
+        if (fontStyle == null) {
+            throw new ParameterException("The font style cannot be null");
         }
 
-        //double size = Uom.toPixel(12, Uom.PT, mt.getDpi(), mt.getScaleDenominator(), null);
-        double size = 12.0;
-        RealParameter fontSize = styleNode.getFontSize();
-        if (fontSize != null) {
-            size = UomUtils.toPixel(fontSize.getValue(map), styleNode.getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+        Float fontSize = ValueHelper.getAsFloat(properties, styleNode.getFontSize());
+        if (fontSize == null) {
+                  throw new ParameterException("The font size cannot be null");
         }
-
+        double size = UomUtils.toPixel(fontSize, styleNode.getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+      
         int st = Font.PLAIN;
 
-        if (weight.equalsIgnoreCase("bold")) {
+        if (fontWeight.equalsIgnoreCase("bold")) {
             st = Font.BOLD;
         }
 
-        if (style.equalsIgnoreCase("italic")) {
+        if (fontStyle.equalsIgnoreCase("italic")) {
             if (st == Font.PLAIN) {
                 st |= Font.ITALIC;
             } else {
@@ -262,6 +255,15 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
             }
         }
 
-        return new Font(family, st, (int) size);
+        return new Font(fontFamily, st, (int) size);
+    }
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
 }

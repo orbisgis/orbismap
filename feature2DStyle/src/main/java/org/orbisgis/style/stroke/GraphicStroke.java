@@ -36,28 +36,16 @@
  */
 package org.orbisgis.style.stroke;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.style.common.RelativeOrientation;
-import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * A {@code GraphicStroke} is used essentially to repeat a a graphic along a line. It is dependant 
@@ -74,9 +62,9 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     public static final double MIN_LENGTH = 1; // In pixel !
 
     private Graphic graphic;
-    private RealParameter length;
+    private ExpressionParameter length;
     private RelativeOrientation orientation;
-    private RealParameter relativePosition;
+    private ExpressionParameter relativePosition;
 
     
     /**
@@ -107,10 +95,9 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
      * is defaulted to the natural length of the graphic.
      * @param length 
      */
-    public void setLength(RealParameter length) {
+    public void setLength(ExpressionParameter length) {
         this.length = length;
         if (this.length != null) {
-            this.length.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             this.length.setParent(this);
         }
     }
@@ -120,7 +107,7 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
      * of the embedded {@code Graphic} is used.
      * @return 
      */
-    public RealParameter getLength() {
+    public ExpressionParameter getLength() {
         return length;
     }
 
@@ -145,15 +132,14 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     }
 
 
-    public RealParameter getRelativePosition() {
+    public ExpressionParameter getRelativePosition() {
         return relativePosition;
     }
 
 
-    public void setRelativePosition(RealParameter relativePosition) {
+    public void setRelativePosition(ExpressionParameter relativePosition) {
         this.relativePosition = relativePosition;
         if (this.relativePosition != null){
-            this.relativePosition.setContext(RealParameterContext.PERCENTAGE_CONTEXT);
             this.relativePosition.setParent(this);
         }
     }

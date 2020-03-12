@@ -14,7 +14,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.label.ExclusionRadius;
 import org.orbisgis.style.label.ExclusionRectangle;
@@ -31,25 +30,23 @@ import org.orbisgis.style.utils.UomUtils;
  */
 public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
 
-    @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, PointLabel styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    private Shape shape;
 
-        Shape shape = (Shape) properties.get("shape");
+    @Override
+    public void draw(Graphics2D g2, MapTransform mapTransform, PointLabel styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         if (shape != null) {
             double x;
             double y;
-
-            // TODO RenderPermission !
-            double deltaX = 0;
-            double deltaY = 0;
+            Double deltaX =0D;
+            Double deltaY=0D;
             Uom uom = styleNode.getUom();
             StyledText styleText = styleNode.getLabel();
 
             if (styleText != null) {
                 StyleTextDrawer styleTextDrawer = new StyleTextDrawer();
-                String text = ValueHelper.getString(sp, styleText.getText());
+                String text = ValueHelper.getAsString(properties, styleText.getText());
                 if(text!=null && !text.isEmpty()) {
-                    Rectangle2D bounds = styleTextDrawer.getBounds(sp, g2, text, properties, mapTransform, styleText);
+                    Rectangle2D bounds = styleTextDrawer.getBounds( g2, text, properties, mapTransform, styleText);
 
 
                     x = shape.getBounds2D().getCenterX() + getHorizontalDisplacement(bounds, styleNode.getHorizontalAlign());
@@ -58,14 +55,24 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
                     ExclusionZone exclusionZone = styleNode.getExclusionZone();
                     if (exclusionZone != null) {
                         if (exclusionZone instanceof ExclusionRadius) {
-                            double radius = ((ExclusionRadius) (exclusionZone)).getRadius().getValue(properties);
+                            Double radius = ValueHelper.getAsDouble(properties,((ExclusionRadius) (exclusionZone)).getRadius());
+                            if(radius==null){
+                                throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
+                            }
                             radius = UomUtils.toPixel(radius, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
                             deltaX = radius;
                             deltaY = radius;
                         } else {
-                            deltaX = ((ExclusionRectangle) (exclusionZone)).getX().getValue(properties);
-                            deltaY = ((ExclusionRectangle) (exclusionZone)).getY().getValue(properties);
+                             deltaX = ValueHelper.getAsDouble(properties,((ExclusionRectangle) (exclusionZone)).getX());
+                            if(deltaX==null){
+                                throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
+                            }
+                             deltaY = ValueHelper.getAsDouble(properties,((ExclusionRectangle) (exclusionZone)).getY());
 
+                            if(deltaY==null){
+                                throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
+                            }
+                            
                             deltaX = UomUtils.toPixel(deltaX, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
                             deltaY = UomUtils.toPixel(deltaY, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
                         }
@@ -75,7 +82,9 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
 
                     properties.put("affinetransform", at);
                     properties.put("verticalalignment", styleNode.getVerticalAlign());
-                    styleTextDrawer.draw(sp, g2, mapTransform, styleText, properties);
+                    styleTextDrawer.draw(g2, mapTransform, styleText, properties);
+                    properties.remove("affinetransform");
+                    properties.remove("verticalalignment");
                 }
             }
 
@@ -99,6 +108,16 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
             default:
                 return 0.0;
         }
+    }
+    
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
 
 }

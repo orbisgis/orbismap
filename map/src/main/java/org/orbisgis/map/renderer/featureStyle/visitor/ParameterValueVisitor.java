@@ -51,9 +51,10 @@ import org.orbisgis.style.IStyleNodeVisitor;
  */
 public class ParameterValueVisitor implements IStyleNodeVisitor {
 
-    private HashMap<String, String> res = new HashMap<String, String>();
-    
-    private int count=0;
+    private HashMap<String, String> expression_parameters = new HashMap<String, String>();
+   // private HashMap<String, Object> literal_parameters = new HashMap<String, Object>();
+
+    private int count = 0;
 
     /**
      * Recursively visits {@code sn} and all its children, searching for
@@ -63,20 +64,23 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
      */
     @Override
     public void visitSymbolizerNode(IStyleNode sn) {
-        if (!res.isEmpty()) {
-            res = new HashMap<String, String>();
+        if (!expression_parameters.isEmpty()) {
+            expression_parameters = new HashMap<>();
         }
+        /*if(!literal_parameters.isEmpty()){
+            literal_parameters = new HashMap<>();
+        }*/
         try {
             visitImpl(sn);
-        } catch (Exception ex) {            
+        } catch (Exception ex) {
             throw new IllegalArgumentException();
         }
     }
 
     /**
      * The method that does the work...It is not callable directly by the
- clients, as it does not clean the inner HashSet. If you want to use it
- directly, inherit this class.
+     * clients, as it does not clean the inner HashSet. If you want to use it
+     * directly, inherit this class.
      *
      * @param sn
      * @throws java.lang.Exception
@@ -85,23 +89,35 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
         List<IStyleNode> children = sn.getChildren();
         if (sn instanceof ExpressionParameter) {
             ExpressionParameter exp = (ExpressionParameter) sn;
+            if(exp.isFunction()){
             Expression expParsed = CCJSqlParserUtil.parseExpression(exp.getExpression(), false);
             String formatedExp = expParsed.toString();
-            String identifier = "parameter_" + count++;
-            exp.setExpression(formatedExp);            
-            if (!res.containsKey(formatedExp)) {
-                res.put(formatedExp,identifier);
+            String identifier = "exp_parameter_" + count++;
+            exp.setExpression(formatedExp);
+            if (!expression_parameters.containsValue(formatedExp)) {
+                expression_parameters.put(identifier, formatedExp);
                 exp.setIdentifier(identifier);
-            }else{
-                exp.setIdentifier(res.get(formatedExp));
+            } else {
+                exp.setIdentifier(expression_parameters.get(formatedExp));
             }
+            }
+            /*else{
+                String identifier = "literal_parameter_" + count++;
+                String expLiteral = exp.getExpression().trim();
+                if (!literal_parameters.containsValue(expLiteral)) {
+                    literal_parameters.put(identifier,expLiteral);
+                    exp.setIdentifier(identifier);
+                } else {
+                    exp.setIdentifier((String) literal_parameters.get(expLiteral));
+                }
+            }*/
         }
         children.forEach((c) -> {
             try {
                 visitImpl(c);
-            } catch (Exception ex) {            
-            throw new IllegalArgumentException();
-        }
+            } catch (Exception ex) {
+                throw new IllegalArgumentException();
+            }
         });
     }
 
@@ -111,13 +127,22 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
      *
      * @return
      */
-    public HashMap<String, String> getResult() {
-        return res;
+    /*public HashMap<String, Object> getLiteralParameters() {
+        return literal_parameters;
+    }*/
+    /**
+     * Gets the {@code HashSet<String>} instance that contains all the field
+     * names needed to use safely the last visited {@code SymbolizerNode}.
+     *
+     * @return
+     */
+    public HashMap<String, String> getExpressionParameters() {
+        return expression_parameters;
     }
 
-    public String getResultAsString() {
-        return res.entrySet().stream().
-                map(entrySet -> entrySet.getKey()+ " as " + entrySet.getValue()).
+    public String getExpressionParametersAsString() {
+        return expression_parameters.entrySet().stream().
+                map(entrySet -> entrySet.getValue() + " as " + entrySet.getKey()).
                 collect(Collectors.joining(","));
     }
 

@@ -39,16 +39,10 @@ package org.orbisgis.style.graphic;
 
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.style.parameter.string.StringLiteral;
-import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Transform;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.FillNode;
@@ -60,7 +54,6 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.ViewBoxNode;
 import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.TransformParameter;
-import org.orbisgis.style.parameter.WKNExpression;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
@@ -91,7 +84,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     private TransformParameter transform;
     private ExpressionParameter wkn;
     private ViewBox viewBox;
-    private RealParameter pOffset;
+    private ExpressionParameter pOffset;
     private Halo halo;
     private IFill fill;
     private Stroke stroke;
@@ -110,8 +103,8 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      */
     public void setTo3mmCircle() {
         this.setUom(Uom.MM);
-        this.setWkn(new ExpressionParameter("circle"));
-        this.setViewBox(new ViewBox(new RealLiteral(DEFAULT_SIZE), new RealLiteral(DEFAULT_SIZE)));
+        this.setWkn(new ExpressionParameter("'circle'"));
+        this.setViewBox(new ViewBox(new ExpressionParameter(DEFAULT_SIZE), new ExpressionParameter(DEFAULT_SIZE)));
         this.setFill(new SolidFill());
         ((ExpressionParameter) ((SolidFill) this.getFill()).getOpacity()).setExpression("100.0");
         this.setStroke(new PenStroke());
@@ -214,7 +207,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * Get the perpendicular offset applied to this {@code MarkGraphic} before rendering.
      * @return The perpendicular offset
      */
-    public RealParameter getPerpendicularOffset() {
+    public ExpressionParameter getPerpendicularOffset() {
         return pOffset;
     }
 
@@ -222,10 +215,9 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * Set the perpendicular offset applied to this {@code MarkGraphic} before rendering.
      * @param pOffset The perpendicular offset
      */
-    public void setPerpendicularOffset(RealParameter pOffset) {
+    public void setPerpendicularOffset(ExpressionParameter pOffset) {
         this.pOffset = pOffset;
         if (this.pOffset != null) {
-            this.pOffset.setContext(RealParameterContext.REAL_CONTEXT);
             this.pOffset.setParent(this);
         }
     }

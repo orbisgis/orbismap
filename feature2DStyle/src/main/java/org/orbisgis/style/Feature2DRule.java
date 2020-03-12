@@ -65,7 +65,7 @@ public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymb
     private ArrayList<IFeatureSymbolizer> symbolizers;
 
     /**
-     * Create a default, empty Rule, with a default inner (and empty) CompositeSymbolizer.
+     * Create a default, empty Rule, with a default inner (and empty) collection of Symbolizers.
      */
     public Feature2DRule() {
         symbolizers = new ArrayList<>();
@@ -95,7 +95,10 @@ public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymb
      * @param expression
      */
     public void setExpression(ExpressionParameter expression) {
-        this.expressionParameter = expression;
+        //Still always a function
+        expression.setFunction(true);
+        this.expressionParameter = expression; 
+        
     }
 
 

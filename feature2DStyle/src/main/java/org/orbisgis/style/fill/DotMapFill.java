@@ -37,8 +37,6 @@
 package org.orbisgis.style.fill;
 
 
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +48,7 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * Descriptor for dot maps. Each point represents a given quantity. Points are randomly placed
@@ -64,8 +63,8 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
    
     
     private Graphic mark;
-    private RealParameter quantityPerMark;
-    private RealParameter totalQuantity;
+    private ExpressionParameter quantityPerMark;
+    private ExpressionParameter totalQuantity;
     private Random rand;
     private Uom uom;
 
@@ -94,10 +93,9 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Set the quantity represented by a single dot.
      * @param quantityPerMark 
      */
-    public void setQuantityPerMark(RealParameter quantityPerMark) {
+    public void setQuantityPerMark(ExpressionParameter quantityPerMark) {
         if (quantityPerMark != null) {
             this.quantityPerMark = quantityPerMark;
-            this.quantityPerMark.setContext(RealParameterContext.REAL_CONTEXT);
             this.quantityPerMark.setParent(this);
         }
     }
@@ -106,7 +104,7 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Get the quantity represented by a single dot.
      * @return The quantity represented by a single dot
      */
-    public RealParameter getQuantityPerMark() {
+    public ExpressionParameter getQuantityPerMark() {
         return quantityPerMark;
     }
 
@@ -114,10 +112,9 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Get the total quantity to be represented for this symbolizer.
      * @param totalQuantity 
      */
-    public void setTotalQuantity(RealParameter totalQuantity) {
+    public void setTotalQuantity(ExpressionParameter totalQuantity) {
         if (totalQuantity != null) {
             this.totalQuantity = totalQuantity;
-            this.totalQuantity.setContext(RealParameterContext.REAL_CONTEXT);
             this.totalQuantity.setParent(this);
         }
     }
@@ -126,7 +123,7 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Set the total quantity to be represented for this symbolizer.
      * @return 
      */
-    public RealParameter getTotalQuantity() {
+    public ExpressionParameter getTotalQuantity() {
         return totalQuantity;
     }    
 

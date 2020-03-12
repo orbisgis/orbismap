@@ -7,20 +7,12 @@ package org.orbisgis.map.renderer.featureStyle.stroke;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
-import org.orbisgis.style.common.RelativeOrientation;
-import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.GraphicStroke;
-import static org.orbisgis.style.stroke.GraphicStroke.MIN_LENGTH;
 
 /**
  *
@@ -28,8 +20,10 @@ import static org.orbisgis.style.stroke.GraphicStroke.MIN_LENGTH;
  */
 public class GraphicStrokeDrawer implements ISymbolizerDraw<GraphicStroke>{
 
+    private Shape shape;
+
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, GraphicStroke styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, GraphicStroke styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         /*List<Shape> shapes;
 
         if (!this.isOffsetRapport() && Math.abs(offset) > 0.0) {
@@ -140,6 +134,15 @@ public class GraphicStrokeDrawer implements ISymbolizerDraw<GraphicStroke>{
                 }
             }
         }*/
+    }
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
     
 }

@@ -35,10 +35,8 @@ package org.orbisgis.style.label;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * A label located at a single point. In addition to all the {@code Label}
@@ -52,7 +50,7 @@ import org.orbisgis.style.IStyleNode;
  */
 public final class PointLabel extends Label {
 
-    private RealParameter rotation;
+    private ExpressionParameter rotation;
     private ExclusionZone exclusionZone;
 
     /**
@@ -63,7 +61,7 @@ public final class PointLabel extends Label {
      */
     public PointLabel() {
         super();
-        rotation = new RealLiteral(0.0);
+        rotation = new ExpressionParameter(0.0);
         setVerticalAlign(VerticalAlignment.TOP);
         setHorizontalAlign(HorizontalAlignment.CENTER);
     }
@@ -96,7 +94,7 @@ public final class PointLabel extends Label {
      *
      * @return The rotation, in degrees, as a {@link RealParameter}
      */
-    public RealParameter getRotation() {
+    public ExpressionParameter getRotation() {
         return rotation;
     }
 
@@ -106,10 +104,9 @@ public final class PointLabel extends Label {
      *
      * @param rotation The new rotation to be used.
      */
-    public void setRotation(RealParameter rotation) {
+    public void setRotation(ExpressionParameter rotation) {
         this.rotation = rotation;
         if (this.rotation != null) {
-            this.rotation.setContext(RealParameterContext.REAL_CONTEXT);
             this.rotation.setParent(this);
         }
     }

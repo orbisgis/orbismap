@@ -36,24 +36,14 @@
  */
 package org.orbisgis.style.graphic;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.style.label.PointLabel;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * A {@code PointTextGraphic} is used to paint a text label using a given translation. It is consequently
@@ -67,8 +57,8 @@ public final class PointTextGraphic extends Graphic implements IUom {
 
         private Uom uom;
         private PointLabel pointLabel;
-        private RealParameter x;
-        private RealParameter y;
+        private ExpressionParameter x;
+        private ExpressionParameter y;
 
         /**
          * Build a new {@code PointTextGraphic}, at the position of its container. 
@@ -117,26 +107,13 @@ public final class PointTextGraphic extends Graphic implements IUom {
                         pointLabel.setParent(this);
                 }
         }
-
-        //@Override
-        public Rectangle2D getBounds(Map<String,Object> map, IMapTransform mt) throws ParameterException, IOException {
-                throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        //@Override
-        public void draw(Graphics2D g2, Map<String,Object> map,
-                IMapTransform mt, AffineTransform fat) throws ParameterException, IOException {
-
-                
-        }
-
         
 
         /**
          * Get the x-displacement in the associated translation.
          * @return 
          */
-        public RealParameter getX() {
+        public ExpressionParameter getX() {
                 return x;
         }
 
@@ -144,10 +121,9 @@ public final class PointTextGraphic extends Graphic implements IUom {
          * Set the x-displacement in the associated translation.
          * @param x 
          */
-        public void setX(RealParameter x) {
+        public void setX(ExpressionParameter x) {
                 this.x = x;
                 if (this.x != null) {
-                        this.x.setContext(RealParameterContext.REAL_CONTEXT);
                         this.x.setParent(this);
                 }
         }
@@ -156,7 +132,7 @@ public final class PointTextGraphic extends Graphic implements IUom {
          * Get the y-displacement in the associated translation.
          * @return 
          */
-        public RealParameter getY() {
+        public ExpressionParameter getY() {
                 return y;
         }
 
@@ -164,10 +140,9 @@ public final class PointTextGraphic extends Graphic implements IUom {
          * Set the y-displacement in the associated translation.
          * @param y 
          */
-        public void setY(RealParameter y) {
+        public void setY(ExpressionParameter y) {
                 this.y = y;
                 if (this.y != null) {
-                        this.y.setContext(RealParameterContext.REAL_CONTEXT);
                         this.y.setParent(this);
                 }
         }

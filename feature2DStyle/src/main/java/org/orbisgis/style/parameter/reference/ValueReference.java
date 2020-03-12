@@ -34,7 +34,7 @@
  * or contact directly:
  * info_at_ orbisgis.org
  */
-package org.orbisgis.style.parameter;
+package org.orbisgis.style.parameter.reference;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -45,6 +45,8 @@ import java.util.Map;
 import org.orbisgis.style.IParameterValue;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.parameter.PropertyNameListener;
 
 /**
  * An (abstract) representation of a Value in a table. 
@@ -52,10 +54,10 @@ import org.orbisgis.style.StyleNode;
  * @author Alexis Guéganno
  * @author Erwan Bocher
  */
-public abstract class ValueReference extends StyleNode implements IParameterValue{
+public class ValueReference extends StyleNode implements IParameterValue{
 
         
-	private String fieldName;
+	private String reference;
 	private int fieldId;
 	private ArrayList<PropertyNameListener> listeners;
 
@@ -73,7 +75,7 @@ public abstract class ValueReference extends StyleNode implements IParameterValu
          */
 	public ValueReference(String fieldName) {
 		this.fieldId = -1;
-		this.fieldName = fieldName;
+		this.reference = fieldName;
 	}
 
    
@@ -104,10 +106,10 @@ public abstract class ValueReference extends StyleNode implements IParameterValu
          * Set the name of the column where the data will be retrieved.
          * @param fieldName 
          */
-	public final void setColumnName(String fieldName) {
+	public final void setReference(String fieldName) {
 		// look for field before assigning the name !
 		this.fieldId = -1;
-		this.fieldName = fieldName;
+		this.reference = fieldName;
 		firePropertyNameChange();
                 update();
 	}
@@ -116,8 +118,8 @@ public abstract class ValueReference extends StyleNode implements IParameterValu
          * Retrieve the name of the column where the value can be retrieved in the table
          * @return 
          */
-	public String getColumnName() {
-		return fieldName;
+	public String getReference() {
+		return reference;
 	}
 
      /**
@@ -131,7 +133,7 @@ public abstract class ValueReference extends StyleNode implements IParameterValu
      */
     public Object getFieldValue(ResultSet sds, long fid) throws SQLException {
         if (this.fieldId == -1) {
-            this.fieldId = getFieldIndexFromLabel(sds, fieldName);
+            this.fieldId = getFieldIndexFromLabel(sds, reference);
         }
         return sds.getObject(fieldId);
     }
@@ -147,17 +149,17 @@ public abstract class ValueReference extends StyleNode implements IParameterValu
     }
     /**
      * Get the {@code Value} associated to this reference in the given
-     * {@code map}. The value returned by {@link ValueReference#getColumnName()}
+     * {@code map}. The value returned by {@link ValueReference#getReference()}
      * is used as the key.
      * @param map
      * @return Value
      * @throws ParameterException
-     * If the value returned by {@link ValueReference#getColumnName()} is not
+     * If the value returned by {@link ValueReference#getReference()} is not
      * a key in {@code map}.
      */
     public Object getFieldValue(Map<String,Object> map) throws ParameterException {
-        if(map.containsKey(fieldName)){
-            return map.get(fieldName);
+        if(map.containsKey(reference)){
+            return map.get(reference);
         } else {
             throw new ParameterException("The given map does not contain the needed key/value pair.");
         }

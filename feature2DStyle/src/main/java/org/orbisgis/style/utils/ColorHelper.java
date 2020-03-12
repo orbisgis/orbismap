@@ -31,13 +31,12 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.parameter.color;
+package org.orbisgis.style.utils;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
-import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  *

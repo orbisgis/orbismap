@@ -17,7 +17,7 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ShapeHelper;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
+import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.Halo;
@@ -36,14 +36,15 @@ public class HaloDrawer implements IFillDrawer<Halo> {
     static {
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
     }
+    private Shape shape;
 
     @Override
-    public Paint getPaint(JdbcSpatialTable sp, Halo styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint(Halo styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
         return null;
     }
 
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, Halo styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, Halo styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         Shape shape = (Shape) properties.get("shape");
         AffineTransform at = (AffineTransform) properties.get("affinetransform");
         if (shape != null) {
@@ -54,19 +55,19 @@ public class HaloDrawer implements IFillDrawer<Halo> {
             //Optimisation
             if (shape instanceof Arc2D) {
                 Arc2D shp = (Arc2D)shape;
-                double r = getHaloRadius(styleNode.getRadius().getValue(properties), styleNode.getUom(), mapTransform);                   
+                double r = getHaloRadius(ValueHelper.getAsDouble(properties, styleNode.getRadius()), styleNode.getUom(), mapTransform);                   
                 double x = shp.getX() - r / 2;
                 double y = shp.getY() - r / 2;
                 double height = shp.getHeight() + r;
                 double width = shp.getWidth() + r;
                 Shape origin = new Arc2D.Double(x, y, width, height, shp.getAngleStart(), shp.getAngleExtent(), shp.getArcType());
                 Shape halo = at.createTransformedShape(origin);
-                fillHalo(sp, fillDrawer, fill, shape, halo, g2, properties, mapTransform);
+                fillHalo( fillDrawer, fill, shape, halo, g2, properties, mapTransform);
             } else {                
-                    double r = getHaloRadius(styleNode.getRadius().getValue(properties), styleNode.getUom(), mapTransform);
+                    double r = getHaloRadius(ValueHelper.getAsDouble(properties, styleNode.getRadius()), styleNode.getUom(), mapTransform);
                     if (r > 0.0) {
                         for (Shape shapeHalo : ShapeHelper.perpendicularOffset(shape, r)) {
-                            fillHalo(sp, fillDrawer, fill, shapeHalo, shape, g2, properties, mapTransform);
+                            fillHalo( fillDrawer, fill, shapeHalo, shape, g2, properties, mapTransform);
                         }
                     }
                 }
@@ -86,7 +87,7 @@ public class HaloDrawer implements IFillDrawer<Halo> {
         return UomUtils.toPixel(radius, uom, mt.getDpi(), mt.getScaleDenominator(), null); // TODO 100%
     }
 
-    private void fillHalo(JdbcSpatialTable sp, IFillDrawer fillDrawer, IFill fill, Shape halo, Shape initialShp, Graphics2D g2,
+    private void fillHalo( IFillDrawer fillDrawer, IFill fill, Shape halo, Shape initialShp, Graphics2D g2,
             Map<String, Object> properties, MapTransform mapTransform)
             throws ParameterException, SQLException {
         if (halo != null && initialShp != null) {
@@ -94,10 +95,20 @@ public class HaloDrawer implements IFillDrawer<Halo> {
             Area aHalo = new Area(halo);           
             aHalo.subtract(initialArea);            
             properties.put("shape", aHalo);
-            fillDrawer.draw(sp, g2, mapTransform, fill, properties);              
+            fillDrawer.draw(g2, mapTransform, fill, properties);              
         } else {
             //LOGGER.error("Perpendicular offset failed");
         }
+    }
+    
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
 
 }

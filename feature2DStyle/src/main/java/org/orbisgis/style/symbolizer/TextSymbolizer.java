@@ -37,12 +37,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.label.Label;
 import org.orbisgis.style.label.PointLabel;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
@@ -58,7 +57,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  */
 public final class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
 
-    private RealParameter perpendicularOffset;
+    private ExpressionParameter perpendicularOffset;
     private Label label;
 
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
@@ -118,7 +117,7 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
      * @return The current perpendicular offset as a {@code RealParameter}. If
      * null, the offset is considered to be equal to {@code 0}.
      */
-    public RealParameter getPerpendicularOffset() {
+    public ExpressionParameter getPerpendicularOffset() {
         return perpendicularOffset;
     }
 
@@ -127,10 +126,9 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
      *
      * @param perpendicularOffset
      */
-    public void setPerpendicularOffset(RealParameter perpendicularOffset) {
+    public void setPerpendicularOffset(ExpressionParameter perpendicularOffset) {
         this.perpendicularOffset = perpendicularOffset;
         if (this.perpendicularOffset != null) {
-            this.perpendicularOffset.setContext(RealParameterContext.REAL_CONTEXT);
             this.perpendicularOffset.setParent(this);
         }
     }

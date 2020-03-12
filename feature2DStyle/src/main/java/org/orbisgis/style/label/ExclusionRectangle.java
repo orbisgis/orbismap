@@ -38,10 +38,8 @@ package org.orbisgis.style.label;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.parameter.real.RealLiteral;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * An {@code ExclusionZone} where the forbidden area is defined as a rectangle. It is 
@@ -51,15 +49,15 @@ import org.orbisgis.style.IStyleNode;
  */
 public final class ExclusionRectangle extends ExclusionZone {
 
-    private RealParameter x;
-    private RealParameter y;
+    private ExpressionParameter x;
+    private ExpressionParameter y;
 
     /**
      * Build a {@code ExclusionZone} with default width and length set to 3. 
      */
     public ExclusionRectangle(){
-        this.setX(new RealLiteral(3));
-        this.setY(new RealLiteral(3));
+        this.setX(new ExpressionParameter(3));
+        this.setY(new ExpressionParameter(3));
     }
 
     
@@ -69,7 +67,7 @@ public final class ExclusionRectangle extends ExclusionZone {
      * @return 
      * the x-length as a {@code RealParameter} 
      */
-    public RealParameter getX() {
+    public ExpressionParameter getX() {
         return x;
     }
 
@@ -77,10 +75,9 @@ public final class ExclusionRectangle extends ExclusionZone {
      * Set the x-length of the rectangle.
      * @param x 
      */
-    public void setX(RealParameter x) {
+    public void setX(ExpressionParameter x) {
         this.x = x;
         if (x != null){
-            x.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             x.setParent(this);
         }
     }
@@ -90,7 +87,7 @@ public final class ExclusionRectangle extends ExclusionZone {
      * @return 
      * the y-length as a {@code RealParameter} 
      */
-    public RealParameter getY() {
+    public ExpressionParameter getY() {
         return y;
     }
 
@@ -98,10 +95,9 @@ public final class ExclusionRectangle extends ExclusionZone {
      * Set the y-length of the rectangle.
      * @param x 
      */
-    public void setY(RealParameter y) {
+    public void setY(ExpressionParameter y) {
         this.y = y;
         if (this.y != null){
-            y.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             y.setParent(this);
         }
     }    

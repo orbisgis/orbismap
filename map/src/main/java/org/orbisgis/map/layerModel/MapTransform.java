@@ -50,15 +50,18 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.h2gis.functions.spatial.convert.ST_ToMultiPoint;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.orbisgis.map.layerModel.MapEnvelope;
 import org.orbisgis.map.api.IMapTransform;
+import org.orbisgis.map.renderer.featureStyle.utils.GeometryHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +72,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
         private boolean adjustExtent;
         private BufferedImage image = null;
         private Envelope adjustedExtent = null;
+        private Geometry adjustedExtentGeometry = null;
         private AffineTransform trans = new AffineTransform();
         private AffineTransform transInv = new AffineTransform();
         private MapEnvelope extent;
@@ -81,9 +85,10 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
 
         static {
                 Map<RenderingHints.Key, Object> hints = new HashMap<>();
-                hints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+                hints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
                 hints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
                 hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 screenHints = new RenderingHints(hints);
         }
 
@@ -94,7 +99,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                 } else {
                     LOGGER.trace("Headless graphics environment, set current DPI to 96.0");
                     this.dpi = DEFAULT_DPI;
-                } 
+                }
         }
 
         /**
@@ -168,6 +173,12 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                 return adjustedExtent;
         }
 
+        public Geometry getAdjustedExtentGeometry() {
+        return adjustedExtentGeometry;
+        }
+        
+        
+
         /**
          *
          * @throws RuntimeException
@@ -186,7 +197,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                         double xCenter = extent.getMinX() + extent.getWidth() / 2.0;
                         double yCenter = extent.getMinY() + extent.getHeight() / 2.0;
                         adjustedExtent = new Envelope();
-
+                        adjustedExtentGeometry = GEOMETRY_FACTORY.toGeometry(adjustedExtent);
                         double scale;
                         if (escalaX < escalaY) {
                                 scale = escalaX;
@@ -195,6 +206,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                                 double newY = yCenter - (newHeight / 2.0);
                                 adjustedExtent = new Envelope(newX, newX + extent.getWidth(), newY,
                                         newY + newHeight);
+                                adjustedExtentGeometry = GEOMETRY_FACTORY.toGeometry(adjustedExtent);
                         } else {
                                 scale = escalaY;
                                 double newWidth = getWidth() / scale;
@@ -202,6 +214,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                                 double newY = yCenter - (extent.getHeight() / 2.0);
                                 adjustedExtent = new Envelope(newX, newX + newWidth, newY, newY
                                         + extent.getHeight());
+                                adjustedExtentGeometry = GEOMETRY_FACTORY.toGeometry(adjustedExtent);
                         }
 
                         trans.setToIdentity();
@@ -210,6 +223,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                                 -adjustedExtent.getMinY() - adjustedExtent.getHeight()));
                 } else {
                         adjustedExtent = new Envelope(extent);
+                        adjustedExtentGeometry = GEOMETRY_FACTORY.toGeometry(adjustedExtent);
                         trans.setToIdentity();
                         double scaleX = getWidth() / extent.getWidth();
                         double scaleY = getHeight() / extent.getHeight();
@@ -447,6 +461,46 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                 //converter.setDecimation(dec);
                 return converter;
         }
+        
+        /**
+         * Gets the AWT {@link Shape}  we'll use to represent {@code geom} on the map.
+         * @param geom The geometry we want to draw.
+         * @param generalize If true we'll perform generalization
+         * @param surfaceOnPoint true to return the interior point
+         * @return An AWT Shape instance.
+         */
+        public Shape getShapeAsPoints(Geometry geom, boolean generalize, boolean surfaceOnPoint ) {
+            if(geom.intersects(adjustedExtentGeometry)){    
+                Geometry geomReduced = geom.intersection(adjustedExtentGeometry);
+                if (generalize) {
+                        Rectangle2DDouble rectangle2dDouble = toPixel(geomReduced.getEnvelopeInternal());
+                        if ((rectangle2dDouble.getHeight() <= MAXPIXEL_DISPLAY)
+                                && (rectangle2dDouble.getWidth() <= MAXPIXEL_DISPLAY)) {
+                                if(geomReduced.getDimension()==1){
+                                     Coordinate[] coords = geomReduced.getCoordinates();
+                                     if(surfaceOnPoint){
+                                        return getShapeWriter().toShape(geomReduced.getFactory().createMultiPointFromCoords(
+                                             new Coordinate[]{coords[0], coords[coords.length-1]}));
+                                     }else{
+                                         return getShapeWriter().toShape(geomReduced.getFactory().createMultiPointFromCoords(
+                                             new Coordinate[]{coords[0], coords[coords.length-1]}).getInteriorPoint());
+                                     }
+                                }
+                                else{
+                                    return new Line2D.Double(rectangle2dDouble.getCenterX(), rectangle2dDouble.getCenterY(),rectangle2dDouble.getCenterX(), rectangle2dDouble.getCenterY());
+                                    
+                                }
+                        }
+                }
+                if(surfaceOnPoint){
+                    return getShapeWriter().toShape(GeometryHelper.getPoints(adjustedExtent, geomReduced.getInteriorPoint()));
+                }
+                else{
+                return getShapeWriter().toShape(GeometryHelper.getPoints(adjustedExtent, geomReduced));
+                }
+            }
+            return null;
+        }
 
         /**
          * Gets the AWT {@link Shape}  we'll use to represent {@code geom} on the map.
@@ -455,6 +509,7 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
          * @return An AWT Shape instance.
          */
         public Shape getShape(Geometry geom, boolean generalize) {
+             if(geom.intersects(adjustedExtentGeometry)){
                 if (generalize) {
                         Rectangle2DDouble rectangle2dDouble = toPixel(geom.getEnvelopeInternal());
                         if ((rectangle2dDouble.getHeight() <= MAXPIXEL_DISPLAY)
@@ -470,6 +525,8 @@ public class MapTransform implements PointTransformation,IMapTransform<MapEnvelo
                         }
                 }
                 return getShapeWriter().toShape(geom);
+             }
+             return null;
         }
 
         public void redraw() {

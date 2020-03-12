@@ -19,13 +19,11 @@ import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.string.StringParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.utils.UomUtils;
 
@@ -39,14 +37,14 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
     static {
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
     }
+    private Shape shape;
 
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, PenStroke styleNode,Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, PenStroke styleNode,Map<String, Object> properties) throws ParameterException, SQLException {
         IFill fill = styleNode.getFill();        
         double offset = (double) properties.get("offset");
-        double width = ValueHelper.getDouble(sp, styleNode.getWidth());
-        Shape shape = (Shape) properties.get("shape");
-        if (fill != null && width > 0) {
+        Double width = ValueHelper.getAsDouble(properties, styleNode.getWidth());
+        if (fill != null && width > 0 && shape!=null) {
             List<Shape> shapes;
             Uom uom =  styleNode.getUom();
             // if not using offset rapport, compute perpendicular offset first
@@ -61,15 +59,15 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
             
              if(drawerMap.containsKey(fill.getClass())){
                 IFillDrawer fillToDraw = drawerMap.get(fill.getClass());
-                Paint paint = fillToDraw.getPaint(sp, fill, properties, mapTransform);                
+                Paint paint = fillToDraw.getPaint( fill, properties, mapTransform);                
                 //Find dashArray info
                 float[] dashLengths =null;
                 float dashOffset = 0;
-                String dashArray = ValueHelper.getString(sp, styleNode.getDashArray());
+                String dashArray = ValueHelper.getAsString(properties, styleNode.getDashArray());
                 if (dashArray != null){
                     if(!dashArray.isEmpty() && Math.abs(offset) > 0.0) {
                        dashLengths = parseDashExpression(dashArray,uom, mapTransform);
-                       dashOffset = ValueHelper.getFloat(sp, styleNode.getDashOffset());
+                       dashOffset = ValueHelper.getAsFloat(properties, styleNode.getDashOffset());
                     }
                 }
               
@@ -80,7 +78,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                     if (styleNode.isLengthRapport()) {
                         scaleDashArrayLength(dashLengths, shp);
                     }
-                    BasicStroke bs = createDashStroke(sp, shp, styleNode, mapTransform, width, dashLengths, dashOffset);                    
+                    BasicStroke bs = createDashStroke(shp, styleNode, mapTransform, width, dashLengths, dashOffset);                    
 
                     int i = 0;
                     int j = 0;
@@ -114,15 +112,14 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                                 if (paint != null) {
                                     g2.draw(oSeg);
                                 } else {
-                                    Shape outline = bs.createStrokedShape(oSeg);
-                                    properties.put("shape", outline);
-                                    fillToDraw.draw(sp, g2, mapTransform, styleNode, properties);
+                                    fillToDraw.setShape(bs.createStrokedShape(oSeg));
+                                    fillToDraw.draw( g2, mapTransform, styleNode, properties);
                                 }
                             }
                         }
                     }
                 } else {
-                    BasicStroke stroke = createBasicStroke(sp, styleNode, mapTransform, width);
+                    BasicStroke stroke = createBasicStroke(styleNode, mapTransform, width);
                     g2.setPaint(paint);
                     g2.setStroke(stroke);
 
@@ -135,9 +132,8 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                                     //g2.setPaint(paint);
                                     g2.draw(oShp);
                                 } else {
-                                    Shape outline = stroke.createStrokedShape(oShp);
-                                    properties.put("shape", outline);
-                                    fillToDraw.draw(sp, g2, mapTransform, styleNode, properties);
+                                    fillToDraw.setShape(stroke.createStrokedShape(oShp));
+                                    fillToDraw.draw(g2, mapTransform, styleNode, properties);
                                 }
                             }
                         }
@@ -149,9 +145,8 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                             g2.draw(shape);
                         } else {
                         //    // Others can't -> create the ares to fill
-                            Shape outline = stroke.createStrokedShape(shp);
-                            properties.put("shape", outline);
-                            fillToDraw.draw(sp, g2, mapTransform, styleNode, properties);
+                            fillToDraw.setShape(stroke.createStrokedShape(shp));
+                            fillToDraw.draw( g2, mapTransform, styleNode, properties);
                         }
                     }
                 }
@@ -198,7 +193,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
      * @throws ParameterException
      * @throws SQLException 
      */
-    private static BasicStroke createDashStroke(JdbcSpatialTable sp, Shape shp, PenStroke penStroke, MapTransform mt, double v100p, float[] dashArray, float dashOffset) throws ParameterException, SQLException {
+    private static BasicStroke createDashStroke(Shape shp, PenStroke penStroke, MapTransform mt, double v100p, float[] dashArray, float dashOffset) throws ParameterException, SQLException {
         Uom uom = penStroke.getUom();
         int cap;
         if (penStroke.getLineCap() == null) {
@@ -247,7 +242,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
     }
         
         
-    private  BasicStroke createBasicStroke(JdbcSpatialTable sp, PenStroke penStroke, MapTransform mt, double v100p) throws ParameterException, SQLException {
+    private  BasicStroke createBasicStroke( PenStroke penStroke, MapTransform mt, double v100p) throws ParameterException, SQLException {
         Uom uom = penStroke.getUom();
         int cap;
         if (penStroke.getLineCap() == null) {
@@ -326,8 +321,8 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
       * @param properties
       * @return 
       */
-     public Double getNaturalLength(JdbcSpatialTable rs, PenStroke penStroke, MapTransform mt,Map<String, Object> properties) throws SQLException {
-        String dashArray = ValueHelper.getString(rs, penStroke.getDashArray());
+     public Double getNaturalLength(PenStroke penStroke, MapTransform mt,Map<String, Object> properties) throws SQLException {
+        String dashArray = ValueHelper.getAsString(properties, penStroke.getDashArray());
         if (dashArray != null) {
             // A dashed PenStroke has a length
             // This is required to compute hatches tile but will break the compound stroke natural length logic
@@ -352,6 +347,16 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
             }
         }
         return Double.POSITIVE_INFINITY;
+    }
+     
+     @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
     
 }

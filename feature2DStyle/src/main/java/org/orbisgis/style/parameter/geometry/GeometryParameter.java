@@ -45,8 +45,7 @@ public class GeometryParameter  extends StyleNode implements IParameterValue, Co
          }
          else{
              return -1;
-         }
-            
+         }            
         }
         return -1;
     }

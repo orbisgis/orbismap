@@ -9,13 +9,19 @@ import java.awt.Color;
 import java.io.File;
 import org.orbisgis.map.renderer.MapRenderer;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.orbisgis.map.layerModel.StyledLayer;
 import org.orbisgis.style.SeExceptions;
 import org.orbisgis.map.api.LayerException;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.style.Feature2DRule;
@@ -60,6 +66,19 @@ public class OrbisMap {
         H2GIS h2GIS = H2GIS.open(map);
 
         ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "LANDCOVER", true);
+        
+        
+        final ArrayList<Object> str = new ArrayList();
+        spatialTable.forEach(o -> {
+            try {
+                str.add( ((JdbcSpatialTable) o).getObject(1));
+            } catch (SQLException ex) {
+                Logger.getLogger(OrbisMap.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }); 
+        
+        System.out.println("STOP");
+        
         long draw = System.currentTimeMillis();
         System.out.println("Start drawing ");
         //h2GIS.execute("create spatial index on LANDCOVER(THE_GEOM)");

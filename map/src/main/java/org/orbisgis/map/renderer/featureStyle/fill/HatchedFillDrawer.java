@@ -18,13 +18,10 @@ import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.HatchedFill;
 import static org.orbisgis.style.fill.HatchedFill.DEFAULT_ALPHA;
-import static org.orbisgis.style.fill.HatchedFill.DEFAULT_PDIST;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.utils.UomUtils;
@@ -46,16 +43,16 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     static {
         drawerMap.put(PenStroke.class, new PenStrokeDrawer());
     }
+    private Shape shape;
 
     
     @Override
-    public Paint getPaint(JdbcSpatialTable sp, HatchedFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint( HatchedFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
         return null;
     }
 
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, HatchedFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        Shape shape = (Shape) properties.get("shape");
+    public void draw(Graphics2D g2, MapTransform mapTransform, HatchedFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         if (shape != null) {
         Uom   uom =   styleNode.getUom();
         Stroke stroke = styleNode.getStroke();
@@ -64,25 +61,30 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 PenStrokeDrawer strokeToDraw = drawerMap.get(stroke.getClass());            
                 // Perpendicular distance between two lines
             try {
-                double pDist = 0.0;
-                double distance = ValueHelper.getDouble(sp, styleNode.getDistance());
+                double pDist = 0;
+                Double distance = ValueHelper.getAsDouble(properties, styleNode.getDistance());
+                if(distance ==null ){
+                    pDist = 0.0;
+                }
                 if (distance > 0) {
                     pDist = UomUtils.toPixel(distance, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
-                }
-                
+                }                
 
                 double alpha = DEFAULT_ALPHA;
-                double angle = ValueHelper.getDouble(sp, styleNode.getAngle());
+                double angle = ValueHelper.getAsDouble(properties, styleNode.getAngle());
                 if (angle >0) {
                     alpha = angle;
                 }
                 double hOffset = 0.0;
-                double offset = ValueHelper.getDouble(sp, styleNode.getOffset());
+                Double offset = ValueHelper.getAsDouble(properties, styleNode.getOffset());
+                if(offset==null){
+                    hOffset = 0.0;
+                }
                 if (offset >0) {
                     hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
                 }
 
-                drawHatch(sp,g2, properties, shape, mapTransform, alpha, pDist, (PenStroke)stroke, strokeToDraw, hOffset);
+                drawHatch(g2, properties, shape, mapTransform, alpha, pDist, (PenStroke)stroke, strokeToDraw, hOffset);
                 
             } catch (RuntimeException eee) {
                 System.out.println("Error " + eee);
@@ -108,7 +110,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
      * @param penStroke
      * @throws ParameterException 
      */
-    public static void drawHatch(JdbcSpatialTable sp, Graphics2D g2, Map<String,Object> properties, Shape shp,
+    public static void drawHatch( Graphics2D g2, Map<String,Object> properties, Shape shp,
              MapTransform mt, double alph, double pDist,PenStroke penStroke, PenStrokeDrawer penStrokeDrawer,
             double hOffset) throws ParameterException, SQLException {
        
@@ -123,7 +125,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
         double beta = Math.PI / 2.0 + alpha;
         double deltaOx = Math.cos(beta) * hOffset;
         double deltaOy = Math.sin(beta) * hOffset;
-        Double naturalLength = penStrokeDrawer.getNaturalLength(sp, penStroke, mt, properties);
+        Double naturalLength = penStrokeDrawer.getNaturalLength( penStroke, mt, properties);
         if (naturalLength.isInfinite()) {
             naturalLength = DEFAULT_NATURAL_LENGTH;
         }
@@ -260,9 +262,8 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                         l.y2 = hymin;
                     }
 
-                    properties.put("shape", l);
-                    penStrokeDrawer.draw(sp, g2, mt, penStroke, properties);
-
+                    penStrokeDrawer.setShape(l);
+                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -276,9 +277,8 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     l.x2 = x;
                     l.y2 = hymax;
 
-                    properties.put("shape", l);
-                    penStrokeDrawer.draw(sp, g2, mt, penStroke, properties);
-
+                    penStrokeDrawer.setShape(l);
+                    penStrokeDrawer.draw( g2, mt, penStroke, properties);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -306,8 +306,8 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                         l.y2 = y;
                     }
 
-                    properties.put("shape", l);
-                    penStrokeDrawer.draw(sp, g2, mt, penStroke, properties);
+                    penStrokeDrawer.setShape(l);
+                    penStrokeDrawer.draw( g2, mt, penStroke, properties);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -335,8 +335,8 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                         l.y2 = y;
                     }
 
-                    properties.put("shape", l);
-                    penStrokeDrawer.draw(sp, g2, mt, penStroke, properties);
+                    penStrokeDrawer.setShape(l);
+                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
 
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
@@ -345,6 +345,16 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
             }
         }
         g2.setClip(null);
+    }
+    
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
     
 }

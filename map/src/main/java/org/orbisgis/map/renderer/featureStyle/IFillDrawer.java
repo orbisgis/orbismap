@@ -21,6 +21,6 @@ import org.orbisgis.style.parameter.ParameterException;
 public interface IFillDrawer <T extends IStyleNode> extends IStyleDrawer <T>{
     
     
-    public Paint getPaint(JdbcSpatialTable sp, T styleNode, Map<String,Object> properties, MapTransform mt) throws ParameterException, SQLException; 
+    public Paint getPaint(T styleNode, Map<String,Object> properties, MapTransform mt) throws ParameterException, SQLException; 
     
 }

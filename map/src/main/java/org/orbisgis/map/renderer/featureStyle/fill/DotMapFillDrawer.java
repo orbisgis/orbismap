@@ -20,7 +20,7 @@ import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
+import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.MarkGraphic;
@@ -40,28 +40,23 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
     static {
         drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
     }
+    private Shape shape;
 
     @Override
-    public Paint getPaint(JdbcSpatialTable sp, DotMapFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint( DotMapFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
         return null;
     }
 
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, DotMapFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        Shape shp = (Shape) properties.get("shape");
+    public void draw(Graphics2D g2, MapTransform mapTransform, DotMapFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+        if(shape!=null){
         Graphic graphic = styleNode.getGraphic();
         if (drawerMap.containsKey(graphic.getClass())) {
             IStyleDrawer graphicDrawer = drawerMap.get(graphic.getClass());
             if(graphicDrawer!=null){
-            Double perMark = null;
-            if (styleNode.getQuantityPerMark() != null) {
-                perMark = styleNode.getQuantityPerMark().getValue(properties);
-            }
-
-            Double total = null;
-            if (styleNode.getTotalQuantity() != null) {
-                total = styleNode.getTotalQuantity().getValue(properties);
-            }
+            Double perMark = ValueHelper.getAsDouble(properties,styleNode.getQuantityPerMark());
+            Double total = ValueHelper.getAsDouble(properties,styleNode.getTotalQuantity());
+           
 
             if (perMark == null || total == null) {
                 throw new ParameterException("Dot Map Fill: missing parameters !!!");
@@ -69,7 +64,7 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
 
             int nb = (int) Math.round(total / perMark);
 
-            Area area = new Area(shp);
+            Area area = new Area(shape);
 
             if (rand == null) {
                 rand = new Random();
@@ -80,12 +75,14 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
                 Point2D.Double pos = findMarkPosition(area);
                 if (pos != null) {
                     properties.put("affinetransform",  AffineTransform.getTranslateInstance(pos.x, pos.y));
-                    graphicDrawer.draw(sp, g2, mapTransform, graphic, properties);
+                    graphicDrawer.draw(g2, mapTransform, graphic, properties);
+                    properties.remove("affinetransform");
                 } else {
                     //TODO : log this message ("Could not find position for mark within area");
                 }
             }
             }
+        }
         }
     }
 
@@ -107,6 +104,16 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
             }
         }
         return null;
+    }
+    
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
 
 }

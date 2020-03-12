@@ -19,6 +19,7 @@
         <module>symcore</module>
         <module>feature2DStyle</module>
         <module>map-api</module>
+        <module>feature2DStyle-json</module>
     </modules>
 
     <!-- Properties -->

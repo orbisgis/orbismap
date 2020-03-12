@@ -29,16 +29,26 @@ public class ExpressionParserTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws JSQLParserException {
+        
+        //Field
+        Expression expr = CCJSqlParserUtil.parseExpression("the_geom", false);        
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+        
+        //Value
+        expr = CCJSqlParserUtil.parseExpression("2", false);        
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+
         //DashArray
-        Expression expr = CCJSqlParserUtil.parseExpression("'2 2'", false);        
-        System.out.println(expr.toString());
+        expr = CCJSqlParserUtil.parseExpression("'2 2'", false);        
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
         
         expr = CCJSqlParserUtil.parseExpression("'POINT(0 0)'::GEOMETRY", false);        
-        System.out.println(expr.toString());
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
         
         expr = CCJSqlParserUtil.parseExpression("CASE 3 + 4 WHEN 1 then 0 END", false);        
-        System.out.println(expr.toString());
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
         expr = CCJSqlParserUtil.parseExpression("(ST_area(the_geom) + 1)/2", false);  
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
         final List<String> columnList = new ArrayList<String>();
         expr.accept(new ExpressionVisitorAdapter() {
             @Override

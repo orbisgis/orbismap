@@ -8,7 +8,7 @@ package org.orbisgis.style.utils;
 import org.orbisgis.style.parameter.ExpressionParameter;
 
 import java.awt.Color;
-import static org.orbisgis.style.parameter.color.ColorHelper.toHex;
+import static org.orbisgis.style.utils.ColorHelper.toHex;
 
 /**
  *
@@ -17,8 +17,12 @@ import static org.orbisgis.style.parameter.color.ColorHelper.toHex;
 public class ExpressionHelper {
     
     
-     public static ExpressionParameter toExpressionParameter(Color color){
-        return new ExpressionParameter("'"+toHex(color)+"'");
+     public static ExpressionParameter toExpression(Color color){
+        return new ExpressionParameter(toHex(color));
     }
+     
+     public static ExpressionParameter randomColor(){
+         return new ExpressionParameter(ColorHelper.toHex(ColorHelper.getRandomColor()));
+     }
     
 }

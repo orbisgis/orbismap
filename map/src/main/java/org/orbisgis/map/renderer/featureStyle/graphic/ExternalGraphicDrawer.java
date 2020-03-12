@@ -5,14 +5,12 @@
  */
 package org.orbisgis.map.renderer.featureStyle.graphic;
 
-import com.kitfox.svg.app.beans.SVGIcon;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.awt.Shape;
 import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.graphic.ExternalGraphic;
 import org.orbisgis.style.graphic.OnlineResource;
 import org.orbisgis.style.parameter.ParameterException;
@@ -23,10 +21,12 @@ import org.orbisgis.style.parameter.ParameterException;
  */
 public class ExternalGraphicDrawer implements IStyleDrawer<ExternalGraphic>{
 
+    private Shape shape;
+
     
         
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, ExternalGraphic styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, ExternalGraphic styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         
         OnlineResource onlineRessource = styleNode.getOnlineResource();
         
@@ -38,6 +38,16 @@ public class ExternalGraphicDrawer implements IStyleDrawer<ExternalGraphic>{
             //TODO : drawJAI(g2, at, mt, opacity);
             }
         }    
+    }
+    
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
     
 }

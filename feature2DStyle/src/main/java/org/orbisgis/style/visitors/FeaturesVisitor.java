@@ -40,7 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orbisgis.style.parameter.ValueReference;
+import org.orbisgis.style.parameter.reference.ValueReference;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IStyleNodeVisitor;
 
@@ -75,7 +75,7 @@ public class FeaturesVisitor implements IStyleNodeVisitor {
         protected void visitImpl(IStyleNode sn){
                 List<IStyleNode> children = sn.getChildren();
                 if(sn instanceof ValueReference){
-                        res.add(((ValueReference)sn).getColumnName());
+                        res.add(((ValueReference)sn).getReference());
                 }
                 children.forEach((c) -> {
                     visitImpl(c);

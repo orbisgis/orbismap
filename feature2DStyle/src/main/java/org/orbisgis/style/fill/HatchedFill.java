@@ -63,6 +63,10 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public final class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode {
 
+    /**
+     * Default offset value for hatches.
+     */
+    public static final double DEFAULT_OFFSET = 0.0;
   
     /**
      * The default perpendicular distance between two hatches.
@@ -89,7 +93,8 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
     public HatchedFill() {
         setStroke(new PenStroke());
         setDistance(new ExpressionParameter(DEFAULT_PDIST));
-        setAngle(new ExpressionParameter(DEFAULT_ALPHA));
+        setAngle(new ExpressionParameter(DEFAULT_ALPHA));        ;
+        setOffset(new ExpressionParameter(DEFAULT_OFFSET));
     }
 
     /**
@@ -124,6 +129,7 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
 
     /**
      * Set the perpendicular distance between two hatches
+     * @param distance
      * @return 
      */
     public void setDistance(ExpressionParameter distance) {

@@ -36,17 +36,11 @@
  */
 package org.orbisgis.style.graphic;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.orbisgis.style.utils.UomUtils;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
-import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * {@code ViewBox} supplies a simple and convenient method to change the view box of a graphic,
@@ -64,8 +58,8 @@ import org.orbisgis.style.StyleNode;
  * @author Alexis Guéganno, Maxence Laurent
  */
 public final class ViewBox extends  StyleNode {
-        private RealParameter x;
-        private RealParameter y;
+        private ExpressionParameter x;
+        private ExpressionParameter y;
 
         /**
          * Build a new {@code ViewBox}, with empty parameters.
@@ -78,36 +72,28 @@ public final class ViewBox extends  StyleNode {
         /**
          * Build a new {@code ViewBox}, using the given width.
          */
-        public ViewBox(RealParameter width) {
+        public ViewBox(ExpressionParameter width) {
             setWidth(width);
         }
 
         /**
          * Build a new {@code ViewBox}, using the given width and height.
          */
-        public ViewBox(RealParameter width, RealParameter height) {
+        public ViewBox(ExpressionParameter width, ExpressionParameter height) {
             setWidth(width);
             setHeight(height);
         }
 
         
-        /**
-         * A {@code ViewBox} can be used if and only if one, at least, of its two parameters
-         * has been set.
-         * @return 
-         */
-        public boolean usable() {
-                return this.x != null || this.y != null;
-        }
+        
 
         /**
          * Set the wifth of this {@code ViewBox}.
          * @param width 
          */
-        public void setWidth(RealParameter width) {
+        public void setWidth(ExpressionParameter width) {
                 x = width;
                 if (x != null) {
-                        x.setContext(RealParameterContext.REAL_CONTEXT);
                         x.setParent(this);
                 }
         }
@@ -115,19 +101,17 @@ public final class ViewBox extends  StyleNode {
          * Get the wifth of this {@code ViewBox}.
          * @return 
          */
-        public RealParameter getWidth() {
-            return x;
-                //return x == null ? y : x;
+        public ExpressionParameter getWidth() {
+            return x == null ? y : x;
         }
 
         /**
          * Set the height of this {@code ViewBox}.
          * @param height 
          */
-        public void setHeight(RealParameter height) {
+        public void setHeight(ExpressionParameter height) {
                 y = height;
                 if (y != null) {
-                        y.setContext(RealParameterContext.REAL_CONTEXT);
                         y.setParent(this);
                 }
         }
@@ -136,51 +120,9 @@ public final class ViewBox extends  StyleNode {
          * Get the height of this {@code ViewBox}.
          * @return 
          */
-        public RealParameter getHeight() {
-            return y;
-                //return y == null ? x : y;
-        }
-
-        /**
-         * Return the final dimension described by this view box, in [px].
-         * @param map map
-         * @param scale required final ratio (if either width or height isn't defined)
-         * @return
-         * @throws ParameterException
-         */
-        public Point2D getDimensionInPixel(Map<String,Object> map, double height,
-                    double width, Double scale, Double dpi) throws ParameterException {
-                double dx, dy;
-
-                double ratio = height / width;
-
-                if (x != null && y != null) {
-                        dx = x.getValue(map);
-                        dy = y.getValue(map);
-                } else if (x != null) {
-                        dx = x.getValue(map);
-                        dy = dx * ratio;
-                } else if (y != null) {
-                        dy = y.getValue(map);
-                        dx = dy / ratio;
-                } else { // nothing is defined
-                        dx = width;
-                        dy = height;
-                        //return null; 
-                }
-
-
-                dx = UomUtils.toPixel(dx, ((IUom)getParent()).getUom(), dpi, scale, width);
-                dy = UomUtils.toPixel(dy, ((IUom)getParent()).getUom(), dpi, scale, height);
-
-                if (Math.abs(dx) <= 0.00021 || Math.abs(dy) <= 0.00021) {
-                        dx=0;
-                        dy=0;
-                }
-
-                return new Point2D.Double(dx, dy);
-        }
-
+        public ExpressionParameter getHeight() {
+            return y == null ? x : y;
+        }       
 
         /**
          * Gets a String representation of this {@code ViewBox}.

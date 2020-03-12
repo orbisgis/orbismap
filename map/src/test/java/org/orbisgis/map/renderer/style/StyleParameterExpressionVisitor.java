@@ -5,6 +5,7 @@
  */
 package org.orbisgis.map.renderer.style;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import org.orbisgis.style.Feature2DStyle;
@@ -17,14 +18,15 @@ import org.orbisgis.map.renderer.featureStyle.visitor.ParameterValueVisitor;
 public class StyleParameterExpressionVisitor {
     
      /**
-     * Test the {@link DataSourceLocation#asType(Class)} method.
+     * Test parser
      */
     @Test
     public void parseExpressionParameter1() {        
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerStyleColorExpression();        
         ParameterValueVisitor pvv = new ParameterValueVisitor();
         pvv.visitSymbolizerNode(style.getRules().get(0));        
-        System.out.println(pvv.getResultAsString());
+        System.out.println(pvv.getExpressionParametersAsString());
+        //System.out.println(pvv.getLiteralParameters().values().stream().collect(Collectors.joining(",")));
        
     }
     
@@ -36,7 +38,7 @@ public class StyleParameterExpressionVisitor {
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerHatched();        
         ParameterValueVisitor pvv = new ParameterValueVisitor();
         pvv.visitSymbolizerNode(style.getRules().get(0));        
-        System.out.println(pvv.getResultAsString());       
+        System.out.println(pvv.getExpressionParametersAsString());       
     }
     
      /**
@@ -47,6 +49,6 @@ public class StyleParameterExpressionVisitor {
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerRuleExpression();        
         ParameterValueVisitor pvv = new ParameterValueVisitor();
         pvv.visitSymbolizerNode(style.getRules().get(0));        
-        System.out.println(pvv.getResultAsString());       
+        System.out.println(pvv.getExpressionParametersAsString());       
     }
 }

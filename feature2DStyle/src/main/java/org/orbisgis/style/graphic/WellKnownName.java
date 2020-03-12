@@ -49,6 +49,11 @@ package org.orbisgis.style.graphic;
  * </ul>
  *
  * @author Alexis Guéganno, Maxence Laurent
+ * TODO : Should be an extension so people are welcome to add their own shape
+ * URI :  extensionShape://name
+ * e.g :  meteo://wind... Excellent idea from geoserver team
+ * A factory manager must be available
+ * Should be nice to add utility to display the shape
  */
 public enum WellKnownName {
     SQUARE, CIRCLE, HALFCIRCLE, TRIANGLE, STAR, CROSS, X;

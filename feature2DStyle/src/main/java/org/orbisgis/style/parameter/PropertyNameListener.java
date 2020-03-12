@@ -36,6 +36,8 @@
  */
 package org.orbisgis.style.parameter;
 
+import org.orbisgis.style.parameter.reference.ValueReference;
+
 /**
  * Listens to change in the name of the field where to retrieve values, in a
  * {@link ValueReference}.

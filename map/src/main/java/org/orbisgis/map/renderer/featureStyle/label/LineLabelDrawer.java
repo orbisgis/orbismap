@@ -16,8 +16,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
-import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.RelativeOrientation;
 import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.label.Label;
@@ -31,19 +29,18 @@ import org.orbisgis.style.parameter.ParameterException;
  */
 public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
 
+    private Shape shape;
+
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, LineLabel styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-   
-        Shape shape = (Shape) properties.get("shape");
+    public void draw( Graphics2D g2, MapTransform mapTransform, LineLabel styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         if (shape != null) {
-             Uom uom = styleNode.getUom();
             StyledText styleText = styleNode.getLabel();
 
             if (styleText != null) {
                 StyleTextDrawer styleTextDrawer = new StyleTextDrawer();
-                String text = ValueHelper.getString(sp,styleText.getText());
+                String text = ValueHelper.getAsString(properties,styleText.getText());
                  if(text!=null && !text.isEmpty()){
-        Rectangle2D bounds = styleTextDrawer.getBounds(sp, g2, text, properties, mapTransform, styleText);
+        Rectangle2D bounds = styleTextDrawer.getBounds(g2, text, properties, mapTransform, styleText);
         double totalWidth = bounds.getWidth();
 
         // TODO, is shp a polygon ? Yes so create a line like:
@@ -133,7 +130,7 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
 
         for (String glyph : glyphs) {
             if (glyph != null && !glyph.isEmpty()) {
-                Rectangle2D gBounds = styleTextDrawer.getBounds(sp, g2, glyph, properties, mapTransform, styleText);
+                Rectangle2D gBounds = styleTextDrawer.getBounds( g2, glyph, properties, mapTransform, styleText);
                 
                 glyphWidth = gBounds.getWidth() * way;
                 Point2D.Double pAt = ShapeHelper.getPointAt(shape, currentPos);
@@ -145,16 +142,25 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
                 AffineTransform at = AffineTransform.getTranslateInstance(pAt.x, pAt.y);
                 at.concatenate(AffineTransform.getRotateInstance(theta));
                 currentPos += glyphWidth;
-                outlines.add(styleTextDrawer.getOutline(sp,g2, glyph, properties, mapTransform, at, vA, styleText));
+                outlines.add(styleTextDrawer.getOutline(g2, glyph, properties, mapTransform, at, vA, styleText));
             } else {
                 //System.out.println ("Space...");
                 //currentPos += emWidth*way;
             }
         }
-        styleTextDrawer.drawOutlines(sp, g2, outlines, properties, mapTransform,styleText);
+        styleTextDrawer.drawOutlines( g2, outlines, properties, mapTransform,styleText);
     }
             }
     }
     }
     
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
+    }
 }

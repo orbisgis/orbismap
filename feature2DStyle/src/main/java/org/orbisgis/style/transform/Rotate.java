@@ -38,10 +38,9 @@ package org.orbisgis.style.transform;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * {@code Rotate} is a transformation that performs a rotation of the affected
@@ -55,15 +54,15 @@ import org.orbisgis.style.StyleNode;
  */
 public final class Rotate extends StyleNode implements Transformation {
 
-        private RealParameter x;
-        private RealParameter y;
-        private RealParameter rotation;
+        private ExpressionParameter x;
+        private ExpressionParameter y;
+        private ExpressionParameter rotation;
 
         /**
          * Build a new {@code Rotate} with angle value set to {@code rotation}.
          * @param rotation 
          */
-        public Rotate(RealParameter rotation) {
+        public Rotate(ExpressionParameter rotation) {
                 setRotation(rotation);
                 setX(null);
                 setY(null);
@@ -77,7 +76,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * @param ox
          * @param oy 
          */
-        public Rotate(RealParameter rotation, RealParameter ox, RealParameter oy) {
+        public Rotate(ExpressionParameter rotation, ExpressionParameter ox, ExpressionParameter oy) {
                 setRotation(rotation);
                 setX(ox);
                 setY(oy);
@@ -91,7 +90,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * The rotation, in clockwise degrees. Indeed, as the Y axis is oriented
          * bottom up, it is the direct rotation sense...
          */
-        public RealParameter getRotation() {
+        public ExpressionParameter getRotation() {
                 return rotation;
         }
 
@@ -99,10 +98,9 @@ public final class Rotate extends StyleNode implements Transformation {
          * Set the rotation defined in this {@code Rotate} instance.
          * @param rotation 
          */
-        public void setRotation(RealParameter rotation) {
+        public void setRotation(ExpressionParameter rotation) {
                 this.rotation = rotation;
                 if (rotation != null) {
-                        rotation.setContext(RealParameterContext.REAL_CONTEXT);
                         this.rotation.setParent(this);
                 }
         }
@@ -114,7 +112,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * returned coordinate is placed in the coordinate system associated to
          * the graphic this {@code Rotate} operation is applied on.
          */
-        public RealParameter getX() {
+        public ExpressionParameter getX() {
                 return x;
         }
 
@@ -126,10 +124,9 @@ public final class Rotate extends StyleNode implements Transformation {
          * A {@code RealParameter} that is placed by this method in a 
          * {@link RealParameterContext#REAL_CONTEXT}
          */
-        public void setX(RealParameter x) {
+        public void setX(ExpressionParameter x) {
                 this.x = x;
                 if (this.x != null) {
-                        this.x.setContext(RealParameterContext.REAL_CONTEXT);
                         this.x.setParent(this);
                 }
         }
@@ -141,7 +138,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * returned coordinate is placed in the coordinate system associated to
          * the graphic this {@code Rotate} operation is applied on.
          */
-        public RealParameter getY() {
+        public ExpressionParameter getY() {
                 return y;
         }
 
@@ -153,10 +150,9 @@ public final class Rotate extends StyleNode implements Transformation {
          * A {@code RealParameter} that is placed by this method in a 
          * {@link RealParameterContext#REAL_CONTEXT}
          */
-        public void setY(RealParameter y) {
+        public void setY(ExpressionParameter y) {
                 this.y = y;
                 if (this.y != null) {
-                        this.y.setContext(RealParameterContext.REAL_CONTEXT);
                         this.y.setParent(this);
                 }
         }

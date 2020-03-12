@@ -16,8 +16,6 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public class ExpressionParser {
  
-    
-
     /**
      * 
      * @param expression

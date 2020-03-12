@@ -16,14 +16,9 @@ import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.label.PointLabelDrawer;
-import static org.orbisgis.map.renderer.featureStyle.symbolizer.AreaSymbolizerDrawer.drawerMap;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
-import org.orbisgis.style.Uom;
-import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.label.Label;
 import org.orbisgis.style.label.PointLabel;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 
 /**
@@ -36,30 +31,39 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer>{
     static {
         drawerMap.put(PointLabel.class, new PointLabelDrawer());
     }
+    private Shape shape;
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
-        Shape shape = mapTransform.getShape(sp.getGeometry(symbolizer.getGeometryParameter().getIdentifier()), true);
-        if (shape != null) {
+    public void draw(Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
+         if (shape != null) {
             List<Shape> shps;
-            RealParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
-            if (perpendicularOffset != null) {
+            //RealParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
+            /*if (perpendicularOffset != null) {
                 Double pOffset = perpendicularOffset.getValue(properties);
                 shps = ShapeHelper.perpendicularOffset(shape, pOffset);
-            } else {
+            } else {*/
                 shps = new LinkedList<Shape>();
                 shps.add(shape);
-            }
+            //}
         
             Label label = symbolizer.getLabel();
             if (drawerMap.containsKey(label.getClass())) {
                 properties.put("offset", 0.0);
                 ILabelDrawer labelDrawer = drawerMap.get(label.getClass());
                 for (Shape s : shps) {
-                    properties.put("shape", s);
-                    labelDrawer.draw(sp, g2, mapTransform, label, properties);
+                    labelDrawer.setShape(s);
+                    labelDrawer.draw(g2, mapTransform, label, properties);
                 }
             }
         }
+    }
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
     
 }

@@ -37,8 +37,6 @@
 package org.orbisgis.style.fill;
 
 
-import org.orbisgis.style.parameter.real.RealParameter;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +47,7 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  * A "GraphicFill" defines repeated-graphic filling (stippling) pattern for an area geometry.
@@ -63,11 +62,11 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
     /**
      * Distance between two graphics in the fill, in X direction.
      */
-    private RealParameter gapX;
+    private ExpressionParameter gapX;
     /**
      * Distance between two graphics in the fill, in Y direction.
      */
-    private RealParameter gapY;
+    private ExpressionParameter gapY;
     private Uom uom;
 
     /**
@@ -104,10 +103,9 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Set the gap, upon X direction, between two symbols.
      * @param gap 
      */
-    public void setGapX(RealParameter gap) {
+    public void setGapX(ExpressionParameter gap) {
         gapX = gap;
         if (gap != null) {
-            gap.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             gap.setParent(this);
         }
     }
@@ -116,10 +114,9 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Set the gap, upon Y direction, between two symbols.
      * @param gap 
      */
-    public void setGapY(RealParameter gap) {
+    public void setGapY(ExpressionParameter gap) {
         gapY = gap;
         if (gap != null) {
-            gap.setContext(RealParameterContext.NON_NEGATIVE_CONTEXT);
             gap.setParent(this);
         }
     }
@@ -129,7 +126,7 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Get the gap, upon X direction, between two symbols. 
      * @return  
      */
-    public RealParameter getGapX() {
+    public ExpressionParameter getGapX() {
         return gapX;
     }
 
@@ -137,7 +134,7 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Get the gap, upon Y direction, between two symbols. 
      * @return  
      */
-    public RealParameter getGapY() {
+    public ExpressionParameter getGapY() {
         return gapY;
     }
     

@@ -6,11 +6,10 @@
 package org.orbisgis.map.renderer.featureStyle.utils;
 
 import java.awt.geom.AffineTransform;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.transform.Translate;
 import org.orbisgis.style.utils.UomUtils;
@@ -36,19 +35,19 @@ public class AffineTransformUtils {
      * @throws ParameterException
      * @throws SQLException
      */
-        public static AffineTransform getAffineTranslate(ResultSet rs, Translate translate, Uom uom,
-            MapTransform mt, Double width100p, Double height100p) throws ParameterException, SQLException {
+        public static AffineTransform getAffineTranslate(Translate translate, Uom uom,
+            Map<String,Object> properties, MapTransform mt, Double width100p, Double height100p) throws ParameterException, SQLException {
                 double tx = 0.0;
-                ExpressionParameter x = translate.getX();
-                if (x!= null) {
-                        tx = UomUtils.toPixel(rs.getDouble(x.getIdentifier()), uom, mt.getDpi(), mt.getScaleDenominator(), width100p);
-                }
+               Double x = ValueHelper.getAsDouble(properties, translate.getX());
+            if (x != null) {
+                tx = UomUtils.toPixel(x, uom, mt.getDpi(), mt.getScaleDenominator(), width100p);
+            }
 
-                double ty = 0.0;
-                ExpressionParameter y = translate.getY();
-                if (translate.getY() != null) {
-                        ty = UomUtils.toPixel(rs.getDouble(y.getIdentifier()), uom, mt.getDpi(), mt.getScaleDenominator(), height100p);
-                }
+            double ty = 0.0;
+            Double y = ValueHelper.getAsDouble(properties, translate.getY());
+            if (y != null) {
+                ty = UomUtils.toPixel(y, uom, mt.getDpi(), mt.getScaleDenominator(), height100p);
+            }
 
                 return AffineTransform.getTranslateInstance(tx, ty);
         }

@@ -11,12 +11,13 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
+import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
+import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.fill.DensityFill;
 import org.orbisgis.style.fill.GraphicFill;
-import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.utils.UomUtils;
 
@@ -30,13 +31,15 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
 
     static {
         drawerMap.put(GraphicFill.class, new GraphicFillDrawer());
+        drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
     }
+    private Shape shape;
 
     @Override
-    public Paint getPaint(JdbcSpatialTable sp, DensityFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
-        double percentage = 0.0;
-        if (styleNode.getPercentageCovered() != null) {
-            percentage = styleNode.getPercentageCovered().getValue(properties) * styleNode.ONE_HUNDRED;
+    public Paint getPaint( DensityFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+        Double percentage = ValueHelper.getAsDouble(properties, styleNode.getPercentageCovered());
+        if (percentage == null) {
+            percentage = 0D;
         }
         if (percentage > styleNode.ONE_HUNDRED) {
             percentage = styleNode.ONE_HUNDRED;
@@ -51,11 +54,11 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
                 Graphic mark = styleNode.getGraphic();
                 if (drawerMap.containsKey(mark.getClass())) {
                     IGraphicDrawer markStyle = drawerMap.get(mark.getClass());
-                    Rectangle2D bounds = markStyle.getBounds(sp, mt, mark, properties);
+                    Rectangle2D bounds = markStyle.getBounds(mt, mark, properties);
                     double ratio = Math.sqrt(styleNode.ONE_HUNDRED / percentage);
                     double gapX = bounds.getWidth() * ratio - bounds.getWidth();
                     double gapY = bounds.getHeight() * ratio - bounds.getHeight();
-                    painter =  GraphicFillDrawer.getPaint(sp, markStyle, properties, mt, mark, gapX, gapY, bounds);
+                    painter =  GraphicFillDrawer.getPaint(markStyle, properties, mt, mark, gapX, gapY, bounds);
                     
                 }
 
@@ -68,36 +71,42 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
     }
 
     @Override
-    public void draw(JdbcSpatialTable sp, Graphics2D g2, MapTransform mapTransform, DensityFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, DensityFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         Shape shp = (Shape) properties.get("shape");
         if (shp != null) {
             if (styleNode.isHatched()) {
-                double alpha = HatchedFill.DEFAULT_ALPHA;
+                Double alpha = ValueHelper.getAsDouble(properties,styleNode.getHatchesOrientation());
                 double pDist;
-
-                if (styleNode.getHatchesOrientation() != null) {
-                    alpha = styleNode.getHatchesOrientation().getValue(properties);
+                if (alpha==null) {
+                    throw new ParameterException("The orientation parameter cannot be null");
                 }
                 // Stroke width in pixel
-                double sWidth = sp.getDouble(styleNode.getHatches().getWidth().getIdentifier());
+                Double sWidth = ValueHelper.getAsDouble(properties, styleNode.getHatches().getWidth());
+                
+                if (sWidth==null) {
+                    throw new ParameterException("The hatches size parameter cannot be null");
+                }
                 
                 double widthInPixel = UomUtils.toPixel(sWidth, styleNode.getUom(), mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
 
-                double percentage = 0.0;
+                Double percentage = ValueHelper.getAsDouble(properties, styleNode.getPercentageCovered()) ;
 
-                if (styleNode.getPercentageCovered() != null) {
-                    percentage = styleNode.getPercentageCovered().getValue(properties) * styleNode.ONE_HUNDRED;
+                if (percentage==null) {
+                    throw new ParameterException("The percentage covered parameter cannot be null");
                 }
+                
+                double percentageNormalized = percentage* styleNode.ONE_HUNDRED;               
+                
 
-                if (percentage > styleNode.ONE_HUNDRED) {
-                    percentage = styleNode.ONE_HUNDRED;
+                if (percentageNormalized > styleNode.ONE_HUNDRED) {
+                    percentageNormalized = styleNode.ONE_HUNDRED;
                 }
                 // Perpendiculat dist bw two hatches
-                pDist = styleNode.ONE_HUNDRED * widthInPixel / percentage;
-                HatchedFillDrawer.drawHatch(sp, g2, properties, shp, mapTransform, alpha, pDist, styleNode.getHatches(),new PenStrokeDrawer(), 0.0);
+                pDist = styleNode.ONE_HUNDRED * widthInPixel / percentageNormalized;
+                HatchedFillDrawer.drawHatch(g2, properties, shp, mapTransform, alpha, pDist, styleNode.getHatches(),new PenStrokeDrawer(), 0.0);
             } else {
 
-                Paint painter = getPaint(sp, styleNode, properties, mapTransform);
+                Paint painter = getPaint(styleNode, properties, mapTransform);
 
                 if (painter != null) {
                     g2.setPaint(painter);
@@ -107,4 +116,13 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
         }
     }
 
+    @Override
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(Shape shape) {
+        this.shape = shape;
+    }
 }
