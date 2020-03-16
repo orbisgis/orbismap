@@ -11,6 +11,8 @@ public class ValueHelper {
             if (!expressionParameter.isFunction()) {
                 return expressionParameter.getExpression();
             }
+            
+            expressionParameter.getDataType();
             return (String) properties.get(expressionParameter.getIdentifier());
         }
         return null;
@@ -35,7 +37,7 @@ public class ValueHelper {
         }
         return null;
     }
-    
+
     public static Integer getAsInteger(Map<String, Object> properties, ExpressionParameter expressionParameter) {
         if (expressionParameter != null) {
             if (!expressionParameter.isFunction()) {
@@ -45,7 +47,7 @@ public class ValueHelper {
         }
         return null;
     }
-    
+
     public static Boolean getAsBoolean(Map<String, Object> properties, ExpressionParameter expressionParameter) {
         if (expressionParameter != null) {
             if (!expressionParameter.isFunction()) {

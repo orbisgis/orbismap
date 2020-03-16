@@ -9,11 +9,11 @@ import org.orbisgis.map.renderer.featureStyle.fill.DensityFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
-import org.orbisgis.map.renderer.featureStyle.utils.AffineTransformUtils;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.fill.DotMapFillDrawer;
@@ -49,14 +49,16 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
         drawerMap.put(GraphicFill.class, new GraphicFillDrawer());
     }
     private Shape shape;
+    private BufferedImage bi;
+    private Graphics2D g2_bi;
     
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, AreaSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
         Uom uom = symbolizer.getUom();
         Shape shp = getShape();
         if (symbolizer.getTranslate() != null) {
-            shp = AffineTransformUtils.getAffineTranslate(symbolizer.getTranslate(), uom,properties, mapTransform,
-                    (double) mapTransform.getWidth(), (double) mapTransform.getHeight()).createTransformedShape(shp);
+           // TODO : shp = AffineTransformUtils.getAffineTranslate(symbolizer.getTranslate(), uom,properties, mapTransform,
+             //       (double) mapTransform.getWidth(), (double) mapTransform.getHeight()).createTransformedShape(shp);
         }
         if (shp != null) {
             IFill fill = symbolizer.getFill();
@@ -100,4 +102,33 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
         this.shape = shape;
     }
 
+    @Override
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        this.bi=bufferedImage;
+    }
+
+    @Override
+    public BufferedImage getBufferedImage() {
+     return bi;
+    }
+
+    @Override
+    public void setGraphics2D(Graphics2D g2) {
+        this.g2_bi=g2;
+   }
+
+    @Override
+    public Graphics2D getGraphics2D() {
+        return g2_bi;
+    }
+
+    @Override
+    public void dispose(Graphics2D g2) {
+        g2_bi.dispose();      
+        g2_bi=null;
+        g2.drawImage(bi, 0,0, null);
+    }
+
+    
+    
 }

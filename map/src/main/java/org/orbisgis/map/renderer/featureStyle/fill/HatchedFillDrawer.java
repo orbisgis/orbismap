@@ -61,27 +61,32 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 PenStrokeDrawer strokeToDraw = drawerMap.get(stroke.getClass());            
                 // Perpendicular distance between two lines
             try {
-                double pDist = 0;
-                Double distance = ValueHelper.getAsDouble(properties, styleNode.getDistance());
+                float pDist = 0;
+                Float distance = ValueHelper.getAsFloat(properties, styleNode.getDistance());
                 if(distance ==null ){
-                    pDist = 0.0;
+                    throw new ParameterException("The distance parameter for the hatched fill cannot be null");
+
                 }
                 if (distance > 0) {
-                    pDist = UomUtils.toPixel(distance, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                    pDist = UomUtils.toPixel(distance, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                 }                
 
-                double alpha = DEFAULT_ALPHA;
-                double angle = ValueHelper.getAsDouble(properties, styleNode.getAngle());
+                float alpha = DEFAULT_ALPHA;
+                Float angle = ValueHelper.getAsFloat(properties, styleNode.getAngle());
+                if(angle==null){
+                    throw new ParameterException("The angle parameter for the hatched fill cannot be null");
+                }
                 if (angle >0) {
                     alpha = angle;
                 }
                 double hOffset = 0.0;
-                Double offset = ValueHelper.getAsDouble(properties, styleNode.getOffset());
+                Float offset = ValueHelper.getAsFloat(properties, styleNode.getOffset());
                 if(offset==null){
-                    hOffset = 0.0;
+                   throw new ParameterException("The offset parameter for the hatched fill cannot be null");
+
                 }
                 if (offset >0) {
-                    hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                    hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                 }
 
                 drawHatch(g2, properties, shape, mapTransform, alpha, pDist, (PenStroke)stroke, strokeToDraw, hOffset);

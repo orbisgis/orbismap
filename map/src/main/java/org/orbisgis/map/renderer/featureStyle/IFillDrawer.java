@@ -9,7 +9,6 @@ import java.awt.Paint;
 import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.parameter.ParameterException;
 

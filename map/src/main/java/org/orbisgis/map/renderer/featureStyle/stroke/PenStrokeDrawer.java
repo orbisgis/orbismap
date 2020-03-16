@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
+import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.IFill;
@@ -31,7 +32,7 @@ import org.orbisgis.style.utils.UomUtils;
  *
  * @author ebocher
  */
-public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
+public class PenStrokeDrawer implements IStrokeDrawer<PenStroke>{
     
     final static Map<Class, IFillDrawer> drawerMap = new HashMap<>();
     static {
@@ -43,7 +44,8 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
     public void draw( Graphics2D g2, MapTransform mapTransform, PenStroke styleNode,Map<String, Object> properties) throws ParameterException, SQLException {
         IFill fill = styleNode.getFill();        
         double offset = (double) properties.get("offset");
-        Double width = ValueHelper.getAsDouble(properties, styleNode.getWidth());
+        
+        Float width = ValueHelper.getAsFloat(properties, styleNode.getWidth());
         if (fill != null && width > 0 && shape!=null) {
             List<Shape> shapes;
             Uom uom =  styleNode.getUom();
@@ -175,7 +177,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                         + "of positive numbers separated with spaces.");
             }
             dashLengths[i] = (float) UomUtils.toPixel(dash, uom,
-                    mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                    mapTransform.getDpi(), mapTransform.getScaleDenominator());
         }
         return dashLengths;
     }
@@ -193,7 +195,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
      * @throws ParameterException
      * @throws SQLException 
      */
-    private static BasicStroke createDashStroke(Shape shp, PenStroke penStroke, MapTransform mt, double v100p, float[] dashArray, float dashOffset) throws ParameterException, SQLException {
+    private static BasicStroke createDashStroke(Shape shp, PenStroke penStroke, MapTransform mt, float v100p, float[] dashArray, float dashOffset) throws ParameterException, SQLException {
         Uom uom = penStroke.getUom();
         int cap;
         if (penStroke.getLineCap() == null) {
@@ -230,7 +232,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                     break;
             }
         }
-        double w = UomUtils.toPixel(v100p, uom, mt.getDpi(), mt.getScaleDenominator(), null); // 100% based on view box height or width ? TODO
+        double w = UomUtils.toPixel(v100p, uom, mt.getDpi(), mt.getScaleDenominator()); // 100% based on view box height or width ? TODO
 
         double dashO = 0.0;
         if (dashOffset > 0) {
@@ -242,7 +244,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
     }
         
         
-    private  BasicStroke createBasicStroke( PenStroke penStroke, MapTransform mt, double v100p) throws ParameterException, SQLException {
+    private  BasicStroke createBasicStroke( PenStroke penStroke, MapTransform mt, float v100p) throws ParameterException, SQLException {
         Uom uom = penStroke.getUom();
         int cap;
         if (penStroke.getLineCap() == null) {
@@ -279,7 +281,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                     break;
             }
         }
-        double w = UomUtils.toPixel(v100p, uom, mt.getDpi(), mt.getScaleDenominator(), null); // 100% based on view box height or width ? TODO
+        double w = UomUtils.toPixel(v100p, uom, mt.getDpi(), mt.getScaleDenominator()); // 100% based on view box height or width ? TODO
 
         return new BasicStroke((float) w, cap, join);    
     }
@@ -333,7 +335,7 @@ public class PenStrokeDrawer implements ISymbolizerDraw<PenStroke>{
                     String[] splitDash = dashArray.split(" ");
                     int size = splitDash.length;
                     for (int i = 0; i < size; i++) {
-                        sum += UomUtils.toPixel(Double.parseDouble(splitDash[i]), penStroke.getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+                        sum += UomUtils.toPixel(Float.parseFloat(splitDash[i]), penStroke.getUom(), mt.getDpi(), mt.getScaleDenominator());
                     }
 
                     if (size % 2 == 1) {

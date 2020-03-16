@@ -9,8 +9,8 @@ import org.orbisgis.map.renderer.featureStyle.symbolizer.LineSymbolizerDrawer;
 import org.orbisgis.map.renderer.featureStyle.symbolizer.AreaSymbolizerDrawer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.image.BufferedImage;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.sf.jsqlparser.JSQLParserException;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.TopologyException;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.symbolizer.PointSymbolizerDrawer;
 import org.orbisgis.map.renderer.featureStyle.symbolizer.TextSymbolizerDrawer;
@@ -37,6 +38,7 @@ import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.map.renderer.featureStyle.visitor.GeometryParameterVisitor;
+import org.orbisgis.map.renderer.featureStyle.visitor.ParameterValueVisitor.Tuple;
 
 /**
  *
@@ -106,12 +108,12 @@ public class FeatureStyleRenderer {
 
                     //This map is populated from the data
                     Map<String, Object> properties = new HashMap<>();
-                    Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl);
+                    Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl, mt);
                     while (spatialTableQuery.next()) {
                         Map<String, Shape> shapes = new HashMap<String, Shape>();
                         Shape currentShape = null;
                         //Populate properties here
-                        populateProperties(spatialTableQuery, mt, properties, expressionParameters.getExpressionParameters().keySet());
+                        populateProperties(spatialTableQuery, mt, properties, expressionParameters.getExpressionsProperties());
                         for (Map.Entry<IFeatureSymbolizer, ISymbolizerDraw> symbolizers : symbolizersToDraw.entrySet()) {
                             try {
                                 //Set the shape to the symbolizer to draw
@@ -121,84 +123,90 @@ public class FeatureStyleRenderer {
                                 if(shapes.containsKey(geomIdentifier)){
                                     currentShape= shapes.get(geomIdentifier);
                                 }
-                                else{
+                                else{       
                                     Geometry geom = spatialTableQuery.getGeometry(geomIdentifier);
+                                    Geometry   geomReduced = geom;
+                                    try {
+                                        boolean overlaps = geom.overlaps(mt.getAdjustedExtentGeometry());
+                                        if (overlaps) {
+                                            geomReduced = geom.intersection(mt.getAdjustedExtentGeometry());
+                                        }
+                                    } catch (TopologyException e) {
+                                        //ST_MakeValid.validGeom(geom, true).intersection(adjustedExtentGeometry);
+                                    }                                
+                          
                                     if(featureSymbolizer instanceof PointSymbolizer){
                                         PointSymbolizer ps = (PointSymbolizer) featureSymbolizer;
                                         if (ps.isOnVertex()) {
-                                            currentShape = mt.getShapeAsPoints(geom, false, false);
+                                            currentShape = mt.getShapeAsPoints(geomReduced, false, false);
                                         } else {
-                                            currentShape = mt.getShapeAsPoints(geom, false, true);
+                                            currentShape = mt.getShapeAsPoints(geomReduced, false, true);
                                         } 
                                     }
                                     else{
-                                        currentShape = mt.getShape(geom, true);
+                                        currentShape = mt.getShape(geomReduced, true);
                                     }
                                 }
                                 ISymbolizerDraw symbolizerDraw = symbolizers.getValue();
                                 symbolizerDraw.setShape(currentShape);
-                                symbolizerDraw.draw(g2, mt, featureSymbolizer, properties);
+                                symbolizerDraw.draw(symbolizerDraw.getGraphics2D(), mt, featureSymbolizer, properties);
                                 currentShape=null;
                             } catch (ParameterException | SQLException ex) {
                                 Logger.getLogger(FeatureStyleRenderer.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
+                    }                    
+                    //Draw all buffered images
+                    for (ISymbolizerDraw symbolizerDraw : symbolizersToDraw.values()) {
+                        symbolizerDraw.dispose(g2);
                     }
+                    
+                    
                 }
             }
         }
     }
 
-    private Map<IFeatureSymbolizer, ISymbolizerDraw> prepareSymbolizers(List<IFeatureSymbolizer> sl) {
+    private Map<IFeatureSymbolizer, ISymbolizerDraw> prepareSymbolizers(List<IFeatureSymbolizer> sl, MapTransform mt) {
         Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizerDrawer = new HashMap<>();
         for (int i = 0; i < sl.size(); i++) {
             IFeatureSymbolizer featureSymbolizer = sl.get(i);
             if (featureSymbolizer instanceof AreaSymbolizer) {
-                symbolizerDrawer.put(featureSymbolizer, new AreaSymbolizerDrawer());
+                AreaSymbolizerDrawer drawer = new AreaSymbolizerDrawer();
+                initDrawer(drawer, mt);
+                symbolizerDrawer.put(featureSymbolizer, drawer);
             } else if (featureSymbolizer instanceof LineSymbolizer) {
-                symbolizerDrawer.put(featureSymbolizer, new LineSymbolizerDrawer());
+                LineSymbolizerDrawer drawer = new LineSymbolizerDrawer();
+                initDrawer(drawer, mt);
+                symbolizerDrawer.put(featureSymbolizer,drawer);
             } else if (featureSymbolizer instanceof PointSymbolizer) {
-                symbolizerDrawer.put(featureSymbolizer, new PointSymbolizerDrawer());
+                PointSymbolizerDrawer drawer = new PointSymbolizerDrawer();
+                initDrawer(drawer, mt);
+                symbolizerDrawer.put(featureSymbolizer,drawer);
             } else if (featureSymbolizer instanceof TextSymbolizer) {
-                symbolizerDrawer.put(featureSymbolizer, new TextSymbolizerDrawer());
+                TextSymbolizerDrawer drawer = new TextSymbolizerDrawer();
+                initDrawer(drawer, mt);
+                symbolizerDrawer.put(featureSymbolizer,drawer);
             }
         }
         return symbolizerDrawer;
     }
+    
+    private void initDrawer(ISymbolizerDraw drawer, MapTransform mt) {
+        BufferedImage bufferedImage = new BufferedImage(mt.getWidth(), mt.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D sG2 = bufferedImage.createGraphics();
+        sG2.addRenderingHints(mt.getRenderingHints());
+        drawer.setBufferedImage(bufferedImage);
+        drawer.setGraphics2D(sG2);
+    }
 
     private void populateProperties(JdbcSpatialTable sp, MapTransform mt, 
-            Map<String, Object> properties, Collection<String> parameterValueIdentifiers) throws SQLException {
-        if(!parameterValueIdentifiers.isEmpty()){
-            for (String parameterValueIdentifier : parameterValueIdentifiers) {
-                properties.put(parameterValueIdentifier, sp.getObject(parameterValueIdentifier));
+            Map<String, Object> properties, Map<String, Tuple>  parameterValueIdentifiers) throws SQLException {
+        if(!parameterValueIdentifiers.isEmpty()){            
+            for (Map.Entry<String, Tuple> entry : parameterValueIdentifiers.entrySet()) {
+                properties.put( entry.getKey(), sp.getObject(entry.getValue().getIdentifier(), entry.getValue().getDataType()));              
             }
         }
     }
-    
-    /**
-     * Create the shape awt according the symbolizer
-     * @param sp
-     * @param mt
-     * @param properties
-     * @param symbolizersToDraw 
-     */
-    private void buildShapeForSymbolizer(JdbcSpatialTable sp,MapTransform mt,Map<String, Object> properties,
-            List<IFeatureSymbolizer>  symbolizersToDraw){
-        symbolizersToDraw.forEach((iFeatureSymbolizer) -> {
-                Geometry geom = sp.getGeometry(iFeatureSymbolizer.getGeometryParameter().getIdentifier());
-                if (iFeatureSymbolizer instanceof PointSymbolizer) {
-                    PointSymbolizer ps =  (PointSymbolizer) iFeatureSymbolizer;
-                    if(ps.isOnVertex()){
-                        properties.put("geom_shape_points",  mt.getShapeAsPoints(geom, true, true));
-                    }
-                    else{
-                         properties.put("geom_shape_points",  mt.getShapeAsPoints(geom, true, true));
-                    }                    
-                } else {
-                    properties.put("geom_shape", mt.getShape(geom, true));
-                }
-            });
-    }
-
     
 }

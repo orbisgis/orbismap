@@ -10,6 +10,7 @@ import java.awt.Shape;
 import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.GraphicStroke;
@@ -18,7 +19,7 @@ import org.orbisgis.style.stroke.GraphicStroke;
  *
  * @author ebocher
  */
-public class GraphicStrokeDrawer implements ISymbolizerDraw<GraphicStroke>{
+public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke>{
 
     private Shape shape;
 

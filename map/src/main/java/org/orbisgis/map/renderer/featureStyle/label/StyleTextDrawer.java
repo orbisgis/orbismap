@@ -239,7 +239,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
         if (fontSize == null) {
                   throw new ParameterException("The font size cannot be null");
         }
-        double size = UomUtils.toPixel(fontSize, styleNode.getFontUom(), mt.getDpi(), mt.getScaleDenominator(), null);
+        double size = UomUtils.toPixel(fontSize, styleNode.getFontUom(), mt.getDpi(), mt.getScaleDenominator());
       
         int st = Font.PLAIN;
 

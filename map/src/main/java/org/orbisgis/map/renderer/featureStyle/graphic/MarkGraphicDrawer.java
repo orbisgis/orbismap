@@ -230,7 +230,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
      */
     public static Point2D getDimensionInPixel(Uom uom, double height,
             double width, Double scale, Double dpi) throws ParameterException {
-        double dx, dy;
+        float dx, dy;
 
         double ratio = height / width;
 
@@ -238,19 +238,19 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
             dx = MarkGraphic.DEFAULT_SIZE;
             dy = MarkGraphic.DEFAULT_SIZE;
         } else if (width > 0 && height < 0) {
-            dx = width;
-            dy = dx * ratio;
+            dx = (float) width;
+            dy = (float) (dx * ratio);
         } else if (height > 0 && width < 0) {
-            dy = height;
-            dx = dy / ratio;
+            dy = (float) height;
+            dx = (float) (dy / ratio);
         } else { // nothing is defined
-            dx = width;
-            dy = height;
+            dx = (float) width;
+            dy = (float) height;
             //return null; 
         }
 
-        dx = UomUtils.toPixel(dx, uom, dpi, scale, width);
-        dy = UomUtils.toPixel(dy, uom, dpi, scale, height);
+        dx = UomUtils.toPixel(dx, uom, dpi, scale, (float) width);
+        dy = UomUtils.toPixel(dy, uom, dpi, scale, (float) height);
 
         if (Math.abs(dx) <= 0.00021 || Math.abs(dy) <= 0.00021) {
             dx = 0;

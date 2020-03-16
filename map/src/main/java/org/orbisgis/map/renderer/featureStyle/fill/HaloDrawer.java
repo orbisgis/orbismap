@@ -53,9 +53,13 @@ public class HaloDrawer implements IFillDrawer<Halo> {
             if (drawerMap.containsKey(fill.getClass())) {
                     IFillDrawer fillDrawer = drawerMap.get(fill.getClass());
             //Optimisation
+                Float radius = ValueHelper.getAsFloat(properties, styleNode.getRadius());
+                if (radius == 0 && radius <= 0) {
+                    throw new ParameterException("The radius parameter of the halo cannot be null and greater that 0");
+                }
             if (shape instanceof Arc2D) {
                 Arc2D shp = (Arc2D)shape;
-                double r = getHaloRadius(ValueHelper.getAsDouble(properties, styleNode.getRadius()), styleNode.getUom(), mapTransform);                   
+                float r = getHaloRadius(radius, styleNode.getUom(), mapTransform);                   
                 double x = shp.getX() - r / 2;
                 double y = shp.getY() - r / 2;
                 double height = shp.getHeight() + r;
@@ -64,7 +68,7 @@ public class HaloDrawer implements IFillDrawer<Halo> {
                 Shape halo = at.createTransformedShape(origin);
                 fillHalo( fillDrawer, fill, shape, halo, g2, properties, mapTransform);
             } else {                
-                    double r = getHaloRadius(ValueHelper.getAsDouble(properties, styleNode.getRadius()), styleNode.getUom(), mapTransform);
+                    double r = getHaloRadius(radius, styleNode.getUom(), mapTransform);
                     if (r > 0.0) {
                         for (Shape shapeHalo : ShapeHelper.perpendicularOffset(shape, r)) {
                             fillHalo( fillDrawer, fill, shapeHalo, shape, g2, properties, mapTransform);
@@ -83,8 +87,8 @@ public class HaloDrawer implements IFillDrawer<Halo> {
      * @return
      * @throws ParameterException
      */
-    public double getHaloRadius(double radius, Uom uom, MapTransform mt) throws ParameterException {
-        return UomUtils.toPixel(radius, uom, mt.getDpi(), mt.getScaleDenominator(), null); // TODO 100%
+    public float getHaloRadius(float radius, Uom uom, MapTransform mt) throws ParameterException {
+        return UomUtils.toPixel(radius, uom, mt.getDpi(), mt.getScaleDenominator()); // TODO 100%
     }
 
     private void fillHalo( IFillDrawer fillDrawer, IFill fill, Shape halo, Shape initialShp, Graphics2D g2,

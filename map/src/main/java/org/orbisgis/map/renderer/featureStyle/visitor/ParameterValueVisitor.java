@@ -47,12 +47,14 @@ import org.orbisgis.style.IStyleNodeVisitor;
  * Search for the names of the features that are used in the visited tree of
  * {@link SymbolizerNode} instances.
  *
- * @author Alexis Guéganno
+ * @author Erwan Bocher, CNRS
  */
 public class ParameterValueVisitor implements IStyleNodeVisitor {
+    
+    private HashMap<String, Tuple> expressionsProperties = new HashMap<String, Tuple>();
+
 
     private HashMap<String, String> expression_parameters = new HashMap<String, String>();
-   // private HashMap<String, Object> literal_parameters = new HashMap<String, Object>();
 
     private int count = 0;
 
@@ -64,12 +66,6 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
      */
     @Override
     public void visitSymbolizerNode(IStyleNode sn) {
-        if (!expression_parameters.isEmpty()) {
-            expression_parameters = new HashMap<>();
-        }
-        /*if(!literal_parameters.isEmpty()){
-            literal_parameters = new HashMap<>();
-        }*/
         try {
             visitImpl(sn);
         } catch (Exception ex) {
@@ -89,28 +85,21 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
         List<IStyleNode> children = sn.getChildren();
         if (sn instanceof ExpressionParameter) {
             ExpressionParameter exp = (ExpressionParameter) sn;
-            if(exp.isFunction()){
-            Expression expParsed = CCJSqlParserUtil.parseExpression(exp.getExpression(), false);
-            String formatedExp = expParsed.toString();
-            String identifier = "exp_parameter_" + count++;
-            exp.setExpression(formatedExp);
-            if (!expression_parameters.containsValue(formatedExp)) {
-                expression_parameters.put(identifier, formatedExp);
-                exp.setIdentifier(identifier);
-            } else {
-                exp.setIdentifier(expression_parameters.get(formatedExp));
-            }
-            }
-            /*else{
-                String identifier = "literal_parameter_" + count++;
-                String expLiteral = exp.getExpression().trim();
-                if (!literal_parameters.containsValue(expLiteral)) {
-                    literal_parameters.put(identifier,expLiteral);
-                    exp.setIdentifier(identifier);
+            if (exp.isFunction()) {                          
+                Expression expParsed = CCJSqlParserUtil.parseExpression(exp.getExpression(), false);                  
+                String formatedExp = expParsed.toString();
+                String identifier = "unique_exp_id_" + count++;
+                String autonum_identifier = "auto_exp_id_" + count++;
+                if (!expression_parameters.containsKey(formatedExp)) {
+                    expression_parameters.put(formatedExp,identifier);
+                    exp.setIdentifier(autonum_identifier);
+                    expressionsProperties.put(autonum_identifier, new Tuple(identifier, exp.getDataType()));
                 } else {
-                    exp.setIdentifier((String) literal_parameters.get(expLiteral));
+                    String identifierKey = expression_parameters.get(formatedExp);
+                    exp.setIdentifier(autonum_identifier);
+                    expressionsProperties.put(autonum_identifier, new Tuple(identifierKey, exp.getDataType()));
                 }
-            }*/
+            }
         }
         children.forEach((c) -> {
             try {
@@ -142,8 +131,35 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
 
     public String getExpressionParametersAsString() {
         return expression_parameters.entrySet().stream().
-                map(entrySet -> entrySet.getValue() + " as " + entrySet.getKey()).
+                map(entrySet -> entrySet.getKey()+ " as " + entrySet.getValue()).
                 collect(Collectors.joining(","));
+    }
+
+    public HashMap<String, Tuple> getExpressionsProperties() {
+        return expressionsProperties;
+    }
+    
+    
+
+    public static class Tuple {
+
+        private final String identifier;
+        private final Class dataType;
+
+        public Tuple(String identifier, Class dataType) {
+            this.identifier=identifier;
+            this.dataType=dataType;
+        }
+
+        public Class getDataType() {
+            return dataType;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+        
+        
     }
 
 }

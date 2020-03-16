@@ -5,7 +5,9 @@
  */
 package org.orbisgis.map.renderer.featureStyle.utils;
 
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -16,6 +18,8 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.shape.PointsShape;
+import org.orbisgis.style.parameter.ParameterException;
 
 /**
  *
@@ -42,6 +46,46 @@ public class GeometryHelper {
             }
         }
         return points;
+    }
+    
+    
+    /**
+     * Return all vertices of the geometry 
+     * TODO : Take distance to remove redundant points
+     *
+     * @param envelope
+     * @param theGeom
+     * @param at
+     * @param decimationDistance
+     * @return
+     */
+    public static Shape getPointsAsShape(Envelope envelope, Geometry theGeom, AffineTransform at, double decimationDistance) {  
+        if(at!=null){
+        PointsShape pointsShape = new PointsShape();        
+        Coordinate[] coords = theGeom.getCoordinates();   
+        Coordinate prev = coords[0];
+        Point2D pt = at.transform(new Point2D.Double(prev.x, prev.y), null);  
+        pointsShape.add(new Line2D.Double(pt,pt));
+        int n = coords.length - 1;    
+            for (int i = 1; i <= n; i++) {
+                Coordinate currentCoord = coords[i];
+                if (envelope.intersects(currentCoord)) {
+                    if (decimationDistance > 0.0) {
+                        boolean isDecimated = prev != null
+                                && Math.abs(currentCoord.x - prev.x) < decimationDistance
+                                && Math.abs(currentCoord.y - prev.y) < decimationDistance;
+                        if (i < n && isDecimated) {
+                            continue;
+                        }
+                        prev = currentCoord;
+                    }
+                pt = at.transform(new Point2D.Double(currentCoord.x, currentCoord.y), null);                
+                pointsShape.add(new Line2D.Double(pt,pt));
+            }
+        }        
+        return pointsShape;
+        }
+        return null;
     }
     
     /**

@@ -37,8 +37,8 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
         if (shape != null) {
             double x;
             double y;
-            Double deltaX =0D;
-            Double deltaY=0D;
+            Float deltaX =0f;
+            Float deltaY=0f;
             Uom uom = styleNode.getUom();
             StyledText styleText = styleNode.getLabel();
 
@@ -55,26 +55,26 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
                     ExclusionZone exclusionZone = styleNode.getExclusionZone();
                     if (exclusionZone != null) {
                         if (exclusionZone instanceof ExclusionRadius) {
-                            Double radius = ValueHelper.getAsDouble(properties,((ExclusionRadius) (exclusionZone)).getRadius());
+                            Float radius = ValueHelper.getAsFloat(properties,((ExclusionRadius) (exclusionZone)).getRadius());
                             if(radius==null){
                                 throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
                             }
-                            radius = UomUtils.toPixel(radius, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                            radius = UomUtils.toPixel(radius, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                             deltaX = radius;
                             deltaY = radius;
                         } else {
-                             deltaX = ValueHelper.getAsDouble(properties,((ExclusionRectangle) (exclusionZone)).getX());
+                             deltaX = ValueHelper.getAsFloat(properties,((ExclusionRectangle) (exclusionZone)).getX());
                             if(deltaX==null){
                                 throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
                             }
-                             deltaY = ValueHelper.getAsDouble(properties,((ExclusionRectangle) (exclusionZone)).getY());
+                             deltaY = ValueHelper.getAsFloat(properties,((ExclusionRectangle) (exclusionZone)).getY());
 
                             if(deltaY==null){
                                 throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
                             }
                             
-                            deltaX = UomUtils.toPixel(deltaX, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
-                            deltaY = UomUtils.toPixel(deltaY, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                            deltaX = UomUtils.toPixel(deltaX, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
+                            deltaY = UomUtils.toPixel(deltaY, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                         }
                     }
 

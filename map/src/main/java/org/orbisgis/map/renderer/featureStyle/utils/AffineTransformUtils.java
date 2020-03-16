@@ -35,16 +35,16 @@ public class AffineTransformUtils {
      * @throws ParameterException
      * @throws SQLException
      */
-        public static AffineTransform getAffineTranslate(Translate translate, Uom uom,
+        /*public static AffineTransform getAffineTranslate(Translate translate, Uom uom,
             Map<String,Object> properties, MapTransform mt, Double width100p, Double height100p) throws ParameterException, SQLException {
                 double tx = 0.0;
-               Double x = ValueHelper.getAsDouble(properties, translate.getX());
+               Float x = ValueHelper.getAsFloat(properties, translate.getX());
             if (x != null) {
                 tx = UomUtils.toPixel(x, uom, mt.getDpi(), mt.getScaleDenominator(), width100p);
             }
 
             double ty = 0.0;
-            Double y = ValueHelper.getAsDouble(properties, translate.getY());
+            Float y = ValueHelper.getAsFloat(properties, translate.getY());
             if (y != null) {
                 ty = UomUtils.toPixel(y, uom, mt.getDpi(), mt.getScaleDenominator(), height100p);
             }

@@ -51,7 +51,7 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
         }       
        
         
-        Double opacity = ValueHelper.getAsDouble(properties, solidFill.getOpacity());
+        Float opacity = ValueHelper.getAsFloat(properties, solidFill.getOpacity());
        
         if(opacity==null){
             return color;

@@ -10,6 +10,7 @@ import java.awt.Shape;
 import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.label.LineLabelDrawer;
 import org.orbisgis.style.label.LineLabel;
@@ -20,7 +21,7 @@ import org.orbisgis.style.stroke.TextStroke;
  *
  * @author ebocher
  */
-public class TextStrokeDrawer implements ISymbolizerDraw<TextStroke>{
+public class TextStrokeDrawer implements IStrokeDrawer<TextStroke>{
 
     private Shape shape;
 

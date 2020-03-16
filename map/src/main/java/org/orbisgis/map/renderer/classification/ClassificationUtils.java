@@ -46,7 +46,6 @@ import java.util.List;
 
 import org.h2gis.utilities.TableLocation;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.style.parameter.real.RealParameter;
 
 /**
  * Some methods used for classification...
@@ -59,28 +58,7 @@ public class ClassificationUtils {
     private ClassificationUtils() {
     }
 
-    /**
-     * Retrieves the double values in {@code sds} from {@code value} in
-     * ascending order.
-     *
-     * @param connection
-     * @param table
-     * @param value
-     * @return
-     * @throws SQLException
-     * @throws ParameterException
-     */
-    public static List<Double> getSortedValues(Connection connection, String table, RealParameter value)
-            throws SQLException, ParameterException {
-        List<Double> values = new ArrayList<>();
-        try (Statement st = connection.createStatement();
-             ResultSet rs = st.executeQuery("SELECT " + TableLocation.quoteIdentifier(value.toString()) + " as fieldName FROM " + table + " ORDER BY fieldName")) {
-            while (rs.next()) {
-                values.add(rs.getDouble(1));
-            }
-        }
-        return Collections.unmodifiableList(values);
-    }
+  
 
     /**
      * Gets the minimum and maximum values of {@code table} from {@code value}.

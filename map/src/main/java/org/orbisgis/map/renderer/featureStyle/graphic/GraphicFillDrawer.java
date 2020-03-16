@@ -19,7 +19,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.graphic.Graphic;
@@ -42,7 +41,6 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, GraphicFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        Shape shape = (Shape) properties.get("shape");
         if (shape != null) {
             Paint stipple = getPaint( styleNode, properties, mapTransform);
             if (stipple != null) {
@@ -53,21 +51,21 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
     }
 
     public Paint getPaint( GraphicFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
-        double gX = 0.0;
-        double gY = 0.0;
+        float gX = 0.0f;
+        float gY = 0.0f;
         Uom uom = styleNode.getUom();
-        Double gapX = ValueHelper.getAsDouble(properties, styleNode.getGapX());
+        Float gapX = ValueHelper.getAsFloat(properties, styleNode.getGapX());
         if (gapX != null) {
             gX = gapX;
             if (gX < 0.0) {
-                gX = 0.0;
+                gX = 0.0f;
             }
         }
-        Double gapY = ValueHelper.getAsDouble(properties, styleNode.getGapY());
+        Float gapY = ValueHelper.getAsFloat(properties, styleNode.getGapY());
         if (gapY != null) {
             gY = gapY;
             if (gY < 0.0) {
-                gY = 0.0;
+                gY = 0.0f;
             }
         }
         Graphic graphic = styleNode.getGraphic();        
@@ -75,8 +73,8 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
             if (drawerMap.containsKey(graphic.getClass())) {
                 IGraphicDrawer graphicDrawer = drawerMap.get(graphic.getClass());
                 Rectangle2D bounds = graphicDrawer.getBounds( mt, graphic, properties);
-                gX = UomUtils.toPixel(gX, uom, mt.getDpi(), mt.getScaleDenominator(), bounds.getWidth());
-                gY = UomUtils.toPixel(gY, uom, mt.getDpi(), mt.getScaleDenominator(), bounds.getHeight());
+                gX = UomUtils.toPixel(gX, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getWidth());
+                gY = UomUtils.toPixel(gY, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getHeight());
                 return getPaint( graphicDrawer, properties, mt, graphic, gX, gY, bounds);                
             }
         }

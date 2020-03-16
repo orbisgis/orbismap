@@ -84,8 +84,8 @@ public class GeometryParameterVisitor {
                 String formatedExp = expParsed.toString();
                 String identifier = "geom_" + count++;
                 gp.setExpression(formatedExp);
-                if (!res.containsValue(formatedExp)) {
-                    res.put(identifier,formatedExp);
+                if (!res.containsKey(formatedExp)) {
+                    res.put(formatedExp,identifier);
                     gp.setIdentifier(identifier);
                 }
                 else{
@@ -105,7 +105,7 @@ public class GeometryParameterVisitor {
 
     public String getResultAsString() {
         return res.entrySet().stream().
-                map(entrySet -> entrySet.getValue()+ " as " + entrySet.getKey()).
+                map(entrySet -> entrySet.getKey()+ " as " + entrySet.getValue()).
                 collect(Collectors.joining(","));
     }
 

@@ -44,13 +44,13 @@ public class PointTextGraphicDrawer implements IGraphicDrawer<PointTextGraphic> 
             double px = 0;
             double py = 0;
             Uom uom = styleNode.getUom();
-            Double x = ValueHelper.getAsDouble(properties, styleNode.getX());
+            Float x = ValueHelper.getAsFloat(properties, styleNode.getX());
             if (x != null) {
-                px = UomUtils.toPixel(x, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                px = UomUtils.toPixel(x, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
             }
-            Double y = ValueHelper.getAsDouble(properties, styleNode.getY());
+            Float y = ValueHelper.getAsFloat(properties, styleNode.getY());
             if (y != null) {
-                py = UomUtils.toPixel(y, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                py = UomUtils.toPixel(y, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
             }
 
             Rectangle2D.Double bounds = new Rectangle2D.Double(px - 5, py - 5, 10, 10);

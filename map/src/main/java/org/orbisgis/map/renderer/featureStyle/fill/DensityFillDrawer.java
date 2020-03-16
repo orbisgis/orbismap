@@ -41,6 +41,7 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
         if (percentage == null) {
             percentage = 0D;
         }
+        percentage = percentage * styleNode.ONE_HUNDRED;
         if (percentage > styleNode.ONE_HUNDRED) {
             percentage = styleNode.ONE_HUNDRED;
         }
@@ -72,8 +73,7 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
 
     @Override
     public void draw( Graphics2D g2, MapTransform mapTransform, DensityFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        Shape shp = (Shape) properties.get("shape");
-        if (shp != null) {
+         if (shape != null) {
             if (styleNode.isHatched()) {
                 Double alpha = ValueHelper.getAsDouble(properties,styleNode.getHatchesOrientation());
                 double pDist;
@@ -81,13 +81,13 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
                     throw new ParameterException("The orientation parameter cannot be null");
                 }
                 // Stroke width in pixel
-                Double sWidth = ValueHelper.getAsDouble(properties, styleNode.getHatches().getWidth());
+                Float sWidth = ValueHelper.getAsFloat(properties, styleNode.getHatches().getWidth());
                 
-                if (sWidth==null) {
+                if (sWidth==null && sWidth>=0) {
                     throw new ParameterException("The hatches size parameter cannot be null");
                 }
                 
-                double widthInPixel = UomUtils.toPixel(sWidth, styleNode.getUom(), mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
+                float widthInPixel = UomUtils.toPixel(sWidth, styleNode.getUom(), mapTransform.getDpi(), mapTransform.getScaleDenominator());
 
                 Double percentage = ValueHelper.getAsDouble(properties, styleNode.getPercentageCovered()) ;
 
@@ -103,14 +103,14 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
                 }
                 // Perpendiculat dist bw two hatches
                 pDist = styleNode.ONE_HUNDRED * widthInPixel / percentageNormalized;
-                HatchedFillDrawer.drawHatch(g2, properties, shp, mapTransform, alpha, pDist, styleNode.getHatches(),new PenStrokeDrawer(), 0.0);
+                HatchedFillDrawer.drawHatch(g2, properties, shape, mapTransform, alpha, pDist, styleNode.getHatches(),new PenStrokeDrawer(), 0.0);
             } else {
 
                 Paint painter = getPaint(styleNode, properties, mapTransform);
 
                 if (painter != null) {
                     g2.setPaint(painter);
-                    g2.fill(shp);
+                    g2.fill(shape);
                 }
             }
         }

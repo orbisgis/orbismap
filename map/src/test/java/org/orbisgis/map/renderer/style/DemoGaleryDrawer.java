@@ -8,6 +8,7 @@ package org.orbisgis.map.renderer.style;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -23,6 +24,8 @@ import org.osgi.service.jdbc.DataSourceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.orbisgis.orbisdata.datamanager.api.dataset.IJdbcTable;
+import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 
 /**
  *
@@ -95,8 +98,15 @@ public class DemoGaleryDrawer {
     @Test
     public void testLineSymbolizer() throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StyleFactoryTest.createLineSymbolizerStyle();
+        Feature2DStyle style = StyleFactoryTest.createLineSymbolizer();
         this.template(inputFile, "LineSymbolizer", style, true, null);
+    }
+    
+    @Test
+    public void testLineSymbolizerSizeExpression() throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StyleFactoryTest.createLineSymbolizerSizeExpression();
+        this.template(inputFile, "LineSymbolizerSizeExpression", style, true, null);
     }
 
     @Test
@@ -141,7 +151,7 @@ public class DemoGaleryDrawer {
         this.template(inputFile, "AreaSymbolizerRuleExpression", style, true, null);
     }
          
-    @Test //TODO fixme
+    @Test 
     public void testAreaSymbolizerDotFill() throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerDotFillStyle();
@@ -174,6 +184,38 @@ public class DemoGaleryDrawer {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StyleFactoryTest.createPointSymbolizer();
         this.template(inputFile, "PointSymbolizer", style, true, null);
+    }
+    
+    @Test
+    public void testPointSymbolizerMarkGraphicSizeExpression() throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StyleFactoryTest.createPointSymbolizerMarkGraphicSizeExpression();
+        this.template(inputFile, "PointSymbolizerMarkGraphicSizeExpression", style, true, null);
+    }
+    
+    @Test
+    public void testPointSymbolizerVertex() throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StyleFactoryTest.createPointSymbolizerVertex();
+        this.template(inputFile, "PointSymbolizerVertex", style, true, null);
+    }
+    
+    @Test
+    public void testAreaSymbolizerAndPointSymbolizerVertex() throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StyleFactoryTest.AreaSymbolizerAndPointSymbolizerVertex();
+        this.template(inputFile, "AreaSymbolizerAndPointSymbolizerVertex", style, true, null);
+    }
+    
+    @Test
+    public void testAreaSymbolizerAndPointSymbolizerVertexEnvelope() throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.where("limit 1");
+        spatialTable.next();
+        Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();            
+        Feature2DStyle style = StyleFactoryTest.AreaSymbolizerAndPointSymbolizerVertex();
+        this.template(inputFile, "AreaSymbolizerAndPointSymbolizerVertexEnvelope", style, true, envelope);
     }
     
     

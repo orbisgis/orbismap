@@ -7,6 +7,7 @@ package org.orbisgis.map.renderer.featureStyle.symbolizer;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,6 +33,10 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer>{
         drawerMap.put(PointLabel.class, new PointLabelDrawer());
     }
     private Shape shape;
+    
+    private BufferedImage bi;
+    private Graphics2D g2_bi;
+    
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
          if (shape != null) {
@@ -64,6 +69,33 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer>{
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    
+     @Override
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        this.bi=bufferedImage;
+    }
+
+    @Override
+    public BufferedImage getBufferedImage() {
+     return bi;
+    }
+
+    @Override
+    public void setGraphics2D(Graphics2D g2) {
+        this.g2_bi=g2;
+   }
+
+    @Override
+    public Graphics2D getGraphics2D() {
+        return g2_bi;
+    }
+
+    @Override
+    public void dispose(Graphics2D g2) {
+        g2_bi.dispose();      
+        g2_bi=null;
+        g2.drawImage(bi, null, null);
     }
     
 }
