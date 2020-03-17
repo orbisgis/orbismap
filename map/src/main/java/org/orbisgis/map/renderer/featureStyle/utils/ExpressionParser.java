@@ -8,7 +8,6 @@ package org.orbisgis.map.renderer.featureStyle.utils;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import org.orbisgis.style.parameter.ExpressionParameter;
 
 /**
  *
@@ -22,7 +21,7 @@ public class ExpressionParser {
      * @return
      * @throws JSQLParserException 
      */
-    public static String parse(ExpressionParameter expression) throws JSQLParserException  {
+    public static String parse(org.orbisgis.style.parameter.Expression expression) throws JSQLParserException  {
         if(expression!=null){
           Expression expParsed = CCJSqlParserUtil.parseExpression(expression.getExpression(), false);     
           return expParsed.toString();
@@ -36,11 +35,11 @@ public class ExpressionParser {
      * @return
      * @throws JSQLParserException 
      */
-    public static ExpressionParameter formatConditionalExpression(ExpressionParameter expression) throws JSQLParserException  {
+    public static org.orbisgis.style.parameter.Expression formatConditionalExpression(org.orbisgis.style.parameter.Expression expression) throws JSQLParserException  {
         if(expression!=null){
           Expression expParsed = CCJSqlParserUtil.parseCondExpression(expression.getExpression(), false);     
-          return new ExpressionParameter(expParsed.toString());
+          return new org.orbisgis.style.parameter.Expression(expParsed.toString());
         }
-        return new ExpressionParameter("");
+        return new org.orbisgis.style.parameter.Expression("");
      }
 }

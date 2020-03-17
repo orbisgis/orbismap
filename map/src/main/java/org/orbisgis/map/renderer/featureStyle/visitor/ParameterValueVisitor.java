@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import org.orbisgis.style.parameter.ExpressionParameter;
 
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IStyleNodeVisitor;
@@ -51,7 +50,7 @@ import org.orbisgis.style.IStyleNodeVisitor;
  */
 public class ParameterValueVisitor implements IStyleNodeVisitor {
     
-    private HashMap<String, Tuple> expressionsProperties = new HashMap<String, Tuple>();
+    private HashMap<String, org.orbisgis.style.parameter.Expression> expressionsProperties = new HashMap<String, org.orbisgis.style.parameter.Expression>();
 
 
     private HashMap<String, String> expression_parameters = new HashMap<String, String>();
@@ -83,21 +82,20 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
      */
     protected void visitImpl(IStyleNode sn) throws Exception {
         List<IStyleNode> children = sn.getChildren();
-        if (sn instanceof ExpressionParameter) {
-            ExpressionParameter exp = (ExpressionParameter) sn;
-            if (exp.isFunction()) {                          
+        if (sn instanceof org.orbisgis.style.parameter.Expression) {
+            org.orbisgis.style.parameter.Expression exp =  (org.orbisgis.style.parameter.Expression) sn;
+            if (exp!=null) {                          
                 Expression expParsed = CCJSqlParserUtil.parseExpression(exp.getExpression(), false);                  
                 String formatedExp = expParsed.toString();
                 String identifier = "unique_exp_id_" + count++;
-                String autonum_identifier = "auto_exp_id_" + count++;
                 if (!expression_parameters.containsKey(formatedExp)) {
                     expression_parameters.put(formatedExp,identifier);
-                    exp.setIdentifier(autonum_identifier);
-                    expressionsProperties.put(autonum_identifier, new Tuple(identifier, exp.getDataType()));
+                    exp.setReference(identifier);
+                    expressionsProperties.put(identifier,exp);
                 } else {
                     String identifierKey = expression_parameters.get(formatedExp);
-                    exp.setIdentifier(autonum_identifier);
-                    expressionsProperties.put(autonum_identifier, new Tuple(identifierKey, exp.getDataType()));
+                    exp.setReference(identifierKey);
+                    expressionsProperties.put(identifierKey, exp);
                 }
             }
         }
@@ -135,31 +133,7 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
                 collect(Collectors.joining(","));
     }
 
-    public HashMap<String, Tuple> getExpressionsProperties() {
+    public HashMap<String, org.orbisgis.style.parameter.Expression> getExpressionsProperties() {
         return expressionsProperties;
     }
-    
-    
-
-    public static class Tuple {
-
-        private final String identifier;
-        private final Class dataType;
-
-        public Tuple(String identifier, Class dataType) {
-            this.identifier=identifier;
-            this.dataType=dataType;
-        }
-
-        public Class getDataType() {
-            return dataType;
-        }
-
-        public String getIdentifier() {
-            return identifier;
-        }
-        
-        
-    }
-
 }

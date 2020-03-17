@@ -20,7 +20,6 @@ import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.MarkGraphic;
@@ -54,8 +53,8 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
         if (drawerMap.containsKey(graphic.getClass())) {
             IStyleDrawer graphicDrawer = drawerMap.get(graphic.getClass());
             if(graphicDrawer!=null){
-            Double perMark = ValueHelper.getAsDouble(properties,styleNode.getQuantityPerMark());
-            Double total = ValueHelper.getAsDouble(properties,styleNode.getTotalQuantity());
+            Integer perMark = (Integer) styleNode.getQuantityPerMark().getValue();
+            Integer total = (Integer) styleNode.getTotalQuantity().getValue();
            
 
             if (perMark == null || total == null) {

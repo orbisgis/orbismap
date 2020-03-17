@@ -70,13 +70,13 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  * @author Erwan Bocher, CNRS
  * 
  */
-public final class PointSymbolizer extends StyleNode  implements IGraphicNode,Comparable, IFeatureSymbolizer, UomNode {
+public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Comparable, IFeatureSymbolizer, UomNode {
     private Graphic graphic;
     private boolean onVertex;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
     private String desc;
-    private int level;
+    private int level =0;
     public static final String DEFAULT_NAME = "Point symbolizer";
     private Uom uom;
 
@@ -222,7 +222,6 @@ public final class PointSymbolizer extends StyleNode  implements IGraphicNode,Co
     public int compareTo(Object o) {
         if (o instanceof PointSymbolizer) {
             PointSymbolizer s = (PointSymbolizer) o;
-
             if (s.getLevel() < this.level) {
                 return 1;
             } else if (s.getLevel() == this.level) {

@@ -54,7 +54,7 @@ import org.slf4j.*;
  * @author Maxence Laurent
  * @author Alexis Guéganno
  */
-public final class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule>{
+public class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule>{
 
     public static final String PROP_VISIBLE = "visible";
     private static final String DEFAULT_NAME = "Unnamed Style";

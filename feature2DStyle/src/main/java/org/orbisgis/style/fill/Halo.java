@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,65 +29,68 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.fill;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.*;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.parameter.ExpressionParameter;
-
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
- * A {@code Halo} is a type of {@code Fill} that is applied to the background of font glyphs.
- * It is mainly used to improve the readability of text labels on the map.
+ * A {@code Halo} is a type of {@code Fill} that is applied to the background of
+ * font glyphs. It is mainly used to improve the readability of text labels on
+ * the map.
+ *
  * @author Alexis Guéganno, CNRS
  * @author Erwan Bocher, CNRS
  */
-public final class Halo extends StyleNode implements  IUom, FillNode {
+public class Halo extends StyleNode implements IUom, FillNode {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Halo.class);
-        /**
-         * The default radius for new {@code Halo} instances. Set to 1.0, and UOM dependant.
-         */
+    /**
+     * The default radius for new {@code Halo} instances. Set to 1.0, and UOM
+     * dependant.
+     */
     public static final double DEFAULT_RADIUS = 1.0;
 
     private Uom uom;
-    private ExpressionParameter radius;
+    private ParameterValue radius;
     private IFill fill;
-    
+
     /**
-     * Build a new default {@code Halo}, with a solid fill and a radius set to {@code DEFAULT_RADIUS}
+     * Build a new default {@code Halo}, with a solid fill and a radius set to
+     * {@code DEFAULT_RADIUS}
      */
     public Halo() {
         setFill(getDefaultFill());
-        setRadius(new ExpressionParameter(DEFAULT_RADIUS));
+        setRadius(new Literal(DEFAULT_RADIUS));
     }
 
     /**
-     * Build a new {@code Halo} with the given {@code Fill} and a radius set to {@code radius}
+     * Build a new {@code Halo} with the given {@code Fill} and a radius set to
+     * {@code radius}
+     *
      * @param fill
-     * @param radius 
+     * @param radius
      */
-    public Halo(IFill fill, ExpressionParameter radius) {
+    public Halo(IFill fill, ParameterValue radius) {
         setFill(fill);
         setRadius(radius);
     }
 
-    
     @Override
     public Uom getUom() {
         if (uom == null) {
-            return ((IUom)getParent()).getUom();
+            return ((IUom) getParent()).getUom();
         } else {
             return uom;
         }
@@ -99,8 +100,6 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
     public Uom getOwnUom() {
         return uom;
     }
-
-   
 
     @Override
     public void setFill(IFill fill) {
@@ -115,40 +114,43 @@ public final class Halo extends StyleNode implements  IUom, FillNode {
 
     /**
      * Get the radius of this {@code Halo}.
-     * @return 
-     * The radius of this {@code Halo} as a {@code RealParameter}.
+     *
+     * @return The radius of this {@code Halo} as a {@code RealParameter}.
      */
-    public ExpressionParameter getRadius() {
+    public ParameterValue getRadius() {
         return radius;
     }
 
     /**
      * Set the radius of this {@code Halo}.
-     * @param radius 
+     *
+     * @param radius
      */
-    public void setRadius(ExpressionParameter radius) {
+    public void setRadius(ParameterValue radius) {
         if (radius != null) {
+            ParameterValueHelper.validateAsFloat(radius);
             this.radius = radius;
         } else {
-            this.radius = new ExpressionParameter(DEFAULT_RADIUS);
+            this.radius = new Literal(DEFAULT_RADIUS);
         }
         this.radius.setParent(this);
     }
 
     @Override
     public List<IStyleNode> getChildren() {
-            List<IStyleNode> ls = new ArrayList<IStyleNode>();
-            ls.add(radius);
-            ls.add(fill);
-            return ls;
-    }   
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
+        ls.add(radius);
+        ls.add(fill);
+        return ls;
+    }
 
     /**
      * Default fill for the halo must be white and 100% opaque.
+     *
      * @return
      */
     private IFill getDefaultFill() {
-            return new SolidFill(Color.WHITE, 1);
+        return new SolidFill(Color.WHITE, 1);
     }
 
     @Override

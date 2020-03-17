@@ -17,7 +17,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ShapeHelper;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.Halo;
@@ -44,39 +43,39 @@ public class HaloDrawer implements IFillDrawer<Halo> {
     }
 
     @Override
-    public void draw( Graphics2D g2, MapTransform mapTransform, Halo styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, Halo styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
         Shape shape = (Shape) properties.get("shape");
         AffineTransform at = (AffineTransform) properties.get("affinetransform");
         if (shape != null) {
-        IFill fill = styleNode.getFill();
-        if (styleNode.getRadius() != null && fill != null) { 
-            if (drawerMap.containsKey(fill.getClass())) {
+            IFill fill = styleNode.getFill();
+            if (styleNode.getRadius() != null && fill != null) {
+                if (drawerMap.containsKey(fill.getClass())) {
                     IFillDrawer fillDrawer = drawerMap.get(fill.getClass());
-            //Optimisation
-                Float radius = ValueHelper.getAsFloat(properties, styleNode.getRadius());
-                if (radius == 0 && radius <= 0) {
-                    throw new ParameterException("The radius parameter of the halo cannot be null and greater that 0");
-                }
-            if (shape instanceof Arc2D) {
-                Arc2D shp = (Arc2D)shape;
-                float r = getHaloRadius(radius, styleNode.getUom(), mapTransform);                   
-                double x = shp.getX() - r / 2;
-                double y = shp.getY() - r / 2;
-                double height = shp.getHeight() + r;
-                double width = shp.getWidth() + r;
-                Shape origin = new Arc2D.Double(x, y, width, height, shp.getAngleStart(), shp.getAngleExtent(), shp.getArcType());
-                Shape halo = at.createTransformedShape(origin);
-                fillHalo( fillDrawer, fill, shape, halo, g2, properties, mapTransform);
-            } else {                
-                    double r = getHaloRadius(radius, styleNode.getUom(), mapTransform);
-                    if (r > 0.0) {
-                        for (Shape shapeHalo : ShapeHelper.perpendicularOffset(shape, r)) {
-                            fillHalo( fillDrawer, fill, shapeHalo, shape, g2, properties, mapTransform);
+                    //Optimisation
+                    Float radius = (Float) styleNode.getRadius().getValue();
+                    if (radius == 0 && radius <= 0) {
+                        throw new ParameterException("The radius parameter of the halo cannot be null and greater that 0");
+                    }
+                    if (shape instanceof Arc2D) {
+                        Arc2D shp = (Arc2D) shape;
+                        float r = getHaloRadius(radius, styleNode.getUom(), mapTransform);
+                        double x = shp.getX() - r / 2;
+                        double y = shp.getY() - r / 2;
+                        double height = shp.getHeight() + r;
+                        double width = shp.getWidth() + r;
+                        Shape origin = new Arc2D.Double(x, y, width, height, shp.getAngleStart(), shp.getAngleExtent(), shp.getArcType());
+                        Shape halo = at.createTransformedShape(origin);
+                        fillHalo(fillDrawer, fill, shape, halo, g2, properties, mapTransform);
+                    } else {
+                        double r = getHaloRadius(radius, styleNode.getUom(), mapTransform);
+                        if (r > 0.0) {
+                            for (Shape shapeHalo : ShapeHelper.perpendicularOffset(shape, r)) {
+                                fillHalo(fillDrawer, fill, shapeHalo, shape, g2, properties, mapTransform);
+                            }
                         }
                     }
                 }
             }
-        }
         }
     }
 
@@ -91,20 +90,20 @@ public class HaloDrawer implements IFillDrawer<Halo> {
         return UomUtils.toPixel(radius, uom, mt.getDpi(), mt.getScaleDenominator()); // TODO 100%
     }
 
-    private void fillHalo( IFillDrawer fillDrawer, IFill fill, Shape halo, Shape initialShp, Graphics2D g2,
+    private void fillHalo(IFillDrawer fillDrawer, IFill fill, Shape halo, Shape initialShp, Graphics2D g2,
             Map<String, Object> properties, MapTransform mapTransform)
             throws ParameterException, SQLException {
         if (halo != null && initialShp != null) {
             Area initialArea = new Area(initialShp);
-            Area aHalo = new Area(halo);           
-            aHalo.subtract(initialArea);            
+            Area aHalo = new Area(halo);
+            aHalo.subtract(initialArea);
             properties.put("shape", aHalo);
-            fillDrawer.draw(g2, mapTransform, fill, properties);              
+            fillDrawer.draw(g2, mapTransform, fill, properties);
         } else {
             //LOGGER.error("Perpendicular offset failed");
         }
     }
-    
+
     @Override
     public Shape getShape() {
         return shape;

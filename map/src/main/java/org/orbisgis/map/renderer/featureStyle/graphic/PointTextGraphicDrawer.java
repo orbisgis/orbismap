@@ -14,7 +14,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
 import org.orbisgis.map.renderer.featureStyle.label.PointLabelDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.PointTextGraphic;
 import org.orbisgis.style.label.PointLabel;
@@ -44,11 +43,11 @@ public class PointTextGraphicDrawer implements IGraphicDrawer<PointTextGraphic> 
             double px = 0;
             double py = 0;
             Uom uom = styleNode.getUom();
-            Float x = ValueHelper.getAsFloat(properties, styleNode.getX());
+            Float x = (Float) styleNode.getX().getValue();
             if (x != null) {
                 px = UomUtils.toPixel(x, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
             }
-            Float y = ValueHelper.getAsFloat(properties, styleNode.getY());
+            Float y =  (Float) styleNode.getY().getValue();
             if (y != null) {
                 py = UomUtils.toPixel(y, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
             }

@@ -27,7 +27,6 @@ import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.transform.TransformBuilder;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
@@ -155,7 +154,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
      */
     private Shape getShape(MarkGraphic markGraphic, MapTransform mapTransform, Map<String, Object> properties) throws ParameterException, Exception {
 
-        String wkn = ValueHelper.getAsString(properties, markGraphic.getWkn());
+        String wkn = (String) markGraphic.getWkn().getValue();
         if (wkn != null && !wkn.isEmpty()) {
             return getShape(WellKnownName.fromString(wkn), markGraphic.getViewBox(), properties, mapTransform.getScaleDenominator(),
                     mapTransform.getDpi(), markGraphic.getUom());
@@ -204,8 +203,8 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
             Double scale, Double dpi) throws ParameterException, SQLException {
         double x = 1, y = 1; // The size of the shape, [final unit] => [px]
         if (viewBox != null) {
-            Float height = ValueHelper.getAsFloat(map, viewBox.getHeight());
-            Float width = ValueHelper.getAsFloat(map, viewBox.getWidth());
+            Float height = (Float) viewBox.getHeight().getValue();
+            Float width =  (Float) viewBox.getWidth().getValue();
             if (height != null || width != null) {
                 Point2D box = getDimensionInPixel(((UomNode) viewBox.getParent()).getUom(), height, width, scale, dpi);
                 x = box.getX();
@@ -265,8 +264,8 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
         double x = DEFAULT_SIZE, y = DEFAULT_SIZE; // The size of the shape, [final unit] => [px]
 
         if (viewBox != null) {
-            Float height = ValueHelper.getAsFloat(map, viewBox.getHeight());
-            Float width = ValueHelper.getAsFloat(map, viewBox.getWidth());
+            Float height = (Float) viewBox.getHeight().getValue();
+            Float width =  (Float) viewBox.getWidth().getValue();
             if (height != null || width != null) {
                 Point2D box = getDimensionInPixel(uom, height, width, scale, dpi);
                 x = box.getX();

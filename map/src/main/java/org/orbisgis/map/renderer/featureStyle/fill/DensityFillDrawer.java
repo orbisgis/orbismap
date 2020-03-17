@@ -13,7 +13,6 @@ import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
 import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.fill.DensityFill;
 import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.graphic.Graphic;
@@ -37,9 +36,9 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
 
     @Override
     public Paint getPaint( DensityFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
-        Double percentage = ValueHelper.getAsDouble(properties, styleNode.getPercentageCovered());
+        Float percentage = (Float) styleNode.getPercentageCovered().getValue();
         if (percentage == null) {
-            percentage = 0D;
+            percentage = 0f;
         }
         percentage = percentage * styleNode.ONE_HUNDRED;
         if (percentage > styleNode.ONE_HUNDRED) {
@@ -75,13 +74,13 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
     public void draw( Graphics2D g2, MapTransform mapTransform, DensityFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
          if (shape != null) {
             if (styleNode.isHatched()) {
-                Double alpha = ValueHelper.getAsDouble(properties,styleNode.getHatchesOrientation());
-                double pDist;
+                Float alpha = (Float) styleNode.getHatchesOrientation().getValue();
+                float pDist;
                 if (alpha==null) {
                     throw new ParameterException("The orientation parameter cannot be null");
                 }
                 // Stroke width in pixel
-                Float sWidth = ValueHelper.getAsFloat(properties, styleNode.getHatches().getWidth());
+                Float sWidth = (Float) styleNode.getHatches().getWidth().getValue();
                 
                 if (sWidth==null && sWidth>=0) {
                     throw new ParameterException("The hatches size parameter cannot be null");
@@ -89,13 +88,13 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
                 
                 float widthInPixel = UomUtils.toPixel(sWidth, styleNode.getUom(), mapTransform.getDpi(), mapTransform.getScaleDenominator());
 
-                Double percentage = ValueHelper.getAsDouble(properties, styleNode.getPercentageCovered()) ;
+                Float percentage = (Float) styleNode.getPercentageCovered().getValue() ;
 
                 if (percentage==null) {
                     throw new ParameterException("The percentage covered parameter cannot be null");
                 }
                 
-                double percentageNormalized = percentage* styleNode.ONE_HUNDRED;               
+                float percentageNormalized = percentage* styleNode.ONE_HUNDRED;               
                 
 
                 if (percentageNormalized > styleNode.ONE_HUNDRED) {

@@ -24,7 +24,6 @@ import org.osgi.service.jdbc.DataSourceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import org.orbisgis.orbisdata.datamanager.api.dataset.IJdbcTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 
 /**
@@ -203,7 +202,7 @@ public class DemoGaleryDrawer {
     @Test
     public void testAreaSymbolizerAndPointSymbolizerVertex() throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StyleFactoryTest.AreaSymbolizerAndPointSymbolizerVertex();
+        Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerAndPointSymbolizerVertex();
         this.template(inputFile, "AreaSymbolizerAndPointSymbolizerVertex", style, true, null);
     }
     
@@ -214,9 +213,19 @@ public class DemoGaleryDrawer {
         spatialTable.where("limit 1");
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();            
-        Feature2DStyle style = StyleFactoryTest.AreaSymbolizerAndPointSymbolizerVertex();
+        Feature2DStyle style = StyleFactoryTest.createAreaSymbolizerAndPointSymbolizerVertex();
         this.template(inputFile, "AreaSymbolizerAndPointSymbolizerVertexEnvelope", style, true, envelope);
-    }
+    }    
     
+      @Test
+    public void testSymbolsWithLevelEnvelope() throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.where("limit 1");
+        spatialTable.next();
+        Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();            
+        Feature2DStyle style = StyleFactoryTest.createSymbolsWithLevel();
+        this.template(inputFile, "SymbolsWithLevel", style, true, envelope);
+    } 
     
 }

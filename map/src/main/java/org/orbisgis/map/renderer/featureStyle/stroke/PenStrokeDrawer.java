@@ -18,8 +18,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
-import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.ShapeHelper;
@@ -45,7 +43,7 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke>{
         IFill fill = styleNode.getFill();        
         double offset = (double) properties.get("offset");
         
-        Float width = ValueHelper.getAsFloat(properties, styleNode.getWidth());
+        Float width = (Float) styleNode.getWidth().getValue();
         if (fill != null && width > 0 && shape!=null) {
             List<Shape> shapes;
             Uom uom =  styleNode.getUom();
@@ -65,11 +63,11 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke>{
                 //Find dashArray info
                 float[] dashLengths =null;
                 float dashOffset = 0;
-                String dashArray = ValueHelper.getAsString(properties, styleNode.getDashArray());
+                String dashArray =  (String) styleNode.getDashArray().getValue();
                 if (dashArray != null){
                     if(!dashArray.isEmpty() && Math.abs(offset) > 0.0) {
                        dashLengths = parseDashExpression(dashArray,uom, mapTransform);
-                       dashOffset = ValueHelper.getAsFloat(properties, styleNode.getDashOffset());
+                       dashOffset =  (float) styleNode.getDashOffset().getValue();
                     }
                 }
               
@@ -324,7 +322,7 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke>{
       * @return 
       */
      public Double getNaturalLength(PenStroke penStroke, MapTransform mt,Map<String, Object> properties) throws SQLException {
-        String dashArray = ValueHelper.getAsString(properties, penStroke.getDashArray());
+        String dashArray = (String) penStroke.getDashArray().getValue();
         if (dashArray != null) {
             // A dashed PenStroke has a length
             // This is required to compute hatches tile but will break the compound stroke natural length logic

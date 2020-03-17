@@ -39,7 +39,7 @@ package org.orbisgis.style;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.common.Description;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Expression;
 
 /**
  * Rules are used to group rendering instructions by feature-property conditions and map scales.
@@ -51,7 +51,7 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * @author Maxence Laurent
  * @author Erwan Bocher
  */
-public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer> {
+public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer> {
 
     /**
      * The name set to every rule, if not set externally.
@@ -59,7 +59,7 @@ public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymb
     public static final String DEFAULT_NAME = "Default Rule";
     private String name = "";
     private Description description = new Description();
-    private ExpressionParameter expressionParameter;
+    private Expression expressionParameter;
     private Double minScaleDenom = null;
     private Double maxScaleDenom = null;
     private ArrayList<IFeatureSymbolizer> symbolizers;
@@ -86,7 +86,7 @@ public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymb
      * @return 
      *      The associated <code>where</code> clause.
      */
-    public ExpressionParameter getExpression() {
+    public Expression getExpression() {
         return expressionParameter;
     }
 
@@ -94,11 +94,10 @@ public final class Feature2DRule extends StyleNode implements IRule<IFeatureSymb
      * Replace the current inner <code>where</code> clause.
      * @param expression
      */
-    public void setExpression(ExpressionParameter expression) {
+    public void setExpression(Expression expression) {
         //Still always a function
-        expression.setFunction(true);
         this.expressionParameter = expression; 
-        
+        this.expressionParameter.setDataType(Boolean.class);
     }
 
 

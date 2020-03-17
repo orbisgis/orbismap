@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
  * Represents a translation in an euclidean plane. As it can be represented with
@@ -49,15 +49,15 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public class Translate extends StyleNode implements Transformation {
 
-        private ExpressionParameter x;
-        private ExpressionParameter y;
+        private ParameterValue x;
+        private ParameterValue y;
 
         /**
          * Create a new <code>Translate</code>
          * @param x The translation about X-axis
          * @param y The translation about Y-axis
          */
-        public Translate(ExpressionParameter x, ExpressionParameter y) {
+        public Translate(ParameterValue x, ParameterValue y) {
                 setX(x);
                 setY(y);
         }
@@ -93,7 +93,7 @@ public class Translate extends StyleNode implements Transformation {
          * Get the translation about the X-axis
          * @return The translation about the X-axis
          */
-        public ExpressionParameter getX() {
+        public ParameterValue getX() {
                 return x;
         }
 
@@ -101,7 +101,7 @@ public class Translate extends StyleNode implements Transformation {
          * Get the translation about the Y-axis
          * @return The translation about the Y-axis
          */
-        public ExpressionParameter getY() {
+        public ParameterValue getY() {
                 return y;
         }
 
@@ -109,7 +109,7 @@ public class Translate extends StyleNode implements Transformation {
          * Set the translation about the Y-axis
          * @param y 
          */
-        public final void setY(ExpressionParameter y) {
+        public final void setY(ParameterValue y) {
                 this.y = y;
                 if (y != null) {
                         this.y.setParent(this);
@@ -121,7 +121,7 @@ public class Translate extends StyleNode implements Transformation {
          * @param x
          * @param y 
          */
-        public final void setX(ExpressionParameter x) {
+        public final void setX(ParameterValue x) {
                 this.x = x;
                 if (x != null) {
                         this.x.setParent(this);

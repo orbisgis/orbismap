@@ -41,8 +41,10 @@ import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * {@code TextSymbolizer} instances are used to style text labels. In addition
@@ -55,15 +57,15 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  *
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
+public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
 
-    private ExpressionParameter perpendicularOffset;
+    private ParameterValue perpendicularOffset = new Literal(0d);
     private Label label;
 
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
     private String desc;
-    private int level;
+    private int level =0;
     public static final String DEFAULT_NAME = "Text symbolizer";
     private Uom uom;
 
@@ -117,7 +119,7 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
      * @return The current perpendicular offset as a {@code RealParameter}. If
      * null, the offset is considered to be equal to {@code 0}.
      */
-    public ExpressionParameter getPerpendicularOffset() {
+    public ParameterValue getPerpendicularOffset() {
         return perpendicularOffset;
     }
 
@@ -126,7 +128,8 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
      *
      * @param perpendicularOffset
      */
-    public void setPerpendicularOffset(ExpressionParameter perpendicularOffset) {
+    public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
+        ParameterValueHelper.validateAsFloat(perpendicularOffset);
         this.perpendicularOffset = perpendicularOffset;
         if (this.perpendicularOffset != null) {
             this.perpendicularOffset.setParent(this);
@@ -235,7 +238,6 @@ public final class TextSymbolizer extends StyleNode implements IFeatureSymbolize
     public int compareTo(Object o) {
         if (o instanceof TextSymbolizer) {
             TextSymbolizer s = (TextSymbolizer) o;
-
             if (s.getLevel() < this.level) {
                 return 1;
             } else if (s.getLevel() == this.level) {

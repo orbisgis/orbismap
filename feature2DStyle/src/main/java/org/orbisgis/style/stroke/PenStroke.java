@@ -44,7 +44,10 @@ import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * Basic stroke for linear features. It is designed according to :
@@ -61,7 +64,7 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * </ul>
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class PenStroke extends Stroke implements FillNode {
+public  class PenStroke extends Stroke implements FillNode {
 
     public static final double DEFAULT_WIDTH_PX = 1.0;
     public static final double DEFAULT_WIDTH = .25;
@@ -74,11 +77,11 @@ public final class PenStroke extends Stroke implements FillNode {
      */
     public static final LineJoin DEFAULT_JOIN = LineJoin.MITRE;
     private IFill fill;
-    private ExpressionParameter width;
+    private ParameterValue width;
     private LineJoin lineJoin;
     private LineCap lineCap;
-    private ExpressionParameter dashArray;
-    private ExpressionParameter dashOffset;
+    private ParameterValue dashArray;
+    private ParameterValue dashOffset;
 
     /**
      * There are three ways to draw the end of a line : butt, round and square.
@@ -104,9 +107,10 @@ public final class PenStroke extends Stroke implements FillNode {
     public PenStroke() {
         super();
         setFill(getDefaultFill());
-        setWidth(new ExpressionParameter(DEFAULT_WIDTH));
+        setWidth(new Literal(DEFAULT_WIDTH));
         setUom(Uom.PX);
-        setDashOffset(new ExpressionParameter(0.0));
+        setDashOffset(new Literal(0.0));
+        setDashArray(new NullParameterValue());
         setLineCap(DEFAULT_CAP);
         setLineJoin(DEFAULT_JOIN);
     }
@@ -194,8 +198,9 @@ public final class PenStroke extends Stroke implements FillNode {
      * Set the width used to draw the lines with this {@code PenStroke}.
      * @param width The new width. If null, will be replaced with {@link PenStroke#DEFAULT_WIDTH}, as specified in SE 2.0.
      */
-    public void setWidth(ExpressionParameter width) {
-        this.width = width == null ? new ExpressionParameter(DEFAULT_WIDTH) : width;
+    public void setWidth(ParameterValue width) {
+        ParameterValueHelper.validateAsFloat(width);
+        this.width = width == null ? new Literal(DEFAULT_WIDTH) : width;        
         if (width != null) {
             width.setParent(this);
         }
@@ -205,7 +210,7 @@ public final class PenStroke extends Stroke implements FillNode {
      * Gets the width used to draw the lines with this PenStroke.
      * @return 
      */
-    public ExpressionParameter getWidth() {
+    public ParameterValue getWidth() {
         return width;
     }
 
@@ -213,7 +218,7 @@ public final class PenStroke extends Stroke implements FillNode {
      * Gets the offset let before drawing the first dash.
      * @return  The offset let before drawing the first dash.
      */
-    public ExpressionParameter getDashOffset() {
+    public ParameterValue getDashOffset() {
         return dashOffset;
     }
 
@@ -221,7 +226,8 @@ public final class PenStroke extends Stroke implements FillNode {
      * Sets the offset let before drawing the first dash.
      * @param dashOffset.
      */
-    public void setDashOffset(ExpressionParameter dashOffset) {
+    public void setDashOffset(ParameterValue dashOffset) {
+        ParameterValueHelper.validateAsFloat(dashOffset);
         this.dashOffset = dashOffset;
         this.dashOffset.setParent(this);
     }
@@ -233,7 +239,7 @@ public final class PenStroke extends Stroke implements FillNode {
      * and transparent (odd elements of the array) parts of the lines to draw.
      * @return 
      */
-    public ExpressionParameter getDashArray() {
+    public ParameterValue getDashArray() {
         return dashArray;
     }
 
@@ -244,8 +250,9 @@ public final class PenStroke extends Stroke implements FillNode {
      * and transparent (odd elements of the array) parts of the lines to draw.
      * @param dashArray The new dash array.
      */
-    public void setDashArray(ExpressionParameter dashArray) {
-        this.dashArray = dashArray;
+    public void setDashArray(ParameterValue dashArray) {
+        ParameterValueHelper.validateAsString(dashArray);
+        this.dashArray =dashArray;
         this.dashArray.setParent(this);
     }
 }

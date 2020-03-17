@@ -52,8 +52,10 @@ import org.orbisgis.style.IUom;
 import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.ViewBoxNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.TransformParameter;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
@@ -72,19 +74,19 @@ import org.orbisgis.style.parameter.TransformParameter;
  * @author Alexis Guéganno
  * @author Erwan Bocher, CNRS
  */
-public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
+public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         ViewBoxNode, IUom, TransformNode {
 
         /**
          * The default size used to build {@code MarkGraphic} instances.
          */
-    public static final double DEFAULT_SIZE = 3;
+    public static float DEFAULT_SIZE = 3;
     //private MarkGraphicSource source;
     private Uom uom;
     private TransformParameter transform;
-    private ExpressionParameter wkn;
+    private ParameterValue wkn;
     private ViewBox viewBox;
-    private ExpressionParameter pOffset;
+    private ParameterValue pOffset = new Literal(0d);
     private Halo halo;
     private IFill fill;
     private Stroke stroke;
@@ -103,10 +105,9 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      */
     public void setTo3mmCircle() {
         this.setUom(Uom.MM);
-        this.setWkn(new ExpressionParameter("'circle'"));
-        this.setViewBox(new ViewBox(new ExpressionParameter(DEFAULT_SIZE), new ExpressionParameter(DEFAULT_SIZE)));
+        this.setWkn(new Literal("'circle'"));
+        this.setViewBox(new ViewBox(new Literal(DEFAULT_SIZE), new Literal(DEFAULT_SIZE)));
         this.setFill(new SolidFill());
-        ((ExpressionParameter) ((SolidFill) this.getFill()).getOpacity()).setExpression("100.0");
         this.setStroke(new PenStroke());
     }
     
@@ -199,15 +200,17 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         if (viewBox == null) {
             viewBox = new ViewBox();
         }
+        else{
         this.viewBox = viewBox;
         viewBox.setParent(this);
+        }
     }
     
     /**
      * Get the perpendicular offset applied to this {@code MarkGraphic} before rendering.
      * @return The perpendicular offset
      */
-    public ExpressionParameter getPerpendicularOffset() {
+    public ParameterValue getPerpendicularOffset() {
         return pOffset;
     }
 
@@ -215,8 +218,9 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * Set the perpendicular offset applied to this {@code MarkGraphic} before rendering.
      * @param pOffset The perpendicular offset
      */
-    public void setPerpendicularOffset(ExpressionParameter pOffset) {
-        this.pOffset = pOffset;
+    public void setPerpendicularOffset(ParameterValue pOffset) {
+        ParameterValueHelper.validateAsFloat(pOffset);
+        this.pOffset = pOffset;        
         if (this.pOffset != null) {
             this.pOffset.setParent(this);
         }
@@ -227,7 +231,7 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * Gets the WellKnownName defining this {@code MarkGraphic}.
      * @return the well-known name currently used, as a StringParameter.
      */
-    public ExpressionParameter getWkn() {
+    public ParameterValue getWkn() {
         return wkn;
     }
 
@@ -235,8 +239,9 @@ public final class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * Sets the WellKnownName defining this {@code MarkGraphic}.
      * @param wkn The new well-known name to use, as a StringParameter.
      */
-    public void setWkn(ExpressionParameter wkn) {
-        this.wkn = wkn;
+    public void setWkn(ParameterValue wkn) {
+        ParameterValueHelper.validateAsString(wkn);
+        this.wkn = wkn;        
         if (this.wkn != null) {
             this.wkn.setParent(this);
         }

@@ -49,7 +49,7 @@ import org.orbisgis.style.IStyleNode;
  * details used for the rendering.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class TextStroke extends Stroke {
+public  class TextStroke extends Stroke {
 
         private LineLabel lineLabel;
 

@@ -36,7 +36,9 @@ package org.orbisgis.style.label;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * An {@code ExclusionZone} where the forbidden area is defined as a circle. It
@@ -46,15 +48,15 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  *
  * @author Maxence Laurent
  */
-public final class ExclusionRadius extends ExclusionZone {
+public class ExclusionRadius extends ExclusionZone {
 
-    private ExpressionParameter radius;
+    private ParameterValue radius;
 
     /**
      * Build a new {@code ExclusionRadius} with radius 3.
      */
     public ExclusionRadius() {
-        setRadius(new ExpressionParameter(3));
+        setRadius(new Literal(3));
     }
 
     /**
@@ -64,7 +66,7 @@ public final class ExclusionRadius extends ExclusionZone {
      * @param radius
      */
     public ExclusionRadius(double radius) {
-        setRadius(new ExpressionParameter(radius));
+        setRadius(new Literal(radius));
     }
 
     /**
@@ -72,7 +74,7 @@ public final class ExclusionRadius extends ExclusionZone {
      *
      * @return The radius as a {@code RealParameter}.
      */
-    public ExpressionParameter getRadius() {
+    public ParameterValue getRadius() {
         return radius;
     }
 
@@ -81,7 +83,8 @@ public final class ExclusionRadius extends ExclusionZone {
      *
      * @param radius
      */
-    public void setRadius(ExpressionParameter radius) {
+    public void setRadius(ParameterValue radius) {
+        ParameterValueHelper.validateAsFloat(radius);
         this.radius = radius;
         if (this.radius != null) {
             this.radius.setParent(this);

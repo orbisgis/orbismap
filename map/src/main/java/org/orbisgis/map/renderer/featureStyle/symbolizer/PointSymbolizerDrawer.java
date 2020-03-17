@@ -35,7 +35,7 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
         drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
     }
     private Shape shape;
-    
+
     private BufferedImage bi;
     private Graphics2D g2_bi;
 
@@ -75,21 +75,21 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
-    
-     @Override
+
+    @Override
     public void setBufferedImage(BufferedImage bufferedImage) {
-        this.bi=bufferedImage;
+        this.bi = bufferedImage;
     }
 
     @Override
     public BufferedImage getBufferedImage() {
-     return bi;
+        return bi;
     }
 
     @Override
     public void setGraphics2D(Graphics2D g2) {
-        this.g2_bi=g2;
-   }
+        this.g2_bi = g2;
+    }
 
     @Override
     public Graphics2D getGraphics2D() {
@@ -98,8 +98,11 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
 
     @Override
     public void dispose(Graphics2D g2) {
-        g2_bi.dispose();      
-        g2_bi=null;
-        g2.drawImage(bi, null, null);
+        if (g2 != null) {
+            g2_bi.dispose();
+            g2_bi = null;
+            g2.drawImage(bi, null, null);
+            bi = null;
+        }
     }
 }

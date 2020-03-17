@@ -11,9 +11,14 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -38,7 +43,7 @@ import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.map.renderer.featureStyle.visitor.GeometryParameterVisitor;
-import org.orbisgis.map.renderer.featureStyle.visitor.ParameterValueVisitor.Tuple;
+import org.orbisgis.style.parameter.Expression;
 
 /**
  *
@@ -112,8 +117,8 @@ public class FeatureStyleRenderer {
                     while (spatialTableQuery.next()) {
                         Map<String, Shape> shapes = new HashMap<String, Shape>();
                         Shape currentShape = null;
-                        //Populate properties here
-                        populateProperties(spatialTableQuery, mt, properties, expressionParameters.getExpressionsProperties());
+                        //Populate expressions here
+                        populateExpressions(spatialTableQuery, mt, expressionParameters.getExpressionsProperties());
                         for (Map.Entry<IFeatureSymbolizer, ISymbolizerDraw> symbolizers : symbolizersToDraw.entrySet()) {
                             try {
                                 //Set the shape to the symbolizer to draw
@@ -155,56 +160,121 @@ public class FeatureStyleRenderer {
                                 Logger.getLogger(FeatureStyleRenderer.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    }                    
+                    } 
+
+                    //Draw the bufferedimages in the good order
+                    Comparator<Entry<IFeatureSymbolizer, ISymbolizerDraw>> symbolizerLevelComp = (o1, o2) -> {
+                        if (o1.getKey().getLevel() > o2.getKey().getLevel()) {
+                            return -1;
+                        } else if (o1.getKey().getLevel() < o2.getKey().getLevel()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    };
+
+                    Map<IFeatureSymbolizer, ISymbolizerDraw> sortedSymbolizers
+                            = symbolizersToDraw.entrySet().stream().
+                                    sorted(symbolizerLevelComp.reversed()).
+                                    collect(Collectors.toMap(Entry::getKey, Entry::getValue,
+                                            (e1, e2) -> e1, LinkedHashMap::new));
+
                     //Draw all buffered images
-                    for (ISymbolizerDraw symbolizerDraw : symbolizersToDraw.values()) {
+                    sortedSymbolizers.values().forEach((symbolizerDraw) -> {
                         symbolizerDraw.dispose(g2);
-                    }
-                    
+                    });
+
                     
                 }
             }
         }
     }
 
+    /**
+     * TODO : sort the IFeatureSymbolizer in this pass and set the good bufferedimage
+     * @param sl
+     * @param mt
+     * @return 
+     */
     private Map<IFeatureSymbolizer, ISymbolizerDraw> prepareSymbolizers(List<IFeatureSymbolizer> sl, MapTransform mt) {
-        Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizerDrawer = new HashMap<>();
+        Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizerDrawer = new LinkedHashMap<>();
+        HashMap<Integer, GraphicElements> bufferedImages = new HashMap<>();
         for (int i = 0; i < sl.size(); i++) {
             IFeatureSymbolizer featureSymbolizer = sl.get(i);
+            int level = featureSymbolizer.getLevel();
             if (featureSymbolizer instanceof AreaSymbolizer) {
                 AreaSymbolizerDrawer drawer = new AreaSymbolizerDrawer();
-                initDrawer(drawer, mt);
+                initDrawer(level, drawer, mt, bufferedImages);
                 symbolizerDrawer.put(featureSymbolizer, drawer);
             } else if (featureSymbolizer instanceof LineSymbolizer) {
                 LineSymbolizerDrawer drawer = new LineSymbolizerDrawer();
-                initDrawer(drawer, mt);
+                initDrawer(level, drawer, mt,bufferedImages);
                 symbolizerDrawer.put(featureSymbolizer,drawer);
             } else if (featureSymbolizer instanceof PointSymbolizer) {
                 PointSymbolizerDrawer drawer = new PointSymbolizerDrawer();
-                initDrawer(drawer, mt);
+                initDrawer(level, drawer, mt,bufferedImages);
                 symbolizerDrawer.put(featureSymbolizer,drawer);
             } else if (featureSymbolizer instanceof TextSymbolizer) {
                 TextSymbolizerDrawer drawer = new TextSymbolizerDrawer();
-                initDrawer(drawer, mt);
+                initDrawer(level, drawer, mt,bufferedImages);
                 symbolizerDrawer.put(featureSymbolizer,drawer);
             }
         }
         return symbolizerDrawer;
     }
     
-    private void initDrawer(ISymbolizerDraw drawer, MapTransform mt) {
-        BufferedImage bufferedImage = new BufferedImage(mt.getWidth(), mt.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D sG2 = bufferedImage.createGraphics();
-        sG2.addRenderingHints(mt.getRenderingHints());
-        drawer.setBufferedImage(bufferedImage);
-        drawer.setGraphics2D(sG2);
+    public class GraphicElements {
+
+        public final Graphics2D g2;
+        public final BufferedImage image;
+
+        public GraphicElements(Graphics2D g2, BufferedImage image) {
+            this.g2 = g2;
+            this.image = image;
+        }
+
+        public Graphics2D getG2() {
+            return g2;
+        }
+
+        public BufferedImage getImage() {
+            return image;
+        }
+        
+    }
+    
+    /**
+     * The number of bufferedimage depend on the symbol level
+     * @param drawer
+     * @param mt 
+     */
+    private void initDrawer(int level, ISymbolizerDraw drawer, MapTransform mt, HashMap<Integer, GraphicElements> bufferedImages) {
+        GraphicElements graphics = bufferedImages.get(level);
+        if (graphics != null) {
+            drawer.setBufferedImage(graphics.getImage());
+            drawer.setGraphics2D(graphics.getG2());
+        } else {
+            BufferedImage bufferedImage = new BufferedImage(mt.getWidth(), mt.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D sG2 = bufferedImage.createGraphics();
+            sG2.addRenderingHints(mt.getRenderingHints());
+            bufferedImages.put(level, new GraphicElements(sG2, bufferedImage));
+            drawer.setBufferedImage(bufferedImage);
+            drawer.setGraphics2D(sG2);
+        }
     }
 
-    private void populateProperties(JdbcSpatialTable sp, MapTransform mt, 
-            Map<String, Object> properties, Map<String, Tuple>  parameterValueIdentifiers) throws SQLException {
+    /**
+     * 
+     * @param sp
+     * @param mt
+     * @param parameterValueIdentifiers
+     * @throws SQLException 
+     */
+    private void populateExpressions(JdbcSpatialTable sp, MapTransform mt, Map<String, org.orbisgis.style.parameter.Expression>  parameterValueIdentifiers) throws SQLException {
         if(!parameterValueIdentifiers.isEmpty()){            
-            for (Map.Entry<String, Tuple> entry : parameterValueIdentifiers.entrySet()) {
-                properties.put( entry.getKey(), sp.getObject(entry.getValue().getIdentifier(), entry.getValue().getDataType()));              
+            for (Map.Entry<String, org.orbisgis.style.parameter.Expression> entry : parameterValueIdentifiers.entrySet()) {
+                Expression exp = entry.getValue();
+                exp.setValue(sp.getObject(exp.getReference(),exp.getDataType()));        
             }
         }
     }

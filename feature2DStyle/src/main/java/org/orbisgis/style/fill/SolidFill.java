@@ -41,18 +41,19 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
-import org.orbisgis.style.utils.ExpressionHelper;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
+import org.orbisgis.style.parameter.Literal;
 
 /**
  * A solid fill fills a shape with a solid color (+opacity)
  *
  * @author Maxence Laurent
  */
-public final class SolidFill extends StyleNode implements IFill , UomNode {
+public  class SolidFill extends StyleNode implements IFill , UomNode {
 
-    private ExpressionParameter color;
-    private ExpressionParameter opacity;
+    private ParameterValue color;
+    private ParameterValue opacity;
 
     /**
      * Default value for opacity : {@value SolidFill#DEFAULT_OPACITY}
@@ -74,7 +75,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(ExpressionHelper.randomColor(), new ExpressionParameter(1d));
+        this(ParameterValueHelper.randomColor(), new Literal(1f));
     }
 
     /**
@@ -83,7 +84,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param c
      */
     public SolidFill(Color c) {
-        this(ExpressionHelper.toExpression(c), new ExpressionParameter(1d));
+        this(ParameterValueHelper.toExpression(c), new Literal(1f));
     }
 
     /**
@@ -93,7 +94,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param opacity
      */
     public SolidFill(Color c, double opacity) {
-        this(ExpressionHelper.toExpression(c), new ExpressionParameter(opacity));
+        this(ParameterValueHelper.toExpression(c), new Literal(opacity));
     }
 
     /**
@@ -102,7 +103,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      * @param c
      * @param opacity
      */
-    public SolidFill(ExpressionParameter c, ExpressionParameter opacity) {
+    public SolidFill(ParameterValue c, ParameterValue opacity) {
         this.setColor(c);
         this.setOpacity(opacity);
     }
@@ -112,8 +113,10 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      *
      * @param color
      */
-    public void setColor(ExpressionParameter color) {
+    public void setColor(ParameterValue color) {
         this.color = color;
+        ParameterValueHelper.validateAsString(this.color);
+        //this.color.setDataType(String.class);
         if (this.color != null) {
             this.color.setParent(this);
         }
@@ -124,7 +127,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      *
      * @return
      */
-    public ExpressionParameter getColor() {
+    public ParameterValue getColor() {
         return color;
     }
 
@@ -133,8 +136,9 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      *
      * @param opacity
      */
-    public void setOpacity(ExpressionParameter opacity) {
-        this.opacity = opacity == null ? new ExpressionParameter(1) : opacity;
+    public void setOpacity(ParameterValue opacity) {
+        this.opacity = opacity == null ? new Literal(1f) : opacity;
+        ParameterValueHelper.validateAsFloat(this.opacity);
         this.opacity.setParent(this);
     }
 
@@ -143,7 +147,7 @@ public final class SolidFill extends StyleNode implements IFill , UomNode {
      *
      * @return
      */
-    public ExpressionParameter getOpacity() {
+    public ParameterValue getOpacity() {
         return opacity;
     }
 

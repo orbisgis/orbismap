@@ -9,12 +9,10 @@ import java.awt.Color;
 import java.io.File;
 import org.orbisgis.map.renderer.MapRenderer;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.orbisgis.map.layerModel.StyledLayer;
@@ -31,7 +29,8 @@ import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Expression;
+import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.stroke.PenStroke;
 import org.osgi.service.jdbc.DataSourceFactory;
 
@@ -151,9 +150,9 @@ public class OrbisMap {
     public static Feature2DStyle createAreaSymbolizerStyleColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
-        ExpressionParameter colorExpression = new ExpressionParameter(""
+        Expression colorExpression = new Expression(""
                 + "CASE WHEN ST_AREA(THE_GEOM)> 50000 THEN '#ff6d6d' ELSE '#6d86ff' END  ");
-        ExpressionParameter opacity = new ExpressionParameter("1");
+        Literal opacity = new Literal(1);
         SolidFill solidFill = new SolidFill(colorExpression, opacity);
         areaSymbolizer.setFill(solidFill);
         PenStroke ps = new PenStroke();

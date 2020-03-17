@@ -46,7 +46,9 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code HatchedFill} will fill a shape with hatches. It is configured according
@@ -61,28 +63,28 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * <p>The meaning of distance and offset is of course UOM dependant.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode {
+public  class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode {
 
     /**
      * Default offset value for hatches.
      */
-    public static final double DEFAULT_OFFSET = 0.0;
+    public static final float DEFAULT_OFFSET = 0.0f;
   
     /**
      * The default perpendicular distance between two hatches.
      */
-    public static final double DEFAULT_PDIST = 10.0;
+    public static final float DEFAULT_PDIST = 10.0f;
     /**
      * Default orientation value for hatches.
      */
-    public static final double DEFAULT_ALPHA = 45.0;
+    public static final float DEFAULT_ALPHA = 45.0f;
     /**
      * 
      */
     public static final double DEFAULT_NATURAL_LENGTH = 100;
-    private ExpressionParameter angle;
-    private ExpressionParameter distance;
-    private ExpressionParameter offset;
+    private ParameterValue angle;
+    private ParameterValue distance;
+    private ParameterValue offset;
     private Stroke stroke;
     private Uom uom;
 
@@ -92,16 +94,16 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      */
     public HatchedFill() {
         setStroke(new PenStroke());
-        setDistance(new ExpressionParameter(DEFAULT_PDIST));
-        setAngle(new ExpressionParameter(DEFAULT_ALPHA));        ;
-        setOffset(new ExpressionParameter(DEFAULT_OFFSET));
+        setDistance(new Literal(DEFAULT_PDIST));
+        setAngle(new Literal(DEFAULT_ALPHA));        ;
+        setOffset(new Literal(DEFAULT_OFFSET));
     }
 
     /**
      * Get the orientation of the hatches.
      * @return 
      */
-    public ExpressionParameter getAngle() {
+    public ParameterValue getAngle() {
         return angle;
     }
 
@@ -110,7 +112,8 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Set the orientation of the hatches. 
      * @param angle
      */
-    public void setAngle(ExpressionParameter angle) {
+    public void setAngle(ParameterValue angle) {
+        ParameterValueHelper.validateAsFloat(angle);
         this.angle = angle;
         if (angle != null) {
             angle.setParent(this);
@@ -122,17 +125,17 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Get the perpendicular distance between two hatches
      * @return 
      */
-    public ExpressionParameter getDistance() {
+    public ParameterValue getDistance() {
         return distance;
     }
 
 
     /**
      * Set the perpendicular distance between two hatches
-     * @param distance
-     * @return 
+     * @param distance 
      */
-    public void setDistance(ExpressionParameter distance) {
+    public void setDistance(ParameterValue distance) {
+        ParameterValueHelper.validateAsFloat(distance);
         this.distance = distance;
         if (distance != null) {
             this.distance.setParent(this);
@@ -145,7 +148,7 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Get the offset of the hatches.
      * @return 
      */
-    public ExpressionParameter getOffset() {
+    public ParameterValue getOffset() {
         return offset;
     }
 
@@ -154,8 +157,9 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
      * Set the offset of the hatches.
      * @param offset 
      */
-    public void setOffset(ExpressionParameter offset) {
-        this.offset = offset;
+    public void setOffset(ParameterValue offset) {
+        ParameterValueHelper.validateAsFloat(offset);
+        this.offset = offset;        
         if (offset != null) {
             offset.setParent(this);
         }
@@ -210,8 +214,5 @@ public final class HatchedFill extends StyleNode implements StrokeNode, IFill, U
     public Uom getOwnUom() {
         return uom;
     }
-
-   
-
 
 }

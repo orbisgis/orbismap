@@ -48,7 +48,9 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.NullParameterValue;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * Descriptor for dot maps. Each point represents a given quantity. Points are randomly placed
@@ -59,12 +61,12 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  *   * The symbol associated to each single dot.
  * @author Alexis Guéganno
  */
-public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNode {
+public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNode {
    
     
     private Graphic mark;
-    private ExpressionParameter quantityPerMark;
-    private ExpressionParameter totalQuantity;
+    private ParameterValue quantityPerMark = new NullParameterValue();
+    private ParameterValue totalQuantity = new NullParameterValue();
     private Random rand;
     private Uom uom;
 
@@ -72,7 +74,6 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Creates a new DotMapFill, with uninstanciated values.
      */
     public DotMapFill() {
-        
     }
 
     
@@ -93,8 +94,9 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Set the quantity represented by a single dot.
      * @param quantityPerMark 
      */
-    public void setQuantityPerMark(ExpressionParameter quantityPerMark) {
+    public void setQuantityPerMark(ParameterValue quantityPerMark) {
         if (quantityPerMark != null) {
+            ParameterValueHelper.validateAsInteger(quantityPerMark);
             this.quantityPerMark = quantityPerMark;
             this.quantityPerMark.setParent(this);
         }
@@ -104,7 +106,7 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Get the quantity represented by a single dot.
      * @return The quantity represented by a single dot
      */
-    public ExpressionParameter getQuantityPerMark() {
+    public ParameterValue getQuantityPerMark() {
         return quantityPerMark;
     }
 
@@ -112,9 +114,11 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Get the total quantity to be represented for this symbolizer.
      * @param totalQuantity 
      */
-    public void setTotalQuantity(ExpressionParameter totalQuantity) {
+    public void setTotalQuantity(ParameterValue totalQuantity) {
         if (totalQuantity != null) {
+             ParameterValueHelper.validateAsInteger(totalQuantity);
             this.totalQuantity = totalQuantity;
+            this.totalQuantity.setDataType(Integer.class);
             this.totalQuantity.setParent(this);
         }
     }
@@ -123,7 +127,7 @@ public final class DotMapFill extends StyleNode implements IGraphicNode, IFill, 
      * Set the total quantity to be represented for this symbolizer.
      * @return 
      */
-    public ExpressionParameter getTotalQuantity() {
+    public ParameterValue getTotalQuantity() {
         return totalQuantity;
     }    
 

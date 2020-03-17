@@ -36,20 +36,10 @@
  */
 package org.orbisgis.style.label;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.orbisgis.style.common.RelativeOrientation;
-import org.orbisgis.style.common.ShapeHelper;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IStyleNode;
 
 /**

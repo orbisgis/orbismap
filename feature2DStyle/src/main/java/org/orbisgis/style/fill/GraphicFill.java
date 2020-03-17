@@ -47,7 +47,9 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.NullParameterValue;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A "GraphicFill" defines repeated-graphic filling (stippling) pattern for an area geometry.
@@ -56,25 +58,23 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * stored as <code>RealParameter</code> instances.
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNode{
+public  class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNode{
 
     private Graphic graphic;
     /**
      * Distance between two graphics in the fill, in X direction.
      */
-    private ExpressionParameter gapX;
+    private ParameterValue gapX = new NullParameterValue();
     /**
      * Distance between two graphics in the fill, in Y direction.
      */
-    private ExpressionParameter gapY;
+    private ParameterValue gapY =new NullParameterValue();
     private Uom uom;
 
     /**
      * Creates a new GraphicFill, with the gap's measures set to null.
      */
     public GraphicFill() {
-        this.setGapX(null);
-        this.setGapY(null);
     }
 
     
@@ -103,7 +103,8 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Set the gap, upon X direction, between two symbols.
      * @param gap 
      */
-    public void setGapX(ExpressionParameter gap) {
+    public void setGapX(ParameterValue gap) {        
+        ParameterValueHelper.validateAsFloat(gap);
         gapX = gap;
         if (gap != null) {
             gap.setParent(this);
@@ -114,7 +115,8 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Set the gap, upon Y direction, between two symbols.
      * @param gap 
      */
-    public void setGapY(ExpressionParameter gap) {
+    public void setGapY(ParameterValue gap) {
+        ParameterValueHelper.validateAsFloat(gap);
         gapY = gap;
         if (gap != null) {
             gap.setParent(this);
@@ -126,7 +128,7 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Get the gap, upon X direction, between two symbols. 
      * @return  
      */
-    public ExpressionParameter getGapX() {
+    public ParameterValue getGapX() {
         return gapX;
     }
 
@@ -134,7 +136,7 @@ public final class GraphicFill extends StyleNode implements IGraphicNode, IFill,
      * Get the gap, upon Y direction, between two symbols. 
      * @return  
      */
-    public ExpressionParameter getGapY() {
+    public ParameterValue getGapY() {
         return gapY;
     }
     

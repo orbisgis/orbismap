@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
  * {@code Scale} is used to apply an homothetic transformation on a Graphic. It
@@ -52,15 +52,15 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public final class Scale extends StyleNode implements Transformation {
 
-    private ExpressionParameter x;
-    private ExpressionParameter y;
+    private ParameterValue x;
+    private ParameterValue y;
 
     /**
      * Build a new {@code Scale} with the given horizontal and vertical factors.
      * @param x The horizontal factor.
      * @param y The vertical factor.
      */
-    public Scale(ExpressionParameter x, ExpressionParameter y) {
+    public Scale(ParameterValue x, ParameterValue y) {
         setX(x);
         setY(y);
     }
@@ -70,7 +70,7 @@ public final class Scale extends StyleNode implements Transformation {
      * both vertical and horizontal values.
      * @param xy
      */
-    public Scale(ExpressionParameter xy) {
+    public Scale(ParameterValue xy) {
         setX(xy);
         setY(xy);
     }
@@ -82,7 +82,7 @@ public final class Scale extends StyleNode implements Transformation {
      * @return
      * A {@code RealParameter} in a {@link RealParameterContext#REAL_CONTEXT}.
      */
-    public ExpressionParameter getX() {
+    public ParameterValue getX() {
         return x;
     }
 
@@ -92,7 +92,7 @@ public final class Scale extends StyleNode implements Transformation {
      * A {@code RealParameter} that is placed by this method in a
      * {@link RealParameterContext#REAL_CONTEXT}.
      */
-    public void setX(ExpressionParameter x) {
+    public void setX(ParameterValue x) {
         this.x = x;
         if (this.x != null) {
             this.x.setParent(this);
@@ -104,7 +104,7 @@ public final class Scale extends StyleNode implements Transformation {
      * @return
      * A {@code RealParameter} in a {@link RealParameterContext#REAL_CONTEXT}.
      */
-    public ExpressionParameter getY() {
+    public ParameterValue getY() {
         return y;
     }
 
@@ -114,7 +114,7 @@ public final class Scale extends StyleNode implements Transformation {
      * A {@code RealParameter} that is placed by this method in a
      * {@link RealParameterContext#REAL_CONTEXT}.
      */
-    public void setY(ExpressionParameter y) {
+    public void setY(ParameterValue y) {
         this.y = y;
         if (this.y != null) {
             this.y.setParent(this);

@@ -75,7 +75,7 @@ public final class ColorHelper {
      * @param alpha [0;1]
      * @return new color with alpha channel
      */
-    public static Color getColorWithAlpha(Color c, double alpha) {
+    public static Color getColorWithAlpha(Color c, float alpha) {
         int a = (int) (MAX_RGB_VALUE * alpha);
 
         if (a < 0) {

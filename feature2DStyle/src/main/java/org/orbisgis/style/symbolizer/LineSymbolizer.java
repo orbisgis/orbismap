@@ -41,10 +41,12 @@ import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code LineSymbolizer} is used to style a {@code Stroke} along a linear
@@ -62,14 +64,14 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  * @author Alexis Guéganno, CNRS
  * @author Maxence Laurent, HEIG-VD
  */
-public final class LineSymbolizer extends StyleNode implements Comparable, StrokeNode, IFeatureSymbolizer, UomNode {
+public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode, IFeatureSymbolizer, UomNode {
 
-    private ExpressionParameter perpendicularOffset;
+    private ParameterValue perpendicularOffset = new Literal(0d);
     private Stroke stroke;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
     private String desc;
-    private int level;
+    private int level =0;
     public static final String DEFAULT_NAME = "Line symbolizer";
     private Uom uom;
 
@@ -111,7 +113,7 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
      *
      * @return
      */
-    public ExpressionParameter getPerpendicularOffset() {
+    public ParameterValue getPerpendicularOffset() {
         return perpendicularOffset;
     }
 
@@ -121,7 +123,8 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
      *
      * @param perpendicularOffset
      */
-    public void setPerpendicularOffset(ExpressionParameter perpendicularOffset) {
+    public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
+        ParameterValueHelper.validateAsFloat(perpendicularOffset);
         this.perpendicularOffset = perpendicularOffset;
         if (this.perpendicularOffset != null) {
             this.perpendicularOffset.setParent(this);
@@ -229,8 +232,7 @@ public final class LineSymbolizer extends StyleNode implements Comparable, Strok
     @Override
     public int compareTo(Object o) {
         if (o instanceof PointSymbolizer) {
-            PointSymbolizer s = (PointSymbolizer) o;
-
+            LineSymbolizer s = (LineSymbolizer) o;
             if (s.getLevel() < this.level) {
                 return 1;
             } else if (s.getLevel() == this.level) {

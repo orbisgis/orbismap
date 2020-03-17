@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
 
@@ -38,7 +37,7 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
     @Override
     public Paint getPaint( SolidFill solidFill, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
         //Color ac = null; // ac stands 4 colour + alpha channel
-        String colorValue = ValueHelper.getAsString(properties, solidFill.getColor());
+        String colorValue = (String) solidFill.getColor().getValue();
         Color color = null;
         if (colorValue!= null) {
             color = Color.decode(colorValue);
@@ -51,7 +50,7 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
         }       
        
         
-        Float opacity = ValueHelper.getAsFloat(properties, solidFill.getOpacity());
+        Float opacity =  (Float) solidFill.getOpacity().getValue();
        
         if(opacity==null){
             return color;

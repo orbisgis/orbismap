@@ -40,7 +40,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.StrokeNode;
-import org.orbisgis.style.utils.ExpressionHelper;
+import org.orbisgis.style.utils.ParameterValueHelper;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.stroke.Stroke;
@@ -49,7 +49,8 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
  * This class embed all the informations needed to represent text of any kind on a map.
@@ -63,12 +64,12 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * Color and opacity of the text are defined using a <code>Fill</code> instance
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
-    private ExpressionParameter text;
-    private ExpressionParameter fontFamily;
-    private ExpressionParameter fontWeight;
-    private ExpressionParameter fontStyle;
-    private ExpressionParameter fontSize;
+public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
+    private ParameterValue text;
+    private ParameterValue fontFamily;
+    private ParameterValue fontWeight;
+    private ParameterValue fontStyle;
+    private ParameterValue fontSize;
     private Stroke stroke;
     private IFill fill;
     private Halo halo;
@@ -91,16 +92,16 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @param label 
      */
     public StyledText(String label) {
-        setText(new ExpressionParameter(label));
-        setFontFamily(new ExpressionParameter("Arial"));
-        setFontWeight(new ExpressionParameter("Normal"));
-        setFontStyle(new ExpressionParameter("Normal"));
-        setFontSize(new ExpressionParameter(12));
+        setText(new Literal(label));
+        setFontFamily(new Literal("Arial"));
+        setFontWeight(new Literal("Normal"));
+        setFontStyle(new Literal("Normal"));
+        setFontSize(new Literal(12));
         setUom(Uom.PT);
 
         SolidFill f = new SolidFill();
-        f.setOpacity(new ExpressionParameter(1.0));
-        f.setColor(ExpressionHelper.toExpression(Color.black));
+        f.setOpacity(new Literal(1.0));
+        f.setColor(ParameterValueHelper.toExpression(Color.black));
 
         this.setFill(f);
     }    
@@ -173,7 +174,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Get the text contained in this <code>StyledText</code>
      * @return the text contained in this <code>StyledText</code> as a <code>StringParameter</code> instance.
      */
-    public ExpressionParameter getText() {
+    public ParameterValue getText() {
         return text;
     }
 
@@ -181,8 +182,9 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the text contained in this <code>StyledText</code>
      * @param text 
      */
-    public void setText(ExpressionParameter text) {
+    public void setText(ParameterValue text) {
         if (text != null) {
+            ParameterValueHelper.validateAsString(this.text);
             this.text = text;
             this.text.setParent(this);
         }
@@ -206,7 +208,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The fontFamily as a <code>StringParameter</code>
      */
-    public ExpressionParameter getFontFamily() {
+    public ParameterValue getFontFamily() {
         return fontFamily;
     }
 
@@ -214,8 +216,9 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font family used to represent this <code>StyledText</code>
      * @param fontFamily 
      */
-    public void setFontFamily(ExpressionParameter fontFamily) {
+    public void setFontFamily(ParameterValue fontFamily) {
         if (fontFamily != null) {
+            ParameterValueHelper.validateAsString(fontFamily);
             this.fontFamily = fontFamily;
             this.fontFamily.setParent(this);
         }
@@ -226,7 +229,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The font size as a <code>RealParameter</code>
      */
-    public ExpressionParameter getFontSize() {
+    public ParameterValue getFontSize() {
         return fontSize;
     }
 
@@ -234,7 +237,8 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font size used to represent this <code>StyledText</code>
      * @param fontSize The new font's size
      */
-    public void setFontSize(ExpressionParameter fontSize) {
+    public void setFontSize(ParameterValue fontSize) {
+        ParameterValueHelper.validateAsFloat(fontSize);
         this.fontSize = fontSize;
         if (this.fontSize != null) {
             this.fontSize.setParent(this);
@@ -246,7 +250,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The font style as a <code>StringParameter</code>
      */
-    public ExpressionParameter getFontStyle() {
+    public ParameterValue getFontStyle() {
         return fontStyle;
     }
 
@@ -254,8 +258,9 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font style used to represent this <code>StyledText</code>
      * @param fontStyle The new font's style
      */
-    public void setFontStyle(ExpressionParameter fontStyle) {
+    public void setFontStyle(ParameterValue fontStyle) {
         if (fontStyle != null) {
+            ParameterValueHelper.validateAsString(fontStyle);
             this.fontStyle = fontStyle;
             this.fontStyle.setParent(this);
         }
@@ -266,7 +271,7 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * @return 
      * The font weight as a <code>StringParameter</code>
      */
-    public ExpressionParameter getFontWeight() {
+    public ParameterValue getFontWeight() {
         return fontWeight;
     }
 
@@ -274,9 +279,10 @@ public final class StyledText extends StyleNode implements IUom, FillNode, Strok
      * Set the font weight used to represent this <code>StyledText</code>
      * @param fontWeight The new font's weight
      */
-    public void setFontWeight(ExpressionParameter fontWeight) {
+    public void setFontWeight(ParameterValue fontWeight) {
         if (fontWeight != null) {
-            this.fontWeight = fontWeight;
+            ParameterValueHelper.validateAsString(fontWeight);
+            this.fontWeight = fontWeight;            
             this.fontWeight.setParent(this);
         }
     }

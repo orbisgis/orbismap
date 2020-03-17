@@ -40,12 +40,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.common.RelativeOrientation;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.parameter.real.RealParameterContext;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code GraphicStroke} is used essentially to repeat a a graphic along a line. It is dependant 
@@ -57,14 +57,14 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * <li>A relative orientation, as defined in {@link RelativeOrientation}.</li></ul>
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
+public  class GraphicStroke extends Stroke implements IGraphicNode, IUom {
 
     public static final double MIN_LENGTH = 1; // In pixel !
 
     private Graphic graphic;
-    private ExpressionParameter length;
+    private ParameterValue length;
     private RelativeOrientation orientation;
-    private ExpressionParameter relativePosition;
+    private ParameterValue relativePosition;
 
     
     /**
@@ -95,7 +95,8 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
      * is defaulted to the natural length of the graphic.
      * @param length 
      */
-    public void setLength(ExpressionParameter length) {
+    public void setLength(ParameterValue length) {
+        ParameterValueHelper.validateAsFloat(length);
         this.length = length;
         if (this.length != null) {
             this.length.setParent(this);
@@ -107,7 +108,7 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
      * of the embedded {@code Graphic} is used.
      * @return 
      */
-    public ExpressionParameter getLength() {
+    public ParameterValue getLength() {
         return length;
     }
 
@@ -132,12 +133,13 @@ public final class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     }
 
 
-    public ExpressionParameter getRelativePosition() {
+    public ParameterValue getRelativePosition() {
         return relativePosition;
     }
 
 
-    public void setRelativePosition(ExpressionParameter relativePosition) {
+    public void setRelativePosition(ParameterValue relativePosition) {
+        ParameterValueHelper.validateAsFloat(relativePosition);
         this.relativePosition = relativePosition;
         if (this.relativePosition != null){
             this.relativePosition.setParent(this);

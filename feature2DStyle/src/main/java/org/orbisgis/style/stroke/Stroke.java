@@ -36,12 +36,6 @@
  */
 package org.orbisgis.style.stroke;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.io.IOException;
-import java.util.Map;
-import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;

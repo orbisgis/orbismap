@@ -28,7 +28,6 @@ import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.ExpressionParameter;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
@@ -74,7 +73,7 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
             if (stroke != null) {
                 double offset = 0.0;
                 //TODO : build the shape before
-                ExpressionParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
+                Double perpendicularOffset = (Double) symbolizer.getPerpendicularOffset().getValue();
                 /*(perpendicularOffset != null) {
                     offset = Uom.toPixel(perpendicularOffset.getValue(rs, fid),
                             uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
@@ -104,7 +103,7 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
 
     @Override
     public void setBufferedImage(BufferedImage bufferedImage) {
-        this.bi=bufferedImage;
+      this.bi=bufferedImage;
     }
 
     @Override
@@ -124,9 +123,13 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
 
     @Override
     public void dispose(Graphics2D g2) {
-        g2_bi.dispose();      
-        g2_bi=null;
-        g2.drawImage(bi, 0,0, null);
+        //The g2 can be null when the Graphics2D has been already disposed.
+        if (g2_bi != null) {
+            g2_bi.dispose();
+            g2_bi = null;            
+            g2.drawImage(bi, 0, 0, null);
+            bi=null;
+        }
     }
 
     

@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.label.ExclusionRadius;
 import org.orbisgis.style.label.ExclusionRectangle;
@@ -44,7 +43,7 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
 
             if (styleText != null) {
                 StyleTextDrawer styleTextDrawer = new StyleTextDrawer();
-                String text = ValueHelper.getAsString(properties, styleText.getText());
+                String text =  (String) styleText.getText().getValue();
                 if(text!=null && !text.isEmpty()) {
                     Rectangle2D bounds = styleTextDrawer.getBounds( g2, text, properties, mapTransform, styleText);
 
@@ -55,7 +54,7 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
                     ExclusionZone exclusionZone = styleNode.getExclusionZone();
                     if (exclusionZone != null) {
                         if (exclusionZone instanceof ExclusionRadius) {
-                            Float radius = ValueHelper.getAsFloat(properties,((ExclusionRadius) (exclusionZone)).getRadius());
+                            Float radius = (Float) ((ExclusionRadius) (exclusionZone)).getRadius().getValue();
                             if(radius==null){
                                 throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
                             }
@@ -63,11 +62,11 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
                             deltaX = radius;
                             deltaY = radius;
                         } else {
-                             deltaX = ValueHelper.getAsFloat(properties,((ExclusionRectangle) (exclusionZone)).getX());
+                             deltaX = (Float) ((ExclusionRectangle) (exclusionZone)).getX().getValue();
                             if(deltaX==null){
                                 throw new ParameterException("The radius parameter for the exclusion zone cannot be null");
                             }
-                             deltaY = ValueHelper.getAsFloat(properties,((ExclusionRectangle) (exclusionZone)).getY());
+                             deltaY = (Float) ((ExclusionRectangle) (exclusionZone)).getY().getValue();
 
                             if(deltaY==null){
                                 throw new ParameterException("The radius parameter for the exclusion zone cannot be null");

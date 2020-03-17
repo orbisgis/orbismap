@@ -40,7 +40,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
-import org.orbisgis.style.graphic.ExternalGraphicSource;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 

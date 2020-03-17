@@ -38,38 +38,85 @@ public class UomUtils {
      *
      * @todo return integer !!!
      */
-    public static double toPixel(double value, Uom uom, Double dpi, Double scale, Double v100p) throws ParameterException {
+    public static float toPixel(float value, Uom uom, double dpi, double scale, float v100p) throws ParameterException {
         if (uom == null) {
             return value; // no uom ? => return as Pixel !
         }
 
-        if (dpi == null && uom != Uom.PX) {
+        if (dpi <= 0  && uom != Uom.PX) {
             throw new ParameterException("DPI is invalid");
         }
 
         switch (uom) {
             case IN:
-                return value * dpi; // [IN] * [PX]/[IN] => [PX]
+                return (float) (value * dpi); // [IN] * [PX]/[IN] => [PX]
             case MM:
-                return (value / MM_IN_INCH) * dpi; // [MM] * [IN]/[MM] * [PX]/[IN] => [PX]
+                return (float) ((value / MM_IN_INCH) * dpi); // [MM] * [IN]/[MM] * [PX]/[IN] => [PX]
             case PT: // 1PT == 1/72[IN] whatever dpi is
-                return (value / PT_IN_INCH) * dpi; // 1/72[IN] * 72 *[PX]/[IN] => [PX]
+                return (float) ((value / PT_IN_INCH) * dpi); // 1/72[IN] * 72 *[PX]/[IN] => [PX]
             case GM:
-                if (scale == null) {
+                if (scale <= 0) {
                     throw new ParameterException("Scale is invalid");
                 }
-                return (value * ONE_THOUSAND * dpi) / (scale * MM_IN_INCH);
+                return (float) ((value * ONE_THOUSAND * dpi) / (scale * MM_IN_INCH));
             case GFT:
-                if (scale == null) {
+                if (scale <= 0){
                     throw new ParameterException("Scale is invalid");
                 }
-                return (value * IN_IN_FOOT * dpi) / (scale);
+                return (float) ((value * IN_IN_FOOT * dpi) / (scale));
             case PERCENT:
-                if (v100p == null) {
-                    return value;
-                    //throw new ParameterException("100% value is invalid");
+                return (float) (value * v100p / ONE_HUNDRED);
+            case PX:
+            default:
+                return value; // [PX]
+        }
+    }
+    
+    /**
+     * Convert a value to the corresponding value in pixel
+     *
+     * Note that converting ground unit to pixel is done by using a constant
+     * scale
+     *
+     * @param value the value to convert
+     * @param uom unit of measure for value
+     * @param dpi the current resolution
+     * @param scale the current scale (for converting ground meters and ground
+     * feet to media units)
+     * (%)
+     * @return
+     * @throws ParameterException
+     *
+     * @todo return integer !!!
+     */
+    public static float toPixel(float value, Uom uom, double dpi, double scale) throws ParameterException {
+        if (uom == null) {
+            return value; // no uom ? => return as Pixel !
+        }
+
+        if (dpi <= 0  && uom != Uom.PX) {
+            throw new ParameterException("DPI is invalid");
+        }
+
+        switch (uom) {
+            case IN:
+                return (float) (value * dpi); // [IN] * [PX]/[IN] => [PX]
+            case MM:
+                return (float) ((value / MM_IN_INCH) * dpi); // [MM] * [IN]/[MM] * [PX]/[IN] => [PX]
+            case PT: // 1PT == 1/72[IN] whatever dpi is
+                return (float) ((value / PT_IN_INCH) * dpi); // 1/72[IN] * 72 *[PX]/[IN] => [PX]
+            case GM:
+                if (scale <= 0) {
+                    throw new ParameterException("Scale is invalid");
                 }
-                return value * v100p / ONE_HUNDRED;
+                return (float) ((value * ONE_THOUSAND * dpi) / (scale * MM_IN_INCH));
+            case GFT:
+                if (scale <= 0){
+                    throw new ParameterException("Scale is invalid");
+                }
+                return (float) ((value * IN_IN_FOOT * dpi) / (scale));
+            case PERCENT:
+                return value;
             case PX:
             default:
                 return value; // [PX]

@@ -15,7 +15,8 @@ import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.graphic.ViewBox;
 import org.orbisgis.style.label.PointLabel;
 import org.orbisgis.style.label.StyledText;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Expression;
+import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
@@ -38,10 +39,10 @@ public class StyleFactoryTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         PenStroke ps = new PenStroke();
-        ps.setWidth(new ExpressionParameter("CASE WHEN TYPE = 'cereals' then 5 else 1 END", true));
-        ExpressionParameter colorExpression = new ExpressionParameter(""
-                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ", true);
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        ps.setWidth(new Expression("CASE WHEN TYPE = 'cereals' then 5 else 1 END"));
+        Expression colorExpression = new Expression(""
+                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        Literal opacity = new Literal(1f);
         ps.setFill(new SolidFill(colorExpression, opacity));
         lineSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
@@ -109,7 +110,7 @@ public class StyleFactoryTest {
         TextSymbolizer textSymbolizer = new TextSymbolizer();
         PointLabel pointLabel = new PointLabel();
         StyledText styledText = new StyledText();
-        styledText.setText(new ExpressionParameter("type", true));
+        styledText.setText(new Expression("type"));
         pointLabel.setLabel(styledText);
         textSymbolizer.setLabel(pointLabel);
         Feature2DRule rule = new Feature2DRule();
@@ -128,11 +129,11 @@ public class StyleFactoryTest {
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         HatchedFill hatchedFill = new HatchedFill();
         PenStroke psHatchedFill = new PenStroke();
-        psHatchedFill.setWidth(new ExpressionParameter(2));
+        psHatchedFill.setWidth(new Literal(2));
         hatchedFill.setStroke(psHatchedFill);
         areaSymbolizer.setFill(hatchedFill);
         PenStroke ps = new PenStroke();
-        ps.setWidth(new ExpressionParameter(2));
+        ps.setWidth(new Literal(2));
         SolidFill psFill = new SolidFill(Color.BLUE);
         ps.setFill(psFill);
         areaSymbolizer.setStroke(ps);
@@ -152,16 +153,16 @@ public class StyleFactoryTest {
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         HatchedFill hatchedFill = new HatchedFill();
         PenStroke psHatchedFill = new PenStroke();
-        psHatchedFill.setWidth(new ExpressionParameter(2));
-        ExpressionParameter colorExpression = new ExpressionParameter(""
-                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ", true);
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        psHatchedFill.setWidth(new Literal(2));
+        Expression colorExpression = new Expression(""
+                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        Literal opacity = new Literal(1f);
         SolidFill sfhatchedFill = new SolidFill(colorExpression, opacity);
         psHatchedFill.setFill(sfhatchedFill);
         hatchedFill.setStroke(psHatchedFill);
         areaSymbolizer.setFill(hatchedFill);
         PenStroke ps = new PenStroke();
-        ps.setWidth(new ExpressionParameter(2));
+        ps.setWidth(new Literal(2));
         SolidFill psFill = new SolidFill(Color.BLUE);
         ps.setFill(psFill);
         areaSymbolizer.setStroke(ps);
@@ -180,9 +181,9 @@ public class StyleFactoryTest {
     public static Feature2DStyle createAreaSymbolizerStyleColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
-        ExpressionParameter colorExpression = new ExpressionParameter(""
-                + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END  ", true);
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        Expression colorExpression = new Expression(""
+                + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        Literal opacity = new Literal(1f);
         SolidFill solidFill = new SolidFill(colorExpression, opacity);
         areaSymbolizer.setFill(solidFill);
         PenStroke ps = new PenStroke();
@@ -205,12 +206,12 @@ public class StyleFactoryTest {
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         DotMapFill dotMapFill = new DotMapFill();
         MarkGraphic mg = new MarkGraphic();
-        mg.setWkn(new ExpressionParameter("circle"));
+        mg.setWkn(new Literal("circle"));
         mg.setUom(Uom.PX);
-        mg.setViewBox(new ViewBox(new ExpressionParameter(1)));
+        mg.setViewBox(new ViewBox(new Literal(1)));
         dotMapFill.setGraphic(mg);
-        dotMapFill.setQuantityPerMark(new ExpressionParameter(3));
-        dotMapFill.setTotalQuantity(new ExpressionParameter(2000));
+        dotMapFill.setQuantityPerMark(new Literal(3));
+        dotMapFill.setTotalQuantity(new Literal(2000));
         areaSymbolizer.setFill(dotMapFill);
         PenStroke ps = new PenStroke();
         SolidFill psFill = new SolidFill(Color.BLUE);
@@ -227,9 +228,9 @@ public class StyleFactoryTest {
         TextSymbolizer textSymbolizer = new TextSymbolizer();
         PointLabel pointLabel = new PointLabel();
         StyledText styledText = new StyledText("type");
-        ExpressionParameter colorExpression = new ExpressionParameter(""
-                + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END ", true);
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        Expression colorExpression = new Expression(""
+                + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END ");
+        Literal opacity = new Literal(1f);
         SolidFill solidFill = new SolidFill(colorExpression, opacity);
         styledText.setFill(solidFill);
         pointLabel.setLabel(styledText);
@@ -266,7 +267,7 @@ public class StyleFactoryTest {
         ps.setFill(psFill);
         areaSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
-        rule.setExpression(new ExpressionParameter("st_area(the_geom) < 5000"));
+        rule.setExpression(new Expression("st_area(the_geom) < 5000"));
         rule.addSymbolizer(areaSymbolizer);
         style.addRule(rule);
         return style;
@@ -281,19 +282,19 @@ public class StyleFactoryTest {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         DensityFill densityFill = new DensityFill();
-        densityFill.setPercentageCovered(new ExpressionParameter(0.2));
-        densityFill.setHatchesOrientation(new ExpressionParameter(120));
+        densityFill.setPercentageCovered(new Literal(0.2));
+        densityFill.setHatchesOrientation(new Literal(120));
         PenStroke psHatchedFill = new PenStroke();
-        psHatchedFill.setWidth(new ExpressionParameter("1"));
-        ExpressionParameter colorExpression = new ExpressionParameter(""
-                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ", true);
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        psHatchedFill.setWidth(new Literal(1));
+        Expression colorExpression = new Expression(""
+                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        Literal opacity = new Literal(1f);
         SolidFill sfhatchedFill = new SolidFill(colorExpression, opacity);
         psHatchedFill.setFill(sfhatchedFill);
         densityFill.setHatches(psHatchedFill);
         areaSymbolizer.setFill(densityFill);
         PenStroke ps = new PenStroke();
-        ps.setWidth(new ExpressionParameter(2));
+        ps.setWidth(new Literal(2));
         SolidFill psFill = new SolidFill(Color.BLUE);
         ps.setFill(psFill);
         areaSymbolizer.setStroke(ps);
@@ -312,17 +313,17 @@ public class StyleFactoryTest {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         DensityFill densityFill = new DensityFill();
-        densityFill.setPercentageCovered(new ExpressionParameter(0.2));
-        densityFill.setHatchesOrientation(new ExpressionParameter(120));
+        densityFill.setPercentageCovered(new Literal(0.2));
+        densityFill.setHatchesOrientation(new Literal(120));
         MarkGraphic markGraphic = new MarkGraphic();
-        ExpressionParameter colorExpression = new ExpressionParameter("#ff6d6d");
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        Literal colorExpression = new Literal("#ff6d6d");
+        Literal opacity = new Literal(1f);
         SolidFill markFill = new SolidFill(colorExpression, opacity);
         markGraphic.setFill(markFill);
         densityFill.setGraphic(markGraphic);
         areaSymbolizer.setFill(densityFill);
         PenStroke ps = new PenStroke();
-        ps.setWidth(new ExpressionParameter(3));
+        ps.setWidth(new Literal(3));
         SolidFill psFill = new SolidFill(Color.BLUE);
         ps.setFill(psFill);
         areaSymbolizer.setStroke(ps);
@@ -341,13 +342,13 @@ public class StyleFactoryTest {
     public static Feature2DStyle createAreaSymbolizerGraphicFillColor() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
-        ExpressionParameter colorExpression = new ExpressionParameter("#ff6d6d");
-        ExpressionParameter opacity = new ExpressionParameter(1);
+        Literal colorExpression = new Literal("#ff6d6d");
+        Literal opacity = new Literal(1f);
         SolidFill solilFillG = new SolidFill(colorExpression, opacity);
         GraphicFill graphicFill = new GraphicFill();
         MarkGraphic mg = new MarkGraphic();
         mg.setFill(solilFillG);
-        mg.setViewBox(new ViewBox(new ExpressionParameter(12), new ExpressionParameter(12)));
+        mg.setViewBox(new ViewBox(new Literal(12), new Literal(12)));
         graphicFill.setGraphic(mg);
         areaSymbolizer.setFill(graphicFill);
         PenStroke ps = new PenStroke();
@@ -400,15 +401,15 @@ public class StyleFactoryTest {
         PointSymbolizer ps = new PointSymbolizer();
         MarkGraphic markGraphic = new MarkGraphic();
         PenStroke penStroke = new PenStroke();
-        penStroke.setWidth(new ExpressionParameter(1.0));
+        penStroke.setWidth(new Literal(1.0));
         markGraphic.setStroke(penStroke);
-        markGraphic.setViewBox(new ViewBox(new ExpressionParameter("CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN 10.0 WHEN ST_AREA(THE_GEOM)< 5000  and ST_AREA(THE_GEOM)< 10000 THEN 30.0 ELSE 1.0 END", true)));
+        markGraphic.setViewBox(new ViewBox(new Expression("CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN 10.0 WHEN ST_AREA(THE_GEOM)< 5000  and ST_AREA(THE_GEOM)< 10000 THEN 30.0 ELSE 1.0 END")));
         ps.setGraphic(markGraphic);
         rule.addSymbolizer(ps);
         return style;
     }
 
-    static Feature2DStyle AreaSymbolizerAndPointSymbolizerVertex() {
+    static Feature2DStyle createAreaSymbolizerAndPointSymbolizerVertex() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         SolidFill solidFill = new SolidFill(Color.GREEN);
@@ -419,11 +420,47 @@ public class StyleFactoryTest {
         areaSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
         PointSymbolizer pointSymbolizer = new PointSymbolizer();
-        pointSymbolizer.setOnVertex(true);
-        rule.addSymbolizer(pointSymbolizer);        
+        pointSymbolizer.setOnVertex(true);  
         rule.addSymbolizer(areaSymbolizer);
+        rule.addSymbolizer(pointSymbolizer); 
         style.addRule(rule);
         return style;
     }
+    
+    
+     static Feature2DStyle createSymbolsWithLevel() {
+        Feature2DStyle style = new Feature2DStyle();
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        SolidFill solidFill = new SolidFill(Color.GREEN);
+        areaSymbolizer.setFill(solidFill);
+        PenStroke ps = new PenStroke();
+        SolidFill psFill = new SolidFill(Color.BLUE);
+        ps.setFill(psFill);
+        areaSymbolizer.setStroke(ps);
+        areaSymbolizer.setLevel(1);
+        Feature2DRule rule = new Feature2DRule();
+        
+        PointSymbolizer pointSymbolizerCircle = new PointSymbolizer();
+        MarkGraphic mg = new MarkGraphic();
+        mg.setWkn(new Literal("circle"));
+        mg.setViewBox(new ViewBox(new Literal(10)));
+        pointSymbolizerCircle.setOnVertex(true);
+        pointSymbolizerCircle.setGraphic(mg);
+        pointSymbolizerCircle.setLevel(2);
+        PointSymbolizer pointSymbolizerCross = new PointSymbolizer();
+        MarkGraphic mg_cross = new MarkGraphic();
+        mg_cross.setWkn(new Literal("cross"));
+        mg_cross.setViewBox(new ViewBox(new Literal(10)));
+        pointSymbolizerCross.setOnVertex(true);
+        pointSymbolizerCross.setGraphic(mg_cross);
+        pointSymbolizerCross.setLevel(3);
+        
+        rule.addSymbolizer(areaSymbolizer);
+        rule.addSymbolizer(pointSymbolizerCircle);
+        rule.addSymbolizer(pointSymbolizerCross);
+        style.addRule(rule);
+        return style;
+    }
+
 
 }

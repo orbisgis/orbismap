@@ -39,7 +39,9 @@ package org.orbisgis.style.label;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * An {@code ExclusionZone} where the forbidden area is defined as a rectangle. It is 
@@ -47,17 +49,17 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  * UOM instance.
  * @author Alexis Guéganno, Maxence Laurent
  */
-public final class ExclusionRectangle extends ExclusionZone {
+public  class ExclusionRectangle extends ExclusionZone {
 
-    private ExpressionParameter x;
-    private ExpressionParameter y;
+    private ParameterValue x;
+    private ParameterValue y;
 
     /**
      * Build a {@code ExclusionZone} with default width and length set to 3. 
      */
     public ExclusionRectangle(){
-        this.setX(new ExpressionParameter(3));
-        this.setY(new ExpressionParameter(3));
+        this.setX(new Literal(3));
+        this.setY(new Literal(3));
     }
 
     
@@ -67,7 +69,7 @@ public final class ExclusionRectangle extends ExclusionZone {
      * @return 
      * the x-length as a {@code RealParameter} 
      */
-    public ExpressionParameter getX() {
+    public ParameterValue getX() {
         return x;
     }
 
@@ -75,7 +77,8 @@ public final class ExclusionRectangle extends ExclusionZone {
      * Set the x-length of the rectangle.
      * @param x 
      */
-    public void setX(ExpressionParameter x) {
+    public void setX(ParameterValue x) {
+        ParameterValueHelper.validateAsFloat(x);
         this.x = x;
         if (x != null){
             x.setParent(this);
@@ -87,15 +90,16 @@ public final class ExclusionRectangle extends ExclusionZone {
      * @return 
      * the y-length as a {@code RealParameter} 
      */
-    public ExpressionParameter getY() {
+    public ParameterValue getY() {
         return y;
     }
 
     /**
      * Set the y-length of the rectangle.
-     * @param x 
+     * @param y
      */
-    public void setY(ExpressionParameter y) {
+    public void setY(ParameterValue y) {        
+        ParameterValueHelper.validateAsFloat(y);
         this.y = y;
         if (this.y != null){
             y.setParent(this);

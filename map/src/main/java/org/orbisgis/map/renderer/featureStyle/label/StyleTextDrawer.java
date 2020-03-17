@@ -23,7 +23,6 @@ import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
@@ -51,7 +50,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
 
     @Override
     public void draw( Graphics2D g2, MapTransform mapTransform, StyledText styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-            String txt = ValueHelper.getAsString(properties, styleNode.getText());
+            String txt =  (String) styleNode.getText().getValue();
             if (txt != null) {
             Label.VerticalAlignment va  = (Label.VerticalAlignment) properties.get("verticalalignment");
 
@@ -219,23 +218,23 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws IOException
      */
     private Font getFont( Map<String, Object> properties, MapTransform mt, StyledText styleNode) throws ParameterException {
-        String fontFamily = ValueHelper.getAsString(properties,styleNode.getFontFamily());
+        String fontFamily = (String) styleNode.getFontFamily().getValue();
         if (fontFamily == null) {
             throw new ParameterException("The font family cannot be null");
         }
 
         // TODO Family is comma delimeted list of fonts family. Choose the first available
-        String fontWeight = ValueHelper.getAsString(properties,styleNode.getFontWeight());
+        String fontWeight = (String) styleNode.getFontWeight().getValue();
         if (fontWeight == null) {
             throw new ParameterException("The font weight cannot be null");
         }
 
-        String fontStyle = ValueHelper.getAsString(properties,styleNode.getFontStyle());
+        String fontStyle = (String) styleNode.getFontStyle().getValue();
         if (fontStyle == null) {
             throw new ParameterException("The font style cannot be null");
         }
 
-        Float fontSize = ValueHelper.getAsFloat(properties, styleNode.getFontSize());
+        Float fontSize =  (Float) styleNode.getFontSize().getValue();
         if (fontSize == null) {
                   throw new ParameterException("The font size cannot be null");
         }

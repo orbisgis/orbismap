@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.common.RelativeOrientation;
 import org.orbisgis.style.common.ShapeHelper;
 import org.orbisgis.style.label.Label;
@@ -38,7 +37,7 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
 
             if (styleText != null) {
                 StyleTextDrawer styleTextDrawer = new StyleTextDrawer();
-                String text = ValueHelper.getAsString(properties,styleText.getText());
+                String text = (String) styleText.getText().getValue();
                  if(text!=null && !text.isEmpty()){
         Rectangle2D bounds = styleTextDrawer.getBounds(g2, text, properties, mapTransform, styleText);
         double totalWidth = bounds.getWidth();

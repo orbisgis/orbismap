@@ -44,11 +44,13 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Translate;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A "AreaSymbolizer" specifies the rendering of a polygon or other area/surface
@@ -61,16 +63,16 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  *
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, IFeatureSymbolizer, UomNode {
+public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, IFeatureSymbolizer, UomNode {
 
     private Translate translate;
-    private ExpressionParameter perpendicularOffset;
+    private ParameterValue perpendicularOffset = new Literal(0d);
     private Stroke stroke;
     private IFill fill;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
     private String desc;
-    private int level;
+    private int level =0;
     public static final String DEFAULT_NAME = "Area symbolizer";
     private Uom uom;
 
@@ -152,7 +154,7 @@ public final class AreaSymbolizer extends StyleNode implements FillNode, StrokeN
      * cause the polygons to be drawn larger than their original size, while a
      * negative value will cause the drawing of smaller polygons.
      */
-    public ExpressionParameter getPerpendicularOffset() {
+    public ParameterValue getPerpendicularOffset() {
         return perpendicularOffset;
     }
 
@@ -167,7 +169,8 @@ public final class AreaSymbolizer extends StyleNode implements FillNode, StrokeN
      * original size, while a negative value will cause the drawing of smaller
      * polygons.
      */
-    public void setPerpendicularOffset(ExpressionParameter perpendicularOffset) {
+    public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
+        ParameterValueHelper.validateAsFloat(perpendicularOffset);
         this.perpendicularOffset = perpendicularOffset;
         if (this.perpendicularOffset != null) {
             this.perpendicularOffset.setParent(this);
@@ -283,7 +286,6 @@ public final class AreaSymbolizer extends StyleNode implements FillNode, StrokeN
     public int compareTo(Object o) {
         if (o instanceof AreaSymbolizer) {
             AreaSymbolizer s = (AreaSymbolizer) o;
-
             if (s.getLevel() < this.level) {
                 return 1;
             } else if (s.getLevel() == this.level) {

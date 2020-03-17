@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.parameter.ExpressionParameter;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
  * {@code Rotate} is a transformation that performs a rotation of the affected
@@ -54,15 +54,15 @@ import org.orbisgis.style.parameter.ExpressionParameter;
  */
 public final class Rotate extends StyleNode implements Transformation {
 
-        private ExpressionParameter x;
-        private ExpressionParameter y;
-        private ExpressionParameter rotation;
+        private ParameterValue x;
+        private ParameterValue y;
+        private ParameterValue rotation;
 
         /**
          * Build a new {@code Rotate} with angle value set to {@code rotation}.
          * @param rotation 
          */
-        public Rotate(ExpressionParameter rotation) {
+        public Rotate(ParameterValue rotation) {
                 setRotation(rotation);
                 setX(null);
                 setY(null);
@@ -76,7 +76,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * @param ox
          * @param oy 
          */
-        public Rotate(ExpressionParameter rotation, ExpressionParameter ox, ExpressionParameter oy) {
+        public Rotate(ParameterValue rotation, ParameterValue ox, ParameterValue oy) {
                 setRotation(rotation);
                 setX(ox);
                 setY(oy);
@@ -90,7 +90,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * The rotation, in clockwise degrees. Indeed, as the Y axis is oriented
          * bottom up, it is the direct rotation sense...
          */
-        public ExpressionParameter getRotation() {
+        public ParameterValue getRotation() {
                 return rotation;
         }
 
@@ -98,7 +98,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * Set the rotation defined in this {@code Rotate} instance.
          * @param rotation 
          */
-        public void setRotation(ExpressionParameter rotation) {
+        public void setRotation(ParameterValue rotation) {
                 this.rotation = rotation;
                 if (rotation != null) {
                         this.rotation.setParent(this);
@@ -112,7 +112,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * returned coordinate is placed in the coordinate system associated to
          * the graphic this {@code Rotate} operation is applied on.
          */
-        public ExpressionParameter getX() {
+        public ParameterValue getX() {
                 return x;
         }
 
@@ -124,7 +124,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * A {@code RealParameter} that is placed by this method in a 
          * {@link RealParameterContext#REAL_CONTEXT}
          */
-        public void setX(ExpressionParameter x) {
+        public void setX(ParameterValue x) {
                 this.x = x;
                 if (this.x != null) {
                         this.x.setParent(this);
@@ -138,7 +138,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * returned coordinate is placed in the coordinate system associated to
          * the graphic this {@code Rotate} operation is applied on.
          */
-        public ExpressionParameter getY() {
+        public ParameterValue getY() {
                 return y;
         }
 
@@ -150,7 +150,7 @@ public final class Rotate extends StyleNode implements Transformation {
          * A {@code RealParameter} that is placed by this method in a 
          * {@link RealParameterContext#REAL_CONTEXT}
          */
-        public void setY(ExpressionParameter y) {
+        public void setY(ParameterValue y) {
                 this.y = y;
                 if (this.y != null) {
                         this.y.setParent(this);

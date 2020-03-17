@@ -17,7 +17,6 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.HatchedFill;
 import static org.orbisgis.style.fill.HatchedFill.DEFAULT_ALPHA;
@@ -62,7 +61,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 // Perpendicular distance between two lines
             try {
                 float pDist = 0;
-                Float distance = ValueHelper.getAsFloat(properties, styleNode.getDistance());
+                Float distance =  (Float) styleNode.getDistance().getValue();
                 if(distance ==null ){
                     throw new ParameterException("The distance parameter for the hatched fill cannot be null");
 
@@ -72,7 +71,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 }                
 
                 float alpha = DEFAULT_ALPHA;
-                Float angle = ValueHelper.getAsFloat(properties, styleNode.getAngle());
+                Float angle = (Float) styleNode.getAngle().getValue();
                 if(angle==null){
                     throw new ParameterException("The angle parameter for the hatched fill cannot be null");
                 }
@@ -80,7 +79,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     alpha = angle;
                 }
                 double hOffset = 0.0;
-                Float offset = ValueHelper.getAsFloat(properties, styleNode.getOffset());
+                Float offset =  (Float) styleNode.getOffset().getValue();
                 if(offset==null){
                    throw new ParameterException("The offset parameter for the hatched fill cannot be null");
 

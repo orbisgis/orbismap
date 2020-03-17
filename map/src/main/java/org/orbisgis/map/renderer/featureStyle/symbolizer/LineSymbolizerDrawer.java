@@ -92,8 +92,11 @@ public class LineSymbolizerDrawer implements ISymbolizerDraw<LineSymbolizer> {
 
     @Override
     public void dispose(Graphics2D g2) {
+        if(g2!=null){
         g2_bi.dispose();      
         g2_bi=null;
         g2.drawImage(bi, null, null);
+        bi=null;
+        }
     }
 }

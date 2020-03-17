@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
-import org.orbisgis.map.renderer.featureStyle.utils.ValueHelper;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.graphic.Graphic;
@@ -54,14 +53,14 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
         float gX = 0.0f;
         float gY = 0.0f;
         Uom uom = styleNode.getUom();
-        Float gapX = ValueHelper.getAsFloat(properties, styleNode.getGapX());
+        Float gapX =  (Float) styleNode.getGapX().getValue();
         if (gapX != null) {
             gX = gapX;
             if (gX < 0.0) {
                 gX = 0.0f;
             }
         }
-        Float gapY = ValueHelper.getAsFloat(properties, styleNode.getGapY());
+        Float gapY = (Float) styleNode.getGapY().getValue();
         if (gapY != null) {
             gY = gapY;
             if (gY < 0.0) {
