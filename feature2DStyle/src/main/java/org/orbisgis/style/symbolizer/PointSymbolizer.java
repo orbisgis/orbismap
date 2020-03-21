@@ -44,6 +44,7 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
+import org.orbisgis.style.common.Description;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
@@ -75,7 +76,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     private boolean onVertex;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
-    private String desc;
+    private Description description = new Description();
     private int level =0;
     public static final String DEFAULT_NAME = "Point symbolizer";
     private Uom uom;
@@ -164,8 +165,9 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
      *
      * @return
      */
-    public String getDescription() {
-        return desc;
+    @Override
+    public Description getDescription() {
+        return description;
     }
 
     /**
@@ -173,8 +175,9 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
      *
      * @param description
      */
-    public void setDescription(String description) {
-        desc = description;
+    @Override
+    public void setDescription(Description description) {
+        this.description = description;
     }
 
     @Override

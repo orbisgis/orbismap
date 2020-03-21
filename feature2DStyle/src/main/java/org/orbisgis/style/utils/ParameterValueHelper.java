@@ -36,6 +36,7 @@ public class ParameterValueHelper {
                     if (!(value instanceof String)) {
                         parameterValue.setValue(String.valueOf(value));
                     }
+                    parameterValue.setDataType(String.class);
                 }
             }
         }        
@@ -52,8 +53,9 @@ public class ParameterValueHelper {
                     if (value instanceof String) {
                         parameterValue.setValue(Float.parseFloat((String) value));
                     } else if (value instanceof Number) {
-                        parameterValue.setValue(((Number) value).floatValue());
+                        parameterValue.setValue(((Number) value).floatValue());                       
                     }
+                    parameterValue.setDataType(Float.class);
                 }
             }
         }
@@ -72,6 +74,8 @@ public class ParameterValueHelper {
                     } else if (value instanceof Number) {
                         parameterValue.setValue(((Number) value).doubleValue());
                     }
+                    parameterValue.setDataType(Double.class);
+
                 }
             }
         }        
@@ -90,9 +94,40 @@ public class ParameterValueHelper {
                     } else if (value instanceof Number) {
                         parameterValue.setValue(((Number) value).intValue());
                     }
+                    parameterValue.setDataType(Integer.class);
                 }
             }
         } 
+    }
+    
+     /**
+     * Return the enum value according the class enum
+     *
+     * @param <T>
+     * @param enumType
+     * @param name
+     * @return
+     */
+    public static <T extends Enum<?>> T lookup(Class<T> enumType,
+            String name) {
+        for (T enumn : enumType.getEnumConstants()) {
+            if (enumn.name().equalsIgnoreCase(name)) {
+                return enumn;
+            }
+        }
+        return null;
+    }
+    
+    public static Literal createFloatLiteral(Float value){
+        Literal  literal = new Literal(value);
+        literal.setDataType(Float.class);
+        return literal;
+    }
+    
+    public static Literal createDoubleLiteral(Double value){
+        Literal  literal = new Literal(value);
+        literal.setDataType(Double.class);
+        return literal;
     }
 
 }

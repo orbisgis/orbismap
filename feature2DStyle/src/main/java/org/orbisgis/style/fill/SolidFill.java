@@ -58,7 +58,7 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
     /**
      * Default value for opacity : {@value SolidFill#DEFAULT_OPACITY}
      */
-    public static final double DEFAULT_OPACITY = 1;
+    public static final float DEFAULT_OPACITY = 1;
     /**
      * Default colour value : {@value SolidFill#GRAY50}
      */
@@ -75,7 +75,7 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(ParameterValueHelper.randomColor(), new Literal(1f));
+        this(ParameterValueHelper.randomColor(), ParameterValueHelper.createFloatLiteral(1f));
     }
 
     /**
@@ -84,7 +84,7 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      * @param c
      */
     public SolidFill(Color c) {
-        this(ParameterValueHelper.toExpression(c), new Literal(1f));
+        this(ParameterValueHelper.toExpression(c), ParameterValueHelper.createFloatLiteral(1f));
     }
 
     /**
@@ -93,8 +93,8 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      * @param c
      * @param opacity
      */
-    public SolidFill(Color c, double opacity) {
-        this(ParameterValueHelper.toExpression(c), new Literal(opacity));
+    public SolidFill(Color c, float opacity) {
+        this(ParameterValueHelper.toExpression(c), ParameterValueHelper.createFloatLiteral(opacity));
     }
 
     /**
@@ -113,10 +113,9 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      *
      * @param color
      */
-    public void setColor(ParameterValue color) {
+    public void setColor(ParameterValue color) {        
+        ParameterValueHelper.validateAsString(color);
         this.color = color;
-        ParameterValueHelper.validateAsString(this.color);
-        //this.color.setDataType(String.class);
         if (this.color != null) {
             this.color.setParent(this);
         }
@@ -137,8 +136,8 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      * @param opacity
      */
     public void setOpacity(ParameterValue opacity) {
-        this.opacity = opacity == null ? new Literal(1f) : opacity;
-        ParameterValueHelper.validateAsFloat(this.opacity);
+        ParameterValueHelper.validateAsFloat(opacity);
+        this.opacity = opacity == null ? ParameterValueHelper.createFloatLiteral(1f) : opacity;        
         this.opacity.setParent(this);
     }
 

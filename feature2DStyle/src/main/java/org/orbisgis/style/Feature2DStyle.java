@@ -36,8 +36,6 @@
  */
 package org.orbisgis.style;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -56,15 +54,11 @@ import org.slf4j.*;
  */
 public class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule>{
 
-    public static final String PROP_VISIBLE = "visible";
     private static final String DEFAULT_NAME = "Unnamed Style";
     private static final Logger LOGGER = LoggerFactory.getLogger(Feature2DStyle.class);
     private String name;
     private ArrayList<Feature2DRule> rules;
-    private boolean visible = true;
-    private Description description = new Description();
-
-    protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);    
+    private Description description = new Description();   
     
     /**
      * Create a new {@code Style} with a default {@code Rule}.
@@ -179,65 +173,7 @@ public class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule>{
             ls.addAll(rules);
             return ls;
     }
-
-    /**
-     *
-     * @return
-     * True if the Rule is visible
-     */
-    public boolean isVisible() {
-        return visible;
-    }
-
-    /**
-     * If set to true, the rule is visible.
-     * @param visible
-     */
-    public void setVisible(boolean visible) {
-        boolean oldValue = this.visible;
-        this.visible = visible;
-        propertyChangeSupport.firePropertyChange(PROP_VISIBLE, oldValue, visible);
-    }
-    
-
-    /**
-    * Add a property-change listener for all properties.
-    * The listener is called for all properties.
-    * @param listener The PropertyChangeListener instance
-    * @note Use EventHandler.create to build the PropertyChangeListener instance
-    */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-    
-    /**
-    * Add a property-change listener for a specific property.
-    * The listener is called only when there is a change to 
-    * the specified property.
-    * @param prop The static property name PROP_..
-    * @param listener The PropertyChangeListener instance
-    * @note Use EventHandler.create to build the PropertyChangeListener instance
-    */
-    public void addPropertyChangeListener(String prop,PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(prop, listener);
-    }
-    
-    /**
-    * Remove the specified listener from the list
-    * @param listener The listener instance
-    */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    /**
-    * Remove the specified listener for a specified property from the list
-    * @param prop The static property name PROP_..
-    * @param listener The listener instance
-    */
-    public void removePropertyChangeListener(String prop,PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(prop,listener);
-    }    
+     
 
     @Override
     public String getTitle(Locale locale) {

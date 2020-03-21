@@ -5,6 +5,7 @@
  */
 package org.orbisgis.style;
 
+import org.orbisgis.style.common.Description;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
@@ -16,5 +17,11 @@ public interface IFeatureSymbolizer extends ISymbolizer, Comparable{
     GeometryParameter getGeometryParameter();
 
     void setGeometryParameter(GeometryParameter geometryExpression);
+    
+    Description getDescription();
+    
+    void setDescription(Description description);
+    
+    
     
 }

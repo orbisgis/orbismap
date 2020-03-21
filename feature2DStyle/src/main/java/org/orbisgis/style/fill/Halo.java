@@ -60,7 +60,7 @@ public class Halo extends StyleNode implements IUom, FillNode {
      * The default radius for new {@code Halo} instances. Set to 1.0, and UOM
      * dependant.
      */
-    public static final double DEFAULT_RADIUS = 1.0;
+    public static final float DEFAULT_RADIUS = 1.0f;
 
     private Uom uom;
     private ParameterValue radius;
@@ -72,7 +72,7 @@ public class Halo extends StyleNode implements IUom, FillNode {
      */
     public Halo() {
         setFill(getDefaultFill());
-        setRadius(new Literal(DEFAULT_RADIUS));
+        setRadius(ParameterValueHelper.createFloatLiteral(DEFAULT_RADIUS));
     }
 
     /**
@@ -131,7 +131,7 @@ public class Halo extends StyleNode implements IUom, FillNode {
             ParameterValueHelper.validateAsFloat(radius);
             this.radius = radius;
         } else {
-            this.radius = new Literal(DEFAULT_RADIUS);
+            this.radius = ParameterValueHelper.createFloatLiteral(DEFAULT_RADIUS);
         }
         this.radius.setParent(this);
     }

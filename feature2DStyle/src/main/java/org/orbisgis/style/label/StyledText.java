@@ -184,7 +184,7 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
      */
     public void setText(ParameterValue text) {
         if (text != null) {
-            ParameterValueHelper.validateAsString(this.text);
+            ParameterValueHelper.validateAsString(text);
             this.text = text;
             this.text.setParent(this);
         }

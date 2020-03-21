@@ -11,14 +11,12 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -30,7 +28,6 @@ import org.orbisgis.map.renderer.featureStyle.symbolizer.PointSymbolizerDrawer;
 import org.orbisgis.map.renderer.featureStyle.symbolizer.TextSymbolizerDrawer;
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.Feature2DRule;
-import org.orbisgis.map.renderer.featureStyle.visitor.ParameterValueVisitor;
 import org.orbisgis.map.api.IProgressMonitor;
 import org.orbisgis.map.renderer.featureStyle.utils.ExpressionParser;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
@@ -42,8 +39,9 @@ import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 import org.orbisgis.style.parameter.ParameterException;
-import org.orbisgis.map.renderer.featureStyle.visitor.GeometryParameterVisitor;
 import org.orbisgis.style.parameter.Expression;
+import org.orbisgis.style.visitor.GeometryParameterVisitor;
+import org.orbisgis.style.visitor.ParameterValueVisitor;
 
 /**
  *
@@ -69,7 +67,7 @@ public class FeatureStyleRenderer {
      * @throws JSQLParserException 
      */
     public void formatRuleExpression(Feature2DRule rule) throws JSQLParserException {
-        rule.setExpression(ExpressionParser.formatConditionalExpression(rule.getExpression()));
+        rule.setExpression(ExpressionParser.formatConditionalExpression(rule.getFilterExpression()));
     }
 
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
@@ -100,7 +98,7 @@ public class FeatureStyleRenderer {
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
                     
-                    String ruleFilter = rule.getExpression().getExpression();
+                    String ruleFilter = rule.getFilterExpression().getExpression();
                     
                     if(!ruleFilter.isEmpty()){                        
                         ruleFilter += " and " ;

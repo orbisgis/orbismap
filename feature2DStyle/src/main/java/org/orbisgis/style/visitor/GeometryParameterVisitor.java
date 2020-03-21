@@ -31,7 +31,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.map.renderer.featureStyle.visitor;
+package org.orbisgis.style.visitor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +49,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  * Search for the names of the features that are used in the visited tree of
  * {@link SymbolizerNode} instances.
  *
- * @author Alexis Guéganno
+ * @author Erwan Bocher
  */
 public class GeometryParameterVisitor {
 
@@ -113,7 +113,5 @@ public class GeometryParameterVisitor {
     public Set<String> getGeometryColumns() {
         return geometryColumnsValid;
     }
-    
-    
 
 }

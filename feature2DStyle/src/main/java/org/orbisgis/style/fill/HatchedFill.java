@@ -94,9 +94,9 @@ public  class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNod
      */
     public HatchedFill() {
         setStroke(new PenStroke());
-        setDistance(new Literal(DEFAULT_PDIST));
-        setAngle(new Literal(DEFAULT_ALPHA));        ;
-        setOffset(new Literal(DEFAULT_OFFSET));
+        setDistance(ParameterValueHelper.createFloatLiteral(DEFAULT_PDIST));
+        setAngle(ParameterValueHelper.createFloatLiteral(DEFAULT_ALPHA));        ;
+        setOffset(ParameterValueHelper.createFloatLiteral(DEFAULT_OFFSET));
     }
 
     /**

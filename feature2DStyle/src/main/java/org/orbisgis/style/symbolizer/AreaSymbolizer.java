@@ -43,6 +43,7 @@ import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
+import org.orbisgis.style.common.Description;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.ParameterValue;
@@ -66,12 +67,12 @@ import org.orbisgis.style.utils.ParameterValueHelper;
 public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, IFeatureSymbolizer, UomNode {
 
     private Translate translate;
-    private ParameterValue perpendicularOffset = new Literal(0d);
+    private ParameterValue perpendicularOffset;
     private Stroke stroke;
     private IFill fill;
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
-    private String desc;
+    private Description description = new Description();
     private int level =0;
     public static final String DEFAULT_NAME = "Area symbolizer";
     private Uom uom;
@@ -170,11 +171,9 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
      * polygons.
      */
     public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
-        ParameterValueHelper.validateAsFloat(perpendicularOffset);
-        this.perpendicularOffset = perpendicularOffset;
-        if (this.perpendicularOffset != null) {
-            this.perpendicularOffset.setParent(this);
-        }
+        ParameterValueHelper.validateAsDouble(perpendicularOffset);
+        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
+        this.perpendicularOffset.setParent(this);   
     }
 
     @Override
@@ -227,8 +226,9 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
      *
      * @return
      */
-    public String getDescription() {
-        return desc;
+    @Override
+    public Description getDescription() {
+        return description;
     }
 
     /**
@@ -236,8 +236,9 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
      *
      * @param description
      */
-    public void setDescription(String description) {
-        desc = description;
+    @Override
+    public void setDescription(Description description) {
+        this.description = description;
     }
 
     @Override

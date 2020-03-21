@@ -86,7 +86,7 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     private TransformParameter transform;
     private ParameterValue wkn;
     private ViewBox viewBox;
-    private ParameterValue pOffset = new Literal(0d);
+    private ParameterValue perpendicularOffset;
     private Halo halo;
     private IFill fill;
     private Stroke stroke;
@@ -211,19 +211,17 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
      * @return The perpendicular offset
      */
     public ParameterValue getPerpendicularOffset() {
-        return pOffset;
+        return perpendicularOffset;
     }
 
     /**
      * Set the perpendicular offset applied to this {@code MarkGraphic} before rendering.
-     * @param pOffset The perpendicular offset
+     * @param perpendicularOffset The perpendicular offset
      */
-    public void setPerpendicularOffset(ParameterValue pOffset) {
-        ParameterValueHelper.validateAsFloat(pOffset);
-        this.pOffset = pOffset;        
-        if (this.pOffset != null) {
-            this.pOffset.setParent(this);
-        }
+    public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
+        ParameterValueHelper.validateAsDouble(perpendicularOffset);
+        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
+        this.perpendicularOffset.setParent(this);       
     }
 
     
@@ -256,8 +254,8 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         if (viewBox != null) {
             ls .add(viewBox);
         }
-        if (pOffset != null) {
-            ls .add(pOffset);
+        if (perpendicularOffset != null) {
+            ls .add(perpendicularOffset);
         }
         if (halo != null) {
             ls .add(halo);

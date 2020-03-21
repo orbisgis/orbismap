@@ -64,17 +64,19 @@ public  class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomN
     /**
      * Distance between two graphics in the fill, in X direction.
      */
-    private ParameterValue gapX = new NullParameterValue();
+    private ParameterValue gapX ;
     /**
      * Distance between two graphics in the fill, in Y direction.
      */
-    private ParameterValue gapY =new NullParameterValue();
+    private ParameterValue gapY ;
     private Uom uom;
 
     /**
      * Creates a new GraphicFill, with the gap's measures set to null.
      */
     public GraphicFill() {
+        setGapX(new NullParameterValue());
+        setGapY(new NullParameterValue());
     }
 
     

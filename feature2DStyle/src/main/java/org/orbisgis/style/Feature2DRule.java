@@ -69,6 +69,7 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
      */
     public Feature2DRule() {
         symbolizers = new ArrayList<>();
+        this.name=DEFAULT_NAME;
     }
 
     @Override
@@ -86,7 +87,7 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
      * @return 
      *      The associated <code>where</code> clause.
      */
-    public Expression getExpression() {
+    public Expression getFilterExpression() {
         return expressionParameter;
     }
 
@@ -96,7 +97,7 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
      */
     public void setExpression(Expression expression) {
         //Still always a function
-        this.expressionParameter = expression; 
+        this.expressionParameter = expression;
         this.expressionParameter.setDataType(Boolean.class);
     }
 

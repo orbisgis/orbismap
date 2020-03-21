@@ -31,7 +31,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.map.renderer.featureStyle.visitor;
+package org.orbisgis.style.visitor;
 
 import java.util.HashMap;
 import java.util.List;

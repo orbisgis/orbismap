@@ -66,8 +66,8 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  */
 public  class PenStroke extends Stroke implements FillNode {
 
-    public static final double DEFAULT_WIDTH_PX = 1.0;
-    public static final double DEFAULT_WIDTH = .25;
+    public static final float DEFAULT_WIDTH_PX = 1.0f;
+    public static final float DEFAULT_WIDTH = .25f;
     /**
      * The cap used by default. Value is {@code LineCap.BUTT}.
      */
@@ -88,8 +88,7 @@ public  class PenStroke extends Stroke implements FillNode {
      */
     public enum LineCap {
 
-        BUTT, ROUND, SQUARE;
-       
+        BUTT, ROUND, SQUARE;       
     }
 
     /**
@@ -107,7 +106,7 @@ public  class PenStroke extends Stroke implements FillNode {
     public PenStroke() {
         super();
         setFill(getDefaultFill());
-        setWidth(new Literal(DEFAULT_WIDTH));
+        setWidth(new Literal(1.0));
         setUom(Uom.PX);
         setDashOffset(new Literal(0.0));
         setDashArray(new NullParameterValue());
@@ -150,7 +149,7 @@ public  class PenStroke extends Stroke implements FillNode {
     }
 
     private IFill getDefaultFill(){
-        return new SolidFill(Color.BLACK, 1.0);
+        return new SolidFill(new Literal("#000000"), new Literal(1.0f));
     }
 
     /**

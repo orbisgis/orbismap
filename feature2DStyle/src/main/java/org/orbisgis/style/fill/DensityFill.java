@@ -77,7 +77,7 @@ public  class DensityFill extends StyleNode implements IGraphicNode, IFill, UomN
     /**
      * The default covered percentage.
      */
-    public static final double DEFAULT_PERCENTAGE = 0.2;
+    public static final float DEFAULT_PERCENTAGE = 0.2f;
     private Uom uom;
 
     /**
@@ -85,8 +85,8 @@ public  class DensityFill extends StyleNode implements IGraphicNode, IFill, UomN
      */
     public DensityFill() {
         this.setHatches(new PenStroke());
-        this.setHatchesOrientation(new Literal(HatchedFill.DEFAULT_ALPHA));
-        this.setPercentageCovered(new Literal(DEFAULT_PERCENTAGE));
+        this.setHatchesOrientation(ParameterValueHelper.createFloatLiteral(HatchedFill.DEFAULT_ALPHA));
+        this.setPercentageCovered(ParameterValueHelper.createFloatLiteral(DEFAULT_PERCENTAGE));
     }    
 
     /**

@@ -41,6 +41,7 @@ import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.common.Description;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
@@ -59,12 +60,12 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  */
 public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
 
-    private ParameterValue perpendicularOffset = new Literal(0d);
+    private ParameterValue perpendicularOffset;
     private Label label;
 
     private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
     private String name;
-    private String desc;
+    private Description description = new Description();
     private int level =0;
     public static final String DEFAULT_NAME = "Text symbolizer";
     private Uom uom;
@@ -129,11 +130,9 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
      * @param perpendicularOffset
      */
     public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
-        ParameterValueHelper.validateAsFloat(perpendicularOffset);
-        this.perpendicularOffset = perpendicularOffset;
-        if (this.perpendicularOffset != null) {
-            this.perpendicularOffset.setParent(this);
-        }
+        ParameterValueHelper.validateAsDouble(perpendicularOffset);
+        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
+        this.perpendicularOffset.setParent(this); 
     }
 
     @Override
@@ -180,8 +179,9 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
      *
      * @return
      */
-    public String getDescription() {
-        return desc;
+    @Override
+    public Description getDescription() {
+        return description;
     }
 
     /**
@@ -189,8 +189,9 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
      *
      * @param description
      */
-    public void setDescription(String description) {
-        desc = description;
+    @Override
+    public void setDescription(Description description) {
+        this.description = description;
     }
 
     @Override
@@ -208,6 +209,7 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
         return uom == null ? Uom.PX : uom;
     }
 
+    @Override
     public final Uom getOwnUom() {
         return uom;
     }

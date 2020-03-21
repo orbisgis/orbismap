@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.utils.ParameterValueHelper;
 
@@ -67,8 +68,8 @@ public class ViewBox extends StyleNode {
      * Build a new {@code ViewBox}, with empty parameters.
      */
     public ViewBox() {
-        setWidth(null);
-        setHeight(null);
+        setWidth(new NullParameterValue());
+        setHeight(new NullParameterValue());
     }
 
     /**
@@ -117,7 +118,6 @@ public class ViewBox extends StyleNode {
      */
     public void setHeight(ParameterValue height) {
         ParameterValueHelper.validateAsFloat(height);
-
         y = height;
         if (y != null) {
             y.setParent(this);

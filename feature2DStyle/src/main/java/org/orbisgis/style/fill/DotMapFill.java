@@ -65,8 +65,8 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
    
     
     private Graphic mark;
-    private ParameterValue quantityPerMark = new NullParameterValue();
-    private ParameterValue totalQuantity = new NullParameterValue();
+    private ParameterValue quantityPerMark ;
+    private ParameterValue totalQuantity ;
     private Random rand;
     private Uom uom;
 
@@ -74,6 +74,8 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * Creates a new DotMapFill, with uninstanciated values.
      */
     public DotMapFill() {
+        this.setQuantityPerMark(new NullParameterValue());
+        this.setTotalQuantity(new NullParameterValue());
     }
 
     
@@ -92,14 +94,13 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
 
     /**
      * Set the quantity represented by a single dot.
-     * @param quantityPerMark 
+     *
+     * @param quantityPerMark
      */
     public void setQuantityPerMark(ParameterValue quantityPerMark) {
-        if (quantityPerMark != null) {
-            ParameterValueHelper.validateAsInteger(quantityPerMark);
-            this.quantityPerMark = quantityPerMark;
-            this.quantityPerMark.setParent(this);
-        }
+        ParameterValueHelper.validateAsInteger(quantityPerMark);
+        this.quantityPerMark = quantityPerMark;
+        this.quantityPerMark.setParent(this);
     }
 
     /**
@@ -112,15 +113,13 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
 
     /**
      * Get the total quantity to be represented for this symbolizer.
-     * @param totalQuantity 
+     *
+     * @param totalQuantity
      */
     public void setTotalQuantity(ParameterValue totalQuantity) {
-        if (totalQuantity != null) {
-             ParameterValueHelper.validateAsInteger(totalQuantity);
-            this.totalQuantity = totalQuantity;
-            this.totalQuantity.setDataType(Integer.class);
-            this.totalQuantity.setParent(this);
-        }
+        ParameterValueHelper.validateAsInteger(totalQuantity);
+        this.totalQuantity = totalQuantity;
+        this.totalQuantity.setParent(this);
     }
 
     /**

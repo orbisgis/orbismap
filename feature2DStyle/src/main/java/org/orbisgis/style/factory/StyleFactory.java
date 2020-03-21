@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.orbisgis.map.renderer.style;
+package org.orbisgis.style.factory;
 
 import java.awt.Color;
 import org.orbisgis.style.Feature2DRule;
@@ -28,7 +28,7 @@ import org.orbisgis.style.symbolizer.TextSymbolizer;
  *
  * @author ebocher
  */
-public class StyleFactoryTest {
+public class StyleFactory {
 
     /**
      * Create a style with one <code>LineSymbolizer</code>
@@ -68,7 +68,7 @@ public class StyleFactoryTest {
         return style;
     }
 
-    public static Feature2DStyle createAreaSymbolizerStyle() {
+    public static Feature2DStyle createAreaSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         SolidFill solidFill = new SolidFill(Color.GREEN);
@@ -223,7 +223,7 @@ public class StyleFactoryTest {
         return style;
     }
 
-    static Feature2DStyle createTextSymbolizerColorExpression() {
+    public static Feature2DStyle createTextSymbolizerColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
         PointLabel pointLabel = new PointLabel();
@@ -241,7 +241,7 @@ public class StyleFactoryTest {
         return style;
     }
 
-    static Feature2DStyle createAreaSymbolizerGeometryExpression() {
+    public static Feature2DStyle createAreaSymbolizerGeometryExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setGeometryParameter(new GeometryParameter("ST_BUFFER(THE_GEOM, 50)"));
@@ -409,7 +409,7 @@ public class StyleFactoryTest {
         return style;
     }
 
-    static Feature2DStyle createAreaSymbolizerAndPointSymbolizerVertex() {
+    public static Feature2DStyle createAreaSymbolizerAndPointSymbolizerVertex() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         SolidFill solidFill = new SolidFill(Color.GREEN);
@@ -428,7 +428,7 @@ public class StyleFactoryTest {
     }
     
     
-     static Feature2DStyle createSymbolsWithLevel() {
+    public static Feature2DStyle createSymbolsWithLevel() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         SolidFill solidFill = new SolidFill(Color.GREEN);

@@ -114,7 +114,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
                  * No fill and no stroke : apply default SolidFill !
                  */
                 if (fillDrawer == null && strokeDrawer == null) {
-                    SolidFill sf = new SolidFill(Color.BLACK, 1.0);
+                    SolidFill sf = new SolidFill(Color.BLACK, 1.0f);
                     sf.setParent(styleNode);
                     SolidFillDrawer drawer = new SolidFillDrawer();
                     drawer.setShape(outline);
