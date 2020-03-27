@@ -42,9 +42,10 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.factory.StyleFactory;
 import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code Halo} is a type of {@code Fill} that is applied to the background of
@@ -63,7 +64,7 @@ public class Halo extends StyleNode implements IUom, FillNode {
     public static final float DEFAULT_RADIUS = 1.0f;
 
     private Uom uom;
-    private ParameterValue radius;
+    private ParameterValue radius = new NullParameterValue();
     private IFill fill;
 
     /**
@@ -71,8 +72,8 @@ public class Halo extends StyleNode implements IUom, FillNode {
      * {@code DEFAULT_RADIUS}
      */
     public Halo() {
-        setFill(getDefaultFill());
-        setRadius(ParameterValueHelper.createFloatLiteral(DEFAULT_RADIUS));
+        setFill(StyleFactory.createSolidFill(Color.WHITE));
+        setRadius(new Literal(DEFAULT_RADIUS));
     }
 
     /**
@@ -103,8 +104,10 @@ public class Halo extends StyleNode implements IUom, FillNode {
 
     @Override
     public void setFill(IFill fill) {
-        this.fill = fill == null ? getDefaultFill() : fill;
-        this.fill.setParent(this);
+        this.fill = fill;
+        if (this.fill != null) {
+            this.fill.setParent(this);
+        }
     }
 
     @Override
@@ -127,13 +130,14 @@ public class Halo extends StyleNode implements IUom, FillNode {
      * @param radius
      */
     public void setRadius(ParameterValue radius) {
-        if (radius != null) {
-            ParameterValueHelper.validateAsFloat(radius);
-            this.radius = radius;
+        if (radius == null) {
+            this.radius = new NullParameterValue();
+            this.radius.setParent(this);
         } else {
-            this.radius = ParameterValueHelper.createFloatLiteral(DEFAULT_RADIUS);
+            this.radius = radius;
+            this.radius.setParent(this);
+            this.radius.format(Float.class, "value >=0");
         }
-        this.radius.setParent(this);
     }
 
     @Override
@@ -142,15 +146,6 @@ public class Halo extends StyleNode implements IUom, FillNode {
         ls.add(radius);
         ls.add(fill);
         return ls;
-    }
-
-    /**
-     * Default fill for the halo must be white and 100% opaque.
-     *
-     * @return
-     */
-    private IFill getDefaultFill() {
-        return new SolidFill(Color.WHITE, 1);
     }
 
     @Override

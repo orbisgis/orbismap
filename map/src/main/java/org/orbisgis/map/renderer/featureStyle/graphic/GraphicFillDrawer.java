@@ -40,20 +40,18 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, GraphicFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        if (shape != null) {
-            Paint stipple = getPaint( styleNode, properties, mapTransform);
-            if (stipple != null) {
-                g2.setPaint(stipple);
-                g2.fill(shape);
-            }
+        Paint stipple = getPaint(styleNode, properties, mapTransform);
+        if (stipple != null) {
+            g2.setPaint(stipple);
+            g2.fill(shape);
         }
     }
 
-    public Paint getPaint( GraphicFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint(GraphicFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
         float gX = 0.0f;
         float gY = 0.0f;
         Uom uom = styleNode.getUom();
-        Float gapX =  (Float) styleNode.getGapX().getValue();
+        Float gapX = (Float) styleNode.getGapX().getValue();
         if (gapX != null) {
             gX = gapX;
             if (gX < 0.0) {
@@ -67,21 +65,21 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
                 gY = 0.0f;
             }
         }
-        Graphic graphic = styleNode.getGraphic();        
+        Graphic graphic = styleNode.getGraphic();
         if (graphic != null) {
             if (drawerMap.containsKey(graphic.getClass())) {
                 IGraphicDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                Rectangle2D bounds = graphicDrawer.getBounds( mt, graphic, properties);
+                Rectangle2D bounds = graphicDrawer.getBounds(mt, graphic, properties);
                 gX = UomUtils.toPixel(gX, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getWidth());
                 gY = UomUtils.toPixel(gY, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getHeight());
-                return getPaint( graphicDrawer, properties, mt, graphic, gX, gY, bounds);                
+                return getPaint(graphicDrawer, properties, mt, graphic, gX, gY, bounds);
             }
         }
-        
+
         return null;
     }
-    
-    public static Paint getPaint( IGraphicDrawer graphicDrawer, Map<String,Object> properties,
+
+    public static Paint getPaint(IGraphicDrawer graphicDrawer, Map<String, Object> properties,
             MapTransform mt, Graphic graphic, double gX, double gY, Rectangle2D bounds)
             throws ParameterException, SQLException {
 
@@ -96,23 +94,23 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
             int deltaX = (int) (ref.getX() - Math.ceil(ref.getX() / tWidth) * tWidth);
             int deltaY = (int) (ref.getY() - Math.ceil(ref.getY() / tHeight) * tHeight);
 
-            if(tWidth>0 && tHeight>0){
+            if (tWidth > 0 && tHeight > 0) {
 
-            BufferedImage i = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D tile = i.createGraphics();
-            tile.setRenderingHints(mt.getRenderingHints());
-            int ix;
-            int iy;
-            for (ix = 0; ix < 2; ix++) {
-                for (iy = 0; iy < 2; iy++) {
-                    properties.put("affinetransform", AffineTransform.getTranslateInstance(
-                            -bounds.getMinX() + gX / 2.0 + deltaX + tWidth * ix,
-                            -bounds.getMinY() + gY / 2.0 + deltaY + tHeight * iy));
-                    graphicDrawer.draw(tile,mt, graphic, properties);
+                BufferedImage i = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D tile = i.createGraphics();
+                tile.setRenderingHints(mt.getRenderingHints());
+                int ix;
+                int iy;
+                for (ix = 0; ix < 2; ix++) {
+                    for (iy = 0; iy < 2; iy++) {
+                        properties.put("affinetransform", AffineTransform.getTranslateInstance(
+                                -bounds.getMinX() + gX / 2.0 + deltaX + tWidth * ix,
+                                -bounds.getMinY() + gY / 2.0 + deltaY + tHeight * iy));
+                        graphicDrawer.draw(tile, mt, graphic, properties);
+                    }
                 }
-            }
-            tile.dispose();
-            return new TexturePaint(i, new Rectangle2D.Double(0, 0, i.getWidth(), i.getHeight()));
+                tile.dispose();
+                return new TexturePaint(i, new Rectangle2D.Double(0, 0, i.getWidth(), i.getHeight()));
             }
             return null;
         } else {
@@ -123,15 +121,15 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
     @Override
     public Rectangle2D getBounds(MapTransform mapTransform, GraphicFill styleNode, Map<String, Object> properties) throws ParameterException {
         Graphic graphic = styleNode.getGraphic();
-        if(graphic !=null){
+        if (graphic != null) {
             if (drawerMap.containsKey(graphic.getClass())) {
                 IGraphicDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                return graphicDrawer.getBounds( mapTransform, styleNode, properties);
+                return graphicDrawer.getBounds(mapTransform, styleNode, properties);
             }
         }
         return null;
     }
-    
+
     @Override
     public Shape getShape() {
         return shape;

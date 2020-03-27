@@ -40,25 +40,23 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer> {
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
-        if (shape != null) {
-            List<Shape> shps;
-            //RealParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
-            /*if (perpendicularOffset != null) {
+        List<Shape> shps;
+        //RealParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
+        /*if (perpendicularOffset != null) {
                 Double pOffset = perpendicularOffset.getValue(properties);
                 shps = ShapeHelper.perpendicularOffset(shape, pOffset);
             } else {*/
-            shps = new LinkedList<Shape>();
-            shps.add(shape);
-            //}
+        shps = new LinkedList<Shape>();
+        shps.add(getShape());
+        //}
 
-            Label label = symbolizer.getLabel();
-            if (drawerMap.containsKey(label.getClass())) {
-                properties.put("offset", 0.0);
-                ILabelDrawer labelDrawer = drawerMap.get(label.getClass());
-                for (Shape s : shps) {
-                    labelDrawer.setShape(s);
-                    labelDrawer.draw(g2, mapTransform, label, properties);
-                }
+        Label label = symbolizer.getLabel();
+        if (drawerMap.containsKey(label.getClass())) {
+            properties.put("offset", 0.0);
+            ILabelDrawer labelDrawer = drawerMap.get(label.getClass());
+            for (Shape s : shps) {
+                labelDrawer.setShape(s);
+                labelDrawer.draw(g2, mapTransform, label, properties);
             }
         }
     }

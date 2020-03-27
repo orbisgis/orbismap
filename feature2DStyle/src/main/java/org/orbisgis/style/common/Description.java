@@ -36,6 +36,8 @@ package org.orbisgis.style.common;
 import java.net.URI;
 import java.util.*;
 import org.orbisgis.style.IDescription;
+import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 
 /**
  * This class intends to store a description of a {@code Rule}. It is made of
@@ -60,7 +62,7 @@ import org.orbisgis.style.IDescription;
  * @author Alexis Guéganno
  * @see Keywords
  */
-public class Description implements  IDescription{
+public class Description extends StyleNode implements  IDescription{
 
     private HashMap<Locale, String> titles;
     private HashMap<Locale, String> abstractTexts;
@@ -282,5 +284,10 @@ public class Description implements  IDescription{
     public String getAbstract(Locale locale) {
         return abstractTexts.get(locale);
     }   
+
+    @Override
+    public List<IStyleNode> getChildren() {
+        return new ArrayList<IStyleNode>();
+    }
 
 }

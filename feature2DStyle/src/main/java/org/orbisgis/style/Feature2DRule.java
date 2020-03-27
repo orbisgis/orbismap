@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.parameter.Expression;
+import org.orbisgis.style.parameter.ParameterDomain;
 
 /**
  * Rules are used to group rendering instructions by feature-property conditions and map scales.
@@ -96,9 +97,11 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
      * @param expression
      */
     public void setExpression(Expression expression) {
-        //Still always a function
+        if(expression!=null){
         this.expressionParameter = expression;
-        this.expressionParameter.setDataType(Boolean.class);
+        this.expressionParameter.setParent(this);
+        this.expressionParameter.setParameterDomain(new ParameterDomain(Boolean.class));
+        }
     }
 
 

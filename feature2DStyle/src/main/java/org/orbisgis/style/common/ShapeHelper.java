@@ -36,10 +36,12 @@
  */
 package org.orbisgis.style.common;
 
+import java.awt.BasicStroke;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,38 @@ public final class ShapeHelper {
     private static final boolean ENABLE_QUAD = true;
     private static final double FLATNESS = 1e-5;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShapeHelper.class);
+    public static final double EPSILON = 1e-5;
     
     private ShapeHelper(){
+    }
+    
+    
+    public static Area grow(final Shape s, final double offset) {
+        return grow(s, offset, BasicStroke.JOIN_MITER, 10f);
+    }
+    /**
+     * Expand or shrink a shape in all directions by a defined offset.
+     *
+     * @param s          Shape
+     * @param offset     Offset to expand/shrink
+     * @param join       Method for handling edges (see BasicStroke)
+     * @param miterlimit Limit for miter joining method
+     * @return New shape that is expanded or shrunk by the specified amount
+     */
+    public static Area grow(final Shape s, final double offset, int join,
+            float miterlimit) {
+        Area shape = new Area(s);
+        Stroke stroke = new BasicStroke((float) Math.abs(2.0 * offset),
+                BasicStroke.CAP_SQUARE, join, miterlimit);
+        Area strokeShape = new Area(stroke.createStrokedShape(s));
+
+        if (offset > 0.0) {
+            shape.add(strokeShape);
+        } else {
+            shape.subtract(strokeShape);
+        }
+
+        return shape;
     }
 
     /**

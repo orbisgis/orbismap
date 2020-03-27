@@ -6,6 +6,7 @@
 package org.orbisgis.style;
 
 import org.orbisgis.style.common.Description;
+import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
@@ -22,6 +23,8 @@ public interface IFeatureSymbolizer extends ISymbolizer, Comparable{
     
     void setDescription(Description description);
     
+    ParameterValue getPerpendicularOffset();
     
+    void setPerpendicularOffset(ParameterValue parameterValue);
     
 }

@@ -24,6 +24,7 @@ import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.style.IFill;
+import org.orbisgis.style.factory.StyleFactory;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.label.Label;
@@ -114,7 +115,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
                  * No fill and no stroke : apply default SolidFill !
                  */
                 if (fillDrawer == null && strokeDrawer == null) {
-                    SolidFill sf = new SolidFill(Color.BLACK, 1.0f);
+                    SolidFill sf = StyleFactory.createSolidFill(Color.BLACK);
                     sf.setParent(styleNode);
                     SolidFillDrawer drawer = new SolidFillDrawer();
                     drawer.setShape(outline);

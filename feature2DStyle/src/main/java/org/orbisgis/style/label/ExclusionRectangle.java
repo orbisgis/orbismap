@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,8 +29,7 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.label;
 
@@ -40,34 +37,33 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
- * An {@code ExclusionZone} where the forbidden area is defined as a rectangle. It is 
- * defined thanks to a x and y values. Their meaning is of course dependant of the inner
- * UOM instance.
+ * An {@code ExclusionZone} where the forbidden area is defined as a rectangle.
+ * It is defined thanks to a x and y values. Their meaning is of course
+ * dependant of the inner UOM instance.
+ *
  * @author Alexis Guéganno, Maxence Laurent
  */
-public  class ExclusionRectangle extends ExclusionZone {
+public class ExclusionRectangle extends ExclusionZone {
 
-    private ParameterValue x;
-    private ParameterValue y;
+    private ParameterValue x = new NullParameterValue();
+    private ParameterValue y = new NullParameterValue();
 
     /**
-     * Build a {@code ExclusionZone} with default width and length set to 3. 
+     * Build a {@code ExclusionZone} with default width and length set to 3.
      */
-    public ExclusionRectangle(){
-        this.setX(new Literal(3));
-        this.setY(new Literal(3));
+    public ExclusionRectangle() {
+        this.setX(new Literal(3f));
+        this.setY(new Literal(3f));
     }
-
-    
 
     /**
      * Get the x-length of the rectangle.
-     * @return 
-     * the x-length as a {@code RealParameter} 
+     *
+     * @return the x-length as a {@code RealParameter}
      */
     public ParameterValue getX() {
         return x;
@@ -75,20 +71,24 @@ public  class ExclusionRectangle extends ExclusionZone {
 
     /**
      * Set the x-length of the rectangle.
-     * @param x 
+     *
+     * @param x
      */
     public void setX(ParameterValue x) {
-        ParameterValueHelper.validateAsFloat(x);
-        this.x = x;
-        if (x != null){
-            x.setParent(this);
+        if (x == null) {
+            this.x = new NullParameterValue();
+            this.x = x;
+        } else {
+            this.x = x;
+            this.x.setParent(this);
+            this.x.format(Float.class, "value>=0");
         }
     }
 
     /**
      * Get the y-length of the rectangle.
-     * @return 
-     * the y-length as a {@code RealParameter} 
+     *
+     * @return the y-length as a {@code RealParameter}
      */
     public ParameterValue getY() {
         return y;
@@ -96,24 +96,28 @@ public  class ExclusionRectangle extends ExclusionZone {
 
     /**
      * Set the y-length of the rectangle.
+     *
      * @param y
      */
-    public void setY(ParameterValue y) {        
-        ParameterValueHelper.validateAsFloat(y);
-        this.y = y;
-        if (this.y != null){
-            y.setParent(this);
+    public void setY(ParameterValue y) {
+        if (y == null) {
+            this.y = new NullParameterValue();
+            this.y.setParent(this);
+        } else {
+            this.y = y;
+            this.y.setParent(this);
+            this.y.format(Float.class, "value>=0");
         }
-    }    
+    }
 
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (x != null) {
-                ls.add(x);
+            ls.add(x);
         }
         if (y != null) {
-                ls.add(y);
+            ls.add(y);
         }
         return ls;
     }

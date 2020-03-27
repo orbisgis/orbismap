@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,15 +29,11 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.graphic;
 
-
 import org.orbisgis.style.fill.Halo;
-import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Transform;
 
@@ -52,24 +46,26 @@ import org.orbisgis.style.IUom;
 import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.ViewBoxNode;
-import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.TransformParameter;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
- * A {@code MarkGraphic} is created by stroking and filling a geometry line or shape.
- * It is built using the following parameters :
- * <ul><li>A definition of the contained graphic, that can be exclusively of one of these types :
- *      <ul><li> WellKnownText : as defined in {@link WellKnownName}.</li>
+ * A {@code MarkGraphic} is created by stroking and filling a geometry line or
+ * shape. It is built using the following parameters :
+ * <ul><li>A definition of the contained graphic, that can be exclusively of one
+ * of these types :
+ * <ul><li> WellKnownText : as defined in {@link WellKnownName}.</li>
  * <li>A unit of measure</li>
  * <li>A viewbox, as described in {@link ViewBox}</li>
- * <li>A {@link Transform}, that describes an affine transformation that must be applied on the mark.</li>
+ * <li>A {@link Transform}, that describes an affine transformation that must be
+ * applied on the mark.</li>
  * <li>A {@link Halo}</li>
  * <li>A {@link Fill}</li>
  * <li>A {@link Stroke}</li>
  * <li>A perpendicular offset</li>
  * </ul>
+ *
  * @author Maxence Laurent
  * @author Alexis Guéganno
  * @author Erwan Bocher, CNRS
@@ -77,46 +73,31 @@ import org.orbisgis.style.utils.ParameterValueHelper;
 public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         ViewBoxNode, IUom, TransformNode {
 
-        /**
-         * The default size used to build {@code MarkGraphic} instances.
-         */
+    /**
+     * The default size used to build {@code MarkGraphic} instances.
+     */
     public static float DEFAULT_SIZE = 3;
     //private MarkGraphicSource source;
     private Uom uom;
     private TransformParameter transform;
     private ParameterValue wkn;
     private ViewBox viewBox;
-    private ParameterValue perpendicularOffset;
     private Halo halo;
     private IFill fill;
     private Stroke stroke;
 
     /**
-     * Build a default {@code MarkGraphic}. It is built using the {@link WellKnownName#CIRCLE}
-     * value. The mark will be rendered using default solid fill and pen stroke. The 
-     * associated unit of measure is {@link Uom#MM}, and it has the {@link #DEFAULT_SIZE}.
+     * Build an empty MarkGraphic
      */
     public MarkGraphic() {
-        this.setTo3mmCircle();
     }
 
-    /**
-     * Transform this {@code MarkGraphic} in default one, as described in the default constructor.
-     */
-    public void setTo3mmCircle() {
-        this.setUom(Uom.MM);
-        this.setWkn(new Literal("'circle'"));
-        this.setViewBox(new ViewBox(new Literal(DEFAULT_SIZE), new Literal(DEFAULT_SIZE)));
-        this.setFill(new SolidFill());
-        this.setStroke(new PenStroke());
-    }
-    
     @Override
     public Uom getUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof IUom){
-            return ((IUom)getParent()).getUom();
+        } else if (getParent() instanceof IUom) {
+            return ((IUom) getParent()).getUom();
         } else {
             return Uom.PX;
         }
@@ -139,9 +120,11 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
 
     @Override
     public void setTransform(TransformParameter transform) {
-        this.transform = transform;
-        if (transform != null) {
-            transform.setParent(this);
+        if (transform == null) {
+
+        } else {
+            this.transform = transform;
+            this.transform.setParent(this);
         }
     }
 
@@ -153,13 +136,14 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     @Override
     public void setFill(IFill fill) {
         this.fill = fill;
-        if (fill != null) {
-            fill.setParent(this);
+        if (this.fill != null) {
+            this.fill.setParent(this);
         }
     }
 
     /**
      * Get the {@link Halo} defined around this {@code MarkGraphic}.
+     *
      * @return The Halo drawn around the symbol
      */
     public Halo getHalo() {
@@ -168,12 +152,13 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
 
     /**
      * Set the {@link Halo} defined around this {@code MarkGraphic}.
+     *
      * @param halo The new halo to draw around the symbol.
      */
     public void setHalo(Halo halo) {
         this.halo = halo;
-        if (halo != null) {
-            halo.setParent(this);
+        if (this.halo != null) {
+            this.halo.setParent(this);
         }
     }
 
@@ -185,8 +170,8 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     @Override
     public void setStroke(Stroke stroke) {
         this.stroke = stroke;
-        if (stroke != null) {
-            stroke.setParent(this);
+        if (this.stroke != null) {
+            this.stroke.setParent(this);
         }
     }
 
@@ -197,36 +182,15 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
 
     @Override
     public void setViewBox(ViewBox viewBox) {
-        if (viewBox == null) {
-            viewBox = new ViewBox();
-        }
-        else{
         this.viewBox = viewBox;
-        viewBox.setParent(this);
+        if (this.viewBox != null) {
+            this.viewBox.setParent(this);
         }
     }
-    
-    /**
-     * Get the perpendicular offset applied to this {@code MarkGraphic} before rendering.
-     * @return The perpendicular offset
-     */
-    public ParameterValue getPerpendicularOffset() {
-        return perpendicularOffset;
-    }
 
-    /**
-     * Set the perpendicular offset applied to this {@code MarkGraphic} before rendering.
-     * @param perpendicularOffset The perpendicular offset
-     */
-    public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
-        ParameterValueHelper.validateAsDouble(perpendicularOffset);
-        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
-        this.perpendicularOffset.setParent(this);       
-    }
-
-    
     /**
      * Gets the WellKnownName defining this {@code MarkGraphic}.
+     *
      * @return the well-known name currently used, as a StringParameter.
      */
     public ParameterValue getWkn() {
@@ -235,42 +199,42 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
 
     /**
      * Sets the WellKnownName defining this {@code MarkGraphic}.
+     *
      * @param wkn The new well-known name to use, as a StringParameter.
      */
     public void setWkn(ParameterValue wkn) {
-        ParameterValueHelper.validateAsString(wkn);
-        this.wkn = wkn;        
-        if (this.wkn != null) {
+        if (wkn == null) {
+            this.wkn = new NullParameterValue();
             this.wkn.setParent(this);
+        } else {
+            this.wkn = wkn;
+            this.wkn.setParent(this);
+            this.wkn.format(String.class);
         }
-    }   
+    }
 
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
         if (wkn != null) {
-            ls .add(wkn);
+            ls.add(wkn);
         }
         if (viewBox != null) {
-            ls .add(viewBox);
-        }
-        if (perpendicularOffset != null) {
-            ls .add(perpendicularOffset);
+            ls.add(viewBox);
         }
         if (halo != null) {
-            ls .add(halo);
+            ls.add(halo);
         }
         if (fill != null) {
-            ls .add(fill);
+            ls.add(fill);
         }
         if (stroke != null) {
-            ls .add(stroke);
+            ls.add(stroke);
         }
         if (transform != null) {
-            ls .add(transform);
+            ls.add(transform);
         }
         return ls;
     }
 
-    
 }

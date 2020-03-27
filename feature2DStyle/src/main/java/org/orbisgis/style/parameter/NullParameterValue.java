@@ -7,20 +7,14 @@ package org.orbisgis.style.parameter;
 
 /**
  *
- * @author ebocher
+ * @author Erwan Bocher
  */
 public class NullParameterValue  extends ParameterValue{
 
-
-    @Override
-    public void setDataType(Class dataType) {
-        throw new UnsupportedOperationException("Not supported");
+    public NullParameterValue() {
+        super(null, null);
     }
-
-    @Override
-    public Class getDataType() {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
+    
 
     @Override
     public Object getValue() {
@@ -29,7 +23,18 @@ public class NullParameterValue  extends ParameterValue{
 
     @Override
     public void setValue(Object value) {
-        throw new UnsupportedOperationException("Not supported yet");
+         //Nothing to do
+    }
+   
+
+    @Override
+    public void setParameterDomain(IParameterDomain parameterDomain) {
+         //Nothing to do
+    }
+
+    @Override
+    public void format(Class dataType, String domainExpression) {
+        //Nothing to do
     }
     
 }

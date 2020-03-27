@@ -81,24 +81,7 @@ public abstract class Stroke extends StyleNode implements IUom {
         this.linearRapport = lengthRapport;
     }
 
-    /**
-     * When delineating a line with a perpendicular offset, indicate whether or not
-     * stroke element shall following the initial line (rapport=true) or should only
-     * be based on the offseted line (rapport=false);
-     *
-     * @return true if offseted element shall follow initial line
-     */
-    public boolean isOffsetRapport() {
-        return offsetRapport;
-    }
-
-    /**
-     * Determines if we want to use an offset rapport or not.
-     * @param offsetRapport
-     */
-    public void setOffsetRapport(boolean offsetRapport) {
-        this.offsetRapport = offsetRapport;
-    }
+    
     
 
     @Override

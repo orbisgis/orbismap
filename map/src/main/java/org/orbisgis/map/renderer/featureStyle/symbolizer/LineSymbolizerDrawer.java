@@ -14,10 +14,12 @@ import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
+import org.orbisgis.map.renderer.featureStyle.stroke.GraphicStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.stroke.GraphicStroke;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 
@@ -31,32 +33,31 @@ public class LineSymbolizerDrawer implements ISymbolizerDraw<LineSymbolizer> {
 
     static {
         drawerMap.put(PenStroke.class, new PenStrokeDrawer());
+        drawerMap.put(GraphicStroke.class, new GraphicStrokeDrawer());
     }
     private Shape shape;    
     private BufferedImage bi;
     private Graphics2D g2_bi;
 
     @Override
-    public void draw( Graphics2D g2, MapTransform mapTransform, LineSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, LineSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
 
         Stroke stroke = symbolizer.getStroke();
         if (stroke != null) {
             Uom uom = symbolizer.getUom();
-            Shape shp = getShape();
             double offset = 0.0;
             /*ExpressionParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
             if (perpendicularOffset != null) {
                 offset = UomUtils.toPixel(perpendicularOffset.getValue(rs, fid),
                         getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
             }*/
-            if (shp != null) {
-                properties.put("offset", offset);
-                if (drawerMap.containsKey(stroke.getClass())) {
-                    IStyleDrawer drawer = drawerMap.get(stroke.getClass());
-                    drawer.setShape(shape);
-                    drawer.draw( g2, mapTransform, stroke, properties);
-                }
+            properties.put("offset", offset);
+            if (drawerMap.containsKey(stroke.getClass())) {
+                IStyleDrawer drawer = drawerMap.get(stroke.getClass());
+                drawer.setShape(getShape());
+                drawer.draw(g2, mapTransform, stroke, properties);
             }
+
         }
     }
     

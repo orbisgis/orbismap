@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,8 +29,7 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.label;
 
@@ -50,11 +47,12 @@ import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
 /**
- * This class embed all the informations needed to represent text of any kind on a map.
- * A <code>StyledText</code> is defined with several values :
+ * This class embed all the informations needed to represent text of any kind on
+ * a map. A <code>StyledText</code> is defined with several values :
  * <ul><li>A text value</li>
  * <li>A font</li>
  * <li>A weight (Normal or Bold)</li>
@@ -62,69 +60,74 @@ import org.orbisgis.style.parameter.ParameterValue;
  * <li>A size</li>
  * <li>A stroke</li></ul>
  * Color and opacity of the text are defined using a <code>Fill</code> instance
+ *
  * @author Maxence Laurent, Alexis Guéganno
  */
-public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
-    private ParameterValue text;
-    private ParameterValue fontFamily;
-    private ParameterValue fontWeight;
-    private ParameterValue fontStyle;
-    private ParameterValue fontSize;
+public class StyledText extends StyleNode implements IUom, FillNode, StrokeNode {
+
+    private ParameterValue text = new NullParameterValue();
+    private ParameterValue fontFamily = new NullParameterValue();
+    private ParameterValue fontWeight = new NullParameterValue();
+    private ParameterValue fontStyle = new NullParameterValue();
+    private ParameterValue fontSize = new NullParameterValue();
     private Stroke stroke;
     private IFill fill;
     private Halo halo;
     private Uom uom;
 
     /**
-     * Fill a new StyledText with default values. Inner text is <code>Label</code>,
-     * it will be displayed in Arial, with a normal weight, a normal style, a 12 font size.
-     * It is displayed in black, and completely opaque.
+     * Fill a new StyledText with default values. Inner text is
+     * <code>Label</code>, it will be displayed in Arial, with a normal weight,
+     * a normal style, a 12 font size. It is displayed in black, and completely
+     * opaque.
      */
     public StyledText() {
         this("Label");
     }
 
-    
     /**
-     * Fill a new <code>StyledText</code> with the given text value and default values. The text 
-     * will be displayed in Arial, with a normal weight, a normal style, a 12 font size.
-     * It is displayed in black, and completely opaque.
-     * @param label 
+     * Fill a new <code>StyledText</code> with the given text value and default
+     * values. The text will be displayed in Arial, with a normal weight, a
+     * normal style, a 12 font size. It is displayed in black, and completely
+     * opaque.
+     *
+     * @param label
      */
     public StyledText(String label) {
         setText(new Literal(label));
         setFontFamily(new Literal("Arial"));
         setFontWeight(new Literal("Normal"));
         setFontStyle(new Literal("Normal"));
-        setFontSize(new Literal(12));
+        setFontSize(new Literal(12f));
         setUom(Uom.PT);
 
         SolidFill f = new SolidFill();
-        f.setOpacity(new Literal(1.0));
+        f.setOpacity(new Literal(1.0f));
         f.setColor(ParameterValueHelper.toExpression(Color.black));
 
         this.setFill(f);
-    }    
+    }
 
     /**
-     * Tries to retrieve the UOM of the font if any. If non can be found, return the UOM
-     * of the parent node.
+     * Tries to retrieve the UOM of the font if any. If non can be found, return
+     * the UOM of the parent node.
+     *
      * @return
      */
     public Uom getFontUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof IUom){
-            return ((IUom)getParent()).getUom();
+        } else if (getParent() instanceof IUom) {
+            return ((IUom) getParent()).getUom();
         } else {
-                return Uom.PX;
+            return Uom.PX;
         }
     }
 
     @Override
     public Uom getUom() {
         // Note: this.uom only affect font size
-        return ((IUom)getParent()).getUom();
+        return ((IUom) getParent()).getUom();
     }
 
     @Override
@@ -152,8 +155,8 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Return the halo associated to this <code>StyledText</code>.
-     * @return 
-     * A <code>Halo</code> instance, or null if it has not been set.
+     *
+     * @return A <code>Halo</code> instance, or null if it has not been set.
      */
     public Halo getHalo() {
         return halo;
@@ -161,7 +164,8 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Set the halo associated to this <code>StyledText</code>
-     * @param halo 
+     *
+     * @param halo
      */
     public void setHalo(Halo halo) {
         this.halo = halo;
@@ -172,7 +176,9 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Get the text contained in this <code>StyledText</code>
-     * @return the text contained in this <code>StyledText</code> as a <code>StringParameter</code> instance.
+     *
+     * @return the text contained in this <code>StyledText</code> as a
+     * <code>StringParameter</code> instance.
      */
     public ParameterValue getText() {
         return text;
@@ -180,13 +186,17 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Set the text contained in this <code>StyledText</code>
-     * @param text 
+     *
+     * @param text
      */
     public void setText(ParameterValue text) {
-        if (text != null) {
-            ParameterValueHelper.validateAsString(text);
+        if (text == null) {
+            this.text = new NullParameterValue();
+            this.text.setParent(this);
+        } else {
             this.text = text;
             this.text.setParent(this);
+            this.text.format(String.class);
         }
     }
 
@@ -205,8 +215,8 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Get the font family used to represent this <code>StyledText</code>
-     * @return 
-     * The fontFamily as a <code>StringParameter</code>
+     *
+     * @return The fontFamily as a <code>StringParameter</code>
      */
     public ParameterValue getFontFamily() {
         return fontFamily;
@@ -214,20 +224,24 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Set the font family used to represent this <code>StyledText</code>
-     * @param fontFamily 
+     *
+     * @param fontFamily
      */
     public void setFontFamily(ParameterValue fontFamily) {
-        if (fontFamily != null) {
-            ParameterValueHelper.validateAsString(fontFamily);
+        if (fontFamily == null) {
+            this.fontFamily = new NullParameterValue();
+            this.fontFamily.setParent(this);
+        } else {
             this.fontFamily = fontFamily;
             this.fontFamily.setParent(this);
+            this.fontFamily.format(String.class);
         }
     }
 
     /**
      * Get the font size used to represent this <code>StyledText</code>
-     * @return 
-     * The font size as a <code>RealParameter</code>
+     *
+     * @return The font size as a <code>RealParameter</code>
      */
     public ParameterValue getFontSize() {
         return fontSize;
@@ -235,20 +249,24 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Set the font size used to represent this <code>StyledText</code>
+     *
      * @param fontSize The new font's size
      */
     public void setFontSize(ParameterValue fontSize) {
-        ParameterValueHelper.validateAsFloat(fontSize);
-        this.fontSize = fontSize;
-        if (this.fontSize != null) {
+        if (fontSize == null) {
+            this.fontSize = new NullParameterValue();
             this.fontSize.setParent(this);
+        } else {
+            this.fontSize = fontSize;
+            this.fontSize.setParent(this);
+            this.fontSize.format(Float.class, "value >0");
         }
     }
 
     /**
      * Get the font style used to represent this <code>StyledText</code>
-     * @return 
-     * The font style as a <code>StringParameter</code>
+     *
+     * @return The font style as a <code>StringParameter</code>
      */
     public ParameterValue getFontStyle() {
         return fontStyle;
@@ -256,20 +274,24 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Set the font style used to represent this <code>StyledText</code>
+     *
      * @param fontStyle The new font's style
      */
     public void setFontStyle(ParameterValue fontStyle) {
-        if (fontStyle != null) {
-            ParameterValueHelper.validateAsString(fontStyle);
+        if (fontStyle == null) {
+            this.fontStyle = new NullParameterValue();
+            this.fontStyle.setParent(this);
+        } else {
             this.fontStyle = fontStyle;
             this.fontStyle.setParent(this);
+            this.fontStyle.format(String.class);
         }
     }
 
     /**
      * Get the font weight used to represent this <code>StyledText</code>
-     * @return 
-     * The font weight as a <code>StringParameter</code>
+     *
+     * @return The font weight as a <code>StringParameter</code>
      */
     public ParameterValue getFontWeight() {
         return fontWeight;
@@ -277,16 +299,19 @@ public  class StyledText extends StyleNode implements IUom, FillNode, StrokeNode
 
     /**
      * Set the font weight used to represent this <code>StyledText</code>
+     *
      * @param fontWeight The new font's weight
      */
     public void setFontWeight(ParameterValue fontWeight) {
-        if (fontWeight != null) {
-            ParameterValueHelper.validateAsString(fontWeight);
-            this.fontWeight = fontWeight;            
+        if (fontWeight == null) {
+            this.fontWeight = new NullParameterValue();
             this.fontWeight.setParent(this);
+        } else {
+            this.fontWeight = fontWeight;
+            this.fontWeight.setParent(this);
+            this.fontWeight.format(String.class);
         }
     }
-    
 
     @Override
     public java.util.List<IStyleNode> getChildren() {

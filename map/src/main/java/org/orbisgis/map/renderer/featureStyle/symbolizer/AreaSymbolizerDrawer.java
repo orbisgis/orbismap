@@ -39,54 +39,50 @@ import org.orbisgis.style.stroke.Stroke;
 public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
 
     final static Map<Class, IStyleDrawer> drawerMap = new HashMap<>();
+
     static {
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
         drawerMap.put(PenStroke.class, new PenStrokeDrawer());
         drawerMap.put(HatchedFill.class, new HatchedFillDrawer());
         drawerMap.put(DotMapFill.class, new DotMapFillDrawer());
-        drawerMap.put(DensityFill.class, new DensityFillDrawer());        
-        drawerMap.put(GraphicFill.class, new GraphicFillDrawer());
+        drawerMap.put(DensityFill.class, new DensityFillDrawer());
+        drawerMap.put(GraphicFill.class, new GraphicFillDrawer());    
     }
     private Shape shape;
     private BufferedImage bi;
     private Graphics2D g2_bi;
-    
+
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, AreaSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
         Uom uom = symbolizer.getUom();
-        Shape shp = getShape();
         if (symbolizer.getTranslate() != null) {
-           // TODO : shp = AffineTransformUtils.getAffineTranslate(symbolizer.getTranslate(), uom,properties, mapTransform,
-             //       (double) mapTransform.getWidth(), (double) mapTransform.getHeight()).createTransformedShape(shp);
+            // TODO : shp = AffineTransformUtils.getAffineTranslate(symbolizer.getTranslate(), uom,properties, mapTransform,
+            //       (double) mapTransform.getWidth(), (double) mapTransform.getHeight()).createTransformedShape(shp);
         }
-        if (shp != null) {
-            IFill fill = symbolizer.getFill();
-            if (fill != null) {
-                if(drawerMap.containsKey(fill.getClass())){        
-                    IStyleDrawer drawer = drawerMap.get(fill.getClass());
-                    drawer.setShape(shp);
-                    drawer.draw( g2, mapTransform, fill, properties);           
-                }
-            }           
-            
-            Stroke stroke = symbolizer.getStroke();
-            if (stroke != null) {
-                double offset = 0.0;
-                //TODO : build the shape before
-                Double perpendicularOffset = (Double) symbolizer.getPerpendicularOffset().getValue();
-                /*(perpendicularOffset != null) {
-                    offset = Uom.toPixel(perpendicularOffset.getValue(rs, fid),
-                            uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
-                }*/
-                properties.put("offset", offset);
-                if (drawerMap.containsKey(stroke.getClass())) {
-                    IStyleDrawer drawer = drawerMap.get(stroke.getClass());
-                    drawer.setShape(shp);
-                    drawer.draw( g2, mapTransform, stroke, properties);
-                }
+        double offset = 0.0;
+        /*Double perpendicularOffset = (Double) symbolizer.getPerpendicularOffset().getValue();
+        if (perpendicularOffset != null && Math.abs(perpendicularOffset) > 0) {
+            offset = UomUtils.toPixel(perpendicularOffset.floatValue(),
+                    uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
+        }*/
+
+        IFill fill = symbolizer.getFill();
+        if (fill != null) {
+            if (drawerMap.containsKey(fill.getClass())) {
+                IStyleDrawer drawer = drawerMap.get(fill.getClass());
+                drawer.setShape(getShape());
+                drawer.draw(g2, mapTransform, fill, properties);
             }
-            
-            
+        }
+
+        Stroke stroke = symbolizer.getStroke();
+        if (stroke != null) {
+            properties.put("offset", offset);
+            if (drawerMap.containsKey(stroke.getClass())) {
+                IStyleDrawer drawer = drawerMap.get(stroke.getClass());
+                drawer.setShape(getShape());
+                drawer.draw(g2, mapTransform, stroke, properties);
+            }
         }
 
     }
@@ -103,18 +99,18 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
 
     @Override
     public void setBufferedImage(BufferedImage bufferedImage) {
-      this.bi=bufferedImage;
+        this.bi = bufferedImage;
     }
 
     @Override
     public BufferedImage getBufferedImage() {
-     return bi;
+        return bi;
     }
 
     @Override
     public void setGraphics2D(Graphics2D g2) {
-        this.g2_bi=g2;
-   }
+        this.g2_bi = g2;
+    }
 
     @Override
     public Graphics2D getGraphics2D() {
@@ -126,12 +122,10 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
         //The g2 can be null when the Graphics2D has been already disposed.
         if (g2_bi != null) {
             g2_bi.dispose();
-            g2_bi = null;            
+            g2_bi = null;
             g2.drawImage(bi, 0, 0, null);
-            bi=null;
+            bi = null;
         }
     }
 
-    
-    
 }

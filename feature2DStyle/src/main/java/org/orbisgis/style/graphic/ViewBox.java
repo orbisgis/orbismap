@@ -39,7 +39,6 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * {@code ViewBox} supplies a simple and convenient method to change the view
@@ -61,15 +60,13 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  */
 public class ViewBox extends StyleNode {
 
-    private ParameterValue x;
-    private ParameterValue y;
+    private ParameterValue width = new NullParameterValue();
+    private ParameterValue height = new NullParameterValue();
 
     /**
      * Build a new {@code ViewBox}, with empty parameters.
      */
     public ViewBox() {
-        setWidth(new NullParameterValue());
-        setHeight(new NullParameterValue());
     }
 
     /**
@@ -95,10 +92,13 @@ public class ViewBox extends StyleNode {
      * @param width
      */
     public void setWidth(ParameterValue width) {
-        ParameterValueHelper.validateAsFloat(width);
-        x = width;
-        if (x != null) {
-            x.setParent(this);
+        if (width == null) {
+            this.width = new NullParameterValue();
+            this.width.setParent(this);
+        } else {
+            this.width = width;
+            this.width.setParent(this);
+            this.width.format(Float.class, "value>=0");
         }
     }
 
@@ -108,7 +108,7 @@ public class ViewBox extends StyleNode {
      * @return
      */
     public ParameterValue getWidth() {
-        return x == null ? y : x;
+        return width.getValue() == null ? height : width;
     }
 
     /**
@@ -117,10 +117,13 @@ public class ViewBox extends StyleNode {
      * @param height
      */
     public void setHeight(ParameterValue height) {
-        ParameterValueHelper.validateAsFloat(height);
-        y = height;
-        if (y != null) {
-            y.setParent(this);
+        if (height == null) {
+            this.height = new NullParameterValue();
+            this.height.setParent(this);
+        } else {
+            this.height = height;
+            this.height.setParent(this);
+            this.height.format(Float.class, "value>=0");
         }
     }
 
@@ -130,7 +133,7 @@ public class ViewBox extends StyleNode {
      * @return
      */
     public ParameterValue getHeight() {
-        return y == null ? x : y;
+        return height.getValue() == null ? width : height;
     }
 
     /**
@@ -141,11 +144,11 @@ public class ViewBox extends StyleNode {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("ViewBox:");
-        if (this.x != null) {
-            result.append("  Width: ").append(x.toString());
+        if (this.width != null) {
+            result.append("  Width: ").append(width.toString());
         }
-        if (this.y != null) {
-            result.append("  Height: ").append(y.toString());
+        if (this.height != null) {
+            result.append("  Height: ").append(height.toString());
         }
         return result.toString();
     }
@@ -153,11 +156,11 @@ public class ViewBox extends StyleNode {
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
-        if (y != null) {
-            ls.add(y);
+        if (height != null) {
+            ls.add(height);
         }
-        if (x != null) {
-            ls.add(x);
+        if (width != null) {
+            ls.add(width);
         }
         return ls;
     }

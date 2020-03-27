@@ -42,10 +42,9 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.Description;
-import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * {@code TextSymbolizer} instances are used to style text labels. In addition
@@ -60,10 +59,9 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  */
 public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
 
-    private ParameterValue perpendicularOffset;
+    private ParameterValue perpendicularOffset = new NullParameterValue();
     private Label label;
-
-    private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
+    private GeometryParameter geometryExpression;
     private String name;
     private Description description = new Description();
     private int level =0;
@@ -77,11 +75,9 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
      */
     public TextSymbolizer() {
         super();
-        setName("Label");
-        setLabel(new PointLabel());
         this.name = DEFAULT_NAME;
         this.level = 0;
-        this.uom = Uom.MM;
+        this.uom = Uom.MM;        
     }
     
     @Override
@@ -92,6 +88,9 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
     @Override
     public void setGeometryParameter(GeometryParameter geometryExpression) {
         this.geometryExpression = geometryExpression;
+        if(this.geometryExpression!=null){
+            this.geometryExpression.setParent(this);
+        }
     }
 
     /**
@@ -120,6 +119,7 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
      * @return The current perpendicular offset as a {@code RealParameter}. If
      * null, the offset is considered to be equal to {@code 0}.
      */
+    @Override
     public ParameterValue getPerpendicularOffset() {
         return perpendicularOffset;
     }
@@ -129,10 +129,16 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
      *
      * @param perpendicularOffset
      */
+    @Override
     public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
-        ParameterValueHelper.validateAsDouble(perpendicularOffset);
-        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
-        this.perpendicularOffset.setParent(this); 
+       if (perpendicularOffset == null) {
+            this.perpendicularOffset = new NullParameterValue();
+            this.perpendicularOffset.setParent(this);
+        } else {
+            this.perpendicularOffset = perpendicularOffset;
+            this.perpendicularOffset.setParent(this);
+            this.perpendicularOffset.format(Double.class);
+        }
     }
 
     @Override
@@ -192,6 +198,9 @@ public  class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
     @Override
     public void setDescription(Description description) {
         this.description = description;
+        if(this.description!=null){
+            this.description.setParent(this);
+        }
     }
 
     @Override

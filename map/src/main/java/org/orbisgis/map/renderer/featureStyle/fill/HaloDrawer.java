@@ -44,7 +44,6 @@ public class HaloDrawer implements IFillDrawer<Halo> {
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, Halo styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        Shape shape = (Shape) properties.get("shape");
         AffineTransform at = (AffineTransform) properties.get("affinetransform");
         if (shape != null) {
             IFill fill = styleNode.getFill();

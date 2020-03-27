@@ -42,12 +42,11 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
-import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code LineSymbolizer} is used to style a {@code Stroke} along a linear
@@ -65,24 +64,24 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  * @author Alexis Guéganno, CNRS
  * @author Maxence Laurent, HEIG-VD
  */
-public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode, IFeatureSymbolizer, UomNode {
+public class LineSymbolizer extends StyleNode implements Comparable, StrokeNode, IFeatureSymbolizer, UomNode {
 
-    private ParameterValue perpendicularOffset;
+    private ParameterValue perpendicularOffset = new NullParameterValue();
     private Stroke stroke;
-    private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
+    private GeometryParameter geometryExpression;
     private String name;
     private Description description = new Description();
-    private int level =0;
-    public static final String DEFAULT_NAME = "Line symbolizer";
+    private int level = 0;
+    public static final String DEFAULT_NAME = "LineSymbolizer";
     private Uom uom;
 
     /**
      * Instantiate a new default {@code LineSymbolizer}. It's named {@code
      * Line Symbolizer"}, is defined in {@link Uom#MM}, and is drawn using a
-     * default {@link PenStroke}
+     * standard {@link PenStroke}
      */
     public LineSymbolizer() {
-        setStroke(new PenStroke());
+        super();
         this.name = DEFAULT_NAME;
         this.level = 0;
         this.uom = Uom.PX;
@@ -96,6 +95,9 @@ public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode
     @Override
     public void setGeometryParameter(GeometryParameter geometryExpression) {
         this.geometryExpression = geometryExpression;
+        if (this.geometryExpression != null) {
+            this.geometryExpression.setParent(this);
+        }
     }
 
     @Override
@@ -106,7 +108,9 @@ public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode
     @Override
     public void setStroke(Stroke stroke) {
         this.stroke = stroke;
-        stroke.setParent(this);
+        if (this.stroke != null) {
+            this.stroke.setParent(this);
+        }
     }
 
     /**
@@ -114,6 +118,7 @@ public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode
      *
      * @return
      */
+    @Override
     public ParameterValue getPerpendicularOffset() {
         return perpendicularOffset;
     }
@@ -124,12 +129,18 @@ public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode
      *
      * @param perpendicularOffset
      */
+    @Override
     public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
-        ParameterValueHelper.validateAsDouble(perpendicularOffset);
-        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
-        this.perpendicularOffset.setParent(this);        
+       if (perpendicularOffset == null) {
+            this.perpendicularOffset = new NullParameterValue();
+            this.perpendicularOffset.setParent(this);
+        } else {
+            this.perpendicularOffset = perpendicularOffset;
+            this.perpendicularOffset.setParent(this);
+            this.perpendicularOffset.format(Double.class);
+        }
     }
-    
+
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
@@ -187,6 +198,9 @@ public  class LineSymbolizer extends StyleNode implements Comparable, StrokeNode
     @Override
     public void setDescription(Description description) {
         this.description = description;
+        if (this.description != null) {
+            this.description.setParent(this);
+        }
     }
 
     @Override

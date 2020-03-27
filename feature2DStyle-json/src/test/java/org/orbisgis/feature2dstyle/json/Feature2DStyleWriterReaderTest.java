@@ -5,6 +5,7 @@
  */
 package org.orbisgis.feature2dstyle.json;
 
+import java.awt.Color;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.orbisgis.style.Feature2DStyle;
@@ -28,13 +29,12 @@ public class Feature2DStyleWriterReaderTest {
     @Test
     public void writeReadLineSymbolizer(TestInfo testInfo) throws Exception {      
         writeReadTest(testInfo.getDisplayName(), StyleFactory.createLineSymbolizer());
-    }
-    
+    }    
     
     
      @Test
     public void writeReadAreaSymbolizer(TestInfo testInfo) throws Exception {      
-        writeReadTest(testInfo.getDisplayName(), StyleFactory.createAreaSymbolizer());
+        writeReadTest(testInfo.getDisplayName(), StyleFactory.createAreaSymbolizer(Color.yellow, 1));
     }
     
     public static void writeReadTest(String testName, Feature2DStyle inputStyle) throws Exception{

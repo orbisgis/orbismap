@@ -33,7 +33,6 @@
  */
 package org.orbisgis.style.fill;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IFill;
@@ -41,19 +40,18 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
-import org.orbisgis.style.parameter.Literal;
 
 /**
  * A solid fill fills a shape with a solid color (+opacity)
  *
  * @author Maxence Laurent
  */
-public  class SolidFill extends StyleNode implements IFill , UomNode {
+public class SolidFill extends StyleNode implements IFill, UomNode {
 
-    private ParameterValue color;
-    private ParameterValue opacity;
+    private ParameterValue color = new NullParameterValue();
+    private ParameterValue opacity= new NullParameterValue();
 
     /**
      * Default value for opacity : {@value SolidFill#DEFAULT_OPACITY}
@@ -68,33 +66,13 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      * Default colour value as an int :
      */
     public static final int GRAY50_INT = 128;
-    
+
     private Uom uom = Uom.PX;
 
     /**
      * Fill with random color and default opacity.
      */
     public SolidFill() {
-        this(ParameterValueHelper.randomColor(), ParameterValueHelper.createFloatLiteral(1f));
-    }
-
-    /**
-     * Fill with specified color and default opacity
-     *
-     * @param c
-     */
-    public SolidFill(Color c) {
-        this(ParameterValueHelper.toExpression(c), ParameterValueHelper.createFloatLiteral(1f));
-    }
-
-    /**
-     * Fill with specified color and opacity
-     *
-     * @param c
-     * @param opacity
-     */
-    public SolidFill(Color c, float opacity) {
-        this(ParameterValueHelper.toExpression(c), ParameterValueHelper.createFloatLiteral(opacity));
     }
 
     /**
@@ -113,11 +91,14 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      *
      * @param color
      */
-    public void setColor(ParameterValue color) {        
-        ParameterValueHelper.validateAsString(color);
-        this.color = color;
-        if (this.color != null) {
+    public void setColor(ParameterValue color) {
+        if (color == null) {
+            this.color = new NullParameterValue();            
             this.color.setParent(this);
+        } else {            
+            this.color = color;
+            this.color.setParent(this);
+            this.color.format(String.class);
         }
     }
 
@@ -136,9 +117,15 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
      * @param opacity
      */
     public void setOpacity(ParameterValue opacity) {
-        ParameterValueHelper.validateAsFloat(opacity);
-        this.opacity = opacity == null ? ParameterValueHelper.createFloatLiteral(1f) : opacity;        
-        this.opacity.setParent(this);
+        if (opacity == null) {
+            this.opacity = new NullParameterValue();
+            this.opacity.setParent(this);
+        }
+        else{
+            this.opacity = opacity;
+            this.opacity.setParent(this);
+            this.opacity.format(Float.class, "value >=0 and value <=1");
+        }
     }
 
     /**
@@ -169,13 +156,13 @@ public  class SolidFill extends StyleNode implements IFill , UomNode {
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((UomNode)getParent()).getUom() : uom;
+        return uom == null ? ((UomNode) getParent()).getUom() : uom;
     }
 
     @Override
     public void setUom(Uom uom) {
-        this.uom =uom;
-     }    
+        this.uom = uom;
+    }
 
     @Override
     public Uom getOwnUom() {

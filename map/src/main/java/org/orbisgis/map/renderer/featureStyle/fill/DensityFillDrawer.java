@@ -82,7 +82,7 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
                 // Stroke width in pixel
                 Float sWidth = (Float) styleNode.getHatches().getWidth().getValue();
                 
-                if (sWidth==null && sWidth>=0) {
+                if (sWidth==null) {
                     throw new ParameterException("The hatches size parameter cannot be null");
                 }
                 

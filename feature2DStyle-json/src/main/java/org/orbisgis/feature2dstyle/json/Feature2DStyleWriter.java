@@ -20,7 +20,7 @@ import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.IFill;
-import org.orbisgis.style.StyleFactory;
+import org.orbisgis.style.factory.StyleFactory;
 import org.orbisgis.style.fill.DensityFill;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
@@ -65,29 +65,27 @@ public class Feature2DStyleWriter {
             try {
                 fos = new FileOutputStream(file);
                 JsonFactory jsonFactory = new JsonFactory();
-                JsonGenerator jsonGenerator = jsonFactory.createGenerator(new BufferedOutputStream(fos), jsonEncoding);
-
-                String title = fds.getTitle(Locale.getDefault());
-                String name = fds.getName();
-                String resum = fds.getAbstract(Locale.getDefault());
-
-                // header of the Symbology JSON file
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("Style", "Feature2DStyle");
-                writeFieldNotNull(jsonGenerator, "Name", name);
-                writeFieldNotNull(jsonGenerator, "Title", title);
-                writeFieldNotNull(jsonGenerator, "Abstract", resum);
-                List<Feature2DRule> rules = fds.getRules();
-                jsonGenerator.writeFieldName("rules");
-                jsonGenerator.writeStartArray();
-                for (Feature2DRule rule : rules) {
-                    writeRule(jsonGenerator, rule);
+                try (JsonGenerator jsonGenerator = jsonFactory.createGenerator(new BufferedOutputStream(fos), jsonEncoding)) {
+                    String title = fds.getTitle(Locale.getDefault());
+                    String name = fds.getName();
+                    String resum = fds.getAbstract(Locale.getDefault());
+                    
+                    // header of the Symbology JSON file
+                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeStringField("Style", "Feature2DStyle");
+                    writeFieldNotNull(jsonGenerator, "Name", name);
+                    writeFieldNotNull(jsonGenerator, "Title", title);
+                    writeFieldNotNull(jsonGenerator, "Abstract", resum);
+                    List<Feature2DRule> rules = fds.getRules();
+                    jsonGenerator.writeFieldName("rules");
+                    jsonGenerator.writeStartArray();
+                    for (Feature2DRule rule : rules) {
+                        writeRule(jsonGenerator, rule);
+                    }
+                    jsonGenerator.writeEndArray();
+                    jsonGenerator.writeEndObject();
+                    jsonGenerator.flush();
                 }
-                jsonGenerator.writeEndArray();
-                jsonGenerator.writeEndObject();
-                jsonGenerator.flush();
-                jsonGenerator.close();
-
             } catch (FileNotFoundException ex) {
                 throw new Exception(ex);
 
@@ -102,21 +100,7 @@ public class Feature2DStyleWriter {
             }
         }
 
-    }
-
-    /**
-     * @param args the command line arguments
-     * @throws java.lang.Exception
-     */
-    public static void main(String[] args) throws Exception {
-        Feature2DStyle style = StyleFactory.createAreaSymbolizerStyle();
-        style = StyleFactory.createLineSymbolizerStyle();
-        style = StyleFactory.createPointSymbolizerStyle();
-        style=createAreaSymbolizerStyleColorExpression();
-        Feature2DStyleWriter writer = new Feature2DStyleWriter(style);
-        writer.write(new File("/tmp/mysld.json"));
-
-    }
+    }    
 
     /**
      * Write a <code>Feature2DRule</code>
@@ -349,8 +333,7 @@ public class Feature2DStyleWriter {
         SolidFill solidFill = new SolidFill(colorExpression, opacity);
         areaSymbolizer.setFill(solidFill);
         PenStroke ps = new PenStroke();
-        SolidFill psFill = new SolidFill(Color.BLUE);
-        ps.setFill(psFill);
+        ps.setFill(StyleFactory.createSolidFill(Color.BLUE));
         areaSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
         rule.addSymbolizer(areaSymbolizer);

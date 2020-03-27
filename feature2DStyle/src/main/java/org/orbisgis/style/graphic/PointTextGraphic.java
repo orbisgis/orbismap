@@ -40,8 +40,8 @@ import org.orbisgis.style.label.PointLabel;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A {@code PointTextGraphic} is used to paint a text label using a given
@@ -56,14 +56,13 @@ public class PointTextGraphic extends Graphic implements IUom {
 
     private Uom uom;
     private PointLabel pointLabel;
-    private ParameterValue x;
-    private ParameterValue y;
+    private ParameterValue x = new NullParameterValue();
+    private ParameterValue y = new NullParameterValue();
 
     /**
      * Build a new {@code PointTextGraphic}, at the position of its container.
      */
     public PointTextGraphic() {
-        setPointLabel(new PointLabel());
     }
 
     @Override
@@ -123,10 +122,13 @@ public class PointTextGraphic extends Graphic implements IUom {
      * @param x
      */
     public void setX(ParameterValue x) {
-        ParameterValueHelper.validateAsFloat(x);
-        this.x = x;
-        if (this.x != null) {
+        if (x == null) {
+            this.x = new NullParameterValue();
             this.x.setParent(this);
+        } else {
+            this.x = x;
+            this.x.setParent(this);
+            this.x.format(Float.class, "value>=0");
         }
     }
 
@@ -145,10 +147,13 @@ public class PointTextGraphic extends Graphic implements IUom {
      * @param y
      */
     public void setY(ParameterValue y) {
-        ParameterValueHelper.validateAsFloat(y);
-        this.y = y;
-        if (this.y != null) {
+        if (y == null) {
+            this.y = new NullParameterValue();
             this.y.setParent(this);
+        } else {
+            this.y = y;
+            this.y.setParent(this);
+            this.y.format(Float.class, "value>=0");
         }
     }
 

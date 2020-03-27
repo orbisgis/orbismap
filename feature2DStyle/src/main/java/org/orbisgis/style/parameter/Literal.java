@@ -5,54 +5,47 @@
  */
 package org.orbisgis.style.parameter;
 
-import java.util.Objects;
-
 /**
  *
  * @author ebocher
  */
 public class Literal extends ParameterValue {
 
-    private Object value;
-    private Class dataType = Object.class;
+    public Literal(String value, String domainExpression) {
+        super(value, new ParameterDomain(String.class, domainExpression));   
+
+    }
 
     public Literal(String value) {
-        this.value = value;
-        this.dataType = String.class;
+        super(value, new ParameterDomain(String.class));
     }
 
     public Literal(Boolean value) {
-        this.value = value;
-        this.dataType = Boolean.class;
+        super(value, new ParameterDomain(Boolean.class));
     }
 
-    public Literal(Number value) {
-        this.value = value;
-        this.dataType = Number.class;
+    public Literal(Double value, String domainExpression) {
+        super(value, new ParameterDomain(Double.class, domainExpression));
     }
 
-    @Override
-    public void setDataType(Class dataType) {
-        this.dataType = dataType;
+    public Literal(Double value) {
+        super(value, new ParameterDomain(Double.class));
+    }    
+    public Literal(Float value, String domainExpression) {
+        super(value, new ParameterDomain(Float.class, domainExpression));
     }
 
-    @Override
-    public Class getDataType() {
-        if (value != null) {
-            return value.getClass();
-        }
-        return Object.class;
+    public Literal(Float value) {
+        super(value, new ParameterDomain(Float.class));
+    } 
+    public Literal(Integer value, String domainExpression) {
+        super(value, new ParameterDomain(Integer.class, domainExpression));
     }
 
-    @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
+    public Literal(Integer value) {
+        super(value, new ParameterDomain(Integer.class));
+    } 
+    
 
     @Override
     public boolean equals(Object o) {
@@ -66,23 +59,32 @@ public class Literal extends ParameterValue {
             return false;
         }
         Literal other = (Literal) o;
-        if (!value.equals(other.getValue())) {
+        if (!getValue().equals(other.getValue())) {
             return false;
-        }     
-        
-        if (!dataType.equals(other.getDataType())) {
+        }
+
+        if (!getParameterDomain().equals(other.getParameterDomain())) {
             return false;
-        } 
+        }
         return true;
 
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.value);
-        //hash = 97 * hash + Objects.hashCode(this.dataType);
+        int hash = 5;
         return hash;
     }
+
+    @Override
+    public void format(Class dataType, String expressionDomain) {
+        if(dataType.isAssignableFrom(this.parameterDomain.getDataType())){            
+            this.setDomain(dataType, expressionDomain);
+        }else{
+            throw new RuntimeException("Invalid data type for the value : "+ this.getValue() +". Must be " + dataType.getSimpleName() + 
+                    " instead of "+ this.parameterDomain.getDataType().getSimpleName()+ " from style node : "+ getParent().getClass().getSimpleName());
+        }   
+        checkValue(this.getValue());
+    }  
 
 }

@@ -9,32 +9,21 @@ package org.orbisgis.style.parameter;
  *
  * @author Erwan Bocher
  */
-public class Expression extends ParameterValue{
+public class Expression extends ParameterValue {
 
     private final String expression;
-    private Class dataType;
-    private Object value;    
-    private String reference ="";
-    
-    public Expression(String expression){
-        this.expression = expression;
-    }
-    
-    @Override
-     public void setDataType(Class dataType) {
-        this.dataType = dataType;
-    }
+    private Object value;
+    private String reference = "";
 
-     @Override
-    public Class getDataType() {
-        return dataType;
+    public Expression(String expression) {
+        this.expression = expression;
     }
 
     @Override
     public Object getValue() {
         return value;
     }
-    
+
     public String getExpression() {
         return expression;
     }
@@ -49,7 +38,12 @@ public class Expression extends ParameterValue{
 
     @Override
     public void setValue(Object value) {
-        this.value=value;
+        this.value = value;
+        this.checkValue(value);
+    }   
+
+    @Override
+    public void format(Class dataType, String expressionDomain) {
+        this.setDomain(dataType, expressionDomain);
     }
-    
 }

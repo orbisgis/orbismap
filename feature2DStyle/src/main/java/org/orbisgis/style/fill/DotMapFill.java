@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,12 +29,9 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.fill;
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,23 +45,22 @@ import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
- * Descriptor for dot maps. Each point represents a given quantity. Points are randomly placed
- * in the polygon that contains them.<br/>
+ * Descriptor for dot maps. Each point represents a given quantity. Points are
+ * randomly placed in the polygon that contains them.<br/>
  * A DotMapFill is defined with three things : <br/>
  *   * The quantity represented by a single dot<br/>
  *   * The total quantity to represent<br/>
  *   * The symbol associated to each single dot.
+ *
  * @author Alexis Guéganno
  */
-public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNode {
-   
-    
+public class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNode {
+
     private Graphic mark;
-    private ParameterValue quantityPerMark ;
-    private ParameterValue totalQuantity ;
+    private ParameterValue quantityPerMark = new NullParameterValue();
+    private ParameterValue totalQuantity = new NullParameterValue();
     private Random rand;
     private Uom uom;
 
@@ -74,11 +68,8 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * Creates a new DotMapFill, with uninstanciated values.
      */
     public DotMapFill() {
-        this.setQuantityPerMark(new NullParameterValue());
-        this.setTotalQuantity(new NullParameterValue());
     }
 
-    
     @Override
     public void setGraphic(Graphic mark) {
         if (mark != null) {
@@ -98,13 +89,19 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * @param quantityPerMark
      */
     public void setQuantityPerMark(ParameterValue quantityPerMark) {
-        ParameterValueHelper.validateAsInteger(quantityPerMark);
-        this.quantityPerMark = quantityPerMark;
-        this.quantityPerMark.setParent(this);
+        if (quantityPerMark == null) {
+            this.quantityPerMark = new NullParameterValue();
+            this.quantityPerMark.setParent(this);
+        } else {
+            this.quantityPerMark = quantityPerMark;
+            this.quantityPerMark.setParent(this);
+            this.quantityPerMark.format(Integer.class, "value>=0");            
+        }
     }
 
     /**
      * Get the quantity represented by a single dot.
+     *
      * @return The quantity represented by a single dot
      */
     public ParameterValue getQuantityPerMark() {
@@ -117,18 +114,25 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * @param totalQuantity
      */
     public void setTotalQuantity(ParameterValue totalQuantity) {
-        ParameterValueHelper.validateAsInteger(totalQuantity);
-        this.totalQuantity = totalQuantity;
-        this.totalQuantity.setParent(this);
+        if (totalQuantity == null) {
+            this.totalQuantity = new NullParameterValue();
+            this.totalQuantity.setParent(this);
+        } else {
+            this.totalQuantity = totalQuantity;            
+            this.totalQuantity.setParent(this);
+            this.totalQuantity.format(Integer.class, "value>=0");
+            this.totalQuantity = totalQuantity;
+        }
     }
 
     /**
      * Set the total quantity to be represented for this symbolizer.
-     * @return 
+     *
+     * @return
      */
     public ParameterValue getTotalQuantity() {
         return totalQuantity;
-    }    
+    }
 
     @Override
     public List<IStyleNode> getChildren() {
@@ -147,18 +151,16 @@ public  class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNo
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((UomNode)getParent()).getUom() : uom;
+        return uom == null ? ((UomNode) getParent()).getUom() : uom;
     }
 
     @Override
     public void setUom(Uom uom) {
-        this.uom =uom;
-     }    
+        this.uom = uom;
+    }
 
     @Override
     public Uom getOwnUom() {
         return uom;
     }
-
-    
 }

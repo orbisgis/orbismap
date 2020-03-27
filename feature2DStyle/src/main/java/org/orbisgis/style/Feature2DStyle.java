@@ -41,9 +41,6 @@ import java.util.List;
 import java.util.Locale;
 //import org.slf4j.*;
 import org.orbisgis.style.common.Description;
-import org.slf4j.*;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 /**
  * Usable representation of SE styles. This is the upper node of the symbology
@@ -55,7 +52,6 @@ import org.slf4j.*;
 public class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule>{
 
     private static final String DEFAULT_NAME = "Unnamed Style";
-    private static final Logger LOGGER = LoggerFactory.getLogger(Feature2DStyle.class);
     private String name;
     private ArrayList<Feature2DRule> rules;
     private Description description = new Description();   

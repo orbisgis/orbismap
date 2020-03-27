@@ -46,7 +46,8 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.graphic.MarkGraphic;
+import org.orbisgis.style.parameter.NullParameterValue;
+import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
@@ -73,8 +74,8 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  */
 public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Comparable, IFeatureSymbolizer, UomNode {
     private Graphic graphic;
-    private boolean onVertex;
-    private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
+    private boolean onVertex = false;
+    private GeometryParameter geometryExpression;
     private String name;
     private Description description = new Description();
     private int level =0;
@@ -87,10 +88,10 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
      * Its UOM is {@link Uom#MM}.
      */
     public PointSymbolizer() {
+        super();
         this.name = DEFAULT_NAME;
         this.level = 0;
         this.uom = Uom.PX;
-        this.graphic = new MarkGraphic();
         onVertex = false;
         
     }    
@@ -103,6 +104,9 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public void setGeometryParameter(GeometryParameter geometryExpression) {
         this.geometryExpression = geometryExpression;
+        if(this.geometryExpression!=null){
+            this.geometryExpression.setParent(this);
+        }
     }
 
     @Override
@@ -113,7 +117,9 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public void setGraphic(Graphic graphic) {
         this.graphic = graphic;
-        graphic.setParent(this);
+        if(this.graphic!=null){
+        this.graphic.setParent(this);
+        }
     }
 
 
@@ -178,6 +184,9 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public void setDescription(Description description) {
         this.description = description;
+        if(this.description!=null){
+            this.description.setParent(this);
+        }
     }
 
     @Override
@@ -234,6 +243,15 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
             }
         }
         return -1;
+    }
+
+    @Override
+    public ParameterValue getPerpendicularOffset() {
+        return new NullParameterValue();
+    }
+
+    @Override
+    public void setPerpendicularOffset(ParameterValue parameterValue) {
     }
 
     

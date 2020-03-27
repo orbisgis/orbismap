@@ -54,9 +54,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.h2gis.functions.spatial.clean.ST_MakeValid;
+import org.h2gis.functions.spatial.buffer.ST_OffSetCurve;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.TopologyException;
 import org.orbisgis.map.api.IMapTransform;
 import org.orbisgis.map.renderer.featureStyle.utils.GeometryHelper;
 
@@ -329,6 +328,7 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
      *
      * @return
      */
+    @Override
     public MapEnvelope getExtent() {
         return extent;
     }
@@ -477,7 +477,7 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
      * @param surfaceOnPoint true to return the interior point
      * @return An AWT Shape instance.
      */
-    public Shape getShapeAsPoints(Geometry geom, boolean generalize, boolean surfaceOnPoint) {        
+    public Shape getShapeAsPoints(Geometry geom, boolean generalize, boolean surfaceOnPoint) {
         if (generalize) {
             Rectangle2DDouble rectangle2dDouble = toPixel(geom.getEnvelopeInternal());
             if ((rectangle2dDouble.getHeight() <= MAXPIXEL_DISPLAY)
@@ -511,27 +511,85 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
      *
      * @param geom The geometry we want to draw.
      * @param generalize If true we'll perform generalization
+     * @param offset in pixel
      * @return An AWT Shape instance.
      */
-    public Shape getShape(Geometry geom, boolean generalize) {
-            if (generalize) {
+    public Shape getShape(Geometry geom, boolean generalize, double offset) {
+        if (generalize) {      
+                if(offset<=MAXPIXEL_DISPLAY){                  
                 Rectangle2DDouble rectangle2dDouble = toPixel(geom.getEnvelopeInternal());
                 if ((rectangle2dDouble.getHeight() <= MAXPIXEL_DISPLAY)
                         && (rectangle2dDouble.getWidth() <= MAXPIXEL_DISPLAY)) {
                     if (geom.getDimension() == 1) {
                         Coordinate[] coords = geom.getCoordinates();
-                        return getShapeWriter().toShape(geom.getFactory().createLineString(
-                                new Coordinate[]{coords[0], coords[coords.length - 1]}));
+                        Coordinate coord = coords[0];
+                        Point2D pt = getAffineTransform().transform(new Point2D.Double(coord.x, coord.y), null);
+                        return new Line2D.Double(pt, pt);
                     } else {
                         return rectangle2dDouble;
                     }
+                }                   
+                }
+                else{
+                    if(geom.getDimension()==1){
+                        return  getShape(ST_OffSetCurve.offsetCurve(geom, offset/  pixelsPerMeter()), true);
+                    }                    
+                    return  getShape(geom.buffer(offset/  pixelsPerMeter()), true);
+                }            
+        }
+        if(geom.getDimension()==1){
+            return  getShape(ST_OffSetCurve.offsetCurve(geom, offset/  pixelsPerMeter()), true);
+        }
+        return getShape(geom.buffer(offset/  pixelsPerMeter()), true);
+
+    }
+
+    /**
+     * Calculates the pixels per meter.
+     *
+     * @return The pixels per meter.
+     */
+    public double pixelsPerMeter() {
+        double scale = 1.0 / getScaleDenominator();
+        return scale * (getDpi() / 0.0254);
+    }
+
+    /**
+     * Gets the AWT {@link Shape} we'll use to represent {@code geom} on the
+     * map.
+     *
+     * @param geom The geometry we want to draw.
+     * @param generalize If true we'll perform generalization
+     * @return An AWT Shape instance.
+     */
+    public Shape getShape(Geometry geom, boolean generalize) {
+        if (generalize) {
+            Rectangle2DDouble rectangle2dDouble = toPixel(geom.getEnvelopeInternal());
+            if ((rectangle2dDouble.getHeight() <= MAXPIXEL_DISPLAY)
+                    && (rectangle2dDouble.getWidth() <= MAXPIXEL_DISPLAY)) {
+                switch (geom.getDimension()) {
+                    case 1:
+                    {
+                        Coordinate[] coords = geom.getCoordinates();
+                        Coordinate coord = coords[0];
+                        Coordinate coordLst = coords[coords.length - 1];
+                        Point2D pt = getAffineTransform().transform(new Point2D.Double(coord.x, coord.y), null);
+                        Point2D ptLast = getAffineTransform().transform(new Point2D.Double(coordLst.x, coordLst.y), null);
+                        return new Line2D.Double(pt, ptLast);
+                    }
+                    case 0:
+                    {
+                        Point2D.Double pt = new Point2D.Double(rectangle2dDouble.getCenterX(), rectangle2dDouble.getCenterY());
+                        return new Line2D.Double(pt, pt);
+                    }
+                    default:
+                        return rectangle2dDouble;
                 }
             }
-            return getShapeWriter().toShape(geom);
-
         }
+        return getShapeWriter().toShape(geom);
 
-    
+    }
 
     public void redraw() {
         listeners.forEach((listener) -> {

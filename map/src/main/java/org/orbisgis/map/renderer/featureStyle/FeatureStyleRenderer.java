@@ -40,6 +40,7 @@ import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.parameter.Expression;
+import org.orbisgis.style.utils.UomUtils;
 import org.orbisgis.style.visitor.GeometryParameterVisitor;
 import org.orbisgis.style.visitor.ParameterValueVisitor;
 
@@ -70,6 +71,10 @@ public class FeatureStyleRenderer {
         rule.setExpression(ExpressionParser.formatConditionalExpression(rule.getFilterExpression()));
     }
 
+    //TODO : Add a short circuit method to not iterate the symbolizer when some requiered elements are null
+    // Take into account when the value from an element is build from an expression
+    //ie proportional symbol vs symbol with literal size
+    // Clarify getValue on parameter... must depend on uom ?
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
         List<String> geometryColumns = spatialTable.getGeometricColumns();
         for (Feature2DRule rule : fs.getRules()) {
@@ -78,8 +83,8 @@ public class FeatureStyleRenderer {
                 ParameterValueVisitor expressionParameters = prepareSymbolizerExpression(rule);
                 String allExpressions = expressionParameters.getExpressionParametersAsString();
                 List<IFeatureSymbolizer> sl = rule.getSymbolizers();
-                GeometryParameterVisitor gp = new GeometryParameterVisitor(sl);
-                gp.visit(geometryColumns);
+                GeometryParameterVisitor gp = new GeometryParameterVisitor(sl,geometryColumns);
+                gp.visit();
                 String selectGeometry = gp.getResultAsString();
                 String query = "";
                 if (!selectGeometry.isEmpty() && !allExpressions.isEmpty()) {
@@ -115,6 +120,7 @@ public class FeatureStyleRenderer {
                     while (spatialTableQuery.next()) {
                         Map<String, Shape> shapes = new HashMap<String, Shape>();
                         Shape currentShape = null;
+                        Geometry geomReduced = null;
                         //Populate expressions here
                         populateExpressions(spatialTableQuery, mt, expressionParameters.getExpressionsProperties());
                         for (Map.Entry<IFeatureSymbolizer, ISymbolizerDraw> symbolizers : symbolizersToDraw.entrySet()) {
@@ -123,12 +129,28 @@ public class FeatureStyleRenderer {
                                 //Geometry identifier
                                 IFeatureSymbolizer featureSymbolizer = symbolizers.getKey();
                                 String geomIdentifier = featureSymbolizer.getGeometryParameter().getIdentifier();
-                                if(shapes.containsKey(geomIdentifier)){
-                                    currentShape= shapes.get(geomIdentifier);
+                                String geomMapKey = geomIdentifier;
+                                //Because we transform the shape into a set of points
+                                if(featureSymbolizer instanceof PointSymbolizer){
+                                    geomMapKey = geomIdentifier + "_points";
                                 }
-                                else{       
+                                //Perpendicular offset workarround
+                                float offsetInPixel = 0.0f;
+                                Double poffset = (Double) featureSymbolizer.getPerpendicularOffset().getValue();
+                                if (poffset != null) {
+                                    offsetInPixel = UomUtils.toPixel(poffset.floatValue(), featureSymbolizer.getUom(), mt.getDpi(), mt.getScaleDenominator());
+                                    if (Math.abs(offsetInPixel) > 0) {
+                                        geomMapKey = geomIdentifier + "_offset";
+                                    }
+                                }
+                                if(shapes.containsKey(geomMapKey)){
+                                    currentShape= shapes.get(geomMapKey);
+                                }
+                                else{   
+                                    //We have already the geom in memory
+                                    if(geomReduced==null){
                                     Geometry geom = spatialTableQuery.getGeometry(geomIdentifier);
-                                    Geometry   geomReduced = geom;
+                                    geomReduced = geom;                                    
                                     try {
                                         boolean overlaps = geom.overlaps(mt.getAdjustedExtentGeometry());
                                         if (overlaps) {
@@ -136,8 +158,8 @@ public class FeatureStyleRenderer {
                                         }
                                     } catch (TopologyException e) {
                                         //ST_MakeValid.validGeom(geom, true).intersection(adjustedExtentGeometry);
-                                    }                                
-                          
+                                    }
+                                    }
                                     if(featureSymbolizer instanceof PointSymbolizer){
                                         PointSymbolizer ps = (PointSymbolizer) featureSymbolizer;
                                         if (ps.isOnVertex()) {
@@ -146,13 +168,20 @@ public class FeatureStyleRenderer {
                                             currentShape = mt.getShapeAsPoints(geomReduced, false, true);
                                         } 
                                     }
-                                    else{
-                                        currentShape = mt.getShape(geomReduced, true);
+                                    else {
+                                        if (Math.abs(offsetInPixel)>0) {
+                                            currentShape = mt.getShape(geomReduced, true, offsetInPixel);
+                                        } else {
+                                            currentShape = mt.getShape(geomReduced, true);
+                                        }
                                     }
+                                    shapes.put(geomMapKey, currentShape);
                                 }
-                                ISymbolizerDraw symbolizerDraw = symbolizers.getValue();
-                                symbolizerDraw.setShape(currentShape);
-                                symbolizerDraw.draw(symbolizerDraw.getGraphics2D(), mt, featureSymbolizer, properties);
+                                if (currentShape != null) {
+                                    ISymbolizerDraw symbolizerDraw = symbolizers.getValue();
+                                    symbolizerDraw.setShape(currentShape);
+                                    symbolizerDraw.draw(symbolizerDraw.getGraphics2D(), mt, featureSymbolizer, properties);
+                                }
                                 currentShape=null;
                             } catch (ParameterException | SQLException ex) {
                                 Logger.getLogger(FeatureStyleRenderer.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,7 +199,8 @@ public class FeatureStyleRenderer {
                             return 0;
                         }
                     };
-
+                    
+                    //Sort the symbolizer to draw the image accoring the symbol level
                     Map<IFeatureSymbolizer, ISymbolizerDraw> sortedSymbolizers
                             = symbolizersToDraw.entrySet().stream().
                                     sorted(symbolizerLevelComp.reversed()).
@@ -272,7 +302,7 @@ public class FeatureStyleRenderer {
         if(!parameterValueIdentifiers.isEmpty()){            
             for (Map.Entry<String, org.orbisgis.style.parameter.Expression> entry : parameterValueIdentifiers.entrySet()) {
                 Expression exp = entry.getValue();
-                exp.setValue(sp.getObject(exp.getReference(),exp.getDataType()));        
+                exp.setValue(sp.getObject(exp.getReference(),exp.getParameterDomain().getDataType()));        
             }
         }
     }

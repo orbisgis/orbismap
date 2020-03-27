@@ -44,14 +44,11 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
-import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import org.orbisgis.style.transform.Translate;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A "AreaSymbolizer" specifies the rendering of a polygon or other area/surface
@@ -64,26 +61,25 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  *
  * @author Maxence Laurent, Alexis Guéganno
  */
-public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, IFeatureSymbolizer, UomNode {
+public class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, IFeatureSymbolizer, UomNode {
 
     private Translate translate;
-    private ParameterValue perpendicularOffset;
+    private ParameterValue perpendicularOffset = new NullParameterValue();
     private Stroke stroke;
     private IFill fill;
-    private GeometryParameter geometryExpression = new GeometryParameter("the_geom");
+    private GeometryParameter geometryExpression;
     private String name;
     private Description description = new Description();
-    private int level =0;
+    private int level = 0;
     public static final String DEFAULT_NAME = "Area symbolizer";
     private Uom uom;
 
     /**
      * Build a new AreaSymbolizer, named "Area Symbolizer". It is defined with a
-     * <code>SolidFill</code> and a <code>PenStroke</code>
+     * <code>SolidFill</code> and a standard <code>PenStroke</code>
      */
     public AreaSymbolizer() {
-        this.setFill(new SolidFill());
-        this.setStroke(new PenStroke());
+        super();
         this.name = DEFAULT_NAME;
         this.level = 0;
         this.uom = Uom.PX;
@@ -97,6 +93,9 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
     @Override
     public void setGeometryParameter(GeometryParameter geometryExpression) {
         this.geometryExpression = geometryExpression;
+        if (this.geometryExpression != null) {
+            this.geometryExpression.setParent(this);
+        }
     }
 
     @Override
@@ -170,10 +169,16 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
      * original size, while a negative value will cause the drawing of smaller
      * polygons.
      */
+    @Override
     public void setPerpendicularOffset(ParameterValue perpendicularOffset) {
-        ParameterValueHelper.validateAsDouble(perpendicularOffset);
-        this.perpendicularOffset = perpendicularOffset == null ? ParameterValueHelper.createDoubleLiteral(1d) : perpendicularOffset;    
-        this.perpendicularOffset.setParent(this);   
+        if (perpendicularOffset == null) {
+            this.perpendicularOffset = new NullParameterValue();
+            this.perpendicularOffset.setParent(this);
+        } else {
+            this.perpendicularOffset = perpendicularOffset;
+            this.perpendicularOffset.setParent(this);
+            this.perpendicularOffset.format(Double.class);
+        }
     }
 
     @Override
@@ -239,6 +244,9 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
     @Override
     public void setDescription(Description description) {
         this.description = description;
+        if (this.description != null) {
+            this.description.setParent(this);
+        }
     }
 
     @Override
@@ -297,5 +305,5 @@ public  class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, 
         }
         return -1;
     }
-   
+
 }

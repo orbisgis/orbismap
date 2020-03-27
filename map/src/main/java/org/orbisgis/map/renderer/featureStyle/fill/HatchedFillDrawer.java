@@ -30,13 +30,14 @@ import org.orbisgis.style.utils.UomUtils;
  * @author ebocher
  */
 public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
-      //Useful constants.
+    //Useful constants.
+
     private static final double EPSILON = 0.01; // todo Eval, and use an external EPSILON value.
     private static final double TWO_PI_DEG = 360.0;
     private static final double PI_DEG = 180.0;
-    
+
     public static final double DEFAULT_NATURAL_LENGTH = 100;
-    
+
     final static Map<Class, PenStrokeDrawer> drawerMap = new HashMap<>();
 
     static {
@@ -44,80 +45,69 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     }
     private Shape shape;
 
-    
     @Override
-    public Paint getPaint( HatchedFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint(HatchedFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
         return null;
     }
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, HatchedFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        if (shape != null) {
-        Uom   uom =   styleNode.getUom();
+        Uom uom = styleNode.getUom();
         Stroke stroke = styleNode.getStroke();
         if (stroke != null) {
-            if(drawerMap.containsKey(stroke.getClass())){
-                PenStrokeDrawer strokeToDraw = drawerMap.get(stroke.getClass());            
+            if (drawerMap.containsKey(stroke.getClass())) {
+                PenStrokeDrawer strokeToDraw = drawerMap.get(stroke.getClass());
                 // Perpendicular distance between two lines
-            try {
+
                 float pDist = 0;
-                Float distance =  (Float) styleNode.getDistance().getValue();
-                if(distance ==null ){
+                Float distance = (Float) styleNode.getDistance().getValue();
+                if (distance == null) {
                     throw new ParameterException("The distance parameter for the hatched fill cannot be null");
 
                 }
                 if (distance > 0) {
                     pDist = UomUtils.toPixel(distance, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
-                }                
+                }
 
                 float alpha = DEFAULT_ALPHA;
                 Float angle = (Float) styleNode.getAngle().getValue();
-                if(angle==null){
+                if (angle == null) {
                     throw new ParameterException("The angle parameter for the hatched fill cannot be null");
                 }
-                if (angle >0) {
+                if (angle > 0) {
                     alpha = angle;
                 }
                 double hOffset = 0.0;
-                Float offset =  (Float) styleNode.getOffset().getValue();
-                if(offset==null){
-                   throw new ParameterException("The offset parameter for the hatched fill cannot be null");
-
+                Float offset = (Float) styleNode.getOffset().getValue();
+                if (offset != null) {
+                     hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                 }
-                if (offset >0) {
-                    hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
-                }
-
-                drawHatch(g2, properties, shape, mapTransform, alpha, pDist, (PenStroke)stroke, strokeToDraw, hOffset);
                 
-            } catch (RuntimeException eee) {
-                System.out.println("Error " + eee);
-                eee.printStackTrace(System.out);
+                drawHatch(g2, properties, shape, mapTransform, alpha, pDist, (PenStroke) stroke, strokeToDraw, hOffset);
+
             }
-            }
-        }
         }
     }
-    
+
     /**
      * Static method that draw hatches within provided shp
-     * 
-     * @param sp
-     * @param g2  the g2 to write on
+     *
+     * @param g2 the g2 to write on
      * @param shp the shape to hatch
      * @param mt the well known map transform
      * @param alph hatches orientation
-     * @param pDist perpendicular distance between two hatch line (stroke width 
-     *         not taken into account so a 10mm wide black PenStroke + pDist=10mm
-     *         will produce a full black behaviour...)
-     * @param hOffset offset between the references point and the reference hatch
+     * @param pDist perpendicular distance between two hatch line (stroke width
+     * not taken into account so a 10mm wide black PenStroke + pDist=10mm will
+     * produce a full black behaviour...)
+     * @param hOffset offset between the references point and the reference
+     * hatch
      * @param penStroke
-     * @throws ParameterException 
+     * @throws ParameterException
      */
-    public static void drawHatch( Graphics2D g2, Map<String,Object> properties, Shape shp,
-             MapTransform mt, double alph, double pDist,PenStroke penStroke, PenStrokeDrawer penStrokeDrawer,
+    public static void drawHatch(Graphics2D g2, Map<String, Object> properties, Shape shp,
+            MapTransform mt, double alph, double pDist, PenStroke penStroke, PenStrokeDrawer penStrokeDrawer,
             double hOffset) throws ParameterException, SQLException {
-       
+
         double alpha = alph;
         while (alpha < 0.0) {
             alpha += TWO_PI_DEG;
@@ -129,7 +119,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
         double beta = Math.PI / 2.0 + alpha;
         double deltaOx = Math.cos(beta) * hOffset;
         double deltaOy = Math.sin(beta) * hOffset;
-        Double naturalLength = penStrokeDrawer.getNaturalLength( penStroke, mt, properties);
+        Double naturalLength = penStrokeDrawer.getNaturalLength(penStroke, mt, properties);
         if (naturalLength.isInfinite()) {
             naturalLength = DEFAULT_NATURAL_LENGTH;
         }
@@ -166,7 +156,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
 
 
         /* the following block compute the number of times the hatching pattern shall be drawn */
-
         int nb2start; // how many pattern to skip from the ref point to the begining of the shape ?
         int nb2end; // how many pattern to skip from the ref point to the end of the shape ?
 
@@ -213,7 +202,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
         double nb2drawDeltaY = nb2draw * deltaHy;
 
         // Compute hatches sub-set to draw (avoid all pattern which not stands within the clip area...)
-
         if (vertical) {
             if (deltaHy < 0.0) {
                 hymin = Math.ceil((fbox.getMinY() - ref.getY()) / deltaHy) * deltaHy + ref.getY();
@@ -241,7 +229,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
         double x;
 
         Line2D.Double l = new Line2D.Double();
-
 
         // Inform graphic2g to only draw hatches within the shape !
         g2.clip(shp);
@@ -273,7 +260,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 }
             } else {
 
-                 properties.put("offset", 0.0);
+                properties.put("offset", 0.0);
                 // Seems to been unreachable !
                 for (x = hxmin; x > hxmax - deltaDx / 2.0; x += deltaDx) {
                     l.x1 = x;
@@ -282,7 +269,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     l.y2 = hymax;
 
                     penStrokeDrawer.setShape(l);
-                    penStrokeDrawer.draw( g2, mt, penStroke, properties);
+                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -311,7 +298,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     }
 
                     penStrokeDrawer.setShape(l);
-                    penStrokeDrawer.draw( g2, mt, penStroke, properties);
+                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -323,7 +310,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
 
                 properties.put("offset", 0.0);
                 for (y = hymin; y > hymax - deltaDy / 2.0; y += deltaDy) {
-
 
                     if (cosAlpha > 0) {
                         // Line goes from the left to the right
@@ -344,13 +330,12 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
 
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
-
                 }
             }
         }
         g2.setClip(null);
     }
-    
+
     @Override
     public Shape getShape() {
         return shape;
@@ -360,5 +345,5 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
-    
+
 }

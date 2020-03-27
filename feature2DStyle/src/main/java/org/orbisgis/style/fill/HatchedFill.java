@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,13 +29,12 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.fill;
 
+import java.awt.Color;
 import org.orbisgis.style.StrokeNode;
-import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,30 +43,35 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
+import org.orbisgis.style.factory.StyleFactory;
 import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
- * A {@code HatchedFill} will fill a shape with hatches. It is configured according
- * to an angle (the orientation of the hatches), a distance (between the hatches),
- * an offset (from the default location of the hatches) and a stroke (to determine how to draw the
- * hatches).</p>
- * <p>The <b>offset</b> value is used to shift hatches from the location where they are printed
- * by default. That means that, for a given geometry, it becomes possible to paint multiple
- * hatches that do not overlap by using the same orientation, and using an offset
- * so that each hatch of the second {@code HatchedFill} is drawn between two hatches
- * of the first {@code HatchedFill}.</p>
- * <p>The meaning of distance and offset is of course UOM dependant.
+ * A {@code HatchedFill} will fill a shape with hatches. It is configured
+ * according to an angle (the orientation of the hatches), a distance (between
+ * the hatches), an offset (from the default location of the hatches) and a
+ * stroke (to determine how to draw the hatches).</p>
+ * <p>
+ * The <b>offset</b> value is used to shift hatches from the location where they
+ * are printed by default. That means that, for a given geometry, it becomes
+ * possible to paint multiple hatches that do not overlap by using the same
+ * orientation, and using an offset so that each hatch of the second
+ * {@code HatchedFill} is drawn between two hatches of the first
+ * {@code HatchedFill}.</p>
+ * <p>
+ * The meaning of distance and offset is of course UOM dependant.
+ *
  * @author Maxence Laurent, Alexis Guéganno
  */
-public  class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode {
+public class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode {
 
     /**
      * Default offset value for hatches.
      */
     public static final float DEFAULT_OFFSET = 0.0f;
-  
+
     /**
      * The default perpendicular distance between two hatches.
      */
@@ -79,98 +81,101 @@ public  class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNod
      */
     public static final float DEFAULT_ALPHA = 45.0f;
     /**
-     * 
+     *
      */
     public static final double DEFAULT_NATURAL_LENGTH = 100;
-    private ParameterValue angle;
-    private ParameterValue distance;
-    private ParameterValue offset;
+    private ParameterValue angle = new NullParameterValue();
+    private ParameterValue distance = new NullParameterValue();
+    private ParameterValue offset = new NullParameterValue();
     private Stroke stroke;
     private Uom uom;
 
-
     /**
-     * Creates a default {@code HatchedFill} with default values and a default penstroke.
+     * Creates a default {@code HatchedFill} with default values and a default
+     * penstroke.
      */
     public HatchedFill() {
-        setStroke(new PenStroke());
-        setDistance(ParameterValueHelper.createFloatLiteral(DEFAULT_PDIST));
-        setAngle(ParameterValueHelper.createFloatLiteral(DEFAULT_ALPHA));        ;
-        setOffset(ParameterValueHelper.createFloatLiteral(DEFAULT_OFFSET));
     }
 
     /**
      * Get the orientation of the hatches.
-     * @return 
+     *
+     * @return
      */
     public ParameterValue getAngle() {
         return angle;
     }
 
-
     /**
-     * Set the orientation of the hatches. 
+     * Set the orientation of the hatches.
+     *
      * @param angle
      */
     public void setAngle(ParameterValue angle) {
-        ParameterValueHelper.validateAsFloat(angle);
-        this.angle = angle;
-        if (angle != null) {
-            angle.setParent(this);
+        if (angle == null) {
+            this.angle = new NullParameterValue();
+            this.angle.setParent(this);
+        } else {
+            this.angle = angle;
+            this.angle.setParent(this);
+            this.angle.format(Float.class, "value >=0 and value <= 180");
         }
     }
 
-
     /**
      * Get the perpendicular distance between two hatches
-     * @return 
+     *
+     * @return
      */
     public ParameterValue getDistance() {
         return distance;
     }
 
-
     /**
      * Set the perpendicular distance between two hatches
-     * @param distance 
+     *
+     * @param distance
      */
     public void setDistance(ParameterValue distance) {
-        ParameterValueHelper.validateAsFloat(distance);
-        this.distance = distance;
-        if (distance != null) {
+        if (distance == null) {
+            this.distance = new NullParameterValue();
             this.distance.setParent(this);
+        } else {
+            this.distance = distance;
+            this.distance.setParent(this);
+            this.distance.format(Float.class, "value >=0");
         }
-
     }
-
 
     /**
      * Get the offset of the hatches.
-     * @return 
+     *
+     * @return
      */
     public ParameterValue getOffset() {
         return offset;
     }
 
-
     /**
      * Set the offset of the hatches.
-     * @param offset 
+     *
+     * @param offset
      */
     public void setOffset(ParameterValue offset) {
-        ParameterValueHelper.validateAsFloat(offset);
-        this.offset = offset;        
-        if (offset != null) {
-            offset.setParent(this);
+        if (offset == null) {
+            this.offset = new NullParameterValue();
+            this.offset.setParent(this);
+        } else {
+            this.offset = offset;
+            this.offset.setParent(this);
+            this.offset.format(Float.class);
         }
     }
-
 
     @Override
     public Stroke getStroke() {
         return stroke;
     }
-
 
     @Override
     public void setStroke(Stroke stroke) {
@@ -180,8 +185,6 @@ public  class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNod
         }
     }
 
-
-    
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
@@ -195,19 +198,19 @@ public  class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNod
             ls.add(offset);
         }
         if (stroke != null) {
-                ls.add(stroke);
+            ls.add(stroke);
         }
         return ls;
     }
 
     @Override
     public Uom getUom() {
-     return uom == null ? ((UomNode)getParent()).getUom() : uom;
+        return uom == null ? ((UomNode) getParent()).getUom() : uom;
     }
 
     @Override
     public void setUom(Uom uom) {
-         this.uom = uom;
+        this.uom = uom;
     }
 
     @Override

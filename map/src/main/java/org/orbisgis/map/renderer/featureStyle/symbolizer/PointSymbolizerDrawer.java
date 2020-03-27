@@ -41,13 +41,12 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, PointSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
-        if (shape != null) {
-            Graphic graphic = symbolizer.getGraphic();
+          Graphic graphic = symbolizer.getGraphic();
             if (graphic != null) {
                 if (drawerMap.containsKey(graphic.getClass())) {
                     IStyleDrawer graphicDrawer = drawerMap.get(graphic.getClass());
                     if (shape instanceof PointsShape) {
-                        PointsShape shapes = (PointsShape) shape;
+                        PointsShape shapes = (PointsShape) getShape();
                         for (int i = 0; i < shapes.size(); i++) {
                             Rectangle2D b = shapes.get(i).getBounds2D();
                             AffineTransform a = AffineTransform.getTranslateInstance(b.getX(), b.getY());
@@ -55,7 +54,7 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
                             graphicDrawer.draw(g2, mapTransform, graphic, properties);
                         }
                     } else {
-                        Rectangle2D b = shape.getBounds2D();
+                        Rectangle2D b = getShape().getBounds2D();
                         AffineTransform a = AffineTransform.getTranslateInstance(b.getX(), b.getY());
                         properties.put("affinetransform", a);
                         graphicDrawer.draw(g2, mapTransform, graphic, properties);
@@ -63,7 +62,7 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
 
                 }
             }
-        }
+        
     }
 
     @Override

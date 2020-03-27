@@ -57,20 +57,24 @@ public class GeometryParameterVisitor {
     private final List<IFeatureSymbolizer> feature2DSymbolizers;
     final Set<String> geometryColumnsValid = new HashSet<String>();
     private int count=0;
+    private final List<String> geometryColumns;
     
-    public GeometryParameterVisitor(List<IFeatureSymbolizer> feature2DSymbolizers) {
+    public GeometryParameterVisitor(List<IFeatureSymbolizer> feature2DSymbolizers, List<String> geometryColumns) {
         this.feature2DSymbolizers = feature2DSymbolizers;
+        this.geometryColumns=geometryColumns;
     }
 
     /**
      *
      * @param sn
      */
-    public void visit(List<String> geometryColumns) throws Exception {
-        if (!feature2DSymbolizers.isEmpty()) {
+    public void visit() throws Exception {
+        if (!feature2DSymbolizers.isEmpty()&& !geometryColumns.isEmpty()) {
             res = new HashMap<String, String>();
             for (IFeatureSymbolizer feature2DSymbolizer : feature2DSymbolizers) {
                 GeometryParameter gp = feature2DSymbolizer.getGeometryParameter();
+                String formatedExp;
+                if(gp!=null){
                 Expression expParsed = CCJSqlParserUtil.parseExpression(gp.getExpression(), false);
                 expParsed.accept(new ExpressionVisitorAdapter() {
                     @Override
@@ -81,7 +85,14 @@ public class GeometryParameterVisitor {
                         }
                     }
                 });
-                String formatedExp = expParsed.toString();
+                    formatedExp = expParsed.toString();
+                }
+                else{
+                    gp =  new GeometryParameter(geometryColumns.get(0));
+                    formatedExp = gp.getExpression();
+                    geometryColumnsValid.add(geometryColumns.get(0));
+                    feature2DSymbolizer.setGeometryParameter(gp);
+                }
                 String identifier = "geom_" + count++;
                 gp.setExpression(formatedExp);
                 if (!res.containsKey(formatedExp)) {

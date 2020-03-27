@@ -52,7 +52,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
     static {
         drawerMap.put(Halo.class, new HaloDrawer());
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
-        drawerMap.put(PenStroke.class, new PenStrokeDrawer());
+        drawerMap.put(PenStroke.class, new PenStrokeDrawer());       
     }
     // cached shape : only available with shape that doesn't depends on features
     private Shape shape;
@@ -70,28 +70,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
             shp = shape;
 
         }
-//        if (shp == null) {
-//            ExpressionParameter wknEwpression = styleNode.getWkn();
-//            WellKnownName wknValue = WellKnownName.CIRCLE;
-//            if (wknEwpression != null) {
-//                Object value = sp.getObject(wknEwpression.getIdentifier());
-//                if (value instanceof Geometry) {
-//                    Geometry geom = (Geometry) value;                    
-//                    shp = getShape(mapTransform.getShape(geom, false), styleNode.getViewBox(), properties, mapTransform.getScaleDenominator(),
-//                            mapTransform.getDpi());
-//                } else if (value instanceof String) {
-//                    WellKnownName wknSupported = WellKnownName.fromString((String) value);
-//                    if (wknSupported == null) {
-//                        shp = WellKnownNameUtils.getShape(wknSupported, styleNode.getViewBox(), properties, mapTransform.getScaleDenominator(),
-//                                mapTransform.getDpi());
-//                    }
-//                }
-//
-//            } else {
-//                shp = WellKnownNameUtils.getShape(wknValue, styleNode.getViewBox(), properties, mapTransform.getScaleDenominator(),
-//                        mapTransform.getDpi());
-//            }
-//     }
+        
         if (shp != null) {
             AffineTransform at = new AffineTransform((AffineTransform) properties.get("affinetransform"));
             if (styleNode.getTransform() != null) {
@@ -122,23 +101,13 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
                     drawer.draw(g2, mapTransform, fill, properties);
                 }
             }
-
             Stroke stroke = styleNode.getStroke();
             if (stroke != null) {
-                double offset = 0.0;
-                //TODO : RealParameter perpendicularOffset = styleNode.getPerpendicularOffset();
-                /*(perpendicularOffset != null) {
-                    offset = Uom.toPixel(perpendicularOffset.getValue(rs, fid),
-                            uom, mapTransform.getDpi(), mapTransform.getScaleDenominator(), null);
-                }*/
-                properties.put("offset", offset);
                 if (drawerMap.containsKey(stroke.getClass())) {
                     IStyleDrawer drawer = drawerMap.get(stroke.getClass());
                     drawer.setShape(atShp);
                     drawer.draw(g2, mapTransform, stroke, properties);
                 }
-                properties.remove("offset");
-
             }
         }
 
@@ -153,7 +122,6 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
      * @throws ParameterException
      */
     private Shape getShape(MarkGraphic markGraphic, MapTransform mapTransform, Map<String, Object> properties) throws ParameterException, Exception {
-
         String wkn = (String) markGraphic.getWkn().getValue();
         if (wkn != null && !wkn.isEmpty()) {
             return getShape(WellKnownName.fromString(wkn), markGraphic.getViewBox(), properties, mapTransform.getScaleDenominator(),
@@ -410,5 +378,4 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
-
 }

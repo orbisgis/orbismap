@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * A label located at a single point. In addition to all the {@code Label}
@@ -50,9 +50,9 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  *
  * @author Alexis Guéganno, Maxence Laurent
  */
-public  class PointLabel extends Label {
+public class PointLabel extends Label {
 
-    private ParameterValue rotation;
+    private ParameterValue rotation = new NullParameterValue();
     private ExclusionZone exclusionZone;
 
     /**
@@ -107,10 +107,13 @@ public  class PointLabel extends Label {
      * @param rotation The new rotation to be used.
      */
     public void setRotation(ParameterValue rotation) {
-        ParameterValueHelper.validateAsFloat(rotation);
-        this.rotation = rotation;
-        if (this.rotation != null) {
+        if (rotation == null) {
+            this.rotation = new NullParameterValue();
             this.rotation.setParent(this);
+        } else {
+            this.rotation = rotation;
+            this.rotation.setParent(this);
+            this.rotation.format(Float.class, "value>=0 and value <=180");
         }
     }
 

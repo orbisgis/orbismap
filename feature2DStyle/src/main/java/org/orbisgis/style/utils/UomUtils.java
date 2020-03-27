@@ -97,6 +97,10 @@ public class UomUtils {
         if (dpi <= 0  && uom != Uom.PX) {
             throw new ParameterException("DPI is invalid");
         }
+        
+        if(value ==0){
+            return value;
+        }
 
         switch (uom) {
             case IN:

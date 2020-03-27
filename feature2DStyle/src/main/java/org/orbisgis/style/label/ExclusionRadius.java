@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.utils.ParameterValueHelper;
 
 /**
  * An {@code ExclusionZone} where the forbidden area is defined as a circle. It
@@ -50,13 +50,13 @@ import org.orbisgis.style.utils.ParameterValueHelper;
  */
 public class ExclusionRadius extends ExclusionZone {
 
-    private ParameterValue radius;
+    private ParameterValue radius = new NullParameterValue();
 
     /**
      * Build a new {@code ExclusionRadius} with radius 3.
      */
     public ExclusionRadius() {
-        setRadius(new Literal(3));
+        setRadius(new Literal(3f));
     }
 
     /**
@@ -84,12 +84,15 @@ public class ExclusionRadius extends ExclusionZone {
      * @param radius
      */
     public void setRadius(ParameterValue radius) {
-        ParameterValueHelper.validateAsFloat(radius);
-        this.radius = radius;
-        if (this.radius != null) {
+        if (radius == null) {
+            this.radius = new NullParameterValue();
             this.radius.setParent(this);
+        } else {
+            this.radius = radius;
+            this.radius.setParent(this);
+            this.radius.format(Float.class, "value>=0");
         }
-    }    
+    }
 
     @Override
     public List<IStyleNode> getChildren() {

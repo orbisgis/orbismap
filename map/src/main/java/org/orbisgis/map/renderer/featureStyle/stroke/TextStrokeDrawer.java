@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
-import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.label.LineLabelDrawer;
 import org.orbisgis.style.label.LineLabel;
 import org.orbisgis.style.parameter.ParameterException;
@@ -27,7 +26,6 @@ public class TextStrokeDrawer implements IStrokeDrawer<TextStroke>{
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, TextStroke styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-  
         LineLabel lineLabel = styleNode.getLineLabel();
         if (lineLabel != null) {
             new LineLabelDrawer().draw(g2, mapTransform, lineLabel, properties);
