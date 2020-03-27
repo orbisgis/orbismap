@@ -85,8 +85,8 @@ public class RendererPerf {
             Map<String, String> map = new HashMap<>();
             map.put(DataSourceFactory.JDBC_DATABASE_NAME, "");
             map.put(DataSourceFactory.JDBC_URL, "jdbc:postgresql://ns380291.ip-94-23-250.eu/");
-            map.put(DataSourceFactory.JDBC_USER, "erwan");
-            map.put(DataSourceFactory.JDBC_PASSWORD, "d@nemark");
+            map.put(DataSourceFactory.JDBC_USER, "");
+            map.put(DataSourceFactory.JDBC_PASSWORD, "");
             return POSTGIS.open(map);
         }
     }
