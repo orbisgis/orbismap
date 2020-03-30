@@ -5,11 +5,10 @@
  */
 package org.orbisgis.map.renderer.featureStyle;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import org.orbisgis.map.layerModel.MapTransform;
-import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
@@ -17,12 +16,14 @@ import org.orbisgis.style.parameter.ParameterException;
  * @author ebocher
  * @param <T>
  */
-public interface IStyleDrawer<T extends IStyleNode>{
+public interface IGraphicCollectionDrawer <T extends StyleNode> extends IStyleDrawer <T>{
     
-    Shape getShape();
     
-    void setShape(Shape shape);
+    public Rectangle2D getBounds(MapTransform mapTransform, T styleNode) throws ParameterException;
     
-    void draw(Graphics2D g2, MapTransform mapTransform , T styleNode) throws ParameterException;
+    
+    public AffineTransform getAffineTransform();
+
    
+    public void setAffineTransform(AffineTransform affineTransform);  
 }

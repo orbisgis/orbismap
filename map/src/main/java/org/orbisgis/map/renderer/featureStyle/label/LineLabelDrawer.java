@@ -10,9 +10,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
 import org.orbisgis.style.common.RelativeOrientation;
@@ -31,7 +29,7 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
     private Shape shape;
 
     @Override
-    public void draw( Graphics2D g2, MapTransform mapTransform, LineLabel styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, LineLabel styleNode) throws ParameterException {
         if (shape != null) {
             StyledText styleText = styleNode.getLabel();
 
@@ -39,7 +37,7 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
                 StyleTextDrawer styleTextDrawer = new StyleTextDrawer();
                 String text = (String) styleText.getText().getValue();
                  if(text!=null && !text.isEmpty()){
-        Rectangle2D bounds = styleTextDrawer.getBounds(g2, text, properties, mapTransform, styleText);
+        Rectangle2D bounds = styleTextDrawer.getBounds(g2, text, mapTransform, styleText);
         double totalWidth = bounds.getWidth();
 
         // TODO, is shp a polygon ? Yes so create a line like:
@@ -129,7 +127,7 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
 
         for (String glyph : glyphs) {
             if (glyph != null && !glyph.isEmpty()) {
-                Rectangle2D gBounds = styleTextDrawer.getBounds( g2, glyph, properties, mapTransform, styleText);
+                Rectangle2D gBounds = styleTextDrawer.getBounds( g2, glyph, mapTransform, styleText);
                 
                 glyphWidth = gBounds.getWidth() * way;
                 Point2D.Double pAt = ShapeHelper.getPointAt(shape, currentPos);
@@ -141,13 +139,13 @@ public class LineLabelDrawer implements ILabelDrawer<LineLabel> {
                 AffineTransform at = AffineTransform.getTranslateInstance(pAt.x, pAt.y);
                 at.concatenate(AffineTransform.getRotateInstance(theta));
                 currentPos += glyphWidth;
-                outlines.add(styleTextDrawer.getOutline(g2, glyph, properties, mapTransform, at, vA, styleText));
+                outlines.add(styleTextDrawer.getOutline(g2, glyph, mapTransform, at, vA, styleText));
             } else {
                 //System.out.println ("Space...");
                 //currentPos += emWidth*way;
             }
         }
-        styleTextDrawer.drawOutlines( g2, outlines, properties, mapTransform,styleText);
+        styleTextDrawer.drawOutlines( g2, outlines, mapTransform,styleText);
     }
             }
     }

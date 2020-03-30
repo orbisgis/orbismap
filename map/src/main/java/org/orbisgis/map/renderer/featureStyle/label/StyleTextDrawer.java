@@ -50,19 +50,19 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
     private Shape shape;
 
     @Override
-    public void draw( Graphics2D g2, MapTransform mapTransform, StyledText styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, StyledText styleNode) throws ParameterException {
             String txt =  (String) styleNode.getText().getValue();
             if (txt != null) {
-            Label.VerticalAlignment va  = (Label.VerticalAlignment) properties.get("verticalalignment");
+            Label.VerticalAlignment va  = null;//(Label.VerticalAlignment) properties.get("verticalalignment");
 
             if (va == null) {
                 va  = Label.VerticalAlignment.TOP;
             }
-            AffineTransform at = (AffineTransform) properties.get("affinetransform");
+            AffineTransform at = g2.getTransform();////AffineTransform) properties.get("affinetransform");
 
             ArrayList<Shape> outlines = new ArrayList<Shape>();
-            outlines.add(getOutline( g2, txt, properties, mapTransform, at, va, styleNode));
-            drawOutlines(g2, outlines, properties, mapTransform, styleNode);
+            outlines.add(getOutline( g2, txt, mapTransform, at, va, styleNode));
+            drawOutlines(g2, outlines, mapTransform, styleNode);
         }
     }
 
@@ -79,8 +79,8 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @param mapTransform
      * @throws ParameterException
      */
-    public void drawOutlines(Graphics2D g2, ArrayList<Shape> outlines, Map<String, Object> properties,
-            MapTransform mapTransform, StyledText styleNode) throws ParameterException, SQLException {
+    public void drawOutlines(Graphics2D g2, ArrayList<Shape> outlines,
+            MapTransform mapTransform, StyledText styleNode) throws ParameterException {
 
         Halo halo = styleNode.getHalo();
 
@@ -89,7 +89,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
                 IStyleDrawer haloDrawer = drawerMap.get(halo.getClass());
                 for (Shape outline : outlines) {
                     haloDrawer.setShape(outline);
-                    haloDrawer.draw( g2, mapTransform, halo, properties);
+                    haloDrawer.draw( g2, mapTransform, halo);
                 }
             }
         }
@@ -119,16 +119,15 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
                     sf.setParent(styleNode);
                     SolidFillDrawer drawer = new SolidFillDrawer();
                     drawer.setShape(outline);
-                   drawer.draw(g2, mapTransform, sf, properties);
+                   drawer.draw(g2, mapTransform, sf);
                 }
                 if (fillDrawer != null) {
                     fillDrawer.setShape(outline);
-                    fillDrawer.draw( g2, mapTransform, fill, properties);
+                    fillDrawer.draw( g2, mapTransform, fill);
                 }
                 if (strokeDrawer != null) {
                     strokeDrawer.setShape(outline);
-                    properties.put("offset", 0.0);
-                    strokeDrawer.draw(g2, mapTransform, stroke, properties);
+                    strokeDrawer.draw(g2, mapTransform, stroke);
                 }
             }
 
@@ -147,10 +146,10 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException
      * @throws IOException
      */
-    public Rectangle2D getBounds(Graphics2D g2, String text, Map<String, Object> map,
+    public Rectangle2D getBounds(Graphics2D g2, String text,
             MapTransform mt, StyledText styleNode) throws ParameterException {
 
-        Font font = getFont(map, mt, styleNode);
+        Font font = getFont( mt, styleNode);
         FontMetrics metrics = g2.getFontMetrics(font);
         return metrics.getStringBounds(text, null);
     }
@@ -176,10 +175,10 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws IOException If an error occurred while retrieving the
      * {@code Font}.
      */
-    public Shape getOutline( Graphics2D g2, String text, Map<String, Object> map,
+    public Shape getOutline( Graphics2D g2, String text,
             MapTransform mt, AffineTransform at, Label.VerticalAlignment va, StyledText styleNode)
             throws ParameterException {
-        Font font = getFont(map, mt, styleNode);
+        Font font = getFont(mt, styleNode);
         TextLayout tl = new TextLayout(text, font, g2.getFontRenderContext());
         FontMetrics metrics = g2.getFontMetrics(font);
         double dy = 0;
@@ -218,7 +217,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException
      * @throws IOException
      */
-    private Font getFont( Map<String, Object> properties, MapTransform mt, StyledText styleNode) throws ParameterException {
+    private Font getFont( MapTransform mt, StyledText styleNode) throws ParameterException {
         String fontFamily = (String) styleNode.getFontFamily().getValue();
         if (fontFamily == null) {
             throw new ParameterException("The font family cannot be null");

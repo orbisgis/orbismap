@@ -7,7 +7,6 @@ package org.orbisgis.map.renderer.featureStyle.stroke;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.sql.SQLException;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
@@ -25,10 +24,10 @@ public class TextStrokeDrawer implements IStrokeDrawer<TextStroke>{
     private Shape shape;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, TextStroke styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, TextStroke styleNode) throws ParameterException {
         LineLabel lineLabel = styleNode.getLineLabel();
         if (lineLabel != null) {
-            new LineLabelDrawer().draw(g2, mapTransform, lineLabel, properties);
+            new LineLabelDrawer().draw(g2, mapTransform, lineLabel);
         }
     }
     @Override

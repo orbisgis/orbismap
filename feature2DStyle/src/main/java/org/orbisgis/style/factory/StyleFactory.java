@@ -10,6 +10,7 @@ import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.IRule;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.common.RelativeOrientation;
 import org.orbisgis.style.fill.*;
 import org.orbisgis.style.graphic.MarkGraphic;
 import static org.orbisgis.style.graphic.MarkGraphic.DEFAULT_SIZE;
@@ -20,6 +21,7 @@ import org.orbisgis.style.parameter.Expression;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.style.stroke.GraphicStroke;
 import org.orbisgis.style.stroke.PenStroke;
 import static org.orbisgis.style.stroke.PenStroke.DEFAULT_CAP;
 import static org.orbisgis.style.stroke.PenStroke.DEFAULT_JOIN;
@@ -272,7 +274,7 @@ public class StyleFactory {
         mg.setWkn(new Literal("circle"));
         mg.setUom(Uom.PX);
         mg.setViewBox(new ViewBox(new Literal(1f)));
-        dotMapFill.setGraphic(mg);
+        dotMapFill.addGraphic(mg);
         dotMapFill.setQuantityPerMark(new Literal(3));
         dotMapFill.setTotalQuantity(new Literal(2000));
         areaSymbolizer.setFill(dotMapFill);
@@ -379,7 +381,7 @@ public class StyleFactory {
         SolidFill markFill = new SolidFill(colorExpression, opacity);
         markGraphic.setFill(markFill);        
         markGraphic.setViewBox(new ViewBox(new Literal(12f), new Literal(12f)));
-        densityFill.setGraphic(markGraphic);
+        densityFill.addGraphic(markGraphic);
         areaSymbolizer.setFill(densityFill);
         PenStroke ps = new PenStroke();
         ps.setWidth(new Literal(3f));
@@ -408,7 +410,7 @@ public class StyleFactory {
         mg.setWkn(new Literal("circle"));
         mg.setFill(solilFillG);
         mg.setViewBox(new ViewBox(new Literal(12f), new Literal(12f)));
-        graphicFill.setGraphic(mg);
+        graphicFill.addGraphic(mg);
         areaSymbolizer.setFill(graphicFill);
         PenStroke ps = new PenStroke();
         ps.setFill(createSolidFill(Color.GREEN));
@@ -434,7 +436,7 @@ public class StyleFactory {
         markGraphic.setViewBox(new ViewBox(new Literal(size)));
         markGraphic.setFill(createSolidFill(fillColor)); 
         markGraphic.setStroke(createPenStroke(strokeColor, strokeSize));
-        ps.setGraphic(markGraphic);
+        ps.addGraphic(markGraphic);
         rule.addSymbolizer(ps);
         return style;
     }
@@ -453,7 +455,7 @@ public class StyleFactory {
         markGraphic.setWkn(new Literal("square"));
         markGraphic.setViewBox(new ViewBox(new Literal(12f), new Literal(12f)));
         markGraphic.setFill(createSolidFill(Color.ORANGE));                
-        ps.setGraphic(markGraphic);
+        ps.addGraphic(markGraphic);
         ps.setOnVertex(true);
         rule.addSymbolizer(ps);
         return style;
@@ -474,7 +476,7 @@ public class StyleFactory {
         markGraphic.setStroke(createPenStroke(Color.black, 1));        
         markGraphic.setWkn(new Literal("square"));
         markGraphic.setViewBox(new ViewBox(new Expression("CASE WHEN ST_AREA(THE_GEOM)> 20000 THEN 60.0  ELSE 5.0 END")));
-        ps.setGraphic(markGraphic);
+        ps.addGraphic(markGraphic);
         rule.addSymbolizer(ps);
         return style;
     }
@@ -488,7 +490,7 @@ public class StyleFactory {
         areaSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
         PointSymbolizer pointSymbolizer = new PointSymbolizer();
-        pointSymbolizer.setGraphic(createMarkGraphic());
+        pointSymbolizer.addGraphic(createMarkGraphic());
         pointSymbolizer.setOnVertex(true);  
         rule.addSymbolizer(areaSymbolizer);
         rule.addSymbolizer(pointSymbolizer); 
@@ -512,7 +514,7 @@ public class StyleFactory {
         mg.setWkn(new Literal("circle"));
         mg.setViewBox(new ViewBox(new Literal(10f)));
         pointSymbolizerCircle.setOnVertex(true);
-        pointSymbolizerCircle.setGraphic(mg);
+        pointSymbolizerCircle.addGraphic(mg);
         pointSymbolizerCircle.setLevel(2);
         PointSymbolizer pointSymbolizerCross = new PointSymbolizer();
         MarkGraphic mg_cross = new MarkGraphic();
@@ -520,7 +522,7 @@ public class StyleFactory {
         mg_cross.setViewBox(new ViewBox(new Literal(10f)));        
         mg_cross.setFill(createSolidFill(Color.RED));
         pointSymbolizerCross.setOnVertex(true);
-        pointSymbolizerCross.setGraphic(mg_cross);
+        pointSymbolizerCross.addGraphic(mg_cross);
         pointSymbolizerCross.setLevel(3);
         
         rule.addSymbolizer(areaSymbolizer);
@@ -596,5 +598,39 @@ public class StyleFactory {
         markGraphic.setFill(createSolidFill(Color.GRAY));
         markGraphic.setStroke(createPenStroke(Color.ORANGE, 1));
         return markGraphic;
+    }
+    
+    /**
+     * Create a style with one <code>LineSymbolizer</code>
+     *
+     * @return a  <code>Style</code>
+     */
+    public static Feature2DStyle createGraphicStrokeLineSymbolizer(Color color, float width,double offset ) {
+        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        GraphicStroke graphicStroke =  new GraphicStroke();
+        graphicStroke.setUom(Uom.MM);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
+        graphicStroke.setDistance(new Literal(5f));
+        MarkGraphic verticalLineGraphic = new MarkGraphic();
+        verticalLineGraphic.setUom(Uom.MM);
+        verticalLineGraphic.setWkn(new Literal("VERTLINE"));
+        verticalLineGraphic.setViewBox(new ViewBox(new Literal(10f), new Literal(10f)));
+        verticalLineGraphic.setFill(createSolidFill(Color.GRAY));
+        verticalLineGraphic.setStroke(createPenStroke(Color.ORANGE, 3));
+        graphicStroke.addGraphic(verticalLineGraphic);
+        MarkGraphic circleGraphic = new MarkGraphic();
+        circleGraphic.setWkn(new Literal("circle"));        
+        circleGraphic.setUom(Uom.MM);
+        circleGraphic.setViewBox(new ViewBox(new Literal(2f), new Literal(2f)));
+        circleGraphic.setFill(createSolidFill(Color.GRAY));
+        circleGraphic.setStroke(createPenStroke(Color.ORANGE, 1));       
+        graphicStroke.addGraphic(circleGraphic);
+        lineSymbolizer.setPerpendicularOffset(new Literal(offset));
+        lineSymbolizer.setStroke(graphicStroke);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(lineSymbolizer);
+        style.addRule(rule);
+        return style;
     }
 }

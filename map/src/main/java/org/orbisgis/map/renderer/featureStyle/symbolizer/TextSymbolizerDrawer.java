@@ -8,10 +8,7 @@ package org.orbisgis.map.renderer.featureStyle.symbolizer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
@@ -39,25 +36,12 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer> {
     private Graphics2D g2_bi;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
-        List<Shape> shps;
-        //RealParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
-        /*if (perpendicularOffset != null) {
-                Double pOffset = perpendicularOffset.getValue(properties);
-                shps = ShapeHelper.perpendicularOffset(shape, pOffset);
-            } else {*/
-        shps = new LinkedList<Shape>();
-        shps.add(getShape());
-        //}
-
+    public void draw(Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer) throws ParameterException {
         Label label = symbolizer.getLabel();
         if (drawerMap.containsKey(label.getClass())) {
-            properties.put("offset", 0.0);
             ILabelDrawer labelDrawer = drawerMap.get(label.getClass());
-            for (Shape s : shps) {
-                labelDrawer.setShape(s);
-                labelDrawer.draw(g2, mapTransform, label, properties);
-            }
+            labelDrawer.setShape(getShape());
+            labelDrawer.draw(g2, mapTransform, label);
         }
     }
 

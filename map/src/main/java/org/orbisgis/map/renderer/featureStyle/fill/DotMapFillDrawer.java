@@ -12,17 +12,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
+import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
-import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
+import org.orbisgis.map.renderer.featureStyle.graphic.GraphicCollectionDrawer;
 import org.orbisgis.style.fill.DotMapFill;
-import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.graphic.MarkGraphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
@@ -34,28 +33,28 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
     private Random rand;
     static final int MAX_ATTEMPT = 100;
 
-    final static Map<Class, IStyleDrawer> drawerMap = new HashMap<>();
+    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
 
     static {
-        drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
+        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
     }
     private Shape shape;
+    private AffineTransform affineTransform;
 
     @Override
-    public Paint getPaint( DotMapFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint( DotMapFill styleNode, MapTransform mt) throws ParameterException {
         return null;
     }
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, DotMapFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, DotMapFill styleNode) throws ParameterException {
         if(shape!=null){
-        Graphic graphic = styleNode.getGraphic();
+        GraphicCollection graphic = styleNode.getGraphics();
         if (drawerMap.containsKey(graphic.getClass())) {
-            IStyleDrawer graphicDrawer = drawerMap.get(graphic.getClass());
+            IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
             if(graphicDrawer!=null){
             Integer perMark = (Integer) styleNode.getQuantityPerMark().getValue();
-            Integer total = (Integer) styleNode.getTotalQuantity().getValue();
-           
+            Integer total = (Integer) styleNode.getTotalQuantity().getValue();           
 
             if (perMark == null || total == null) {
                 throw new ParameterException("Dot Map Fill: missing parameters !!!");
@@ -73,12 +72,9 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
             for (int i = 0; i < nb; i++) {
                 Point2D.Double pos = findMarkPosition(area);
                 if (pos != null) {
-                    properties.put("affinetransform",  AffineTransform.getTranslateInstance(pos.x, pos.y));
-                    graphicDrawer.draw(g2, mapTransform, graphic, properties);
-                    properties.remove("affinetransform");
-                } else {
-                    //TODO : log this message ("Could not find position for mark within area");
-                }
+                    graphicDrawer.setAffineTransform(AffineTransform.getTranslateInstance(pos.x, pos.y));
+                    graphicDrawer.draw(g2, mapTransform, graphic);
+                } 
             }
             }
         }
@@ -113,6 +109,15 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    @Override
+    public AffineTransform getAffineTransform() {
+        return affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform = affineTransform;
     }
 
 }

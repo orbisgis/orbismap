@@ -6,8 +6,7 @@
 package org.orbisgis.map.renderer.featureStyle;
 
 import java.awt.Paint;
-import java.sql.SQLException;
-import java.util.Map;
+import java.awt.geom.AffineTransform;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.parameter.ParameterException;
@@ -20,6 +19,11 @@ import org.orbisgis.style.parameter.ParameterException;
 public interface IFillDrawer <T extends IStyleNode> extends IStyleDrawer <T>{
     
     
-    public Paint getPaint(T styleNode, Map<String,Object> properties, MapTransform mt) throws ParameterException, SQLException; 
+    public Paint getPaint(T styleNode, MapTransform mt) throws ParameterException; 
+    
+    public AffineTransform getAffineTransform();
+
+   
+    public void setAffineTransform(AffineTransform affineTransform); 
     
 }

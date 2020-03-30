@@ -261,7 +261,7 @@ public class Feature2DStyleWriter {
         generator.writeFieldName("PointSymbolizer");
         generator.writeStartObject(); // Start with left brace i.e. {        
         writeSymbolizerMetadata(generator, symbolizer);
-        writeGraphic(generator, symbolizer.getGraphic());
+        writeGraphic(generator, symbolizer.getGraphics());
         generator.writeEndObject();
 
     }

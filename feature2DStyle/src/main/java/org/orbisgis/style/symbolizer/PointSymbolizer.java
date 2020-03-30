@@ -46,6 +46,7 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
@@ -73,7 +74,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  * 
  */
 public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Comparable, IFeatureSymbolizer, UomNode {
-    private Graphic graphic;
+    private GraphicCollection graphics;
     private boolean onVertex = false;
     private GeometryParameter geometryExpression;
     private String name;
@@ -93,6 +94,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
         this.level = 0;
         this.uom = Uom.PX;
         onVertex = false;
+        this.graphics =new GraphicCollection();
         
     }    
     
@@ -110,15 +112,21 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     }
 
     @Override
-    public Graphic getGraphic() {
-        return graphic;
+    public GraphicCollection getGraphics() {
+        return graphics;
     }
 
     @Override
-    public void setGraphic(Graphic graphic) {
-        this.graphic = graphic;
-        if(this.graphic!=null){
-        this.graphic.setParent(this);
+    public void setGraphics(GraphicCollection graphic) {
+        this.graphics = graphic;
+        if(this.graphics!=null){
+        this.graphics.setParent(this);
+        }
+    }
+    @Override
+    public void addGraphic(Graphic graphic) {
+        if (graphics != null) {
+            this.graphics.add(graphic);
         }
     }
 
@@ -137,7 +145,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
         if(this.getGeometryParameter()!=null){
             ls.add(this.getGeometryParameter());
         }
-        ls.add(graphic);
+        ls.add(graphics);
         return ls;
     }
     

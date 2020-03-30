@@ -42,6 +42,7 @@ import org.orbisgis.style.IUom;
 import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.factory.StyleFactory;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
@@ -61,10 +62,9 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
 
     public static final double MIN_LENGTH = 1; // In pixel !
 
-    private Graphic graphic;
-    private ParameterValue length = new NullParameterValue();
+    private GraphicCollection graphics;
+    private ParameterValue distance = new NullParameterValue();
     private RelativeOrientation orientation;
-    private ParameterValue relativePosition = new NullParameterValue();
 
     /**
      * Build a new, default, {@code GraphicStroke}. It is defined with a default
@@ -73,44 +73,42 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
      */
     public GraphicStroke() {
         super();
-        this.graphic = StyleFactory.create3mmMarkGraphic();
+        this.graphics = new GraphicCollection();
     }
 
     @Override
-    public void setGraphic(Graphic graphic) {
-        this.graphic = graphic;
+    public void setGraphics(GraphicCollection graphic) {
+        this.graphics = graphic;
     }
 
     @Override
-    public Graphic getGraphic() {
-        return graphic;
+    public GraphicCollection getGraphics() {
+        return graphics;
     }
 
     /**
-     * Set the length used to plot the embedded graphic. If set to null, then
-     * this length is defaulted to the natural length of the graphic.
+     * Set the distance used to plot the embedded graphic.
      *
-     * @param length
+     * @param distance
      */
-    public void setLength(ParameterValue length) {
-        if (length != null) {
-            this.length = new NullParameterValue();
-            this.length.setParent(this);
+    public void setDistance(ParameterValue distance) {
+        if (distance == null) {
+            this.distance = new NullParameterValue();
+            this.distance.setParent(this);
         } else {
-            this.length = length;
-            this.length.setParent(this);
-            this.length.format(Float.class);
+            this.distance = distance;
+            this.distance.setParent(this);
+            this.distance.format(Float.class);
         }
     }
 
     /**
-     * Get the length used to plot the embedded graphic. If {@code null}, then
-     * the length of the embedded {@code Graphic} is used.
+     * Get the distance used to plot the embedded graphic. 
      *
      * @return
      */
-    public ParameterValue getLength() {
-        return length;
+    public ParameterValue getDistance() {
+        return distance;
     }
 
     /**
@@ -135,34 +133,23 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
         }
     }
 
-    public ParameterValue getRelativePosition() {
-        return relativePosition;
-    }
-
-    public void setRelativePosition(ParameterValue relativePosition) {
-        if (this.relativePosition != null) {
-            this.relativePosition = new NullParameterValue();
-            this.relativePosition.setParent(this);
-        } else {
-            this.relativePosition = relativePosition;
-            this.relativePosition.setParent(this);
-            this.relativePosition.format(Float.class);
-        }
-    }
-
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
-        if (graphic != null) {
-            ls.add(graphic);
+        if (graphics != null) {
+            ls.add(graphics);
         }
-        if (length != null) {
-            ls.add(length);
-        }
-        if (relativePosition != null) {
-            ls.add(relativePosition);
+        if (distance != null) {
+            ls.add(distance);
         }
         return ls;
+    }
+
+    @Override
+    public void addGraphic(Graphic graphic) {
+        if (graphics != null) {
+            this.graphics.add(graphic);
+        }
     }
 
 }

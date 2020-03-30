@@ -42,6 +42,7 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
@@ -56,7 +57,7 @@ import org.orbisgis.style.parameter.ParameterValue;
  */
 public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNode {
 
-    private Graphic graphic;
+    private GraphicCollection graphics;
     /**
      * Distance between two graphics in the fill, in X direction.
      */
@@ -71,6 +72,7 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * Creates a new GraphicFill, with the gap's measures set to null.
      */
     public GraphicFill() {
+        this.graphics=new GraphicCollection();
     }
 
     /**
@@ -80,8 +82,8 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * @param graphic
      */
     @Override
-    public void setGraphic(Graphic graphic) {
-        this.graphic = graphic;
+    public void setGraphics(GraphicCollection graphic) {
+        this.graphics = graphic;
         graphic.setParent(this);
     }
 
@@ -91,8 +93,8 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * @return
      */
     @Override
-    public Graphic getGraphic() {
-        return graphic;
+    public GraphicCollection getGraphics() {
+        return graphics;
     }
 
     /**
@@ -148,8 +150,8 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
-        if (graphic != null) {
-            ls.add(graphic);
+        if (graphics != null) {
+            ls.add(graphics);
         }
         if (gapX != null) {
             ls.add(gapX);
@@ -173,6 +175,13 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
     @Override
     public Uom getOwnUom() {
         return uom;
+    }
+    
+    @Override
+    public void addGraphic(Graphic graphic) {
+        if (graphics != null) {
+            this.graphics.add(graphic);
+        }
     }
 
 }

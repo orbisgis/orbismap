@@ -11,7 +11,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
@@ -36,15 +35,15 @@ public class HaloDrawer implements IFillDrawer<Halo> {
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
     }
     private Shape shape;
+    private AffineTransform affineTransform;
 
     @Override
-    public Paint getPaint(Halo styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint(Halo styleNode, MapTransform mt) throws ParameterException {
         return null;
     }
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, Halo styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        AffineTransform at = (AffineTransform) properties.get("affinetransform");
+    public void draw(Graphics2D g2, MapTransform mapTransform, Halo styleNode) throws ParameterException {
         if (shape != null) {
             IFill fill = styleNode.getFill();
             if (styleNode.getRadius() != null && fill != null) {
@@ -63,13 +62,13 @@ public class HaloDrawer implements IFillDrawer<Halo> {
                         double height = shp.getHeight() + r;
                         double width = shp.getWidth() + r;
                         Shape origin = new Arc2D.Double(x, y, width, height, shp.getAngleStart(), shp.getAngleExtent(), shp.getArcType());
-                        Shape halo = at.createTransformedShape(origin);
-                        fillHalo(fillDrawer, fill, shape, halo, g2, properties, mapTransform);
+                        Shape halo = getAffineTransform().createTransformedShape(origin);
+                        fillHalo(fillDrawer, fill, shape, halo, g2, mapTransform);
                     } else {
                         double r = getHaloRadius(radius, styleNode.getUom(), mapTransform);
                         if (r > 0.0) {
                             for (Shape shapeHalo : ShapeHelper.perpendicularOffset(shape, r)) {
-                                fillHalo(fillDrawer, fill, shapeHalo, shape, g2, properties, mapTransform);
+                                fillHalo(fillDrawer, fill, shapeHalo, shape, g2, mapTransform);
                             }
                         }
                     }
@@ -90,14 +89,14 @@ public class HaloDrawer implements IFillDrawer<Halo> {
     }
 
     private void fillHalo(IFillDrawer fillDrawer, IFill fill, Shape halo, Shape initialShp, Graphics2D g2,
-            Map<String, Object> properties, MapTransform mapTransform)
-            throws ParameterException, SQLException {
+            MapTransform mapTransform)
+            throws ParameterException {
         if (halo != null && initialShp != null) {
             Area initialArea = new Area(initialShp);
             Area aHalo = new Area(halo);
             aHalo.subtract(initialArea);
-            properties.put("shape", aHalo);
-            fillDrawer.draw(g2, mapTransform, fill, properties);
+            fillDrawer.setShape(aHalo);
+            fillDrawer.draw(g2, mapTransform, fill);
         } else {
             //LOGGER.error("Perpendicular offset failed");
         }
@@ -113,4 +112,13 @@ public class HaloDrawer implements IFillDrawer<Halo> {
         this.shape = shape;
     }
 
+    @Override
+    public AffineTransform getAffineTransform() {
+        return affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform = affineTransform;
+    }
 }

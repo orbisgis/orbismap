@@ -8,7 +8,6 @@ package org.orbisgis.map.renderer.featureStyle.symbolizer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
@@ -40,22 +39,15 @@ public class LineSymbolizerDrawer implements ISymbolizerDraw<LineSymbolizer> {
     private Graphics2D g2_bi;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, LineSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, LineSymbolizer symbolizer) throws ParameterException {
 
         Stroke stroke = symbolizer.getStroke();
         if (stroke != null) {
             Uom uom = symbolizer.getUom();
-            double offset = 0.0;
-            /*ExpressionParameter perpendicularOffset = symbolizer.getPerpendicularOffset();
-            if (perpendicularOffset != null) {
-                offset = UomUtils.toPixel(perpendicularOffset.getValue(rs, fid),
-                        getUom(), mt.getDpi(), mt.getScaleDenominator(), null);
-            }*/
-            properties.put("offset", offset);
             if (drawerMap.containsKey(stroke.getClass())) {
                 IStyleDrawer drawer = drawerMap.get(stroke.getClass());
                 drawer.setShape(getShape());
-                drawer.draw(g2, mapTransform, stroke, properties);
+                drawer.draw(g2, mapTransform, stroke);
             }
 
         }

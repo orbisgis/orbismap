@@ -10,17 +10,16 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
-import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
+import org.orbisgis.map.renderer.featureStyle.graphic.GraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.shape.PointsShape;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
-import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.graphic.MarkGraphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
@@ -29,10 +28,10 @@ import org.orbisgis.style.parameter.ParameterException;
  */
 public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
 
-    final static Map<Class, IStyleDrawer> drawerMap = new HashMap<>();
+    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
 
     static {
-        drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
+        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
     }
     private Shape shape;
 
@@ -40,30 +39,30 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
     private Graphics2D g2_bi;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, PointSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
-          Graphic graphic = symbolizer.getGraphic();
+    public void draw(Graphics2D g2, MapTransform mapTransform, PointSymbolizer symbolizer) throws ParameterException {
+            GraphicCollection graphic = symbolizer.getGraphics();
             if (graphic != null) {
                 if (drawerMap.containsKey(graphic.getClass())) {
-                    IStyleDrawer graphicDrawer = drawerMap.get(graphic.getClass());
+                    IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
                     if (shape instanceof PointsShape) {
                         PointsShape shapes = (PointsShape) getShape();
                         for (int i = 0; i < shapes.size(); i++) {
                             Rectangle2D b = shapes.get(i).getBounds2D();
-                            AffineTransform a = AffineTransform.getTranslateInstance(b.getX(), b.getY());
-                            properties.put("affinetransform", a);
-                            graphicDrawer.draw(g2, mapTransform, graphic, properties);
+                            graphicDrawer.setAffineTransform( AffineTransform.getTranslateInstance(b.getX(), b.getY()));                        
+                            graphicDrawer.draw(g2, mapTransform, graphic);
                         }
                     } else {
                         Rectangle2D b = getShape().getBounds2D();
-                        AffineTransform a = AffineTransform.getTranslateInstance(b.getX(), b.getY());
-                        properties.put("affinetransform", a);
-                        graphicDrawer.draw(g2, mapTransform, graphic, properties);
+                        graphicDrawer.setAffineTransform(AffineTransform.getTranslateInstance(b.getX(), b.getY()));
+                        graphicDrawer.draw(g2, mapTransform, graphic);
                     }
 
                 }
             }
         
-    }
+    }  
+    
+    
 
     @Override
     public Shape getShape() {
@@ -104,4 +103,5 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
             bi = null;
         }
     }
+
 }

@@ -4,19 +4,17 @@ import org.orbisgis.map.renderer.featureStyle.graphic.GraphicFillDrawer;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
-import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
-import org.orbisgis.map.renderer.featureStyle.graphic.MarkGraphicDrawer;
+import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
+import org.orbisgis.map.renderer.featureStyle.graphic.GraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.style.fill.DensityFill;
-import org.orbisgis.style.fill.GraphicFill;
-import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.graphic.MarkGraphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.utils.UomUtils;
 
@@ -26,16 +24,16 @@ import org.orbisgis.style.utils.UomUtils;
  */
 public class DensityFillDrawer implements IFillDrawer<DensityFill> {
 
-    final static Map<Class, IGraphicDrawer> drawerMap = new HashMap<>();
+    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
 
     static {
-        drawerMap.put(GraphicFill.class, new GraphicFillDrawer());
-        drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
+        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
     }
     private Shape shape;
+    private AffineTransform affineTransform;
 
     @Override
-    public Paint getPaint( DensityFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint( DensityFill styleNode, MapTransform mt) throws ParameterException {
         Float percentage = (Float) styleNode.getPercentageCovered().getValue();
         if (percentage == null) {
             percentage = 0f;
@@ -50,16 +48,15 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
 
             if (styleNode.isHatched() && styleNode.getHatches() != null) {
                 return null;
-            } else if (styleNode.getGraphic() != null) {
-                Graphic mark = styleNode.getGraphic();
+            } else if (styleNode.getGraphics() != null) {
+                GraphicCollection mark = styleNode.getGraphics();
                 if (drawerMap.containsKey(mark.getClass())) {
-                    IGraphicDrawer markStyle = drawerMap.get(mark.getClass());
-                    Rectangle2D bounds = markStyle.getBounds(mt, mark, properties);
+                    IGraphicCollectionDrawer markStyle = drawerMap.get(mark.getClass());
+                    Rectangle2D bounds = markStyle.getBounds(mt, mark);
                     double ratio = Math.sqrt(styleNode.ONE_HUNDRED / percentage);
                     double gapX = bounds.getWidth() * ratio - bounds.getWidth();
                     double gapY = bounds.getHeight() * ratio - bounds.getHeight();
-                    painter =  GraphicFillDrawer.getPaint(markStyle, properties, mt, mark, gapX, gapY, bounds);
-                    
+                    painter =  GraphicFillDrawer.getPaint(markStyle, mt, mark, gapX, gapY, bounds);                    
                 }
 
             } else {
@@ -71,7 +68,7 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
     }
 
     @Override
-    public void draw( Graphics2D g2, MapTransform mapTransform, DensityFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw( Graphics2D g2, MapTransform mapTransform, DensityFill styleNode) throws ParameterException {
          if (shape != null) {
             if (styleNode.isHatched()) {
                 Float alpha = (Float) styleNode.getHatchesOrientation().getValue();
@@ -102,10 +99,10 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
                 }
                 // Perpendiculat dist bw two hatches
                 pDist = styleNode.ONE_HUNDRED * widthInPixel / percentageNormalized;
-                HatchedFillDrawer.drawHatch(g2, properties, shape, mapTransform, alpha, pDist, styleNode.getHatches(),new PenStrokeDrawer(), 0.0);
+                HatchedFillDrawer.drawHatch(g2, shape, mapTransform, alpha, pDist, styleNode.getHatches(),new PenStrokeDrawer(), 0.0);
             } else {
 
-                Paint painter = getPaint(styleNode, properties, mapTransform);
+                Paint painter = getPaint(styleNode, mapTransform);
 
                 if (painter != null) {
                     g2.setPaint(painter);
@@ -123,5 +120,14 @@ public class DensityFillDrawer implements IFillDrawer<DensityFill> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    @Override
+    public AffineTransform getAffineTransform() {
+        return affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform = affineTransform;
     }
 }

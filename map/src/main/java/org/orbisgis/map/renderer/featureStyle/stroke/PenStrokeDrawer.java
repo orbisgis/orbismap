@@ -10,7 +10,6 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
@@ -37,14 +36,14 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
     private Shape shape;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, PenStroke styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, PenStroke styleNode) throws ParameterException {
         IFill fill = styleNode.getFill();
         Float width = (Float) styleNode.getWidth().getValue();
         if (fill != null && width != null) {
             Uom uom = styleNode.getUom();
             if (drawerMap.containsKey(fill.getClass())) {
                 IFillDrawer fillToDraw = drawerMap.get(fill.getClass());
-                Paint paint = fillToDraw.getPaint(fill, properties, mapTransform);
+                Paint paint = fillToDraw.getPaint(fill, mapTransform);
                 //Find dashArray info
                 float[] dashLengths = null;
                 Float dashOffset = 0f;
@@ -66,13 +65,13 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
                     stroke = createBasicStroke(styleNode, mapTransform, width);
                 }
                 g2.setPaint(paint);
-                g2.setStroke(stroke);
+                g2.setStroke(stroke);                
                 if (paint != null) {
                     g2.draw(shape);
                 } else {
                     //    // Others can't -> create the ares to fill
                     fillToDraw.setShape(stroke.createStrokedShape(shape));
-                    fillToDraw.draw(g2, mapTransform, styleNode, properties);
+                    fillToDraw.draw(g2, mapTransform, styleNode);
                 }
             }
 
@@ -116,7 +115,7 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
      * @throws ParameterException
      * @throws SQLException
      */
-    private static BasicStroke createDashStroke(PenStroke penStroke, MapTransform mt, float v100p, float[] dashArray, float dashOffset) throws ParameterException, SQLException {
+    private static BasicStroke createDashStroke(PenStroke penStroke, MapTransform mt, float v100p, float[] dashArray, float dashOffset) throws ParameterException {
         Uom uom = penStroke.getUom();
         int cap;
         if (penStroke.getLineCap() == null) {
@@ -164,7 +163,7 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
 
     }
 
-    private BasicStroke createBasicStroke(PenStroke penStroke, MapTransform mt, float v100p) throws ParameterException, SQLException {
+    private BasicStroke createBasicStroke(PenStroke penStroke, MapTransform mt, float v100p) throws ParameterException {
         Uom uom = penStroke.getUom();
         int cap;
         if (penStroke.getLineCap() == null) {
@@ -215,7 +214,7 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
      * @param properties
      * @return
      */
-    public Double getNaturalLength(PenStroke penStroke, MapTransform mt, Map<String, Object> properties) {
+    public Double getNaturalLength(PenStroke penStroke, MapTransform mt) {
         String dashArray = (String) penStroke.getDashArray().getValue();
         if (dashArray != null) {
             // A dashed PenStroke has a length
@@ -251,6 +250,6 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
-    }
+    }  
 
 }

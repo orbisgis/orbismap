@@ -12,13 +12,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
@@ -26,7 +24,6 @@ import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
-import org.orbisgis.map.renderer.featureStyle.transform.TransformBuilder;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
@@ -52,32 +49,28 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
     static {
         drawerMap.put(Halo.class, new HaloDrawer());
         drawerMap.put(SolidFill.class, new SolidFillDrawer());
-        drawerMap.put(PenStroke.class, new PenStrokeDrawer());       
+        drawerMap.put(PenStroke.class, new PenStrokeDrawer());
     }
     // cached shape : only available with shape that doesn't depends on features
     private Shape shape;
+    private AffineTransform affineTransform;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, MarkGraphic styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, MarkGraphic styleNode) throws ParameterException {
         Shape shp = null;
         if (shape == null) {
-            try {
-                shp = getShape(styleNode, mapTransform, properties);
-            } catch (Exception ex) {
-                Logger.getLogger(MarkGraphicDrawer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            shp = getShape(styleNode, mapTransform);
         } else {
             shp = shape;
 
         }
-        
+
         if (shp != null) {
-            AffineTransform at = new AffineTransform((AffineTransform) properties.get("affinetransform"));
+            AffineTransform at = new AffineTransform(getAffineTransform());
             if (styleNode.getTransform() != null) {
                 //TODO : Put in cache...
-                TransformBuilder transformBuilder = new TransformBuilder();
-                properties.put("shape", shp);
-                at.concatenate(transformBuilder.getAffineTransform(styleNode.getTransform(), properties));
+                //TransformBuilder transformBuilder = new TransformBuilder();
+                //at.concatenate(transformBuilder.getAffineTransform(styleNode.getTransform(), properties));
             }
             Shape atShp = at.createTransformedShape(shp);
 
@@ -90,7 +83,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
                 if (drawerMap.containsKey(halo.getClass())) {
                     IStyleDrawer drawer = drawerMap.get(halo.getClass());
                     drawer.setShape(atShp);
-                    drawer.draw(g2, mapTransform, halo, properties);
+                    drawer.draw(g2, mapTransform, halo);
                 }
             }
             IFill fill = styleNode.getFill();
@@ -98,7 +91,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
                 if (drawerMap.containsKey(fill.getClass())) {
                     IStyleDrawer drawer = drawerMap.get(fill.getClass());
                     drawer.setShape(atShp);
-                    drawer.draw(g2, mapTransform, fill, properties);
+                    drawer.draw(g2, mapTransform, fill);
                 }
             }
             Stroke stroke = styleNode.getStroke();
@@ -106,7 +99,7 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
                 if (drawerMap.containsKey(stroke.getClass())) {
                     IStyleDrawer drawer = drawerMap.get(stroke.getClass());
                     drawer.setShape(atShp);
-                    drawer.draw(g2, mapTransform, stroke, properties);
+                    drawer.draw(g2, mapTransform, stroke);
                 }
             }
         }
@@ -116,18 +109,18 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
     /**
      * TODO : implements
      *
-     * @param map
-     * @param mt
+     * @param markGraphic
+     * @param mapTransform
      * @return
      * @throws ParameterException
      */
-    private Shape getShape(MarkGraphic markGraphic, MapTransform mapTransform, Map<String, Object> properties) throws ParameterException, Exception {
+    public Shape getShape(MarkGraphic markGraphic, MapTransform mapTransform) throws ParameterException {
         String wkn = (String) markGraphic.getWkn().getValue();
         if (wkn != null && !wkn.isEmpty()) {
-            return getShape(WellKnownName.fromString(wkn), markGraphic.getViewBox(), properties, mapTransform.getScaleDenominator(),
+            return getShape(WellKnownName.fromString(wkn), markGraphic.getViewBox(), mapTransform.getScaleDenominator(),
                     mapTransform.getDpi(), markGraphic.getUom());
         } else {
-            throw new IllegalArgumentException("");
+            throw new RuntimeException("Cannot find any shape to draw");
         }
 
         /*if (source != null) {
@@ -140,21 +133,17 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
     }
 
     @Override
-    public Rectangle2D getBounds(MapTransform mapTransform, MarkGraphic styleNode, Map<String, Object> properties) throws ParameterException {
+    public Rectangle2D getBounds(MapTransform mapTransform, MarkGraphic styleNode) throws ParameterException {
         Shape shp = null;
         // If the shape doesn't depends on feature (i.e. not null), we used the cached one
         if (shape == null) {
-            try {
-                shp = getShape(styleNode, mapTransform, properties);
-            } catch (Exception ex) {
-                Logger.getLogger(MarkGraphicDrawer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                shp = getShape(styleNode, mapTransform);
         } else {
             shp = shape;
         }
 
         if (shp == null) {
-            getShape(WellKnownName.CIRCLE, styleNode.getViewBox(), properties, mapTransform.getScaleDenominator(),
+            getShape(WellKnownName.CIRCLE, styleNode.getViewBox(), mapTransform.getScaleDenominator(),
                     mapTransform.getDpi(), styleNode.getUom());
         }
 
@@ -167,12 +156,12 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
 
     }
 
-    public static Shape getShape(Shape shape, ViewBox viewBox, Map<String, Object> map,
-            Double scale, Double dpi) throws ParameterException, SQLException {
+    public static Shape getShape(Shape shape, ViewBox viewBox,
+            Double scale, Double dpi) throws ParameterException {
         double x = 1, y = 1; // The size of the shape, [final unit] => [px]
         if (viewBox != null) {
             Float height = (Float) viewBox.getHeight().getValue();
-            Float width =  (Float) viewBox.getWidth().getValue();
+            Float width = (Float) viewBox.getWidth().getValue();
             if (height != null || width != null) {
                 Point2D box = getDimensionInPixel(((UomNode) viewBox.getParent()).getUom(), height, width, scale, dpi);
                 x = box.getX();
@@ -227,13 +216,13 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
         return new Point2D.Double(dx, dy);
     }
 
-    public static Shape getShape(WellKnownName wellKnownName, ViewBox viewBox, Map<String, Object> map,
+    public static Shape getShape(WellKnownName wellKnownName, ViewBox viewBox,
             Double scale, Double dpi, Uom uom) throws ParameterException {
         double x = DEFAULT_SIZE, y = DEFAULT_SIZE; // The size of the shape, [final unit] => [px]
 
         if (viewBox != null) {
             Float height = (Float) viewBox.getHeight().getValue();
-            Float width =  (Float) viewBox.getWidth().getValue();
+            Float width = (Float) viewBox.getWidth().getValue();
             if (height != null || width != null) {
                 Point2D box = getDimensionInPixel(uom, height, width, scale, dpi);
                 x = box.getX();
@@ -246,6 +235,8 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
         int minxy6 = (int) Math.min(x / 6, y / 6);
 
         switch (wellKnownName) {
+            case VERTLINE:
+                return new Line2D.Double(0, -Math.abs(y2), 0, Math.abs(y2));
             case HALFCIRCLE:
                 if (x2 >= 0) {
                     return new Arc2D.Double(-x2, -Math.abs(y2), Math.abs(x), Math.abs(y), -90, -180, Arc2D.CHORD);
@@ -333,9 +324,8 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
                 cross.addPoint(-minxy6, -minxy6);
 
                 cross.addPoint(-minxy6, -y2);
-
                 return cross;
-
+                
             case X:
 
                 Polygon xShape = new Polygon();
@@ -377,5 +367,15 @@ public class MarkGraphicDrawer implements IGraphicDrawer<MarkGraphic> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+
+    @Override
+    public AffineTransform getAffineTransform() {
+        return  affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform=affineTransform;
     }
 }

@@ -34,6 +34,7 @@
         <dependency>
             <groupId>org.orbisgis.orbisdata.datamanager</groupId>
             <artifactId>jdbc</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <!-- Test dependencies -->
         <dependency>

@@ -75,6 +75,7 @@ public class FeatureStyleRenderer {
     // Take into account when the value from an element is build from an expression
     //ie proportional symbol vs symbol with literal size
     // Clarify getValue on parameter... must depend on uom ?
+    //Penstrocke must be able to support graphic during the dash instead of line
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
         List<String> geometryColumns = spatialTable.getGeometricColumns();
         for (Feature2DRule rule : fs.getRules()) {
@@ -180,10 +181,10 @@ public class FeatureStyleRenderer {
                                 if (currentShape != null) {
                                     ISymbolizerDraw symbolizerDraw = symbolizers.getValue();
                                     symbolizerDraw.setShape(currentShape);
-                                    symbolizerDraw.draw(symbolizerDraw.getGraphics2D(), mt, featureSymbolizer, properties);
+                                    symbolizerDraw.draw(symbolizerDraw.getGraphics2D(), mt, featureSymbolizer);
                                 }
                                 currentShape=null;
-                            } catch (ParameterException | SQLException ex) {
+                            } catch (ParameterException ex) {
                                 Logger.getLogger(FeatureStyleRenderer.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }

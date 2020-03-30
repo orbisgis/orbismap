@@ -45,6 +45,7 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
@@ -66,7 +67,7 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
     private boolean isHatched;
     private PenStroke hatches;
     private ParameterValue orientation= new NullParameterValue();
-    private Graphic mark;
+    private GraphicCollection graphics;
     private ParameterValue percentageCovered = new NullParameterValue();
     //Some constants we don't want to be considered as magic numbers.
     public static final float ONE_HUNDRED = 100;
@@ -83,6 +84,7 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
      * Build a default {@code DensityFill}
      */
     public DensityFill() {
+        this.graphics = new GraphicCollection();
     }    
 
     /**
@@ -94,7 +96,7 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
         this.hatches = hatches;
         if (hatches != null) {
             this.isHatched = true;
-            this.setGraphic(null);
+            this.setGraphics(null);
             hatches.setParent(this);
         }
     }
@@ -133,8 +135,8 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
     }
 
     @Override
-    public void setGraphic(Graphic mark) {
-        this.mark = mark;
+    public void setGraphics(GraphicCollection mark) {
+        this.graphics = mark;
         if (mark != null) {
             this.isHatched = false;
             mark.setParent(this);
@@ -143,8 +145,8 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
     }
 
     @Override
-    public Graphic getGraphic() {
-        return mark;
+    public GraphicCollection getGraphics() {
+        return graphics;
     }
 
     /**
@@ -203,8 +205,8 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
                 ls.add(orientation);
             }
         } else {
-            if (mark != null) {
-                ls.add(mark);
+            if (graphics != null) {
+                ls.add(graphics);
             }
         }
         if (percentageCovered != null) {
@@ -226,5 +228,12 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
     @Override
     public Uom getOwnUom() {
         return uom;
+    }
+    
+    @Override
+    public void addGraphic(Graphic graphic) {
+        if (graphics != null) {
+            this.graphics.add(graphic);
+        }
     }
 }

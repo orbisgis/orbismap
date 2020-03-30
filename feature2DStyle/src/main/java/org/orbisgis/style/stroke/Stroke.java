@@ -48,41 +48,9 @@ import org.orbisgis.style.Uom;
 public abstract class Stroke extends StyleNode implements IUom {
 
     private Uom uom;
-    private boolean linearRapport;
-    private boolean offsetRapport;
-
-    /**
-     * Instanciate a new default {@code Stroke}, with linear and offset rapports
-     * set to false.
-     */
+        
     protected Stroke(){
-        linearRapport = false;
-        offsetRapport = false;
     }
-   
-
-    /**
-     * When delineating closed shapes (i.e. a ring), indicate, whether or not,
-     * the length of stroke elements shall be scaled in order to make the pattern
-     * appear a integral number of time. This will make the junction more aesthetical
-     *
-     * @return <cdoe>true</code> if the stroke elements' length shall be scaled,
-     * <code>false</code> otherwise.
-     */
-    public boolean isLengthRapport() {
-        return linearRapport;
-    }
-
-    /**
-     * Determines if we want to use an length rapport or not.
-     * @param lengthRapport
-     */
-    public void setLengthRapport(boolean lengthRapport) {
-        this.linearRapport = lengthRapport;
-    }
-
-    
-    
 
     @Override
     public Uom getUom() {

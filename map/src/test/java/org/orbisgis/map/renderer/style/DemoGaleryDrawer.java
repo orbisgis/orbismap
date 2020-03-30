@@ -199,7 +199,7 @@ public class DemoGaleryDrawer {
     @Test
     public void testPointSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StyleFactory.createPointSymbolizer("circle", Color.yellow, 2, Color.BLACK, 1);
+        Feature2DStyle style = StyleFactory.createPointSymbolizer("circle", Color.yellow, 10, Color.BLACK, 1);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 
@@ -265,6 +265,17 @@ public class DemoGaleryDrawer {
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().getEnvelopeInternal();
         Feature2DStyle style = StyleFactory.createDashedAreaymbolizer(Color.yellow, 2, 0, "10");
+        template(inputFile, testInfo.getDisplayName(), style, true, envelope);
+    }
+    
+    @Test
+    public void testGraphicStrokeLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.where("limit 1");
+        spatialTable.next();
+        Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
+        Feature2DStyle style = StyleFactory.createGraphicStrokeLineSymbolizer(Color.yellow, 2, 0);
         template(inputFile, testInfo.getDisplayName(), style, true, envelope);
     }
 

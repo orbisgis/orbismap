@@ -13,15 +13,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.GraphicFill;
-import org.orbisgis.style.graphic.Graphic;
-import org.orbisgis.style.graphic.MarkGraphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.utils.UomUtils;
 
@@ -31,23 +30,24 @@ import org.orbisgis.style.utils.UomUtils;
  */
 public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
 
-    final static Map<Class, IGraphicDrawer> drawerMap = new HashMap<>();
+    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
 
     static {
-        drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
+        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
     }
     private Shape shape;
+    private AffineTransform affineTransform;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, GraphicFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
-        Paint stipple = getPaint(styleNode, properties, mapTransform);
+    public void draw(Graphics2D g2, MapTransform mapTransform, GraphicFill styleNode) throws ParameterException {
+        Paint stipple = getPaint(styleNode, mapTransform);
         if (stipple != null) {
             g2.setPaint(stipple);
             g2.fill(shape);
         }
     }
 
-    public Paint getPaint(GraphicFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint(GraphicFill styleNode, MapTransform mt) throws ParameterException {
         float gX = 0.0f;
         float gY = 0.0f;
         Uom uom = styleNode.getUom();
@@ -65,23 +65,23 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
                 gY = 0.0f;
             }
         }
-        Graphic graphic = styleNode.getGraphic();
+        GraphicCollection graphic = styleNode.getGraphics();
         if (graphic != null) {
             if (drawerMap.containsKey(graphic.getClass())) {
-                IGraphicDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                Rectangle2D bounds = graphicDrawer.getBounds(mt, graphic, properties);
+                IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
+                Rectangle2D bounds = graphicDrawer.getBounds(mt, graphic);
                 gX = UomUtils.toPixel(gX, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getWidth());
                 gY = UomUtils.toPixel(gY, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getHeight());
-                return getPaint(graphicDrawer, properties, mt, graphic, gX, gY, bounds);
+                return getPaint(graphicDrawer, mt, graphic, gX, gY, bounds);
             }
         }
 
         return null;
     }
 
-    public static Paint getPaint(IGraphicDrawer graphicDrawer, Map<String, Object> properties,
-            MapTransform mt, Graphic graphic, double gX, double gY, Rectangle2D bounds)
-            throws ParameterException, SQLException {
+    public static Paint getPaint(IGraphicCollectionDrawer graphicDrawer,
+            MapTransform mt, GraphicCollection graphics, double gX, double gY, Rectangle2D bounds)
+            throws ParameterException {
 
         if (bounds != null) {
 
@@ -103,10 +103,10 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
                 int iy;
                 for (ix = 0; ix < 2; ix++) {
                     for (iy = 0; iy < 2; iy++) {
-                        properties.put("affinetransform", AffineTransform.getTranslateInstance(
+                        graphicDrawer.setAffineTransform(AffineTransform.getTranslateInstance(
                                 -bounds.getMinX() + gX / 2.0 + deltaX + tWidth * ix,
                                 -bounds.getMinY() + gY / 2.0 + deltaY + tHeight * iy));
-                        graphicDrawer.draw(tile, mt, graphic, properties);
+                        graphicDrawer.draw(tile, mt, graphics);
                     }
                 }
                 tile.dispose();
@@ -119,12 +119,12 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
     }
 
     @Override
-    public Rectangle2D getBounds(MapTransform mapTransform, GraphicFill styleNode, Map<String, Object> properties) throws ParameterException {
-        Graphic graphic = styleNode.getGraphic();
+    public Rectangle2D getBounds(MapTransform mapTransform, GraphicFill styleNode) throws ParameterException {
+        GraphicCollection graphic = styleNode.getGraphics();
         if (graphic != null) {
             if (drawerMap.containsKey(graphic.getClass())) {
-                IGraphicDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                return graphicDrawer.getBounds(mapTransform, styleNode, properties);
+                IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
+                return graphicDrawer.getBounds(mapTransform, styleNode);
             }
         }
         return null;
@@ -138,6 +138,16 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+
+     @Override
+    public AffineTransform getAffineTransform() {
+        return  affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform=affineTransform;
     }
 
 }

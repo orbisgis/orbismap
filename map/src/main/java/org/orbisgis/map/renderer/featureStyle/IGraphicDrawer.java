@@ -5,8 +5,9 @@
  */
 package org.orbisgis.map.renderer.featureStyle;
 
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.parameter.ParameterException;
@@ -19,5 +20,14 @@ import org.orbisgis.style.parameter.ParameterException;
 public interface IGraphicDrawer <T extends StyleNode> extends IStyleDrawer <T>{
     
     
-    public Rectangle2D getBounds(MapTransform mapTransform, T styleNode, Map<String, Object> properties) throws ParameterException;
+    public Rectangle2D getBounds(MapTransform mapTransform, T styleNode) throws ParameterException;
+
+   
+    public AffineTransform getAffineTransform();
+
+   
+    public void setAffineTransform(AffineTransform affineTransform);  
+    
+    
+    
 }

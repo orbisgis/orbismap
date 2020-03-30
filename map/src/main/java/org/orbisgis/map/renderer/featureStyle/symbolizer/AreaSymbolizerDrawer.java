@@ -10,7 +10,6 @@ import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
@@ -53,35 +52,28 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
     private Graphics2D g2_bi;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, AreaSymbolizer symbolizer, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, AreaSymbolizer symbolizer) throws ParameterException {
         Uom uom = symbolizer.getUom();
         if (symbolizer.getTranslate() != null) {
             // TODO : shp = AffineTransformUtils.getAffineTranslate(symbolizer.getTranslate(), uom,properties, mapTransform,
             //       (double) mapTransform.getWidth(), (double) mapTransform.getHeight()).createTransformedShape(shp);
         }
-        double offset = 0.0;
-        /*Double perpendicularOffset = (Double) symbolizer.getPerpendicularOffset().getValue();
-        if (perpendicularOffset != null && Math.abs(perpendicularOffset) > 0) {
-            offset = UomUtils.toPixel(perpendicularOffset.floatValue(),
-                    uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
-        }*/
 
         IFill fill = symbolizer.getFill();
         if (fill != null) {
             if (drawerMap.containsKey(fill.getClass())) {
                 IStyleDrawer drawer = drawerMap.get(fill.getClass());
                 drawer.setShape(getShape());
-                drawer.draw(g2, mapTransform, fill, properties);
+                drawer.draw(g2, mapTransform, fill);
             }
         }
 
         Stroke stroke = symbolizer.getStroke();
         if (stroke != null) {
-            properties.put("offset", offset);
             if (drawerMap.containsKey(stroke.getClass())) {
                 IStyleDrawer drawer = drawerMap.get(stroke.getClass());
                 drawer.setShape(getShape());
-                drawer.draw(g2, mapTransform, stroke, properties);
+                drawer.draw(g2, mapTransform, stroke);
             }
         }
 

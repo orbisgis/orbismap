@@ -7,8 +7,6 @@ package org.orbisgis.map.renderer.featureStyle.graphic;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.sql.SQLException;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.style.graphic.ExternalGraphic;
@@ -26,7 +24,7 @@ public class ExternalGraphicDrawer implements IStyleDrawer<ExternalGraphic>{
     
         
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, ExternalGraphic styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, ExternalGraphic styleNode) throws ParameterException {
         
         OnlineResource onlineRessource = styleNode.getOnlineResource();
         

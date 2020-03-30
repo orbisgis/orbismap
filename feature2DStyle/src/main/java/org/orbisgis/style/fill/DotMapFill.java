@@ -43,6 +43,7 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
+import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
@@ -58,7 +59,7 @@ import org.orbisgis.style.parameter.ParameterValue;
  */
 public class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNode {
 
-    private Graphic mark;
+    private GraphicCollection graphics;
     private ParameterValue quantityPerMark = new NullParameterValue();
     private ParameterValue totalQuantity = new NullParameterValue();
     private Random rand;
@@ -68,19 +69,20 @@ public class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNod
      * Creates a new DotMapFill, with uninstanciated values.
      */
     public DotMapFill() {
+        this.graphics = new GraphicCollection();
     }
 
     @Override
-    public void setGraphic(Graphic mark) {
+    public void setGraphics(GraphicCollection mark) {
         if (mark != null) {
-            this.mark = mark;
+            this.graphics = mark;
             mark.setParent(this);
         }
     }
 
     @Override
-    public Graphic getGraphic() {
-        return mark;
+    public GraphicCollection getGraphics() {
+        return graphics;
     }
 
     /**
@@ -137,8 +139,8 @@ public class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNod
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
-        if (mark != null) {
-            ls.add(mark);
+        if (graphics != null) {
+            ls.add(graphics);
         }
         if (quantityPerMark != null) {
             ls.add(quantityPerMark);
@@ -163,4 +165,12 @@ public class DotMapFill extends StyleNode implements IGraphicNode, IFill, UomNod
     public Uom getOwnUom() {
         return uom;
     }
+
+    @Override
+    public void addGraphic(Graphic graphic) {
+        if (graphics != null) {
+            this.graphics.add(graphic);
+        }
+    }
+
 }

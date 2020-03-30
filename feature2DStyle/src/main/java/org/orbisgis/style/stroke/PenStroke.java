@@ -224,6 +224,7 @@ public class PenStroke extends Stroke implements FillNode {
      * @param dashOffset.
      */
     public void setDashOffset(ParameterValue dashOffset) {
+
         if (dashOffset == null) {
             this.dashOffset = new NullParameterValue();
             this.dashOffset.setParent(this);

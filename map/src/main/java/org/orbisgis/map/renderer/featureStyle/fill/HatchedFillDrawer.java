@@ -8,10 +8,10 @@ package org.orbisgis.map.renderer.featureStyle.fill;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
@@ -44,14 +44,15 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
         drawerMap.put(PenStroke.class, new PenStrokeDrawer());
     }
     private Shape shape;
+    private AffineTransform affineTransform;
 
     @Override
-    public Paint getPaint(HatchedFill styleNode, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint(HatchedFill styleNode, MapTransform mt) throws ParameterException {
         return null;
     }
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, HatchedFill styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, HatchedFill styleNode) throws ParameterException {
         Uom uom = styleNode.getUom();
         Stroke stroke = styleNode.getStroke();
         if (stroke != null) {
@@ -83,7 +84,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                      hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                 }
                 
-                drawHatch(g2, properties, shape, mapTransform, alpha, pDist, (PenStroke) stroke, strokeToDraw, hOffset);
+                drawHatch(g2, shape, mapTransform, alpha, pDist, (PenStroke) stroke, strokeToDraw, hOffset);
 
             }
         }
@@ -104,9 +105,9 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
      * @param penStroke
      * @throws ParameterException
      */
-    public static void drawHatch(Graphics2D g2, Map<String, Object> properties, Shape shp,
+    public static void drawHatch(Graphics2D g2, Shape shp,
             MapTransform mt, double alph, double pDist, PenStroke penStroke, PenStrokeDrawer penStrokeDrawer,
-            double hOffset) throws ParameterException, SQLException {
+            double hOffset) throws ParameterException {
 
         double alpha = alph;
         while (alpha < 0.0) {
@@ -119,7 +120,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
         double beta = Math.PI / 2.0 + alpha;
         double deltaOx = Math.cos(beta) * hOffset;
         double deltaOy = Math.sin(beta) * hOffset;
-        Double naturalLength = penStrokeDrawer.getNaturalLength(penStroke, mt, properties);
+        Double naturalLength = penStrokeDrawer.getNaturalLength(penStroke, mt);
         if (naturalLength.isInfinite()) {
             naturalLength = DEFAULT_NATURAL_LENGTH;
         }
@@ -239,7 +240,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 if (deltaDx < 0) {
                     deltaDx *= -1;
                 }
-                properties.put("offset", 0.0);
                 for (x = hxmin; x < hxmax + deltaDx / 2.0; x += deltaDx) {
                     if (sinAlpha > 0) {
                         l.x1 = x;
@@ -254,13 +254,12 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     }
 
                     penStrokeDrawer.setShape(l);
-                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
+                    penStrokeDrawer.draw(g2, mt, penStroke);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
             } else {
 
-                properties.put("offset", 0.0);
                 // Seems to been unreachable !
                 for (x = hxmin; x > hxmax - deltaDx / 2.0; x += deltaDx) {
                     l.x1 = x;
@@ -269,7 +268,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     l.y2 = hymax;
 
                     penStrokeDrawer.setShape(l);
-                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
+                    penStrokeDrawer.draw(g2, mt, penStroke);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -280,7 +279,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 if (deltaDy < 0.0) {
                     deltaDy *= -1;
                 }
-                properties.put("offset", 0.0);
                 for (y = hymin; y < hymax + deltaDy / 2.0; y += deltaDy) {
 
                     if (cosAlpha > 0) {
@@ -298,7 +296,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     }
 
                     penStrokeDrawer.setShape(l);
-                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
+                    penStrokeDrawer.draw(g2, mt, penStroke);
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
                 }
@@ -308,7 +306,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     deltaDy *= -1;
                 }
 
-                properties.put("offset", 0.0);
                 for (y = hymin; y > hymax - deltaDy / 2.0; y += deltaDy) {
 
                     if (cosAlpha > 0) {
@@ -326,7 +323,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                     }
 
                     penStrokeDrawer.setShape(l);
-                    penStrokeDrawer.draw(g2, mt, penStroke, properties);
+                    penStrokeDrawer.draw(g2, mt, penStroke);
 
                     //g2.fillOval((int)(l.getX1() - 2),(int)(l.getY1() -2) , 4, 4);
                     //g2.fillOval((int)(l.getX2() - 2),(int)(l.getY2() -2) , 4, 4);
@@ -344,6 +341,15 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    @Override
+    public AffineTransform getAffineTransform() {
+        return affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform = affineTransform;
     }
 
 }

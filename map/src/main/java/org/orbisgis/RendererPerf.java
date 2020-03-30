@@ -35,7 +35,9 @@ public class RendererPerf {
      */
     public static void main(String[] args) throws Exception {
         //Feature2DStyle style = StyleFactory.createLineSymbolizer(Color.yellow, 1, 0);
-        Feature2DStyle style =  StyleFactory.createPointSymbolizer("square", Color.RED, 2, Color.BLACK, 1);
+        //Feature2DStyle style =  StyleFactory.createPointSymbolizer("square", Color.RED, 2, Color.BLACK, 1);
+        
+        Feature2DStyle style =  StyleFactory.createGraphicStrokeLineSymbolizer(Color.yellow, 2, 0);
         //Feature2DStyle style = StyleFactory.createAreaSymbolizer(Color.yellow, 1, -10000);
         JdbcDataSource h2GIS = createDataSource(true);
         /*JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.getSpatialTable("TMP_GEOFILE");

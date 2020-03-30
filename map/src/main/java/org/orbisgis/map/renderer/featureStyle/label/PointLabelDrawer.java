@@ -9,8 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
 import org.orbisgis.style.Uom;
@@ -32,7 +30,7 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
     private Shape shape;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, PointLabel styleNode, Map<String, Object> properties) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, PointLabel styleNode) throws ParameterException {
         if (shape != null) {
             double x;
             double y;
@@ -45,7 +43,7 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
                 StyleTextDrawer styleTextDrawer = new StyleTextDrawer();
                 String text =  (String) styleText.getText().getValue();
                 if(text!=null && !text.isEmpty()) {
-                    Rectangle2D bounds = styleTextDrawer.getBounds( g2, text, properties, mapTransform, styleText);
+                    Rectangle2D bounds = styleTextDrawer.getBounds( g2, text, mapTransform, styleText);
 
 
                     x = shape.getBounds2D().getCenterX() + getHorizontalDisplacement(bounds, styleNode.getHorizontalAlign());
@@ -79,11 +77,11 @@ public class PointLabelDrawer implements ILabelDrawer<PointLabel> {
 
                     AffineTransform at = AffineTransform.getTranslateInstance(x + deltaX, y + deltaY);
 
-                    properties.put("affinetransform", at);
-                    properties.put("verticalalignment", styleNode.getVerticalAlign());
-                    styleTextDrawer.draw(g2, mapTransform, styleText, properties);
-                    properties.remove("affinetransform");
-                    properties.remove("verticalalignment");
+                    //TODO :  properties.put("affinetransform", at);
+                    //properties.put("verticalalignment", styleNode.getVerticalAlign());
+                    styleTextDrawer.draw(g2, mapTransform, styleText);
+                    //properties.remove("affinetransform");
+                    //properties.remove("verticalalignment");
                 }
             }
 

@@ -6,8 +6,7 @@
 package org.orbisgis.map.renderer.featureStyle.fill;
 
 import java.awt.*;
-import java.sql.SQLException;
-import java.util.Map;
+import java.awt.geom.AffineTransform;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.style.fill.SolidFill;
@@ -23,19 +22,20 @@ import org.orbisgis.style.utils.ColorHelper;
 public class SolidFillDrawer implements IFillDrawer<SolidFill> {
 
     private Shape shape;
+    private AffineTransform affineTransform;
 
     
     
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, SolidFill styleNode,Map<String, Object> properties ) throws ParameterException, SQLException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, SolidFill styleNode) throws ParameterException {
         if (shape != null) {
-            g2.setPaint(getPaint( styleNode, properties, mapTransform));
+            g2.setPaint(getPaint( styleNode, mapTransform));
             g2.fill(shape);
         }
     }
 
     @Override
-    public Paint getPaint( SolidFill solidFill, Map<String, Object> properties, MapTransform mt) throws ParameterException, SQLException {
+    public Paint getPaint( SolidFill solidFill,MapTransform mt) throws ParameterException {
         //Color ac = null; // ac stands 4 colour + alpha channel
         String colorValue = (String) solidFill.getColor().getValue();
         Color color = null;
@@ -66,6 +66,15 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    @Override
+    public AffineTransform getAffineTransform() {
+        return affineTransform;
+    }
+
+    @Override
+    public void setAffineTransform(AffineTransform affineTransform) {
+        this.affineTransform = affineTransform;
     }
     
 }

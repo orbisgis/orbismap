@@ -1,20 +1,18 @@
 /**
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
  * OrbisGIS is distributed under GPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  * This file is part of OrbisGIS.
  *
@@ -31,14 +29,13 @@
  * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.graphic;
 
 /**
- * {@code WellKnownName} instances are used to build simple vectorial {@link MarkGraphic}.
- * There are six types of {@code WellKnownName} :
+ * {@code WellKnownName} instances are used to build simple vectorial
+ * {@link MarkGraphic}. There are six types of {@code WellKnownName} :
  * <ul><li>SQUARE</li>
  * <li>CIRCLE</li>
  * <li>HALFCIRCLE</li>
@@ -48,15 +45,13 @@ package org.orbisgis.style.graphic;
  * <li>X</li>
  * </ul>
  *
- * @author Alexis Guéganno, Maxence Laurent
- * TODO : Should be an extension so people are welcome to add their own shape
- * URI :  extensionShape://name
- * e.g :  meteo://wind... Excellent idea from geoserver team
- * A factory manager must be available
- * Should be nice to add utility to display the shape
+ * @author Alexis Guéganno, Maxence Laurent TODO : Should be an extension so
+ * people are welcome to add their own shape URI : extensionShape://name e.g :
+ * meteo://wind... Excellent idea from geoserver team A factory manager must be
+ * available Should be nice to add utility to display the shape
  */
 public enum WellKnownName {
-    SQUARE, CIRCLE, HALFCIRCLE, TRIANGLE, STAR, CROSS, X;
+    SQUARE, CIRCLE, HALFCIRCLE, TRIANGLE, STAR, CROSS, X, VERTLINE;
 
     /**
      * Default size to be used to render graphics based on well-known names.
@@ -64,82 +59,89 @@ public enum WellKnownName {
     public static final double DEFAULT_SIZE = 10.0;
 
     /**
-     * Get all the {@code String} values that can be used to build a {@code WellKnownName}.
-     * @return 
-     * An array of lega {@code String} values
+     * Get all the {@code String} values that can be used to build a
+     * {@code WellKnownName}.
+     *
+     * @return An array of lega {@code String} values
      */
-    public static String[] getValues(){
+    public static String[] getValues() {
         String[] list = new String[WellKnownName.values().length];
         int i = 0;
-        for (WellKnownName wkn : WellKnownName.values()){
+        for (WellKnownName wkn : WellKnownName.values()) {
             list[i] = wkn.toString();
             i++;
         }
         return list;
     }
 
-        /**
-         * Gets an array containing the localized strings associated to the
-         * string representation of all the units of mesure contained in this
-         * enum.
-         * @return
-         */
-        public static String[] getLocalizedStrings(){
-                WellKnownName[] vals = WellKnownName.values();
-                String[] ls = new String[vals.length];
-                for(int i=0; i<vals.length; i++){
-                        ls[i] = vals[i].toLocalizedString();
-                }
-                return ls;
+    /**
+     * Gets an array containing the localized strings associated to the string
+     * representation of all the units of mesure contained in this enum.
+     *
+     * @return
+     */
+    public static String[] getLocalizedStrings() {
+        WellKnownName[] vals = WellKnownName.values();
+        String[] ls = new String[vals.length];
+        for (int i = 0; i < vals.length; i++) {
+            ls[i] = vals[i].toLocalizedString();
         }
+        return ls;
+    }
 
-        /**
-         * Gets the localized representation of this.
-         * @return
-         */
-        public String toLocalizedString(){
-                switch (this) {
-                        case SQUARE:
-                                return "SQUARE";
-                        case HALFCIRCLE:
-                                return "HALFCIRCLE";
-                        case TRIANGLE:
-                                return "TRIANGLE";
-                        case STAR:
-                                return "STAR";
-                        case CROSS:
-                                return "CROSS";
-                        case X:
-                                return "X";
-                        default:
-                                return "CIRCLE";
+    /**
+     * Gets the localized representation of this.
+     *
+     * @return
+     */
+    public String toLocalizedString() {
+        switch (this) {
+            case SQUARE:
+                return "SQUARE";
+            case HALFCIRCLE:
+                return "HALFCIRCLE";
+            case TRIANGLE:
+                return "TRIANGLE";
+            case STAR:
+                return "STAR";
+            case CROSS:
+                return "CROSS";
+            case X:
+                return "X";
+            case VERTLINE:
+                return "VERTLINE";
+            default:
+                return "CIRCLE";
 
-                }
         }
+    }
 
     /**
      * Build a new {@code WellKnownName} from a {@code String token}.
+     *
      * @param tok
-     * @return 
-     * A {@code WellKnownName} value. Defaults to {@link #CIRCLE} if the name does not match anything.
+     * @return A {@code WellKnownName} value. Defaults to {@link #CIRCLE} if the
+     * name does not match anything.
      */
-    public static WellKnownName fromString(String tok){
+    public static WellKnownName fromString(String tok) {
         String token = tok == null ? "" : tok;
-        if (token.equalsIgnoreCase("SQUARE")){
+        if (token.equalsIgnoreCase("SQUARE")) {
             return SQUARE;
-        } else if (token.equalsIgnoreCase("HALFCIRCLE")){
+        } else if (token.equalsIgnoreCase("HALFCIRCLE")) {
             return HALFCIRCLE;
-        } else if (token.equalsIgnoreCase("TRIANGLE")){
+        } else if (token.equalsIgnoreCase("TRIANGLE")) {
             return TRIANGLE;
-        } else if (token.equalsIgnoreCase("STAR")){
+        } else if (token.equalsIgnoreCase("STAR")) {
             return STAR;
-        } else if (token.equalsIgnoreCase("CROSS")){
+        } else if (token.equalsIgnoreCase("CROSS")) {
             return CROSS;
-        } else if (token.equalsIgnoreCase("X")){
+        } else if (token.equalsIgnoreCase("X")) {
             return X;
-        } else{
+        }  else if (token.equalsIgnoreCase("VERTLINE")) {
+            return VERTLINE;
+        }else {
             return CIRCLE;
         }
-    }   
+    }
 
 }
