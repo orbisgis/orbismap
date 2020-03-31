@@ -80,6 +80,8 @@ public class ViewBox extends StyleNode {
 
     /**
      * Build a new {@code ViewBox}, using the given width and height.
+     * @param width
+     * @param height
      */
     public ViewBox(ParameterValue width, ParameterValue height) {
         setWidth(width);
@@ -100,6 +102,16 @@ public class ViewBox extends StyleNode {
             this.width.setParent(this);
             this.width.format(Float.class, "value>=0");
         }
+    }
+    
+    /**
+     * A {@code ViewBox} can be used if and only if one, at least, of its two
+     * parameters has been set.
+     *
+     * @return
+     */
+    public boolean usable() {
+        return this.width != null || this.height != null;
     }
 
     /**
