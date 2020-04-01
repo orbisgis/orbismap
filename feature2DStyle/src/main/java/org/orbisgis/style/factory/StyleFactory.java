@@ -431,6 +431,7 @@ public class StyleFactory {
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
         PointSymbolizer ps = new PointSymbolizer();
+        ps.setGeometryParameter(new GeometryParameter("the_geom"));
         MarkGraphic  markGraphic = new MarkGraphic();
         markGraphic.setWkn(new Literal(wkn));
         markGraphic.setViewBox(new ViewBox(new Literal(size)));

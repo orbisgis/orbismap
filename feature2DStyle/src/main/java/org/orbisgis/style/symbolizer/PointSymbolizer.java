@@ -212,6 +212,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
         return uom == null ? Uom.PX : uom;
     }
     
+    @Override
     public final Uom getOwnUom() {
         return uom;
     }

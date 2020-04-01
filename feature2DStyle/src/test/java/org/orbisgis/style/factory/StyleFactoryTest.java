@@ -16,7 +16,7 @@ import org.orbisgis.style.parameter.Literal;
  * @author Erwan Bocher, CNRS
  */
 public class StyleFactoryTest {
-
+    
     @Test
     public void createStyleInvalidParameterTest() {
         Assertions.assertThrows(RuntimeException.class, () -> {
@@ -25,12 +25,12 @@ public class StyleFactoryTest {
         });
         Assertions.assertThrows(RuntimeException.class, () -> {
             SolidFill solidFill = new SolidFill(new Literal(""), new Literal(1.0));
-        });   
+        });        
         
         Assertions.assertThrows(RuntimeException.class, () -> {
             SolidFill solidFill = new SolidFill(new Literal(""), new Literal("orbisgis"));
-        }); 
+        });        
         
     }
-
+    
 }

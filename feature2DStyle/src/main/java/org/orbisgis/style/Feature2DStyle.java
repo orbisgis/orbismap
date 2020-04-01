@@ -169,7 +169,17 @@ public class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule>{
             ls.addAll(rules);
             return ls;
     }
+
+    public Description getDescription() {
+        return description;
+    }
+
+    public void setDescription(Description description) {
+        this.description = description;
+    }
      
+    
+    
 
     @Override
     public String getTitle(Locale locale) {

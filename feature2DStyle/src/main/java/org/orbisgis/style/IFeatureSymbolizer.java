@@ -15,6 +15,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  */
 public interface IFeatureSymbolizer extends ISymbolizer, Comparable{
     
+        
     GeometryParameter getGeometryParameter();
 
     void setGeometryParameter(GeometryParameter geometryExpression);
