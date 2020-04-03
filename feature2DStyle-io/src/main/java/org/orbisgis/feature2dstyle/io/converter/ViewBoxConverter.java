@@ -40,61 +40,45 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.Uom;
-import org.orbisgis.style.common.Description;
-import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.symbolizer.LineSymbolizer;
-import org.orbisgis.style.symbolizer.TextSymbolizer;
+import org.orbisgis.style.graphic.ViewBox;
 
 /**
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class TextSymbolizerConverter implements Converter {
+public class ViewBoxConverter implements Converter {
 
-    public TextSymbolizerConverter() {
+    public ViewBoxConverter() {
     }
 
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        TextSymbolizer textSymbolizer = (TextSymbolizer) value;
-        writer.startNode("TextSymbolizer");
-        Feature2DStyleIO.marshalSymbolizerMetadata(textSymbolizer, writer, mc);
-        Feature2DStyleIO.convertAnother(mc, textSymbolizer.getLabel());
+        ViewBox viewBox = (ViewBox) value;
+        writer.startNode("ViewBox");
+        Feature2DStyleIO.marshalParameterValue("Width", viewBox.getWidth(), writer);
+        Feature2DStyleIO.marshalParameterValue("Height", viewBox.getHeight(), writer);
         writer.endNode();
+
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        TextSymbolizer symbolizer = new TextSymbolizer();
+        ViewBox viewBox = new ViewBox();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
-            if ("name".equalsIgnoreCase(reader.getNodeName())) {
-                symbolizer.setName(reader.getValue());
-            } else if ("level".equalsIgnoreCase(reader.getNodeName())) {
-                symbolizer.setLevel(Integer.parseInt(reader.getValue()));
-            } else if ("perpendicularOffset".equalsIgnoreCase(reader.getNodeName())) {
-                symbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader));
-            } else if ("uom".equalsIgnoreCase(reader.getNodeName())) {
-                Uom uom = (Uom) context.convertAnother(reader, Uom.class);
-                symbolizer.setUom(uom);
-            } else if ("geometryparameter".equalsIgnoreCase(reader.getNodeName())) {
-                GeometryParameter geometryParameter = (GeometryParameter) context.convertAnother(reader, GeometryParameter.class);
-                symbolizer.setGeometryParameter(geometryParameter);
-            } else if ("description".equalsIgnoreCase(reader.getNodeName())) {
-                Description description = (Description) context.convertAnother(reader, Description.class);
-                symbolizer.setDescription(description);
+            if ("width".equalsIgnoreCase(reader.getNodeName())) {
+                viewBox.setWidth(Feature2DStyleIO.createParameterValue(reader));
+            } else if ("height".equalsIgnoreCase(reader.getNodeName())) {
+                viewBox.setHeight(Feature2DStyleIO.createParameterValue(reader));
             }
-            //TODO :  parse label
             reader.moveUp();
         }
-        return symbolizer;
-
+        return viewBox;
     }
 
     @Override
     public boolean canConvert(Class type) {
-        return type.equals(TextSymbolizer.class);
+        return type.equals(ViewBox.class);
     }
 
 }
