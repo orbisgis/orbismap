@@ -1,69 +1,89 @@
 /**
+ * Feature2DStyle is part of the OrbisGIS platform
+ * 
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
- * OrbisGIS is distributed under GPL 3 license.
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
+ * Feature2DStyle is distributed under LGPL 3 license.
  *
  * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
  *
- * This file is part of OrbisGIS.
  *
- * OrbisGIS is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
+ * Feature2DStyle is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * OrbisGIS is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.label;
 
+import org.orbisgis.style.FillNode;
+import org.orbisgis.style.IFill;
+import org.orbisgis.style.IFont;
+import org.orbisgis.style.ILabel;
 import org.orbisgis.style.IUom;
+import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.fill.Halo;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
+import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.stroke.Stroke;
 
 /**
  * Labels are used to provide text-label contents. A textSymbolizer must contain
  * a label - If not it won't be displayed.</p>
- * <p>A Label instance contains a text value (as a StyledText) and informations 
+ * <p>
+ * A Label instance contains a text value (as a StyledText) and informations
  * about its alignment, vertical or horizontal.
- * @author Maxence Laurent, Alexis Guéganno
+ *
+ * @author Alexis Guéganno, CNRS (2012-2013)
+ * @author Maxence Laurent, HEIG-VD (2010-2012)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
-public abstract class Label extends StyleNode implements IUom {
+public abstract class Label extends StyleNode implements ILabel<ParameterValue>, FillNode, StrokeNode {
+
     private Uom uom;
-    private StyledText label;
     private HorizontalAlignment hAlign;
     private VerticalAlignment vAlign;
-    
+    private ParameterValue textLabel;
+    private IFill fill;
+    private IFont font;
+    private Halo halo;
+    private Stroke stroke;
+
     /**
-     * Possible values for the HorizontalAlignment of a Label. It can be left, centered or right aligned.
+     * Possible values for the HorizontalAlignment of a Label. It can be left,
+     * centered or right aligned.
      */
     public enum HorizontalAlignment {
 
         LEFT, CENTER, RIGHT;
 
         /**
-         * Creates a <code>HorizontalAlignment</code> from a <code>String</code> value.
+         * Creates a <code>HorizontalAlignment</code> from a <code>String</code>
+         * value.
+         *
          * @param token
-         * @return 
+         * @return
          * <ul><li><code>LEFT</code> if token == "left"</li>
          * <li><code>CENTER</code> if token == "center</li>
          * <li><code>RIGHT</code> of token == "right"</li>
@@ -87,10 +107,10 @@ public abstract class Label extends StyleNode implements IUom {
         }
 
         /**
-         * Retrieve the possible values for <code>HorizontalAlignment</code> in 
+         * Retrieve the possible values for <code>HorizontalAlignment</code> in
          * an array of <code>String</code>
-         * @return 
-         * An array containing the legal values.
+         *
+         * @return An array containing the legal values.
          */
         public static String[] getList() {
             String[] list = new String[values().length];
@@ -100,19 +120,21 @@ public abstract class Label extends StyleNode implements IUom {
             return list;
         }
     }
-  
+
     /**
-     * Possible values for the VerticalAlignment of a Label. It can be top, bottom, middle 
-     * or baseline aligned.
+     * Possible values for the VerticalAlignment of a Label. It can be top,
+     * bottom, middle or baseline aligned.
      */
     public enum VerticalAlignment {
 
         TOP, MIDDLE, BASELINE, BOTTOM;
 
         /**
-         * Creates a <code>VerticalAlignment</code> from a <code>String</code> value.
+         * Creates a <code>VerticalAlignment</code> from a <code>String</code>
+         * value.
+         *
          * @param token
-         * @return 
+         * @return
          * <ul><li><code>BOTTOM</code> if token == "bottom"</li>
          * <li><code>MIDDLE</code> if token == "middle</li>
          * <li><code>BASELINE</code> of token == "baseline"</li>
@@ -135,10 +157,10 @@ public abstract class Label extends StyleNode implements IUom {
         }
 
         /**
-         * Retrieve the possible values for <code>VerticalAlignment</code> in 
-         * an array of <code>String</code>
-         * @return 
-         * An array containing the legal values.
+         * Retrieve the possible values for <code>VerticalAlignment</code> in an
+         * array of <code>String</code>
+         *
+         * @return An array containing the legal values.
          */
         public static String[] getList() {
             String[] list = new String[values().length];
@@ -148,33 +170,28 @@ public abstract class Label extends StyleNode implements IUom {
             return list;
         }
     }
-    
-    
 
     /**
-     * Create a new <code>Label</code> with default values as defined in the default
-     * {@code StyledText} constructor (cf 
+     * Create a new <code>Label</code> with default values as defined in the
+     * default {@code StyledText} constructor (cf
      * {@link org.orbisgis.coremap.renderer.se.label.Label#Label() Label()} ).
      */
-    protected Label() {
-        setLabel(new StyledText());
+    public Label() {
     }
-
-    
 
     @Override
     public Uom getOwnUom() {
         return uom;
     }
-    
+
     @Override
     public Uom getUom() {
         if (uom != null) {
             return uom;
-        } else if(getParent() instanceof IUom){
-            return ((IUom)getParent()).getUom();
+        } else if (getParent() instanceof IUom) {
+            return ((IUom) getParent()).getUom();
         } else {
-                return Uom.PX;
+            return Uom.PX;
         }
     }
 
@@ -184,28 +201,9 @@ public abstract class Label extends StyleNode implements IUom {
     }
 
     /**
-     * Get the text that need to be represented by this <code>Label</code>
-     * @return 
-     * The <code>StyledText</code> instance that contains all the informations needed
-     * to represent the text.
-     */
-    public StyledText getLabel() {
-        return label;
-    }
-
-    /**
-     * Set the text that need to be represented by this <code>Label</code>
-     * @param label 
-     */
-    public final void setLabel(StyledText label) {
-        this.label = label;
-        label.setParent(this);
-    }
-
-    /**
      * Get the current <code>HorizontalAlignment</code>
-     * @return 
-     * The current <code>HorizontalAlignment</code>
+     *
+     * @return The current <code>HorizontalAlignment</code>
      */
     public HorizontalAlignment getHorizontalAlign() {
         return hAlign;
@@ -213,7 +211,8 @@ public abstract class Label extends StyleNode implements IUom {
 
     /**
      * Set the current <code>HorizontalAlignment</code>
-     * @param hAlign 
+     *
+     * @param hAlign
      */
     public void setHorizontalAlign(HorizontalAlignment hAlign) {
         if (hAlign != null) {
@@ -223,8 +222,8 @@ public abstract class Label extends StyleNode implements IUom {
 
     /**
      * Get the current <code>VerticalAlignment</code>
-     * @return 
-     * The current <code>VerticalAlignment</code>
+     *
+     * @return The current <code>VerticalAlignment</code>
      */
     public VerticalAlignment getVerticalAlign() {
         return vAlign;
@@ -232,12 +231,99 @@ public abstract class Label extends StyleNode implements IUom {
 
     /**
      * Set the current <code>VerticalAlignment</code>
-     * @param vAlign 
+     *
+     * @param vAlign
      */
     public void setVerticalAlign(VerticalAlignment vAlign) {
         if (vAlign != null) {
             this.vAlign = vAlign;
         }
     }
+    
+    /**
+     * Set a literal text
+     * @param textLabel 
+     */
+    public void setLabelText(String textLabel) {
+        setLabelText(new Literal(textLabel));
+    }
+
+    @Override
+    public void setLabelText(ParameterValue textLabel) {
+        if (textLabel == null) {
+            this.textLabel = new NullParameterValue();
+            this.textLabel.setParent(this);
+        } else {
+            this.textLabel = textLabel;
+            this.textLabel.setParent(this);
+            this.textLabel.format(String.class);
+        }
+    }
+
+    @Override
+    public ParameterValue getLabelText() {
+        return this.textLabel;
+    }
+
+    @Override
+    public IFont getFont() {
+        return this.font;
+    }
+
+    @Override
+    public void setFont(IFont font) {
+        this.font = font;
+        if (this.font != null) {
+            this.font.setParent(this);
+        }
+    }
+    
+    @Override
+    public IFill getFill() {
+        return fill;
+    }
+    
+    @Override
+    public void setFill(IFill fill) {
+        this.fill = fill;
+        if (fill != null) {
+            fill.setParent(this);
+        }
+    }
+
+    /**
+     * Return the halo associated to this <code>StyledText</code>.
+     *
+     * @return A <code>Halo</code> instance, or null if it has not been set.
+     */
+    public Halo getHalo() {
+        return halo;
+    }
+
+    /**
+     * Set the halo associated to this <code>StyledText</code>
+     *
+     * @param halo
+     */
+    public void setHalo(Halo halo) {
+        this.halo = halo;
+        if (halo != null) {
+            halo.setParent(this);
+        }
+    }
+    
+    @Override
+    public Stroke getStroke() {
+        return stroke;
+    }
+
+    @Override
+    public void setStroke(Stroke stroke) {
+        this.stroke = stroke;
+        if (stroke != null) {
+            stroke.setParent(this);
+        }
+    }
+
 
 }

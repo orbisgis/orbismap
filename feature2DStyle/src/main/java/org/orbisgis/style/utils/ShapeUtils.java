@@ -1,40 +1,38 @@
 /**
+ * Feature2DStyle is part of the OrbisGIS platform
+ * 
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
- * OrbisGIS is distributed under GPL 3 license.
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
+ * Feature2DStyle is distributed under LGPL 3 license.
  *
  * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
  *
- * This file is part of OrbisGIS.
  *
- * OrbisGIS is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
+ * Feature2DStyle is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * OrbisGIS is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.common;
+package org.orbisgis.style.utils;
 
 import java.awt.BasicStroke;
 import org.locationtech.jts.geom.Envelope;
@@ -51,15 +49,15 @@ import org.slf4j.*;
  * Provides utility methods to handle Shape instances.
  * @author Maxence Laurent, Alexis Guéganno
  */
-public final class ShapeHelper {
+public final class ShapeUtils {
 
     public static final double ONE_DEG_IN_RAD = Math.PI / 180.0;
     private static final boolean ENABLE_QUAD = true;
     private static final double FLATNESS = 1e-5;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShapeHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShapeUtils.class);
     public static final double EPSILON = 1e-5;
     
-    private ShapeHelper(){
+    private ShapeUtils(){
     }
     
     
@@ -202,7 +200,7 @@ public final class ShapeHelper {
 
         ArrayList<Shape> shapes = new ArrayList<Shape>();
 
-        if (ShapeHelper.getLineLength(line) < firstLineLength) {
+        if (ShapeUtils.getLineLength(line) < firstLineLength) {
             shapes.add(line);
             return shapes;
         }
@@ -290,7 +288,7 @@ public final class ShapeHelper {
      */
     public static List<Shape> splitLineInSeg(Shape line, double segLength) {
         List<Shape> shapes = new ArrayList<Shape>();
-        double totalLength = ShapeHelper.getLineLength(line);
+        double totalLength = ShapeUtils.getLineLength(line);
         if (segLength <= 0.0 || segLength >= totalLength) {
             shapes.add(line);
             return shapes;

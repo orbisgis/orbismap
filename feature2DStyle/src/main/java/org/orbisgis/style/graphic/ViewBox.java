@@ -1,4 +1,6 @@
 /**
+ * Feature2DStyle is part of the OrbisGIS platform
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -9,24 +11,24 @@
  * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
  * - BP 561 56017 Vannes Cedex
  *
- * OrbisGIS is distributed under GPL 3 license.
+ * Feature2DStyle is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
  * CNRS (Lab-STICC UMR CNRS 6285)
  *
- * This file is part of OrbisGIS.
  *
- * OrbisGIS is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Feature2DStyle is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * OrbisGIS is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License along with
- * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -36,7 +38,9 @@ package org.orbisgis.style.graphic;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
-import org.orbisgis.style.StyleNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.Uom;
+import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
@@ -56,12 +60,18 @@ import org.orbisgis.style.parameter.ParameterValue;
  * The values given for the height and the width can be negative. If that
  * happens, the coordinate of the rendered graphic will be flipped.
  *
- * @author Alexis Guéganno, Maxence Laurent
+ * @author Alexis Guéganno, CNRS (2012-2013)
+ * @author Maxence Laurent, HEIG-VD (2010-2012)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class ViewBox extends StyleNode {
-
+public class ViewBox extends GraphicSize {
+    
     private ParameterValue width = new NullParameterValue();
     private ParameterValue height = new NullParameterValue();
+    private Uom uom;
+    
+     //In mm
+    public static float DEFAULT_SIZE = 3;
 
     /**
      * Build a new {@code ViewBox}, with empty parameters.
@@ -70,22 +80,27 @@ public class ViewBox extends StyleNode {
     }
 
     /**
-     * Build a new {@code ViewBox}, using the given width.
-     *
-     * @param width
+     * Build a new {@code ViewBox}, with only one parameter.
      */
-    public ViewBox(ParameterValue width) {
+    public ViewBox(float width) {
         setWidth(width);
     }
 
     /**
-     * Build a new {@code ViewBox}, using the given width and height.
-     * @param width
-     * @param height
+     * Build a new {@code ViewBox}, with width and heigh parameters.
      */
-    public ViewBox(ParameterValue width, ParameterValue height) {
+    public ViewBox(float width, float height) {
         setWidth(width);
         setHeight(height);
+    }
+
+    /**
+     * Set the wifth of this {@code ViewBox}.
+     *
+     * @param width
+     */
+    public void setWidth(float width) {
+        setWidth(new Literal(width));
     }
 
     /**
@@ -103,7 +118,7 @@ public class ViewBox extends StyleNode {
             this.width.format(Float.class, "value>=0");
         }
     }
-    
+
     /**
      * A {@code ViewBox} can be used if and only if one, at least, of its two
      * parameters has been set.
@@ -121,6 +136,15 @@ public class ViewBox extends StyleNode {
      */
     public ParameterValue getWidth() {
         return width.getValue() == null ? height : width;
+    }
+
+    /**
+     * Set the height of this {@code ViewBox}.
+     *
+     * @param height
+     */
+    public void setHeight(float height) {
+        setHeight(new Literal(height));
     }
 
     /**
@@ -164,7 +188,7 @@ public class ViewBox extends StyleNode {
         }
         return result.toString();
     }
-
+    
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
@@ -175,5 +199,33 @@ public class ViewBox extends StyleNode {
             ls.add(width);
         }
         return ls;
+    }
+    
+    @Override
+    public Uom getUom() {
+        if (uom != null) {
+            return uom;
+        } else if (getParent() instanceof IUom) {
+            return ((IUom) getParent()).getUom();
+        } else {
+            return Uom.PX;
+        }
+    }
+
+    @Override
+    public Uom getOwnUom() {
+        return uom;
+    }
+
+    @Override
+    public void setUom(Uom uom) {
+        this.uom = uom;
+    }
+
+    @Override
+    public void initDefault() {
+        setUom(Uom.MM);
+        setHeight(DEFAULT_SIZE);
+        setWidth(DEFAULT_SIZE);
     }
 }

@@ -1,4 +1,6 @@
 /**
+ * Feature2DStyle is part of the OrbisGIS platform
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -9,36 +11,38 @@
  * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
  * - BP 561 56017 Vannes Cedex
  *
- * OrbisGIS is distributed under GPL 3 license.
+ * Feature2DStyle is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2017
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
  * CNRS (Lab-STICC UMR CNRS 6285)
  *
- * This file is part of OrbisGIS.
  *
- * OrbisGIS is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Feature2DStyle is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * OrbisGIS is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License along with
- * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.stroke;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.FillNode;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
@@ -57,7 +61,9 @@ import org.orbisgis.style.parameter.ParameterValue;
  * <li>An offset used to know where to draw the line.</li>
  * </ul>
  *
- * @author Maxence Laurent, Alexis Guéganno
+ * @author Alexis Guéganno, CNRS (2012-2013)
+ * @author Maxence Laurent, HEIG-VD (2010-2012)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public class PenStroke extends Stroke implements FillNode {
 
@@ -97,6 +103,20 @@ public class PenStroke extends Stroke implements FillNode {
     }
 
     public PenStroke() {
+    }
+
+    @Override
+    public void initDefault() {
+        SolidFill solidFill = new SolidFill();
+        solidFill.setColor(Color.BLACK);
+        solidFill.setOpacity(1.0f);
+        setFill(solidFill);
+        setWidth(DEFAULT_WIDTH);
+        setUom(null);
+        setDashArray("");
+        setDashOffset(0);
+        setLineCap(DEFAULT_CAP);
+        setLineJoin(DEFAULT_JOIN);
     }
 
     @Override
@@ -186,8 +206,16 @@ public class PenStroke extends Stroke implements FillNode {
     /**
      * Set the width used to draw the lines with this {@code PenStroke}.
      *
-     * @param width The new width. If null, will be replaced with
-     * {@link PenStroke#DEFAULT_WIDTH}, as specified in SE 2.0.
+     * @param width The new width.
+     */
+    public void setWidth(float width) {
+        setWidth(new Literal(width));
+    }
+
+    /**
+     * Set the width used to draw the lines with this {@code PenStroke}.
+     *
+     * @param width The new width.
      */
     public void setWidth(ParameterValue width) {
         if (width == null) {
@@ -223,8 +251,16 @@ public class PenStroke extends Stroke implements FillNode {
      *
      * @param dashOffset.
      */
-    public void setDashOffset(ParameterValue dashOffset) {
+    public void setDashOffset(float dashOffset) {
+        setDashOffset(new Literal(dashOffset));
+    }
 
+    /**
+     * Sets the offset let before drawing the first dash.
+     *
+     * @param dashOffset.
+     */
+    public void setDashOffset(ParameterValue dashOffset) {
         if (dashOffset == null) {
             this.dashOffset = new NullParameterValue();
             this.dashOffset.setParent(this);
@@ -248,6 +284,21 @@ public class PenStroke extends Stroke implements FillNode {
      */
     public ParameterValue getDashArray() {
         return dashArray;
+    }
+
+    /**
+     * Sets the array of double values that will be used to draw a dashed line.
+     * This "array" is in fact stored as a string parameter, filled with space
+     * separated double values.</p>
+     * <p>
+     * These values represent the length (in the inner UOM) of the opaque (even
+     * elements of the array) and transparent (odd elements of the array) parts
+     * of the lines to draw.
+     *
+     * @param dashArray The new dash array.
+     */
+    public void setDashArray(String dashArray) {
+        setDashArray(new Literal(dashArray));
     }
 
     /**

@@ -32,32 +32,42 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style;
+package org.orbisgis.style.utils;
+
+import java.awt.Color;
+import org.orbisgis.style.parameter.Literal;
+import static org.orbisgis.style.utils.ColorUtils.toHex;
 
 /**
- * Defines unit of measure management.
  *
- * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public interface UomNode extends IStyleNode {
-        /**
-         * Associates a unit of measure to this node
-         * @param u 
-         */
-	void setUom(Uom u);
-        /**
-         * Get the Uom associated to this node. It differs from {@code getUom}
-         * in the sense that the method in SymbolizerNode will search for the nearest
-         * Uom int the tree of Nodes, if this node does not contain one, while this
-         * method is expected to return null if it can't find an Uom directly.
-         * @return 
-         * A Uom instance, if this has got one, null otherwise.
-         */
-	Uom getOwnUom();
-        /**
-         * Get the unit of measure associated with the current node.
-         * @return
-         */
-        Uom getUom();
+public class ParameterValueUtils {
+
+    public static Literal toExpression(Color color) {
+        return new Literal(toHex(color));
+    }
+
+    public static Literal randomColor() {
+        return new Literal(ColorUtils.toHex(ColorUtils.getRandomColor()));
+    }
+
+
+    /**
+     * Return the enum value according the class enum
+     *
+     * @param <T>
+     * @param enumType
+     * @param name
+     * @return
+     */
+    public static <T extends Enum<?>> T lookup(Class<T> enumType,
+            String name) {
+        for (T enumn : enumType.getEnumConstants()) {
+            if (enumn.name().equalsIgnoreCase(name)) {
+                return enumn;
+            }
+        }
+        return null;
+    }
 }

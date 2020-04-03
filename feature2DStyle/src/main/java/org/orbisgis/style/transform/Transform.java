@@ -198,4 +198,9 @@ public class Transform extends StyleNode implements IUom {
         public void setUom(Uom uom) {
                 this.uom = uom;
         }
+
+    @Override
+    public void initDefault() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

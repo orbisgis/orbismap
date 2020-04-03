@@ -32,32 +32,41 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style;
+package org.orbisgis.style.factory;
+
+import java.awt.Color;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.orbisgis.style.fill.SolidFill;
+import org.orbisgis.style.parameter.Literal;
 
 /**
- * Defines unit of measure management.
  *
- * @author Maxence Laurent, HEIG-VD (2010-2012)
- * @author Erwan Bocher, CNRS (2010-2020)
+ * @author Erwan Bocher, CNRS (2020)
  */
-public interface UomNode extends IStyleNode {
-        /**
-         * Associates a unit of measure to this node
-         * @param u 
-         */
-	void setUom(Uom u);
-        /**
-         * Get the Uom associated to this node. It differs from {@code getUom}
-         * in the sense that the method in SymbolizerNode will search for the nearest
-         * Uom int the tree of Nodes, if this node does not contain one, while this
-         * method is expected to return null if it can't find an Uom directly.
-         * @return 
-         * A Uom instance, if this has got one, null otherwise.
-         */
-	Uom getOwnUom();
-        /**
-         * Get the unit of measure associated with the current node.
-         * @return
-         */
-        Uom getUom();
+public class StyleBuilderTest {
+
+    @Test
+    public void createStyleInvalidParameterTest() {
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            SolidFill solidFill = new SolidFill();
+            solidFill.setColor(Color.yellow);
+            solidFill.setOpacity(12);
+            solidFill.getOpacity().getValue();
+        });
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            SolidFill solidFill = new SolidFill();
+            solidFill.setColor(Color.yellow);
+            solidFill.setOpacity(-1);
+        });
+
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            SolidFill solidFill = new SolidFill();
+            solidFill.setColor("");
+            solidFill.setOpacity(new Literal("orbisgis"));
+        });
+    }
+    
+    
+    
 }

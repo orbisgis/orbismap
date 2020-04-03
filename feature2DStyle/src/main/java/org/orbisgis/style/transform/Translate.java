@@ -132,4 +132,9 @@ public class Translate extends StyleNode implements Transformation {
         public String toString() {
                 return "Translate";
         }
+
+    @Override
+    public void initDefault() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -145,6 +145,11 @@ public final class Scale extends StyleNode implements Transformation {
         return "Scale";
     }
 
+    @Override
+    public void initDefault() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
 
 }

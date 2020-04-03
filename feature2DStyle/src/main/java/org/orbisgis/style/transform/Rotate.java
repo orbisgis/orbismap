@@ -181,4 +181,9 @@ public final class Rotate extends StyleNode implements Transformation {
         public String toString() {
                 return "Rotate";
         }
+
+    @Override
+    public void initDefault() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

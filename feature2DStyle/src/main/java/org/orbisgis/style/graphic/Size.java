@@ -32,85 +32,87 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.label;
+package org.orbisgis.style.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
 /**
- * An {@code ExclusionZone} where the forbidden area is defined as a circle. It
- * is defined thanks to radius value. Its meaning is of course dependant of the
- * inner UOM instance. The resulting exclusion zone is a circle centered on the
- * point associated to the {@code LabelPoint},
  *
- *
- * @author Maxence Laurent, HEIG-VD (2010-2012)
- * @author Erwan Bocher, CNRS (2010-2020)
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class ExclusionRadius extends ExclusionZone {
-    
-    private ParameterValue radius = new NullParameterValue();
+public class Size extends GraphicSize {
+
+    ParameterValue size;
     
     //In mm
     public static float DEFAULT_SIZE = 3;
+    
+    private Uom uom;
 
-    /**
-     * Build a new {@code ExclusionRadius}.
-     */
-    public ExclusionRadius() {
-    }
+    public Size() {
 
-    /**
-     * Get the radius defining this {@code ExclusionRadius}
-     *
-     * @return The radius as a {@code RealParameter}.
-     */
-    public ParameterValue getRadius() {
-        return radius;
-    }
-
-    /**
-     * Set the radius defining this {@code ExclusionRadius}
-     *
-     * @param radius
-     */
-    public void setRadius(float radius) {
-        setRadius(new Literal(radius));
-    }
-
-    /**
-     * Set the radius defining this {@code ExclusionRadius}
-     *
-     * @param radius
-     */
-    public void setRadius(ParameterValue radius) {
-        if (radius == null) {
-            this.radius = new NullParameterValue();
-            this.radius.setParent(this);
-        } else {
-            this.radius = radius;
-            this.radius.setParent(this);
-            this.radius.format(Float.class, "value>=0");
-        }
     }
     
+    
+    public void setSize(float size) {
+        setSize(new Literal(size));
+    }
+
+    public void setSize(ParameterValue size) {
+        if (size == null) {
+            this.size = new NullParameterValue();
+            this.size.setParent(this);
+        } else {
+            this.size = size;
+            this.size.setParent(this);
+            this.size.format(Float.class, "value>=0");
+        }
+    }
+
+    public ParameterValue getSize() {
+        return size;
+    }
+
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
-        if (radius != null) {
-            ls.add(radius);
+        if (size != null) {
+            ls.add(size);
         }
         return ls;
     }
 
     @Override
     public void initDefault() {
-        setUom(Uom.MM);
-        setRadius(DEFAULT_SIZE);
+        setSize(DEFAULT_SIZE);
     }
+
+   @Override
+    public Uom getUom() {
+        if (uom != null) {
+            return uom;
+        } else if (getParent() instanceof IUom) {
+            return ((IUom) getParent()).getUom();
+        } else {
+            return Uom.PX;
+        }
+    }
+
+    @Override
+    public Uom getOwnUom() {
+        return uom;
+    }
+
+    @Override
+    public void setUom(Uom uom) {
+        this.uom = uom;
+    }
+
 }

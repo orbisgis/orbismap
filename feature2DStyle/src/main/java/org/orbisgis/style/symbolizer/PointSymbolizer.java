@@ -1,41 +1,41 @@
 /**
+ * Feature2DStyle is part of the OrbisGIS platform
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
- * OrbisGIS is developed by the GIS group of the DECIDE team of the 
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
  *
  * The GIS group of the DECIDE team is located at :
  *
- * Laboratoire Lab-STICC – CNRS UMR 6285
- * Equipe DECIDE
- * UNIVERSITÉ DE BRETAGNE-SUD
- * Institut Universitaire de Technologie de Vannes
- * 8, Rue Montaigne - BP 561 56017 Vannes Cedex
- * 
- * OrbisGIS is distributed under GPL 3 license.
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2017 CNRS (Lab-STICC UMR CNRS 6285)
+ * Feature2DStyle is distributed under LGPL 3 license.
  *
- * This file is part of OrbisGIS.
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
- * OrbisGIS is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
  *
- * OrbisGIS is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Feature2DStyle is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * You should have received a copy of the GNU General Public License along with
- * OrbisGIS. If not, see <http://www.gnu.org/licenses/>.
+ * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
- * or contact directly:
- * info_at_ orbisgis.org
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.style.symbolizer;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IFeatureSymbolizer;
@@ -45,48 +45,53 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
+import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
+import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.style.stroke.PenStroke;
 
 /**
- * {@code PointSymbolizer} are used to draw a graphic at a point. As a symbolizer, 
- * it depends on :
+ * {@code PointSymbolizer} are used to draw a graphic at a point. As a
+ * symbolizer, it depends on :
  * <ul><li>A version</li>
  * <li>A name<li>
  * <li>A Description</li>
  * <li>A LegendGraphic</li></ul>
- * 
+ *
  * It has additional requirements :
- * <ul><li>A geometry, ie a value reference containing the geometry to style. It 
+ * <ul><li>A geometry, ie a value reference containing the geometry to style. It
  * is optional, but shall appear if several geometries are defined in the data
  * type.</li>
  * <li>A unit of measure. If not set, the UOM of the parent will be used.</li>
  * <li>Graphic : the graphic to draw at the point. Compulsory.</li></ul>
- * 
- * An additional parameter can be given. It is used to determine if the symbol 
+ *
+ * An additional parameter can be given. It is used to determine if the symbol
  * must be drawn on the vertex of a geometry, rather than at its center.
- * 
- * @author Alexis Guéganno, Maxence Laurent
- * @author Erwan Bocher, CNRS
- * 
+ *
+ * @author Alexis Guéganno, CNRS (2012-2013)
+ * @author Maxence Laurent, HEIG-VD (2010-2012)
+ * @author Erwan Bocher, CNRS (2010-2020)
+ *
  */
-public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Comparable, IFeatureSymbolizer, UomNode {
+public class PointSymbolizer extends StyleNode implements IGraphicNode, Comparable, IFeatureSymbolizer, UomNode {
+
     private GraphicCollection graphics;
     private boolean onVertex = false;
     private GeometryParameter geometryExpression;
     private String name;
     private Description description = new Description();
-    private int level =0;
+    private int level = 0;
     public static final String DEFAULT_NAME = "Point symbolizer";
     private Uom uom;
 
     /**
-     * Build a new default {@code PointSymbolizer}. It contains a 
-     * {@link GraphicCollection} that contains a single default {@code MarkGraphic}.
-     * Its UOM is {@link Uom#MM}.
+     * Build a new default {@code PointSymbolizer}. It contains a
+     * {@link GraphicCollection} that contains a single default
+     * {@code MarkGraphic}. Its UOM is {@link Uom#MM}.
      */
     public PointSymbolizer() {
         super();
@@ -94,10 +99,19 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
         this.level = 0;
         this.uom = Uom.PX;
         onVertex = false;
-        this.graphics =new GraphicCollection();
-        
-    }    
-    
+        this.graphics = new GraphicCollection();
+
+    }
+
+    /**
+     * Set geometry expression
+     *
+     * @param geometryExpression
+     */
+    public void setGeometryParameter(String geometryExpression) {
+        setGeometryParameter(new GeometryParameter(geometryExpression));
+    }
+
     @Override
     public GeometryParameter getGeometryParameter() {
         return geometryExpression;
@@ -106,7 +120,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public void setGeometryParameter(GeometryParameter geometryExpression) {
         this.geometryExpression = geometryExpression;
-        if(this.geometryExpression!=null){
+        if (this.geometryExpression != null) {
             this.geometryExpression.setParent(this);
         }
     }
@@ -119,17 +133,17 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public void setGraphics(GraphicCollection graphic) {
         this.graphics = graphic;
-        if(this.graphics!=null){
-        this.graphics.setParent(this);
+        if (this.graphics != null) {
+            this.graphics.setParent(this);
         }
     }
+
     @Override
     public void addGraphic(Graphic graphic) {
         if (graphics != null) {
             this.graphics.add(graphic);
         }
     }
-
 
     public boolean isOnVertex() {
         return onVertex;
@@ -142,14 +156,13 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public List<IStyleNode> getChildren() {
         List<IStyleNode> ls = new ArrayList<IStyleNode>();
-        if(this.getGeometryParameter()!=null){
+        if (this.getGeometryParameter() != null) {
             ls.add(this.getGeometryParameter());
         }
         ls.add(graphics);
         return ls;
     }
-    
-    
+
     /**
      * Gets the name of this Symbolizer.
      *
@@ -173,8 +186,8 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
             this.name = name;
         }
     }
-    
-     /**
+
+    /**
      * Get the description associated to this <code>Symbolizer</code>.
      *
      * @return
@@ -192,7 +205,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     @Override
     public void setDescription(Description description) {
         this.description = description;
-        if(this.description!=null){
+        if (this.description != null) {
             this.description.setParent(this);
         }
     }
@@ -211,7 +224,7 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     public final Uom getUom() {
         return uom == null ? Uom.PX : uom;
     }
-    
+
     @Override
     public final Uom getOwnUom() {
         return uom;
@@ -263,5 +276,16 @@ public  class PointSymbolizer extends StyleNode  implements IGraphicNode,Compara
     public void setPerpendicularOffset(ParameterValue parameterValue) {
     }
 
-    
+    @Override
+    public void initDefault() {
+        setName("Point Symbolizer");        
+        GeometryParameter geometryParameter = new GeometryParameter();
+        geometryParameter.initDefault();
+        setGeometryParameter(geometryParameter);
+        setOnVertex(false);
+        MarkGraphic markGraphic = new MarkGraphic();
+        markGraphic.initDefault();
+        addGraphic(markGraphic);
+    }
+
 }
