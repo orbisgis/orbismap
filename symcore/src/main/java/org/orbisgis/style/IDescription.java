@@ -56,8 +56,10 @@ import java.util.Locale;
  * {@code Keywords} instance associated to a single authority, we map keywords
  * on this authority, ie only on the {@code URI}. The {@code CodeType} is not
  * considered meaningful in this mapping.
- * @author Alexis Guéganno
- * @author Erwan Bocher
+ * 
+ * @author Alexis Guéganno, CNRS (2012-2013)
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  * @see Keywords
  */
 public interface IDescription {

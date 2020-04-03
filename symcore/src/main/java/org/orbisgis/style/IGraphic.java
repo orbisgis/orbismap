@@ -39,16 +39,18 @@
 package org.orbisgis.style;
 
 /**
- * The IGraphic class defines the parameters for drawing a graphic symbol such as
- * shape, color(s), and size.A ​ graphic can be informally defined as “a little
- picture” and can be either a bitmap or scaled vector. (The term “graphic” is
- used instead of the term “symbol” to avoid confusion with Symbolizer, which
- is used in a different context in this model.) As an abstract class and part
- of the base of the core graphical concepts, ​ GraphicClass is a global point
- of extension to specify concrete ways to draw “graphic symbol” (e.g.
- ExternalGraphic and MarkGraphic extensions).
+ * The IGraphic class defines the parameters for drawing a graphic symbol such
+ * as shape, color(s), and size. A graphic can be informally defined as “a
+ * little picture” and can be either a bitmap or scaled vector. (The term
+ * “graphic” is used instead of the term “symbol” to avoid confusion with
+ * Symbolizer, which is used in a different context in this model.) As an
+ * abstract class and part of the base of the core graphical concepts, ​
+ * IGraphic is a global point of extension to specify concrete ways to draw
+ * “graphic symbol” (e.g. ExternalGraphic and MarkGraphic extensions).
  *
- * @author Erwan Bocher CNRS (2020)
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
+ * 
  * @param <T>
  */
 public interface IGraphic<T extends IGraphicSize> extends IStyleNode, IUom {

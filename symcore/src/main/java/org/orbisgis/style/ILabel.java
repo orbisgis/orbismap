@@ -39,13 +39,15 @@
 package org.orbisgis.style;
 
 /**
- * Label class defines the graphical symbolizing properties for drawing a text
+ * ILabel class defines the graphical symbolizing properties for drawing a text
  * label. As an abstract class and part of the base of the core graphical
  * concepts, ​ LabelClass is a point of extension to specify concrete ways to
  * draw text label according to placement behaviours (e.g., a PointLabel or
  * LineLabel).
  *
- * @author Erwan Bocher, CNRS (2020)
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
+ * 
  * @param <T>
  */
 public interface ILabel<T extends IParameterValue> extends IStyleNode, IUom {

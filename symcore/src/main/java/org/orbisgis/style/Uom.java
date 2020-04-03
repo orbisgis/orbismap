@@ -42,9 +42,9 @@ package org.orbisgis.style;
  * This enumeration contains all the units of measure that are allowed in
  * Symbology Core Model.
  *
- * @author Maxence Laurent, HEIG-VD
- * @author Alexis Guéganno, CNRS
- * @author Erwan Bocher, CNRS
+ * 
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  *
  */
 public enum Uom {

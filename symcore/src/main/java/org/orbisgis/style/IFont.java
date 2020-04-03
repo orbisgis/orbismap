@@ -39,8 +39,11 @@
 package org.orbisgis.style;
 
 /**
- * The ​ FontClass describes the font properties to apply for the rendering of a text string.It refers to the W3C CSS Fonts chapter.
- * @author Erwan Bocher CNRS (2020)
+ * The IFont class describes the font properties to apply for the rendering of a text string.
+ * It refers to the W3C CSS Fonts chapter.
+ * 
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  * @param <T>
  */
 public interface IFont<T extends IParameterValue> extends IStyleNode, IUom {

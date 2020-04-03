@@ -41,11 +41,12 @@ package org.orbisgis.style;
 /**
  * IFill defines the graphical symbolizing parameters required to draw the
  * filling of a two-dimensional shape such as a polygon. As an abstract class
- * and part of the base of the core graphical concepts, ​ FillClass is a global
+ * and part of the base of the core graphical concepts, ​ IFill is a global
  * point of extension for specifying concrete definitions for shape fill
  * operations (e.g., the ​ SolidFill ​ and ​ GraphicFill ​ extensions).
  *
- * @author Erwan Bocher
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public interface IFill extends IStyleNode, IUom {    
     

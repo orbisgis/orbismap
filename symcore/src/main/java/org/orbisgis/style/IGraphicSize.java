@@ -39,12 +39,13 @@
 package org.orbisgis.style;
 
 /**
- * The ​ GraphicSize class determines the size of the graphic when it is
+ * The IGraphicSize class determines the size of the graphic when it is
  * rendered. As an abstract class, it is designed to be extended to support the
  * various ways the size could be specified such as by a single value, a
  * rectangular box, or by a three-dimensional cube.
  *
- * @author Erwan Bocher, CNRS (2020)
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public interface IGraphicSize {
 

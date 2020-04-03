@@ -39,14 +39,15 @@
 package org.orbisgis.style;
 
 /**
- * The ​ ParameterValue class represents a gateway that provides the value to be
+ * The IParameterValue class represents a gateway that provides the value to be
  * used by a parameter in a styling context of use (almost all styling
  * parameters such as width, opacity, displacement, etc are "parameter-values").
  * This class has a similar meaning to Expression as defined in the OGC Filter
  * Encoding 2.0 standard. As an interface, it is designed to be extended
  * (e.g., Literal).
  *
- * @author ebocher
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public interface IParameterValue extends IStyleNode{
     

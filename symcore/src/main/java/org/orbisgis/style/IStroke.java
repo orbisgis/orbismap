@@ -39,8 +39,14 @@
 package org.orbisgis.style;
 
 /**
- *
- * @author Erwan Bocher CNRS (2020)
+ * IStroke class defines the graphical symbolizing parameters for drawing an outline (e.g., for
+ * linear geometries or the exterior of a polygon geometry). 
+ * As an abstract class and part of the base of the core graphical concepts, 
+ * IStroke class is a global point of extension to specify 
+ * concrete ways to draw outlines (e.g., the PenStroke and GraphicStroke extensions).
+ * 
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public interface IStroke extends IStyleNode, IUom{
 

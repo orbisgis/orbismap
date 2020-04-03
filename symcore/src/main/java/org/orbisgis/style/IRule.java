@@ -41,11 +41,13 @@ package org.orbisgis.style;
 import java.util.List;
 
 /**
- * Rule is used to organize symbolizing instructions and potentially to define
+ * IRule is used to organize symbolizing instructions and potentially to define
  * conditions of application of these associated symbolizers (e.g.,
  * feature-property conditions or map scales).
  *
- * @author Erwan Bocher
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
+ * 
  * @param <T>
  */
 public interface IRule<T extends ISymbolizer> extends IName, IStyleNode{

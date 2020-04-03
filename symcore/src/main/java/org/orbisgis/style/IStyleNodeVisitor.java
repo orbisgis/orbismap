@@ -43,8 +43,8 @@ package org.orbisgis.style;
  * Visitor implementation for the Symbology core structure. It will be useful to process
  * analysis on the rendering tree from an outside library.
  *
- * @author Erwan Bocher, CNRS
- * @author Alexis Guéganno, CNRS
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public interface IStyleNodeVisitor {
 

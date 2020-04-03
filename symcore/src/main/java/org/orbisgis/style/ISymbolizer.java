@@ -44,7 +44,8 @@ package org.orbisgis.style;
  * opacity, font-family, etc.). As an abstract class, it is designed to be
  * extended.
  *
- * @author Erwan Bocher
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public interface ISymbolizer extends IUom, IName, IStyleNode {
     

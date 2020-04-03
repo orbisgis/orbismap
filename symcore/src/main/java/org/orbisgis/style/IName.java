@@ -40,7 +40,9 @@ package org.orbisgis.style;
 
 /**
  * Interface to manage the name of each elements of the symbolology model
- * @author Erwan Bocher
+ * 
+ * @author Ertz Olivier, HEIG-VD (2010-2020)
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 interface IName {
     
