@@ -38,45 +38,67 @@
  */
 package org.orbisgis.style;
 
-import java.util.List;
-
-
 /**
- * IStyleNode allow to browse the styling tree
- *
- * @author Erwan Bocher CNRS
- * @author Maxence Laurent, HEIG-VD
+ * The ​ FontClass describes the font properties to apply for the rendering of a text string.It refers to the W3C CSS Fonts chapter.
+ * @author Erwan Bocher CNRS (2020)
+ * @param <T>
  */
-public interface IStyleNode{
+public interface IFont<T extends IParameterValue> extends IStyleNode, IUom {
 
     /**
-     * get the parent of this current <code>IStyleNode</code>
-     * @return 
+     * Get the font family used to represent this <code>StyledText</code>
+     *
+     * @return The fontFamily as a <code>StringParameter</code>
      */
-    IStyleNode getParent();
+    public T getFontFamily();
 
     /**
-     * Set the parent of this <code>IStyleNode</code>
-     * @param styleNode 
+     * Set the font family used to represent
+     *
+     * @param fontFamily
      */
-    void setParent(IStyleNode styleNode);
+    public void setFontFamily(T fontFamily);
 
     /**
-     * Notify the parent of the {@code IStyleNode} that cached values must be unset.
+     * Get the font size used to represent
+     *
+     * @return The font size as a <code>IParameterValue</code>
      */
-    void update();
+    public T getFontSize();
 
     /**
-     * Get all the {@code IStyleNode} instances that are direct children
-     * of this.
-     * @return
+     * Set the font size used to represent
+     *
+     * @param fontSize The new font's size
      */
-    List<IStyleNode> getChildren();
+    public void setFontSize(T fontSize);
 
     /**
-     * Accepts the visit of {@code IStyleVisitor}.
-     * @param styleVisitor 
+     * Get the font style used to represent.
+     *
+     * @return The font style as a <code>IParameterValue</code>
      */
-    void acceptVisitor(IStyleNodeVisitor styleVisitor);
+    public T getFontStyle();
+
+    /**
+     * Set the font style used to represent.
+     *
+     * @param fontStyle The new font's style
+     */
+    public void setFontStyle(T fontStyle);
+
+    /**
+     * Get the font weight used to represent.
+     *
+     * @return The font weight as a <code>IParameterValue</code>
+     */
+    public T getFontWeight();
+
+    /**
+     * Set the font weight used to represent.
+     *
+     * @param fontWeight The new font's weight
+     */
+    public void setFontWeight(T fontWeight);
 
 }

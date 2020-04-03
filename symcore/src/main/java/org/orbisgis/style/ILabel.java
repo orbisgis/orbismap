@@ -38,45 +38,24 @@
  */
 package org.orbisgis.style;
 
-import java.util.List;
-
-
 /**
- * IStyleNode allow to browse the styling tree
+ * Label class defines the graphical symbolizing properties for drawing a text
+ * label. As an abstract class and part of the base of the core graphical
+ * concepts, ​ LabelClass is a point of extension to specify concrete ways to
+ * draw text label according to placement behaviours (e.g., a PointLabel or
+ * LineLabel).
  *
- * @author Erwan Bocher CNRS
- * @author Maxence Laurent, HEIG-VD
+ * @author Erwan Bocher, CNRS (2020)
+ * @param <T>
  */
-public interface IStyleNode{
+public interface ILabel<T extends IParameterValue> extends IStyleNode, IUom {
 
-    /**
-     * get the parent of this current <code>IStyleNode</code>
-     * @return 
-     */
-    IStyleNode getParent();
+    IFont getFont();
 
-    /**
-     * Set the parent of this <code>IStyleNode</code>
-     * @param styleNode 
-     */
-    void setParent(IStyleNode styleNode);
+    void setFont(IFont font);
 
-    /**
-     * Notify the parent of the {@code IStyleNode} that cached values must be unset.
-     */
-    void update();
+    T getLabelText();
 
-    /**
-     * Get all the {@code IStyleNode} instances that are direct children
-     * of this.
-     * @return
-     */
-    List<IStyleNode> getChildren();
-
-    /**
-     * Accepts the visit of {@code IStyleVisitor}.
-     * @param styleVisitor 
-     */
-    void acceptVisitor(IStyleNodeVisitor styleVisitor);
+    void setLabelText(T parameterValue);
 
 }

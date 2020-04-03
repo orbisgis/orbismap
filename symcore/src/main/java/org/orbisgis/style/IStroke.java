@@ -38,45 +38,12 @@
  */
 package org.orbisgis.style;
 
-import java.util.List;
-
-
 /**
- * IStyleNode allow to browse the styling tree
  *
- * @author Erwan Bocher CNRS
- * @author Maxence Laurent, HEIG-VD
+ * @author Erwan Bocher CNRS (2020)
  */
-public interface IStyleNode{
+public interface IStroke extends IStyleNode, IUom{
 
-    /**
-     * get the parent of this current <code>IStyleNode</code>
-     * @return 
-     */
-    IStyleNode getParent();
-
-    /**
-     * Set the parent of this <code>IStyleNode</code>
-     * @param styleNode 
-     */
-    void setParent(IStyleNode styleNode);
-
-    /**
-     * Notify the parent of the {@code IStyleNode} that cached values must be unset.
-     */
-    void update();
-
-    /**
-     * Get all the {@code IStyleNode} instances that are direct children
-     * of this.
-     * @return
-     */
-    List<IStyleNode> getChildren();
-
-    /**
-     * Accepts the visit of {@code IStyleVisitor}.
-     * @param styleVisitor 
-     */
-    void acceptVisitor(IStyleNodeVisitor styleVisitor);
-
+   
+       
 }

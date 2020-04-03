@@ -38,45 +38,14 @@
  */
 package org.orbisgis.style;
 
-import java.util.List;
-
-
 /**
- * IStyleNode allow to browse the styling tree
+ * The ​ GraphicSize class determines the size of the graphic when it is
+ * rendered. As an abstract class, it is designed to be extended to support the
+ * various ways the size could be specified such as by a single value, a
+ * rectangular box, or by a three-dimensional cube.
  *
- * @author Erwan Bocher CNRS
- * @author Maxence Laurent, HEIG-VD
+ * @author Erwan Bocher, CNRS (2020)
  */
-public interface IStyleNode{
-
-    /**
-     * get the parent of this current <code>IStyleNode</code>
-     * @return 
-     */
-    IStyleNode getParent();
-
-    /**
-     * Set the parent of this <code>IStyleNode</code>
-     * @param styleNode 
-     */
-    void setParent(IStyleNode styleNode);
-
-    /**
-     * Notify the parent of the {@code IStyleNode} that cached values must be unset.
-     */
-    void update();
-
-    /**
-     * Get all the {@code IStyleNode} instances that are direct children
-     * of this.
-     * @return
-     */
-    List<IStyleNode> getChildren();
-
-    /**
-     * Accepts the visit of {@code IStyleVisitor}.
-     * @param styleVisitor 
-     */
-    void acceptVisitor(IStyleNodeVisitor styleVisitor);
+public interface IGraphicSize {
 
 }
