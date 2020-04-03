@@ -1,7 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Map is part of the OrbisGIS platform
+ * 
+ * OrbisGIS is a java GIS application dedicated to research in GIScience.
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
+ * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
+ *
+ * The GIS group of the DECIDE team is located at :
+ *
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
+ * Map is distributed under LGPL 3 license.
+ *
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
+ * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ *
+ *
+ * Map is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * Map is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * Map. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For more information, please consult: <http://www.orbisgis.org/>
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.map.renderer.featureStyle;
 
@@ -61,21 +90,26 @@ public class FeatureStyleRenderer {
         pvv.visitSymbolizerNode(rule);
         return pvv;
     }
-    
+
     /**
      * Format rule filter expression
+     *
      * @param rule
-     * @throws JSQLParserException 
+     * @throws JSQLParserException
      */
     public void formatRuleExpression(Feature2DRule rule) throws JSQLParserException {
-        rule.setExpression(ExpressionParser.formatConditionalExpression(rule.getFilterExpression()));
+        rule.setFilter(ExpressionParser.formatConditionalExpression(rule.getFilter()));
     }
 
     //TODO : Add a short circuit method to not iterate the symbolizer when some requiered elements are null
-    // Take into account when the value from an element is build from an expression
-    //ie proportional symbol vs symbol with literal size
-    // Clarify getValue on parameter... must depend on uom ?
-    //Penstrocke must be able to support graphic during the dash instead of line
+    /**
+     *
+     * @param spatialTable
+     * @param mt
+     * @param g2
+     * @param pm
+     * @throws Exception
+     */
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
         List<String> geometryColumns = spatialTable.getGeometricColumns();
         for (Feature2DRule rule : fs.getRules()) {
@@ -84,7 +118,7 @@ public class FeatureStyleRenderer {
                 ParameterValueVisitor expressionParameters = prepareSymbolizerExpression(rule);
                 String allExpressions = expressionParameters.getExpressionParametersAsString();
                 List<IFeatureSymbolizer> sl = rule.getSymbolizers();
-                GeometryParameterVisitor gp = new GeometryParameterVisitor(sl,geometryColumns);
+                GeometryParameterVisitor gp = new GeometryParameterVisitor(sl, geometryColumns);
                 gp.visit();
                 String selectGeometry = gp.getResultAsString();
                 String query = "";
@@ -103,14 +137,13 @@ public class FeatureStyleRenderer {
                     String spatialWherefilter = gp.getGeometryColumns().stream()
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
-                    
-                    String ruleFilter = rule.getFilterExpression().getExpression();
-                    
-                    if(!ruleFilter.isEmpty()){                        
-                        ruleFilter += " and " ;
+
+                    String ruleFilter = rule.getFilter().getExpression();
+
+                    if (!ruleFilter.isEmpty()) {
+                        ruleFilter += " and ";
                     }
                     ruleFilter += spatialWherefilter;
-
 
                     JdbcSpatialTable spatialTableQuery = (JdbcSpatialTable) ((JdbcTable) spatialTable.columns(query))
                             .where(ruleFilter).getSpatialTable();
@@ -132,7 +165,7 @@ public class FeatureStyleRenderer {
                                 String geomIdentifier = featureSymbolizer.getGeometryParameter().getIdentifier();
                                 String geomMapKey = geomIdentifier;
                                 //Because we transform the shape into a set of points
-                                if(featureSymbolizer instanceof PointSymbolizer){
+                                if (featureSymbolizer instanceof PointSymbolizer) {
                                     geomMapKey = geomIdentifier + "_points";
                                 }
                                 //Perpendicular offset workarround
@@ -144,33 +177,31 @@ public class FeatureStyleRenderer {
                                         geomMapKey = geomIdentifier + "_offset";
                                     }
                                 }
-                                if(shapes.containsKey(geomMapKey)){
-                                    currentShape= shapes.get(geomMapKey);
-                                }
-                                else{   
+                                if (shapes.containsKey(geomMapKey)) {
+                                    currentShape = shapes.get(geomMapKey);
+                                } else {
                                     //We have already the geom in memory
-                                    if(geomReduced==null){
-                                    Geometry geom = spatialTableQuery.getGeometry(geomIdentifier);
-                                    geomReduced = geom;                                    
-                                    try {
-                                        boolean overlaps = geom.overlaps(mt.getAdjustedExtentGeometry());
-                                        if (overlaps) {
-                                            geomReduced = geom.intersection(mt.getAdjustedExtentGeometry());
+                                    if (geomReduced == null) {
+                                        Geometry geom = spatialTableQuery.getGeometry(geomIdentifier);
+                                        geomReduced = geom;
+                                        try {
+                                            boolean overlaps = geom.overlaps(mt.getAdjustedExtentGeometry());
+                                            if (overlaps) {
+                                                geomReduced = geom.intersection(mt.getAdjustedExtentGeometry());
+                                            }
+                                        } catch (TopologyException e) {
+                                            //ST_MakeValid.validGeom(geom, true).intersection(adjustedExtentGeometry);
                                         }
-                                    } catch (TopologyException e) {
-                                        //ST_MakeValid.validGeom(geom, true).intersection(adjustedExtentGeometry);
                                     }
-                                    }
-                                    if(featureSymbolizer instanceof PointSymbolizer){
+                                    if (featureSymbolizer instanceof PointSymbolizer) {
                                         PointSymbolizer ps = (PointSymbolizer) featureSymbolizer;
                                         if (ps.isOnVertex()) {
                                             currentShape = mt.getShapeAsPoints(geomReduced, false, false);
                                         } else {
                                             currentShape = mt.getShapeAsPoints(geomReduced, false, true);
-                                        } 
-                                    }
-                                    else {
-                                        if (Math.abs(offsetInPixel)>0) {
+                                        }
+                                    } else {
+                                        if (Math.abs(offsetInPixel) > 0) {
                                             currentShape = mt.getShape(geomReduced, true, offsetInPixel);
                                         } else {
                                             currentShape = mt.getShape(geomReduced, true);
@@ -183,12 +214,12 @@ public class FeatureStyleRenderer {
                                     symbolizerDraw.setShape(currentShape);
                                     symbolizerDraw.draw(symbolizerDraw.getGraphics2D(), mt, featureSymbolizer);
                                 }
-                                currentShape=null;
+                                currentShape = null;
                             } catch (ParameterException ex) {
                                 Logger.getLogger(FeatureStyleRenderer.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    } 
+                    }
 
                     //Draw the bufferedimages in the good order
                     Comparator<Entry<IFeatureSymbolizer, ISymbolizerDraw>> symbolizerLevelComp = (o1, o2) -> {
@@ -200,7 +231,7 @@ public class FeatureStyleRenderer {
                             return 0;
                         }
                     };
-                    
+
                     //Sort the symbolizer to draw the image accoring the symbol level
                     Map<IFeatureSymbolizer, ISymbolizerDraw> sortedSymbolizers
                             = symbolizersToDraw.entrySet().stream().
@@ -213,17 +244,18 @@ public class FeatureStyleRenderer {
                         symbolizerDraw.dispose(g2);
                     });
 
-                    
                 }
             }
         }
     }
 
     /**
-     * TODO : sort the IFeatureSymbolizer in this pass and set the good bufferedimage
+     * TODO : sort the IFeatureSymbolizer in this pass and set the good
+     * bufferedimage
+     *
      * @param sl
      * @param mt
-     * @return 
+     * @return
      */
     private Map<IFeatureSymbolizer, ISymbolizerDraw> prepareSymbolizers(List<IFeatureSymbolizer> sl, MapTransform mt) {
         Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizerDrawer = new LinkedHashMap<>();
@@ -237,21 +269,21 @@ public class FeatureStyleRenderer {
                 symbolizerDrawer.put(featureSymbolizer, drawer);
             } else if (featureSymbolizer instanceof LineSymbolizer) {
                 LineSymbolizerDrawer drawer = new LineSymbolizerDrawer();
-                initDrawer(level, drawer, mt,bufferedImages);
-                symbolizerDrawer.put(featureSymbolizer,drawer);
+                initDrawer(level, drawer, mt, bufferedImages);
+                symbolizerDrawer.put(featureSymbolizer, drawer);
             } else if (featureSymbolizer instanceof PointSymbolizer) {
                 PointSymbolizerDrawer drawer = new PointSymbolizerDrawer();
-                initDrawer(level, drawer, mt,bufferedImages);
-                symbolizerDrawer.put(featureSymbolizer,drawer);
+                initDrawer(level, drawer, mt, bufferedImages);
+                symbolizerDrawer.put(featureSymbolizer, drawer);
             } else if (featureSymbolizer instanceof TextSymbolizer) {
                 TextSymbolizerDrawer drawer = new TextSymbolizerDrawer();
-                initDrawer(level, drawer, mt,bufferedImages);
-                symbolizerDrawer.put(featureSymbolizer,drawer);
+                initDrawer(level, drawer, mt, bufferedImages);
+                symbolizerDrawer.put(featureSymbolizer, drawer);
             }
         }
         return symbolizerDrawer;
     }
-    
+
     public class GraphicElements {
 
         public final Graphics2D g2;
@@ -269,13 +301,14 @@ public class FeatureStyleRenderer {
         public BufferedImage getImage() {
             return image;
         }
-        
+
     }
-    
+
     /**
      * The number of bufferedimage depend on the symbol level
+     *
      * @param drawer
-     * @param mt 
+     * @param mt
      */
     private void initDrawer(int level, ISymbolizerDraw drawer, MapTransform mt, HashMap<Integer, GraphicElements> bufferedImages) {
         GraphicElements graphics = bufferedImages.get(level);
@@ -293,19 +326,19 @@ public class FeatureStyleRenderer {
     }
 
     /**
-     * 
+     *
      * @param sp
      * @param mt
      * @param parameterValueIdentifiers
-     * @throws SQLException 
+     * @throws SQLException
      */
-    private void populateExpressions(JdbcSpatialTable sp, MapTransform mt, Map<String, org.orbisgis.style.parameter.Expression>  parameterValueIdentifiers) throws SQLException {
-        if(!parameterValueIdentifiers.isEmpty()){            
+    private void populateExpressions(JdbcSpatialTable sp, MapTransform mt, Map<String, org.orbisgis.style.parameter.Expression> parameterValueIdentifiers) throws SQLException {
+        if (!parameterValueIdentifiers.isEmpty()) {
             for (Map.Entry<String, org.orbisgis.style.parameter.Expression> entry : parameterValueIdentifiers.entrySet()) {
                 Expression exp = entry.getValue();
-                exp.setValue(sp.getObject(exp.getReference(),exp.getParameterDomain().getDataType()));        
+                exp.setValue(sp.getObject(exp.getReference(), exp.getParameterDomain().getDataType()));
             }
         }
     }
-    
+
 }

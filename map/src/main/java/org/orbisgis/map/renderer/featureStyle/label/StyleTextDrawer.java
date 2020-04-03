@@ -1,7 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Map is part of the OrbisGIS platform
+ * 
+ * OrbisGIS is a java GIS application dedicated to research in GIScience.
+ * OrbisGIS is developed by the GIS group of the DECIDE team of the
+ * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
+ *
+ * The GIS group of the DECIDE team is located at :
+ *
+ * Laboratoire Lab-STICC – CNRS UMR 6285 Equipe DECIDE UNIVERSITÉ DE
+ * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
+ * - BP 561 56017 Vannes Cedex
+ *
+ * Map is distributed under LGPL 3 license.
+ *
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
+ * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ *
+ *
+ * Map is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * Map is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * Map. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * For more information, please consult: <http://www.orbisgis.org/>
+ * or contact directly: info_at_ orbisgis.org
  */
 package org.orbisgis.map.renderer.featureStyle.label;
 
@@ -14,7 +43,6 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +52,10 @@ import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.style.IFill;
-import org.orbisgis.style.factory.StyleFactory;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.label.Label;
-import org.orbisgis.style.label.StyledText;
+import org.orbisgis.style.label.StyleFont;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
@@ -38,7 +65,7 @@ import org.orbisgis.style.utils.UomUtils;
  *
  * @author Erwan Bocher, CNRS
  */
-public class StyleTextDrawer implements IStyleDrawer<StyledText> {
+public class StyleTextDrawer implements IStyleDrawer<Label>{
 
     final static Map<Class, IStyleDrawer> drawerMap = new HashMap<>();
 
@@ -48,20 +75,21 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
         drawerMap.put(PenStroke.class, new PenStrokeDrawer());
     }
     private Shape shape;
+    private AffineTransform at;
+    private Label.VerticalAlignment verticalAlign;
 
     @Override
-    public void draw( Graphics2D g2, MapTransform mapTransform, StyledText styleNode) throws ParameterException {
-            String txt =  (String) styleNode.getText().getValue();
+    public void draw( Graphics2D g2, MapTransform mapTransform, Label styleNode) throws ParameterException {
+            String txt =  (String) styleNode.getLabelText().getValue();
             if (txt != null) {
-            Label.VerticalAlignment va  = null;//(Label.VerticalAlignment) properties.get("verticalalignment");
+            Label.VerticalAlignment va  = getVerticalAlign();
 
             if (va == null) {
                 va  = Label.VerticalAlignment.TOP;
             }
-            AffineTransform at = g2.getTransform();////AffineTransform) properties.get("affinetransform");
 
             ArrayList<Shape> outlines = new ArrayList<Shape>();
-            outlines.add(getOutline( g2, txt, mapTransform, at, va, styleNode));
+            outlines.add(getOutline( g2, txt, mapTransform, va, styleNode));
             drawOutlines(g2, outlines, mapTransform, styleNode);
         }
     }
@@ -72,7 +100,6 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * inner {@code Fill}, {@code Halo} and {@code Stroke} instances.If they are
      * not set, a simple default {@code SolidFill} will be used.
      *
-     * @param sp
      * @param g2 The graphics we draw with
      *
      * @param outlines The list of needed outlines
@@ -80,7 +107,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException
      */
     public void drawOutlines(Graphics2D g2, ArrayList<Shape> outlines,
-            MapTransform mapTransform, StyledText styleNode) throws ParameterException {
+            MapTransform mapTransform, Label styleNode) throws ParameterException {
 
         Halo halo = styleNode.getHalo();
 
@@ -115,7 +142,9 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
                  * No fill and no stroke : apply default SolidFill !
                  */
                 if (fillDrawer == null && strokeDrawer == null) {
-                    SolidFill sf = StyleFactory.createSolidFill(Color.BLACK);
+                    SolidFill sf = new SolidFill();
+                    sf.setColor(Color.BLACK);
+                    sf.setOpacity(1f);
                     sf.setParent(styleNode);
                     SolidFillDrawer drawer = new SolidFillDrawer();
                     drawer.setShape(outline);
@@ -140,24 +169,21 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      *
      * @param g2 The graphics we draw with
      * @param text The text for which we need the bounds.
-     * @param map The map of input values
      * @param mt The current IMapTransform
      * @return The bounds of the text
      * @throws ParameterException
-     * @throws IOException
      */
     public Rectangle2D getBounds(Graphics2D g2, String text,
-            MapTransform mt, StyledText styleNode) throws ParameterException {
-
-        Font font = getFont( mt, styleNode);
+            MapTransform mt, StyleFont styleFont) throws ParameterException {
+        Font font = getFont( mt, styleFont);
         FontMetrics metrics = g2.getFontMetrics(font);
         return metrics.getStringBounds(text, null);
     }
 
     /**
-     * Gets the outline of the given {@code String} as a shape. This shapes is
-     * made of the boundary(ies) of the text, that will have to be stroked and
-     * fill.
+     * Gets the outline of the given {@code String} as a shape.This shapes is
+ made of the boundary(ies) of the text, that will have to be stroked and
+ fill.
      *
      * @param g2 The {@code Graphics2D} instance used to render the map we are
      * drawing.
@@ -172,13 +198,11 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException If we fail to retrieve a parameter used to
      * configure this {@code
      * StyledText}.
-     * @throws IOException If an error occurred while retrieving the
-     * {@code Font}.
      */
     public Shape getOutline( Graphics2D g2, String text,
-            MapTransform mt, AffineTransform at, Label.VerticalAlignment va, StyledText styleNode)
+            MapTransform mt, Label.VerticalAlignment va, Label styleNode)
             throws ParameterException {
-        Font font = getFont(mt, styleNode);
+        Font font = getFont(mt, (StyleFont) styleNode.getFont());
         TextLayout tl = new TextLayout(text, font, g2.getFontRenderContext());
         FontMetrics metrics = g2.getFontMetrics(font);
         double dy = 0;
@@ -217,28 +241,28 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
      * @throws ParameterException
      * @throws IOException
      */
-    private Font getFont( MapTransform mt, StyledText styleNode) throws ParameterException {
-        String fontFamily = (String) styleNode.getFontFamily().getValue();
+    private Font getFont( MapTransform mt, StyleFont font) throws ParameterException {
+        String fontFamily = (String) font.getFontFamily().getValue();
         if (fontFamily == null) {
             throw new ParameterException("The font family cannot be null");
         }
 
         // TODO Family is comma delimeted list of fonts family. Choose the first available
-        String fontWeight = (String) styleNode.getFontWeight().getValue();
+        String fontWeight = (String) font.getFontWeight().getValue();
         if (fontWeight == null) {
             throw new ParameterException("The font weight cannot be null");
         }
 
-        String fontStyle = (String) styleNode.getFontStyle().getValue();
+        String fontStyle = (String) font.getFontStyle().getValue();
         if (fontStyle == null) {
             throw new ParameterException("The font style cannot be null");
         }
 
-        Float fontSize =  (Float) styleNode.getFontSize().getValue();
+        Float fontSize =  (Float) font.getFontSize().getValue();
         if (fontSize == null) {
                   throw new ParameterException("The font size cannot be null");
         }
-        double size = UomUtils.toPixel(fontSize, styleNode.getFontUom(), mt.getDpi(), mt.getScaleDenominator());
+        double size = UomUtils.toPixel(fontSize, font.getFontUom(), mt.getDpi(), mt.getScaleDenominator());
       
         int st = Font.PLAIN;
 
@@ -256,6 +280,7 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
 
         return new Font(fontFamily, st, (int) size);
     }
+    
     @Override
     public Shape getShape() {
         return shape;
@@ -265,4 +290,23 @@ public class StyleTextDrawer implements IStyleDrawer<StyledText> {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
+
+    public Label.VerticalAlignment getVerticalAlign() {
+        return verticalAlign;
+    }
+
+    public AffineTransform getAffineTransform() {
+        return at;
+    }
+
+    
+    void setAffineTransform(AffineTransform at) {
+        this.at=at;
+    }
+
+    void setVerticalalignment(Label.VerticalAlignment verticalAlign) {
+        this.verticalAlign=verticalAlign;
+    }
+
+    
 }
