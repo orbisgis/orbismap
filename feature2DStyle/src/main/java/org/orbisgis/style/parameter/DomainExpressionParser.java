@@ -214,7 +214,13 @@ public class DomainExpressionParser extends ExpressionDeParser {
             throw new RuntimeException("Only number value is supported");
         }
         int compare = compareTo((Number) left, (Number) right);
-        result = (compare == 0 || compare > 0);
+        if (compare == 0) {
+            result = true;
+        } else if(compare < 0){
+            result = false;
+        }else{
+            result =true;
+        }
         stackCondition.push(result);
     }
 
@@ -540,8 +546,10 @@ public class DomainExpressionParser extends ExpressionDeParser {
         int compare = compareTo((Number) left, (Number) right);
         if (compare == 0) {
             result = true;
-        } else {
-            result = compare > 0;
+        } else if(compare < 0){
+            result = true;
+        }else{
+            result =false;
         }
         stackCondition.push(result);
     }

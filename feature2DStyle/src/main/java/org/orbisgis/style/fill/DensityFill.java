@@ -58,8 +58,9 @@ import org.orbisgis.style.stroke.PenStroke;
  * {@code PenStroke} and orientation are used. Otherwise, the shape is filled with
  * repeated mark, registered as a {@code GraphicCollection} instance.</p>
  * <p>
- * @author Alexis Guéganno, CNRS (2012-2013) @author Maxence Laurent, HEIG-VD
- * (2010-2012) @author Erwan Bocher, CNRS (2010-2020)
+ * @author Alexis Guéganno, CNRS (2012-2013) 
+ * @author Maxence Laurent, HEIG-VD (2010-2012) 
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
 public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNode {
 

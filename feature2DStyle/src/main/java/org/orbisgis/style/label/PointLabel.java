@@ -178,6 +178,8 @@ public class PointLabel extends Label {
         SolidFill solidFill = new SolidFill();
         solidFill.initDefault();
         setFill(solidFill);
+        setHorizontalAlign(Label.HorizontalAlignment.CENTER);
+        setVerticalAlign(Label.VerticalAlignment.TOP);
     }
     
 }
