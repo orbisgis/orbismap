@@ -71,7 +71,7 @@ public class GeometryParameterVisitor {
      */
     public void visit() throws Exception {
         if (!feature2DSymbolizers.isEmpty()&& !geometryColumns.isEmpty()) {
-            res = new HashMap<String, String>();
+            res = new HashMap<>();
             for (IFeatureSymbolizer feature2DSymbolizer : feature2DSymbolizers) {
                 GeometryParameter gp = feature2DSymbolizer.getGeometryParameter();
                 String formatedExp;
@@ -82,7 +82,7 @@ public class GeometryParameterVisitor {
                     public void visit(Column column) {
                         super.visit(column);
                         if (geometryColumns.contains(column.getColumnName().toUpperCase())) {
-                            geometryColumnsValid.add(column.getColumnName());
+                            geometryColumnsValid.add(column.getColumnName().toUpperCase());
                         }
                     }
                 });

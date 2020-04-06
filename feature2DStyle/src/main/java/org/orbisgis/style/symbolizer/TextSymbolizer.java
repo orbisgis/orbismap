@@ -281,10 +281,7 @@ public class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
 
     @Override
     public void initDefault() {
-        setName("Point Symbolizer");        
-        GeometryParameter geometryParameter = new GeometryParameter();
-        geometryParameter.initDefault();
-        setGeometryParameter(geometryParameter);
+        setName("Point Symbolizer");   
         PointLabel pointLabel = new PointLabel();
         pointLabel.initDefault();
         setLabel(pointLabel);

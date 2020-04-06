@@ -32,7 +32,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.factory;
+package org.orbisgis.style;
 
 import java.awt.Color;
 import org.junit.jupiter.api.Assertions;

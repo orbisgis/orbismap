@@ -277,10 +277,7 @@ public class LineSymbolizer extends StyleNode implements Comparable, StrokeNode,
     }
      @Override
     public void initDefault() {
-        setName("Line Symbolizer");        
-        GeometryParameter geometryParameter = new GeometryParameter();
-        geometryParameter.initDefault();
-        setGeometryParameter(geometryParameter);
+        setName("Line Symbolizer"); 
         PenStroke ps = new PenStroke();
         ps.initDefault();
         setStroke(ps);

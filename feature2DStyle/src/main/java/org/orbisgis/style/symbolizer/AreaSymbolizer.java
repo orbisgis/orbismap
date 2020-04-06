@@ -304,9 +304,6 @@ public class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, I
     @Override
     public void initDefault() {
         setName("Area Symbolizer");
-        GeometryParameter geometryParameter = new GeometryParameter();
-        geometryParameter.initDefault();
-        setGeometryParameter(geometryParameter);
         SolidFill solidFill = new SolidFill();
         solidFill.setColor(Color.GRAY);
         solidFill.setOpacity(1f);

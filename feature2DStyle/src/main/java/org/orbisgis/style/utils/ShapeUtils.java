@@ -142,6 +142,7 @@ public final class ShapeUtils {
     }
 
     /**
+     * @param line
      * @see #getAreaPerimeterLength
      */
     public static double getLineLength(Shape line) {
@@ -533,9 +534,6 @@ public final class ShapeUtils {
         }
     }
 
-    //private static Polygon perpendicularOffsetForArea() {
-    //    return null;
-    //}
     private static class Vertex {
 
         private double x;

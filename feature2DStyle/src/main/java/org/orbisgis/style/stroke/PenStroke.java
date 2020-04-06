@@ -42,6 +42,7 @@ import org.orbisgis.style.FillNode;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
@@ -112,7 +113,7 @@ public class PenStroke extends Stroke implements FillNode {
         solidFill.setOpacity(1.0f);
         setFill(solidFill);
         setWidth(DEFAULT_WIDTH);
-        setUom(null);
+        setUom(Uom.PX);
         setDashArray("");
         setDashOffset(0);
         setLineCap(DEFAULT_CAP);

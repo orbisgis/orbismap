@@ -35,7 +35,6 @@
  */
 package org.orbisgis.style.symbolizer;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IFeatureSymbolizer;
@@ -45,14 +44,12 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
-import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.stroke.PenStroke;
 
 /**
  * {@code PointSymbolizer} are used to draw a graphic at a point. As a
@@ -279,9 +276,6 @@ public class PointSymbolizer extends StyleNode implements IGraphicNode, Comparab
     @Override
     public void initDefault() {
         setName("Point Symbolizer");        
-        GeometryParameter geometryParameter = new GeometryParameter();
-        geometryParameter.initDefault();
-        setGeometryParameter(geometryParameter);
         setOnVertex(false);
         MarkGraphic markGraphic = new MarkGraphic();
         markGraphic.initDefault();

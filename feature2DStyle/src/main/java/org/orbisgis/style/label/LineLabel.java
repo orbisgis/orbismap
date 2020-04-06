@@ -124,6 +124,7 @@ public class LineLabel extends Label {
         setFill(solidFill);
         setHorizontalAlign(Label.HorizontalAlignment.CENTER);
         setVerticalAlign(Label.VerticalAlignment.TOP);
+        setOrientation(RelativeOrientation.NORMAL_UP);
      }
 
 }
