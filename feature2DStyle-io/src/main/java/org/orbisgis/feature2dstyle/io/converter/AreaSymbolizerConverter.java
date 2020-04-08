@@ -84,9 +84,8 @@ public class AreaSymbolizerConverter implements Converter {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);
                 areaSymbolizer.setUom(uom);
             }
-            else if ("geometryparameter".equalsIgnoreCase(reader.getNodeName())) {
-                GeometryParameter geometryParameter = (GeometryParameter) context.convertAnother(reader, GeometryParameter.class);
-                areaSymbolizer.setGeometryParameter(geometryParameter);
+            else if ("geometry".equalsIgnoreCase(reader.getNodeName())) {
+                areaSymbolizer.setGeometryParameter(reader.getValue());
             }
             else if ("description".equalsIgnoreCase(reader.getNodeName())) {
                 Description description = (Description) context.convertAnother(reader, Description.class);

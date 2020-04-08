@@ -81,6 +81,9 @@ public class Feature2DStyleConverter implements Converter {
                  Feature2DRule feature2DRule = (Feature2DRule) context.convertAnother(reader, Feature2DRule.class);
                  fs.addRule(feature2DRule);
              }
+             else if("name".equalsIgnoreCase(reader.getNodeName())){
+                 fs.setName(reader.getValue());
+             }
              reader.moveUp();
         }
         

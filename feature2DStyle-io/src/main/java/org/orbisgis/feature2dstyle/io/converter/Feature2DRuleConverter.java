@@ -43,10 +43,13 @@ import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
+import org.orbisgis.style.symbolizer.LineSymbolizer;
+import org.orbisgis.style.symbolizer.PointSymbolizer;
+import org.orbisgis.style.symbolizer.TextSymbolizer;
 
 /**
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class Feature2DRuleConverter implements Converter {
     
@@ -94,6 +97,18 @@ public class Feature2DRuleConverter implements Converter {
             }
             else if ("areasymbolizer".equalsIgnoreCase(reader.getNodeName())) {
                 AreaSymbolizer symbolizer = (AreaSymbolizer) context.convertAnother(reader, AreaSymbolizer.class);
+                feature2DRule.addSymbolizer(symbolizer);
+            }
+            else if ("linesymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+                LineSymbolizer symbolizer = (LineSymbolizer) context.convertAnother(reader, LineSymbolizer.class);
+                feature2DRule.addSymbolizer(symbolizer);
+            }
+            else if ("pointsymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+                PointSymbolizer symbolizer = (PointSymbolizer) context.convertAnother(reader, PointSymbolizer.class);
+                feature2DRule.addSymbolizer(symbolizer);
+            }
+            else if ("textsymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+                TextSymbolizer symbolizer = (TextSymbolizer) context.convertAnother(reader, TextSymbolizer.class);
                 feature2DRule.addSymbolizer(symbolizer);
             }
             reader.moveUp();

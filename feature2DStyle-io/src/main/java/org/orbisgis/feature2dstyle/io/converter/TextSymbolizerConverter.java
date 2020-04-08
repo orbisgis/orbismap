@@ -43,7 +43,6 @@ import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 
 /**
@@ -78,9 +77,8 @@ public class TextSymbolizerConverter implements Converter {
             } else if ("uom".equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);
                 symbolizer.setUom(uom);
-            } else if ("geometryparameter".equalsIgnoreCase(reader.getNodeName())) {
-                GeometryParameter geometryParameter = (GeometryParameter) context.convertAnother(reader, GeometryParameter.class);
-                symbolizer.setGeometryParameter(geometryParameter);
+            } else if ("geometry".equalsIgnoreCase(reader.getNodeName())) {
+                symbolizer.setGeometryParameter(reader.getValue());
             } else if ("description".equalsIgnoreCase(reader.getNodeName())) {
                 Description description = (Description) context.convertAnother(reader, Description.class);
                 symbolizer.setDescription(description);

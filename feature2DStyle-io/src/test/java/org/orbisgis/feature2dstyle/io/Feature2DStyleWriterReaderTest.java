@@ -1,6 +1,6 @@
 /**
  * Feature2DStyle-IO is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -11,23 +11,24 @@
  * BRETAGNE-SUD Institut Universitaire de Technologie de Vannes 8, Rue Montaigne
  * - BP 561 56017 Vannes Cedex
  *
- * Feature2DStyle-IO  is distributed under LGPL 3 license.
+ * Feature2DStyle-IO is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
- * Feature2DStyle-IO  is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Feature2DStyle-IO is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * Feature2DStyle-IO  is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * Feature2DStyle-IO is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+ * for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Feature2DStyle-IO . If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Feature2DStyle-IO . If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -35,6 +36,7 @@
 package org.orbisgis.feature2dstyle.io;
 
 import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.orbisgis.style.Feature2DStyle;
 
@@ -48,15 +50,16 @@ import org.orbisgis.style.graphic.ViewBox;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
+import org.orbisgis.style.visitor.CompareStyleVisitor;
 
 /**
  *
  * @author Erwan Bocher, CNRS
  */
 public class Feature2DStyleWriterReaderTest {
-    
+
     @Test
-    public void writeReadPointSymbolizerWithSize(TestInfo testInfo) throws Exception {      
+    public void writeReadPointSymbolizerWithSize(TestInfo testInfo) throws Exception {
         Feature2DStyle style = new Feature2DStyle();
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
@@ -72,12 +75,12 @@ public class Feature2DStyleWriterReaderTest {
         penStroke.initDefault();
         markGraphic.setStroke(penStroke);
         ps.addGraphic(markGraphic);
-        rule.addSymbolizer(ps);        
-        writeReadTest(testInfo.getDisplayName(), style );
-    }  
-    
+        rule.addSymbolizer(ps);
+        writeReadTest(testInfo.getDisplayName(), style);
+    }
+
     @Test
-    public void writeReadPointSymbolizer(TestInfo testInfo) throws Exception {      
+    public void writeReadPointSymbolizer(TestInfo testInfo) throws Exception {
         Feature2DStyle style = new Feature2DStyle();
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
@@ -93,37 +96,34 @@ public class Feature2DStyleWriterReaderTest {
         penStroke.initDefault();
         markGraphic.setStroke(penStroke);
         ps.addGraphic(markGraphic);
-        rule.addSymbolizer(ps);        
-        writeReadTest(testInfo.getDisplayName(), style );
-    }    
-    
-    @Test
-    public void writeReadComplexStyle(TestInfo testInfo) throws Exception {      
-       // writeReadTest(testInfo.getDisplayName(), StyleFactory.createAreaSymbolizer(Color.yellow, 1, 0));
+        rule.addSymbolizer(ps);
+        writeReadTest(testInfo.getDisplayName(), style);
     }
-    
-    public static void writeReadTest(String testName, Feature2DStyle inputStyle) throws Exception{
-        File outputStyleFile = new File("./target/"+testName+".se");
-        if(outputStyleFile==null){
+
+    @Test
+    public void writeReadComplexStyle(TestInfo testInfo) throws Exception {
+        //TODO
+        
+    }
+
+    public static void writeReadTest(String testName, Feature2DStyle inputStyle) throws Exception {
+        File outputStyleFile = new File("./target/" + testName + ".se");
+        if (outputStyleFile == null) {
             throw new IllegalArgumentException("The output file to save the json style cannot be null");
         }
-        if(inputStyle==null){
+        if (inputStyle == null) {
             throw new IllegalArgumentException("The input style cannot be null");
         }
         if (outputStyleFile.exists()) {
             outputStyleFile.delete();
         }
-        Feature2DStyleIO.toXML(inputStyle, outputStyleFile);
-        
-        Feature2DStyle fs = Feature2DStyleIO.fromXML(outputStyleFile);
-        
-        /*Feature2DStyleWriter feature2DStyleWriter = new Feature2DStyleWriter(inputStyle);
-        feature2DStyleWriter.write(outputStyleFile);
+        Feature2DStyleIO.toXML(inputStyle, outputStyleFile);        
         assertTrue(outputStyleFile.exists());
-        Feature2DStyleReader feature2DStyleReader = new Feature2DStyleReader(outputStyleFile);
-        Feature2DStyle output_fds = feature2DStyleReader.read();
+
+        Feature2DStyle output_fds = Feature2DStyleIO.fromXML(outputStyleFile);
+
         CompareStyleVisitor cp = new CompareStyleVisitor();
-        cp.visitSymbolizerNode(inputStyle, output_fds);*/
+        cp.visitSymbolizerNode(inputStyle, output_fds);
     }
 
 }
