@@ -35,9 +35,6 @@
 package org.orbisgis.style.utils;
 
 import java.awt.BasicStroke;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.*;
@@ -1334,22 +1331,6 @@ public final class ShapeUtils {
             return null;
         } else {
             return new Line2D.Double(pts.get(0), pts.get(1));
-        }
-    }
-
-    public static Geometry clipToExtent(Geometry theGeom, Envelope extent) {
-        GeometryFactory geometryFactory = new GeometryFactory();
-
-        Envelope incExtent = new Envelope(extent);
-
-        incExtent.expandBy(extent.getWidth() / 10, extent.getHeight() / 10);
-
-        Geometry geometry = theGeom.intersection(geometryFactory.toGeometry(extent));
-
-        if (geometry.isEmpty()) {
-            return null;
-        } else {
-            return geometry;
         }
     }
 }
