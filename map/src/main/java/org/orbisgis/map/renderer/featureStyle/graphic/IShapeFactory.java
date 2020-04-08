@@ -38,6 +38,7 @@ import java.awt.Shape;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.GraphicSize;
 import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
  *
@@ -48,7 +49,7 @@ public interface IShapeFactory {
     String getIdentifier();
     
     Shape getShape(GraphicSize graphicSize,
-            Double scale, Double dpi, Uom uom ) throws  ParameterException;
+            Double scale, Double dpi, Uom uom) throws  ParameterException;
 
     void setShapeName(String shapeName);
     

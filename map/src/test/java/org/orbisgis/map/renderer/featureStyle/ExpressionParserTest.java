@@ -32,7 +32,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.map.renderer.style;
+package org.orbisgis.map.renderer.featureStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +55,12 @@ public class ExpressionParserTest {
      */
     public static void main(String[] args) throws JSQLParserException {
         
-        //Field
+        //Field lowercase
         Expression expr = CCJSqlParserUtil.parseExpression("the_geom", false);        
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+        
+        //Field uppercase
+        expr = CCJSqlParserUtil.parseExpression("THE_GEOM", false);        
         System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
         
         //Value

@@ -48,8 +48,8 @@ import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.utils.UomUtils;
 
 /**
- *
- * @author ebocher
+ * Drawer for the element <code>PointTextGraphic</code>
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class PointTextGraphicDrawer implements IGraphicDrawer<PointTextGraphic> {
 
@@ -57,7 +57,7 @@ public class PointTextGraphicDrawer implements IGraphicDrawer<PointTextGraphic> 
     private AffineTransform affineTransform;
 
     @Override
-    public Rectangle2D getBounds(MapTransform mapTransform, PointTextGraphic styleNode) throws ParameterException {
+    public Rectangle2D getShape(MapTransform mapTransform, PointTextGraphic styleNode) throws ParameterException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

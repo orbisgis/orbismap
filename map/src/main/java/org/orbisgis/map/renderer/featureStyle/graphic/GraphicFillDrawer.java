@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -42,9 +43,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
 import org.orbisgis.style.Uom;
@@ -54,16 +54,12 @@ import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.utils.UomUtils;
 
 /**
+ * Drawer for the element <code>GraphicFill</code>
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
+public class GraphicFillDrawer extends AbstractDrawerFinder<IGraphicCollectionDrawer, GraphicCollection> implements IGraphicDrawer<GraphicFill> {
 
-    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
-    }
     private Shape shape;
     private AffineTransform affineTransform;
 
@@ -94,15 +90,13 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
                 gY = 0.0f;
             }
         }
-        GraphicCollection graphic = styleNode.getGraphics();
-        if (graphic != null) {
-            if (drawerMap.containsKey(graphic.getClass())) {
-                IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                Rectangle2D bounds = graphicDrawer.getBounds(mt, graphic);
-                gX = UomUtils.toPixel(gX, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getWidth());
-                gY = UomUtils.toPixel(gY, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getHeight());
-                return getPaint(graphicDrawer, mt, graphic, gX, gY, bounds);
-            }
+        GraphicCollection graphics = styleNode.getGraphics();
+        IGraphicCollectionDrawer drawer = getDrawer(graphics);
+        if (drawer != null) {
+            Rectangle2D bounds = drawer.getBounds(mt, graphics);
+            gX = UomUtils.toPixel(gX, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getWidth());
+            gY = UomUtils.toPixel(gY, uom, mt.getDpi(), mt.getScaleDenominator(), (float) bounds.getHeight());
+            return getPaint(drawer, mt, graphics, gX, gY, bounds);
         }
 
         return null;
@@ -148,13 +142,10 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
     }
 
     @Override
-    public Rectangle2D getBounds(MapTransform mapTransform, GraphicFill styleNode) throws ParameterException {
-        GraphicCollection graphic = styleNode.getGraphics();
-        if (graphic != null) {
-            if (drawerMap.containsKey(graphic.getClass())) {
-                IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                return graphicDrawer.getBounds(mapTransform, styleNode);
-            }
+    public Rectangle2D getShape(MapTransform mapTransform, GraphicFill styleNode) throws ParameterException {
+        IGraphicCollectionDrawer drawer = getDrawer(styleNode.getGraphics());
+        if (drawer != null) {
+            return drawer.getBounds(mapTransform, styleNode);
         }
         return null;
     }
@@ -169,14 +160,28 @@ public class GraphicFillDrawer implements IGraphicDrawer<GraphicFill> {
         this.shape = shape;
     }
 
-     @Override
+    @Override
     public AffineTransform getAffineTransform() {
-        return  affineTransform;
+        return affineTransform;
     }
 
     @Override
     public void setAffineTransform(AffineTransform affineTransform) {
-        this.affineTransform=affineTransform;
+        this.affineTransform = affineTransform;
     }
 
+    @Override
+    public IGraphicCollectionDrawer getDrawer(GraphicCollection styleNode) {
+        if (styleNode != null) {
+            IGraphicCollectionDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof GraphicCollection) {
+                    drawer = new GraphicCollectionDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
+    }
 }

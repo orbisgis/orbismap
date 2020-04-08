@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -39,29 +40,31 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
+import org.orbisgis.map.renderer.featureStyle.fill.DensityFillDrawer;
+import org.orbisgis.map.renderer.featureStyle.fill.DotMapFillDrawer;
+import org.orbisgis.map.renderer.featureStyle.fill.HaloDrawer;
+import org.orbisgis.map.renderer.featureStyle.fill.HatchedFillDrawer;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.fill.DensityFill;
+import org.orbisgis.style.fill.DotMapFill;
+import org.orbisgis.style.fill.Halo;
+import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.utils.UomUtils;
 
 /**
- *
- * @author ebocher
+ * Drawer for the element <code>PenStroke</code>
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
+public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> implements IStrokeDrawer<PenStroke> {
 
-    final static Map<Class, IFillDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(SolidFill.class, new SolidFillDrawer());
-    }
     private Shape shape;
 
     @Override
@@ -69,9 +72,8 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
         IFill fill = styleNode.getFill();
         Float width = (Float) styleNode.getWidth().getValue();
         if (fill != null && width != null) {
-            Uom uom = styleNode.getUom();
-            if (drawerMap.containsKey(fill.getClass())) {
-                IFillDrawer fillToDraw = drawerMap.get(fill.getClass());
+                Uom uom = styleNode.getUom();
+                IFillDrawer fillToDraw = getDrawer(fill);
                 Paint paint = fillToDraw.getPaint(fill, mapTransform);
                 //Find dashArray info
                 float[] dashLengths = null;
@@ -88,13 +90,15 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
                 }
                 BasicStroke stroke;
                 if (dashLengths != null) {
-                    stroke = createDashStroke(styleNode, mapTransform, width, dashLengths, dashOffset);
+                    stroke = createDashStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator()),
+                             dashLengths, dashOffset);
 
                 } else {
-                    stroke = createBasicStroke(styleNode, mapTransform, width);
+                    stroke = createBasicStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator())
+                    );
                 }
                 g2.setPaint(paint);
-                g2.setStroke(stroke);                
+                g2.setStroke(stroke);
                 if (paint != null) {
                     g2.draw(shape);
                 } else {
@@ -102,8 +106,6 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
                     fillToDraw.setShape(stroke.createStrokedShape(shape));
                     fillToDraw.draw(g2, mapTransform, styleNode);
                 }
-            }
-
         }
     }
 
@@ -234,15 +236,13 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
         return new BasicStroke((float) w, cap, join);
     }
 
-    
-
     /**
      *
      * @param penStroke
      * @param mt
-     * @param properties
      * @return
      */
+    @Override
     public Double getNaturalLength(PenStroke penStroke, MapTransform mt) {
         String dashArray = (String) penStroke.getDashArray().getValue();
         if (dashArray != null) {
@@ -279,6 +279,32 @@ public class PenStrokeDrawer implements IStrokeDrawer<PenStroke> {
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
-    }  
+    }
 
+    @Override
+    public IFillDrawer getDrawer(IFill styleNode) {
+        if (styleNode != null) {
+            IFillDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof Halo) {
+                    drawer = new HaloDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof SolidFill) {
+                    drawer = new SolidFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof HatchedFill) {
+                    drawer = new HatchedFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof DensityFill) {
+                    drawer = new DensityFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof DotMapFill) {
+                    drawer = new DotMapFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
+    }
 }

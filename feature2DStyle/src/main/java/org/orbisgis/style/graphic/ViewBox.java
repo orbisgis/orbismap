@@ -37,6 +37,7 @@ package org.orbisgis.style.graphic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.Uom;
@@ -228,4 +229,42 @@ public class ViewBox extends GraphicSize {
         setHeight(DEFAULT_SIZE);
         setWidth(DEFAULT_SIZE);
     }
+
+    @Override
+    public boolean equals(Object o) {
+         if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof Literal)) {
+            return false;
+        }
+        ViewBox other = (ViewBox) o;
+        
+        if (!getUom().equals(other.getUom())) {
+            return false;
+        }
+
+        if (!getHeight().equals(other.getHeight())) {
+            return false;
+        }
+        if (!getWidth().equals(other.getWidth())) {
+            return false;
+        }
+        return true;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.width);
+        hash = 83 * hash + Objects.hashCode(this.height);
+        hash = 83 * hash + Objects.hashCode(this.uom);
+        return hash;
+    }
+    
+    
 }

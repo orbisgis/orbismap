@@ -66,7 +66,25 @@ public class ParameterDomain implements IParameterDomain{
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof ParameterDomain)) {
+            return false;
+        }
+        ParameterDomain other = (ParameterDomain) o;
+        if (!getDataType().equals(other.getDataType())) {
+            return false;
+        }
+
+        if (!getExpression().equals(other.getExpression())) {
+            return false;
+        }
+        return true;
+
     }
 
     @Override

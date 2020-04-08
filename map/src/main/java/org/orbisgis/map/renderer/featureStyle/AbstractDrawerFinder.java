@@ -34,16 +34,30 @@
  */
 package org.orbisgis.map.renderer.featureStyle;
 
-import org.orbisgis.map.layerModel.MapTransform;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.orbisgis.style.IStyleNode;
 
 /**
  *
+ * This class is used to load only the necessary drawers.
  * @author Erwan Bocher, CNRS (2020)
- * @param <T>
  */
-public interface IStrokeDrawer <T extends IStyleNode> extends IStyleDrawer <T> {
-
-    public Double getNaturalLength(T stroke, MapTransform mapTransform);
+public abstract class AbstractDrawerFinder<T extends IStyleDrawer, S extends IStyleNode>{
+    
+    public  Map<S, T> drawerMap;
+    
+    public AbstractDrawerFinder(){
+        drawerMap = new LinkedHashMap<>();
+    }
+    
+    /**
+     * 
+     * Find the drawer
+     *
+     * @param styleNode the input style node
+     * @return a drawer for the style node
+     */
+    public abstract T getDrawer(S styleNode);
     
 }

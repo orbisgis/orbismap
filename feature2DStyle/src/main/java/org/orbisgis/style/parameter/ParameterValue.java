@@ -36,6 +36,7 @@ package org.orbisgis.style.parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.orbisgis.style.IParameterValue;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
@@ -50,6 +51,7 @@ public abstract class ParameterValue extends StyleNode implements IParameterValu
     private Object value;
 
     IParameterDomain parameterDomain;
+    private boolean isLiteral =true;
     
     public ParameterValue(){
         this.parameterDomain = null;        
@@ -134,4 +136,53 @@ public abstract class ParameterValue extends StyleNode implements IParameterValu
             this.parameterDomain = new ParameterDomain(dataType);
         }
     }
+    
+    /**
+     * Return true if the ParameterValue is a <code>Literal</code>
+     * @return 
+     */
+    public boolean isLiteral() {
+        return isLiteral;
+    }
+    
+    /**
+     * 
+     * @param isLiteral 
+     */
+    public void setLiteral(boolean isLiteral) {
+        this.isLiteral=isLiteral;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof ParameterValue)) {
+            return false;
+        }
+        ParameterValue other = (ParameterValue) o;
+        if (!getValue().equals(other.getValue())) {
+            return false;
+        }
+        if (!getParameterDomain().equals(other.getParameterDomain())) {
+            return false;
+        }
+        return true;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + Objects.hashCode(this.value);
+        hash = 83 * hash + Objects.hashCode(this.parameterDomain);
+        hash = 83 * hash + (this.isLiteral ? 1 : 0);
+        return hash;
+    }
+    
+    
 }

@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -39,18 +40,17 @@ import org.orbisgis.map.renderer.featureStyle.fill.SolidFillDrawer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.fill.DotMapFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.fill.HatchedFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.graphic.GraphicFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
-import org.orbisgis.style.fill.DensityFill;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.style.IFill;
+import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
@@ -61,21 +61,12 @@ import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
 
 /**
+ * Drawer for the element <code>AreaSymbolizer</code>
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
+public class AreaSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyleNode> implements ISymbolizerDraw<AreaSymbolizer> {
 
-    final static Map<Class, IStyleDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(SolidFill.class, new SolidFillDrawer());
-        drawerMap.put(PenStroke.class, new PenStrokeDrawer());
-        drawerMap.put(HatchedFill.class, new HatchedFillDrawer());
-        drawerMap.put(DotMapFill.class, new DotMapFillDrawer());
-        drawerMap.put(DensityFill.class, new DensityFillDrawer());
-        drawerMap.put(GraphicFill.class, new GraphicFillDrawer());    
-    }
     private Shape shape;
     private BufferedImage bi;
     private Graphics2D g2_bi;
@@ -89,23 +80,17 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
         }
 
         IFill fill = symbolizer.getFill();
-        if (fill != null) {
-            if (drawerMap.containsKey(fill.getClass())) {
-                IStyleDrawer drawer = drawerMap.get(fill.getClass());
-                drawer.setShape(getShape());
-                drawer.draw(g2, mapTransform, fill);
-            }
+        IStyleDrawer fillDrawer = getDrawer(fill);
+        if (fillDrawer != null) {
+                fillDrawer.setShape(getShape());
+                fillDrawer.draw(g2, mapTransform, fill);
         }
-
         Stroke stroke = symbolizer.getStroke();
-        if (stroke != null) {
-            if (drawerMap.containsKey(stroke.getClass())) {
-                IStyleDrawer drawer = drawerMap.get(stroke.getClass());
-                drawer.setShape(getShape());
-                drawer.draw(g2, mapTransform, stroke);
-            }
+        IStyleDrawer strokeDrawer = getDrawer(stroke);
+        if (strokeDrawer != null) {
+                strokeDrawer.setShape(getShape());
+                strokeDrawer.draw(g2, mapTransform, stroke);
         }
-
     }
 
     @Override
@@ -147,6 +132,36 @@ public class AreaSymbolizerDrawer implements ISymbolizerDraw<AreaSymbolizer> {
             g2.drawImage(bi, 0, 0, null);
             bi = null;
         }
+    }
+
+    @Override
+    public IStyleDrawer getDrawer(IStyleNode styleNode) {
+        if (styleNode != null) {
+            IStyleDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof SolidFill) {
+                    drawer = new SolidFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof PenStroke) {
+                    drawer = new PenStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof HatchedFill) {
+                    drawer = new HatchedFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof DotMapFill) {
+                    drawer = new DotMapFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof SolidFill) {
+                    drawer = new DensityFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof GraphicFill) {
+                    drawer = new GraphicFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
     }
 
 }

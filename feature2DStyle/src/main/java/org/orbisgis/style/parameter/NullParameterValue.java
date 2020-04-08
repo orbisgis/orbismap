@@ -42,6 +42,7 @@ public class NullParameterValue  extends ParameterValue{
 
     public NullParameterValue() {
         super(null, null);
+        this.setLiteral(false);
     }
     
 

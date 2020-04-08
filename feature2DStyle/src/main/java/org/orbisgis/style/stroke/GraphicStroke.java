@@ -69,7 +69,7 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     private GraphicCollection graphics;
     private ParameterValue distance ;
     private RelativeOrientation orientation;
-    private ParameterValue adjustedDistance;
+    private ParameterValue overlapMark;
 
     /**
      * Build a new, default, {@code GraphicStroke}. It is defined with a default
@@ -80,6 +80,7 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
         super();
         this.graphics = new GraphicCollection();
         this.distance = new Literal(false);
+        this.overlapMark = new Literal(true);
     }
     
     @Override
@@ -113,44 +114,44 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
         } else {
             this.distance = distance;
             this.distance.setParent(this);
-            this.distance.format(Float.class);
+            this.distance.format(Float.class, "value >=0");
         }
     }
     
     /**
      * Return true is distance must be adjusted between all graphics.
      * Otherwise they overlap 
-     * Default is false
+     * Default is true
      * @return 
      */
-    public ParameterValue isAdjusted() {
-        return adjustedDistance;
+    public ParameterValue isOverlap() {
+        return overlapMark;
     }
     
     /**
-     * Set true if the distance between the graphics must be adjusted to avoid
+     * Set false if the distance between the graphics must be adjusted to avoid
      * overlapping and distribute all graphics according the distance
      * 
-     * @param adjustedDistance
+     * @param overlapMark
      */
-    public void setAdjusted(boolean adjustedDistance) {
-        setAdjusted(new Literal(adjustedDistance));
+    public void setOverlap(boolean overlapMark) {
+        setOverlap(new Literal(overlapMark));
     }    
     
     /**
-     * Set true if the distance between the graphics must be adjusted to avoid
+     * Set false if the distance between the graphics must be adjusted to avoid
      * overlapping and distribute all graphics according the distance
      * 
-     * @param adjustedDistance
+     * @param overlapMark
      */
-    public void setAdjusted(ParameterValue adjustedDistance) {
-        if (adjustedDistance == null) {
-            this.adjustedDistance = new NullParameterValue();
-            this.adjustedDistance.setParent(this);
+    public void setOverlap(ParameterValue overlapMark) {
+        if (overlapMark == null) {
+            this.overlapMark = new Literal(true);
+            this.overlapMark.setParent(this);
         } else {
-            this.adjustedDistance = adjustedDistance;
-            this.adjustedDistance.setParent(this);
-            this.adjustedDistance.format(Boolean.class);
+            this.overlapMark = overlapMark;
+            this.overlapMark.setParent(this);
+            this.overlapMark.format(Boolean.class);
         }
     }
 

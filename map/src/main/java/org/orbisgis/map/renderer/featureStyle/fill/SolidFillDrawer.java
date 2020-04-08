@@ -45,8 +45,8 @@ import static org.orbisgis.style.fill.SolidFill.GRAY50;
 import org.orbisgis.style.utils.ColorUtils;
 
 /**
- *
- * @author ebocher
+ * Drawer for the element <code>SolidFill</code>
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class SolidFillDrawer implements IFillDrawer<SolidFill> {
 
@@ -65,7 +65,6 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
 
     @Override
     public Paint getPaint( SolidFill solidFill,MapTransform mt) throws ParameterException {
-        //Color ac = null; // ac stands 4 colour + alpha channel
         String colorValue = (String) solidFill.getColor().getValue();
         Color color = null;
         if (colorValue!= null) {

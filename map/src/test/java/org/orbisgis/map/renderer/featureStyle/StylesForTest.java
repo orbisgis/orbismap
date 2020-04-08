@@ -32,7 +32,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.map.renderer.style;
+package org.orbisgis.map.renderer.featureStyle;
 
 import java.awt.Color;
 import org.orbisgis.style.Feature2DRule;
@@ -47,6 +47,7 @@ import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.graphic.ViewBox;
 import org.orbisgis.style.label.Label;
+import org.orbisgis.style.label.LineLabel;
 import org.orbisgis.style.label.PointLabel;
 import org.orbisgis.style.label.RelativeOrientation;
 import org.orbisgis.style.label.StyleFont;
@@ -104,6 +105,39 @@ public class StylesForTest {
         lineSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
         rule.addSymbolizer(lineSymbolizer);
+        style.addRule(rule);
+        return style;
+    }
+    
+    
+    /*
+         * Create a style with one <code>LineSymbolizer</code>
+         *
+         * @param color line color
+         * @param width of the line
+         * @param offset of the line
+         * @param uom unit of measure
+         * @return a  <code>Style</code>
+     */
+    public static Feature2DStyle createTwoLineSymbolizers() {
+        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setUom(Uom.PX);
+        lineSymbolizer.setPerpendicularOffset(0);
+        PenStroke ps = new PenStroke();
+        ps.setWidth(10);
+        ps.setFill(createSolidFill(Color.RED));
+        lineSymbolizer.setStroke(ps);
+        LineSymbolizer lineSymbolizer2 = new LineSymbolizer();
+        lineSymbolizer2.setUom(Uom.PX);
+        lineSymbolizer2.setPerpendicularOffset(0);
+        PenStroke ps2 = new PenStroke();
+        ps2.setWidth(2);
+        ps2.setFill(createSolidFill(Color.YELLOW));
+        lineSymbolizer2.setStroke(ps2);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(lineSymbolizer);
+        rule.addSymbolizer(lineSymbolizer2);
         style.addRule(rule);
         return style;
     }
@@ -507,7 +541,8 @@ public class StylesForTest {
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
         PointSymbolizer ps = new PointSymbolizer();
-        MarkGraphic markGraphic = new MarkGraphic();
+        ps.setUom(Uom.PX);
+        MarkGraphic markGraphic = new MarkGraphic();        
         markGraphic.setWellKnownName(new Literal("square"));
         markGraphic.setGraphicSize(new ViewBox(12f));
         markGraphic.setFill(createSolidFill(Color.ORANGE));
@@ -658,24 +693,27 @@ public class StylesForTest {
      * @param offset
      * @return a  <code>Style</code>
      */
-    public static Feature2DStyle createGraphicStrokeLineSymbolizer(Color color, float width, double offset) {
-        Feature2DStyle style = new Feature2DStyle();
+    public static Feature2DStyle createGraphicStrokeLineSymbolizer(Color color, float width, double offset, float  distance) {        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
+        lineSymbolizerBase.initDefault();
+        lineSymbolizerBase.setLevel(0);        
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setLevel(1);
         GraphicStroke graphicStroke = new GraphicStroke();
-        graphicStroke.setUom(Uom.MM);
+        graphicStroke.setUom(Uom.PX);
         graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
-        graphicStroke.setDistance(new Literal(5f));
+        graphicStroke.setDistance(distance);
         MarkGraphic verticalLineGraphic = new MarkGraphic();
-        verticalLineGraphic.setUom(Uom.MM);
-        verticalLineGraphic.setWellKnownName(new Literal("VERTLINE"));
-        verticalLineGraphic.setGraphicSize(new ViewBox(10f));
+        verticalLineGraphic.setUom(Uom.PX);
+        verticalLineGraphic.setWellKnownName(new Literal("square"));
+        verticalLineGraphic.setGraphicSize(new ViewBox(5f));
         verticalLineGraphic.setFill(createSolidFill(Color.GRAY));
-        verticalLineGraphic.setStroke(createPenStroke(Color.ORANGE, 3));
+        verticalLineGraphic.setStroke(createPenStroke(Color.ORANGE, 1));
         graphicStroke.addGraphic(verticalLineGraphic);
         MarkGraphic circleGraphic = new MarkGraphic();
         circleGraphic.setWellKnownName(new Literal("circle"));
-        circleGraphic.setUom(Uom.MM);
-        circleGraphic.setGraphicSize(new ViewBox(2f));
+        circleGraphic.setUom(Uom.PX);
+        circleGraphic.setGraphicSize(new ViewBox(5f));
         circleGraphic.setFill(createSolidFill(Color.GRAY));
         circleGraphic.setStroke(createPenStroke(Color.ORANGE, 1));
         graphicStroke.addGraphic(circleGraphic);
@@ -683,8 +721,96 @@ public class StylesForTest {
         lineSymbolizer.setStroke(graphicStroke);
         Feature2DRule rule = new Feature2DRule();
         rule.addSymbolizer(lineSymbolizer);
+        rule.addSymbolizer(lineSymbolizerBase);
         style.addRule(rule);
         return style;
     }
+    
+    /**
+     * Create a style with one <code>LineSymbolizer</code>
+     *
+     * @param color
+     * @param width
+     * @param offset
+     * @return a  <code>Style</code>
+     */
+    public static Feature2DStyle createGraphicStrokeLineSymbolizerNoOverlaps(Color color, float width, double offset, float  distance) {        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
+        lineSymbolizerBase.initDefault();
+        lineSymbolizerBase.setLevel(0);        
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setLevel(1);
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setOverlap(false);
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
+        graphicStroke.setDistance(distance);
+        MarkGraphic verticalLineGraphic = new MarkGraphic();
+        verticalLineGraphic.setUom(Uom.PX);
+        verticalLineGraphic.setWellKnownName(new Literal("square"));
+        verticalLineGraphic.setGraphicSize(new ViewBox(5f));
+        verticalLineGraphic.setFill(createSolidFill(Color.GRAY));
+        verticalLineGraphic.setStroke(createPenStroke(Color.ORANGE, 1));
+        graphicStroke.addGraphic(verticalLineGraphic);
+        MarkGraphic circleGraphic = new MarkGraphic();
+        circleGraphic.setWellKnownName(new Literal("circle"));
+        circleGraphic.setUom(Uom.PX);
+        circleGraphic.setGraphicSize(new ViewBox(5f));
+        circleGraphic.setFill(createSolidFill(Color.RED));
+        circleGraphic.setStroke(createPenStroke(Color.ORANGE, 1));
+        graphicStroke.addGraphic(circleGraphic);
+        lineSymbolizer.setPerpendicularOffset(new Literal(offset));
+        lineSymbolizer.setStroke(graphicStroke);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(lineSymbolizer);
+        rule.addSymbolizer(lineSymbolizerBase);
+        style.addRule(rule);
+        return style;
+    }
+
+    /**
+     * Create a line label text symbolizer
+     * 
+     * @return 
+     */
+    static Feature2DStyle createLineLabelTextSymbolizer() {
+        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.initDefault();        
+        TextSymbolizer textSymbolizer = new TextSymbolizer();
+        LineLabel lineLabel = new LineLabel();
+        lineLabel.initDefault();
+        lineLabel.setLabelText(new Expression("type"));
+        textSymbolizer.setLabel(lineLabel);
+        textSymbolizer.setLevel(1);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(textSymbolizer);
+        rule.addSymbolizer(lineSymbolizer);
+        style.addRule(rule);
+        return style;
+    }
+    
+    /**
+     * Create a line label text symbolizer
+     * 
+     * @return 
+     */
+    static Feature2DStyle createPointLabelTextSymbolizer() {
+        Feature2DStyle style = new Feature2DStyle();
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.initDefault();        
+        TextSymbolizer textSymbolizer = new TextSymbolizer();
+        PointLabel pointLabel = new PointLabel();
+        pointLabel.initDefault();
+        pointLabel.setLabelText(new Expression("type"));
+        textSymbolizer.setLabel(pointLabel);
+        textSymbolizer.setLevel(1);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(textSymbolizer);
+        rule.addSymbolizer(areaSymbolizer);
+        style.addRule(rule);
+        return style;
+    }
+
 
 }

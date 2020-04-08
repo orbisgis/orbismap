@@ -40,11 +40,14 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.GraphicSize;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
- *
- * @author ebocher
+ * Get the shape from the a wellKnownNameParameter
+ * Look into a factory
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class ShapeFinder {
     
@@ -63,7 +66,7 @@ public class ShapeFinder {
     
     /**
      * 
-     * @param wkn
+     * @param wellKnownNameParameter
      * @param graphicSize
      * @param scale
      * @param dpi
@@ -71,18 +74,22 @@ public class ShapeFinder {
      * @return
      * @throws ParameterException 
      */
-    public static Shape getShape(String wkn, GraphicSize graphicSize,  Double scale, Double dpi, Uom uom) throws ParameterException  {
-        if (wkn != null && !wkn.isEmpty()) {
-           String[] prefix = getPrefix(wkn);
+    public static Shape getShape(ParameterValue wellKnownNameParameter, GraphicSize graphicSize,  Double scale, Double dpi, Uom uom) throws ParameterException  {
+        if (wellKnownNameParameter != null && !(wellKnownNameParameter instanceof NullParameterValue)) {
+           String[] prefix = getPrefix((String) wellKnownNameParameter.getValue());
            IShapeFactory factory = shapeFactories.get(prefix[0]);
            factory.setShapeName(prefix[1]);
-           return factory.getShape(graphicSize, scale,  dpi,  uom);
-            
+           return factory.getShape(graphicSize, scale,  dpi,  uom);            
         }else{
-        throw  new ParameterException();
+            throw  new ParameterException();
         }
     }
 
+    /**
+     * 
+     * @param wkn
+     * @return 
+     */
     private static String[] getPrefix(String wkn) {
         try {
             URI uri = new URI(wkn);

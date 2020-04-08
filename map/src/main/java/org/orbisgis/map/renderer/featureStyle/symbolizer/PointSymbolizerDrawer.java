@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -39,9 +40,8 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.graphic.GraphicCollectionDrawer;
@@ -51,16 +51,12 @@ import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
+ * Drawer for the element <code>PointSymbolizer</code>
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
+public class PointSymbolizerDrawer extends AbstractDrawerFinder<IGraphicCollectionDrawer, GraphicCollection> implements ISymbolizerDraw<PointSymbolizer> {
 
-    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
-    }
     private Shape shape;
 
     private BufferedImage bi;
@@ -68,29 +64,24 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, PointSymbolizer symbolizer) throws ParameterException {
-            GraphicCollection graphic = symbolizer.getGraphics();
-            if (graphic != null) {
-                if (drawerMap.containsKey(graphic.getClass())) {
-                    IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                    if (shape instanceof PointsShape) {
-                        PointsShape shapes = (PointsShape) getShape();
-                        for (int i = 0; i < shapes.size(); i++) {
-                            Rectangle2D b = shapes.get(i).getBounds2D();
-                            graphicDrawer.setAffineTransform( AffineTransform.getTranslateInstance(b.getX(), b.getY()));                        
-                            graphicDrawer.draw(g2, mapTransform, graphic);
-                        }
-                    } else {
-                        Rectangle2D b = getShape().getBounds2D();
-                        graphicDrawer.setAffineTransform(AffineTransform.getTranslateInstance(b.getX(), b.getY()));
-                        graphicDrawer.draw(g2, mapTransform, graphic);
+        GraphicCollection graphics = symbolizer.getGraphics();
+        IGraphicCollectionDrawer drawer = getDrawer(graphics);
+        if (drawer != null) {
+                if (shape instanceof PointsShape) {
+                    PointsShape shapes = (PointsShape) getShape();
+                    for (int i = 0; i < shapes.size(); i++) {
+                        Rectangle2D b = shapes.get(i).getBounds2D();
+                        drawer.setAffineTransform(AffineTransform.getTranslateInstance(b.getX(), b.getY()));
+                        drawer.draw(g2, mapTransform, graphics);
                     }
+                } else {
+                    Rectangle2D b = getShape().getBounds2D();
+                    drawer.setAffineTransform(AffineTransform.getTranslateInstance(b.getX(), b.getY()));
+                    drawer.draw(g2, mapTransform, graphics);
+                }            
+        }
 
-                }
-            }
-        
-    }  
-    
-    
+    }
 
     @Override
     public Shape getShape() {
@@ -130,6 +121,21 @@ public class PointSymbolizerDrawer implements ISymbolizerDraw<PointSymbolizer> {
             g2.drawImage(bi, null, null);
             bi = null;
         }
+    }
+
+    @Override
+    public IGraphicCollectionDrawer getDrawer(GraphicCollection styleNode) {
+        if (styleNode != null) {
+            IGraphicCollectionDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof GraphicCollection) {
+                    drawer = new GraphicCollectionDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
     }
 
 }

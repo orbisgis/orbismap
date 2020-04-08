@@ -47,6 +47,7 @@ public class Expression extends ParameterValue {
 
     public Expression(String expression) {
         this.expression = expression;
+        this.setLiteral(false);
     }
 
     @Override

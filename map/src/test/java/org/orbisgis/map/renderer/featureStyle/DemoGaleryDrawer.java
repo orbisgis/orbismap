@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,26 +13,27 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.map.renderer.style;
+package org.orbisgis.map.renderer.featureStyle;
 
 import java.awt.Color;
 import java.io.File;
@@ -60,7 +61,7 @@ import org.orbisgis.style.Uom;
 
 /**
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class DemoGaleryDrawer {
 
@@ -111,8 +112,8 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
-    
-      @Test
+
+    @Test
     public void testAreaSymbolizerOffset(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 5);
@@ -136,9 +137,17 @@ public class DemoGaleryDrawer {
     @Test
     public void testLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StylesForTest.createLineSymbolizer(Color.BLACK, 1,0, Uom.PX);
+        Feature2DStyle style = StylesForTest.createLineSymbolizer(Color.BLACK, 1, 0, Uom.PX);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
+
+    @Test
+    public void testTwoLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createTwoLineSymbolizers();
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+
     @Test
     public void testLineSymbolizerOffset(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
@@ -159,8 +168,6 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createTextSymbolizer();
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
-    
-    
 
     @Test
     public void testTextSymbolizerColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
@@ -186,7 +193,7 @@ public class DemoGaleryDrawer {
     @Test
     public void testAreaSymbolizerHatchedColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StylesForTest.createAreaSymbolizerHatchedColorExpression("CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END",2, 45, 10);
+        Feature2DStyle style = StylesForTest.createAreaSymbolizerHatchedColorExpression("CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END", 2, 45, 10);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 
@@ -215,7 +222,7 @@ public class DemoGaleryDrawer {
     public void testAreaSymbolizerGraphicFillColor(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerGraphicFillColor();
-        template(inputFile,testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 
     @Test
@@ -274,7 +281,7 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createSymbolsWithLevel();
         template(inputFile, testInfo.getDisplayName(), style, true, envelope);
     }
-    
+
     @Test
     public void testDashedLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
@@ -285,7 +292,7 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createDashedLineSymbolizer(Color.yellow, 2, 0, "5 2");
         template(inputFile, testInfo.getDisplayName(), style, true, envelope);
     }
-    
+
     @Test
     public void testDashedAreaSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
@@ -296,16 +303,33 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createDashedAreaymbolizer(Color.yellow, 2, 0, "10");
         template(inputFile, testInfo.getDisplayName(), style, true, envelope);
     }
-    
+
     @Test
     public void testGraphicStrokeLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizer(Color.yellow, 2, 0, 10);
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+    
+    @Test
+    public void testGraphicStrokeLineSymbolizerNoOverlaps(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizerNoOverlaps(Color.BLACK, 2, 0, 10);
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+
+    @Test
+    public void testLineLabelTextSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createLineLabelTextSymbolizer();
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+
+    @Test
+    public void testLineLabelTextSymbolizerArea(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
-        spatialTable.where("limit 1");
-        spatialTable.next();
-        Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
-        Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizer(Color.yellow, 2, 0);
-        template(inputFile, testInfo.getDisplayName(), style, true, envelope);
+        Feature2DStyle style = StylesForTest.createPointLabelTextSymbolizer();
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 
 }

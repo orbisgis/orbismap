@@ -37,7 +37,7 @@ package org.orbisgis.map.renderer.featureStyle.graphic;
 import java.util.HashMap;
 
 /**
- *
+ * Weather mark factory
  * @author Erwan Bocher (CNRS)
  *
  * This WeatherMarkFactory is based on the TTF file created and maintained by

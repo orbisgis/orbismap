@@ -45,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.orbisgis.map.renderer.featureStyle.DrawerBaseTest;
-import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.graphic.MarkGraphic;
@@ -70,13 +69,13 @@ public class GraphicCollectionDrawerTest extends DrawerBaseTest {
         graphicCollectionDrawer.setAffineTransform(AffineTransform.getTranslateInstance(bounds.getX(), bounds.getY()));
         graphicCollectionDrawer.draw(g2, mapTransform, graphicCollection);
 
-        IGraphicDrawer markDrawer = graphicCollectionDrawer.getDrawer(circle);
-        Shape makShape = markDrawer.getShape();
+        MarkGraphicDrawer markDrawer = (MarkGraphicDrawer) graphicCollectionDrawer.getDrawer(circle);
+        Shape makShape = markDrawer.getShape(mapTransform,circle);
         assertTrue(makShape instanceof Ellipse2D);
         assertEquals(50, makShape.getBounds2D().getHeight());
         assertEquals(50, makShape.getBounds2D().getWidth());
-        markDrawer = graphicCollectionDrawer.getDrawer(cross);
-        makShape = markDrawer.getShape();
+        markDrawer = (MarkGraphicDrawer) graphicCollectionDrawer.getDrawer(cross);
+        makShape = markDrawer.getShape(mapTransform,cross );
         assertTrue(makShape instanceof Polygon);
         assertEquals(40, makShape.getBounds2D().getHeight());
         assertEquals(40, makShape.getBounds2D().getWidth());

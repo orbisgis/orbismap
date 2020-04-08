@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -45,68 +46,63 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
-import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.graphic.GraphicCollectionDrawer;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
+ * Drawer for the element <code>DotMapFill</code>
  *
  * @author ebocher
  */
-public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
+public class DotMapFillDrawer extends AbstractDrawerFinder<IGraphicCollectionDrawer, GraphicCollection> implements IFillDrawer<DotMapFill> {
 
     private Random rand;
     static final int MAX_ATTEMPT = 100;
 
-    final static Map<Class, IGraphicCollectionDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(GraphicCollection.class, new GraphicCollectionDrawer());
-    }
     private Shape shape;
     private AffineTransform affineTransform;
 
     @Override
-    public Paint getPaint( DotMapFill styleNode, MapTransform mt) throws ParameterException {
+    public Paint getPaint(DotMapFill styleNode, MapTransform mt) throws ParameterException {
         return null;
     }
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, DotMapFill styleNode) throws ParameterException {
-        if(shape!=null){
-        GraphicCollection graphic = styleNode.getGraphics();
-        if (drawerMap.containsKey(graphic.getClass())) {
-            IGraphicCollectionDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-            if(graphicDrawer!=null){
-            Integer perMark = (Integer) styleNode.getQuantityPerMark().getValue();
-            Integer total = (Integer) styleNode.getTotalQuantity().getValue();           
+        if (shape != null) {
+            GraphicCollection graphics = styleNode.getGraphics();
+            IGraphicCollectionDrawer drawer = getDrawer(graphics);
+            if (drawer!=null) {
+                    Integer perMark = (Integer) styleNode.getQuantityPerMark().getValue();
+                    Integer total = (Integer) styleNode.getTotalQuantity().getValue();
 
-            if (perMark == null || total == null) {
-                throw new ParameterException("Dot Map Fill: missing parameters !!!");
-            }
+                    if (perMark == null || total == null) {
+                        throw new ParameterException("Dot Map Fill: missing parameters !!!");
+                    }
 
-            int nb = (int) Math.round(total / perMark);
+                    int nb = (int) Math.round(total / perMark);
 
-            Area area = new Area(shape);
+                    Area area = new Area(shape);
 
-            if (rand == null) {
-                rand = new Random();
+                    if (rand == null) {
+                        rand = new Random();
+                    }
+                    // setting the seed to the scale denom will ensure that mark will not move when panning
+                    rand.setSeed((long) mapTransform.getScaleDenominator());
+                    for (int i = 0; i < nb; i++) {
+                        Point2D.Double pos = findMarkPosition(area);
+                        if (pos != null) {
+                            drawer.setAffineTransform(AffineTransform.getTranslateInstance(pos.x, pos.y));
+                            drawer.draw(g2, mapTransform, graphics);
+                        }
+                    }
+                
             }
-            // setting the seed to the scale denom will ensure that mark will not move when panning
-            rand.setSeed((long) mapTransform.getScaleDenominator());
-            for (int i = 0; i < nb; i++) {
-                Point2D.Double pos = findMarkPosition(area);
-                if (pos != null) {
-                    graphicDrawer.setAffineTransform(AffineTransform.getTranslateInstance(pos.x, pos.y));
-                    graphicDrawer.draw(g2, mapTransform, graphic);
-                } 
-            }
-            }
-        }
         }
     }
 
@@ -129,7 +125,7 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
         }
         return null;
     }
-    
+
     @Override
     public Shape getShape() {
         return shape;
@@ -139,6 +135,7 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
+
     @Override
     public AffineTransform getAffineTransform() {
         return affineTransform;
@@ -147,6 +144,21 @@ public class DotMapFillDrawer implements IFillDrawer<DotMapFill> {
     @Override
     public void setAffineTransform(AffineTransform affineTransform) {
         this.affineTransform = affineTransform;
+    }
+
+    @Override
+    public IGraphicCollectionDrawer getDrawer(GraphicCollection styleNode) {
+        if (styleNode != null) {
+            IGraphicCollectionDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof GraphicCollection) {
+                    drawer = new GraphicCollectionDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
     }
 
 }

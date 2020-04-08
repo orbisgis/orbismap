@@ -40,29 +40,28 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.map.renderer.featureStyle.utils.ShapeHelper;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.fill.DensityFill;
+import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.Halo;
+import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.utils.UomUtils;
 
 /**
- *
- * @author ebocher
+ * Drawer for the element <code>Halo</code>
+ * 
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class HaloDrawer implements IFillDrawer<Halo> {
+public class HaloDrawer extends AbstractDrawerFinder<IFillDrawer, IFill>  implements IFillDrawer<Halo> {
 
-    final static Map<Class, IFillDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(SolidFill.class, new SolidFillDrawer());
-    }
+    
     private Shape shape;
     private AffineTransform affineTransform;
 
@@ -75,9 +74,8 @@ public class HaloDrawer implements IFillDrawer<Halo> {
     public void draw(Graphics2D g2, MapTransform mapTransform, Halo styleNode) throws ParameterException {
         if (shape != null) {
             IFill fill = styleNode.getFill();
-            if (styleNode.getRadius() != null && fill != null) {
-                if (drawerMap.containsKey(fill.getClass())) {
-                    IFillDrawer fillDrawer = drawerMap.get(fill.getClass());
+            IFillDrawer drawer = getDrawer(fill);
+            if (styleNode.getRadius() != null && drawer != null) {
                     //Optimisation
                     Float radius = (Float) styleNode.getRadius().getValue();
                     if (radius == 0 && radius <= 0) {
@@ -92,16 +90,16 @@ public class HaloDrawer implements IFillDrawer<Halo> {
                         double width = shp.getWidth() + r;
                         Shape origin = new Arc2D.Double(x, y, width, height, shp.getAngleStart(), shp.getAngleExtent(), shp.getArcType());
                         Shape halo = getAffineTransform().createTransformedShape(origin);
-                        fillHalo(fillDrawer, fill, shape, halo, g2, mapTransform);
+                        fillHalo(drawer, fill, shape, halo, g2, mapTransform);
                     } else {
                         double r = getHaloRadius(radius, styleNode.getUom(), mapTransform);
                         if (r > 0.0) {
                             for (Shape shapeHalo : ShapeHelper.perpendicularOffset(shape, r)) {
-                                fillHalo(fillDrawer, fill, shapeHalo, shape, g2, mapTransform);
+                                fillHalo(drawer, fill, shapeHalo, shape, g2, mapTransform);
                             }
                         }
                     }
-                }
+                
             }
         }
     }
@@ -149,5 +147,32 @@ public class HaloDrawer implements IFillDrawer<Halo> {
     @Override
     public void setAffineTransform(AffineTransform affineTransform) {
         this.affineTransform = affineTransform;
+    }
+    
+    @Override
+    public IFillDrawer getDrawer(IFill styleNode) {
+        if (styleNode != null) {
+            IFillDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof Halo) {
+                    drawer = new HaloDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof SolidFill) {
+                    drawer = new SolidFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof HatchedFill) {
+                    drawer = new HatchedFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof DensityFill) {
+                    drawer = new DensityFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof DotMapFill) {
+                    drawer = new DotMapFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
     }
 }

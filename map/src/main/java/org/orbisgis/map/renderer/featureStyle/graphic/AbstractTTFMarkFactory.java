@@ -52,8 +52,9 @@ import org.orbisgis.style.graphic.ViewBox;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
- *
- * @author ebocher
+ * Abstract class to read TTF font and return a shape from its index
+ * 
+ * @author Erwan Bocher, CNRS (2020)
  */
 public abstract class AbstractTTFMarkFactory extends AbstractShapeFactory {
 
@@ -135,7 +136,6 @@ public abstract class AbstractTTFMarkFactory extends AbstractShapeFactory {
         } catch (FontFormatException | IOException ex) {
             throw new ParameterException(ex);
         }
-
     }
 
 }

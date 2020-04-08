@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -37,28 +38,25 @@ package org.orbisgis.map.renderer.featureStyle.symbolizer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.ILabelDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
+import org.orbisgis.map.renderer.featureStyle.label.LineLabelDrawer;
 import org.orbisgis.map.renderer.featureStyle.label.PointLabelDrawer;
 import org.orbisgis.style.label.Label;
+import org.orbisgis.style.label.LineLabel;
 import org.orbisgis.style.label.PointLabel;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
 
 /**
+ * Drawer for the element <code>TextSymbolizer</code>
  *
- * @author Erwan Bocher, CNRS
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer> {
-
-    final static Map<Class, ILabelDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(PointLabel.class, new PointLabelDrawer());
-    }
+public class TextSymbolizerDrawer extends AbstractDrawerFinder<ILabelDrawer, Label> implements ISymbolizerDraw<TextSymbolizer> {
+    
     private Shape shape;
 
     private BufferedImage bi;
@@ -67,10 +65,10 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer> {
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, TextSymbolizer symbolizer) throws ParameterException {
         Label label = symbolizer.getLabel();
-        if (drawerMap.containsKey(label.getClass())) {
-            ILabelDrawer labelDrawer = drawerMap.get(label.getClass());
-            labelDrawer.setShape(getShape());
-            labelDrawer.draw(g2, mapTransform, label);
+        ILabelDrawer drawer = getDrawer(label);
+        if (drawer!=null) {
+            drawer.setShape(getShape());
+            drawer.draw(g2, mapTransform, label);
         }
     }
 
@@ -112,6 +110,24 @@ public class TextSymbolizerDrawer implements ISymbolizerDraw<TextSymbolizer> {
             g2.drawImage(bi, null, null);
             bi = null;
         }
+    }
+
+    @Override
+    public ILabelDrawer getDrawer(Label styleNode) {
+        if (styleNode != null) {
+            ILabelDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof PointLabel) {
+                    drawer = new PointLabelDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof LineLabel) {
+                    drawer = new LineLabelDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
     }
 
 }

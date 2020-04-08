@@ -102,8 +102,11 @@ public abstract class AbstractShapeFactory implements IShapeFactory{
     /**
      * Return the final dimension described by this view box, in [px].
      *
+     * @param uom
      * @param scale required final ratio (if either width or height isn't
      * defined)
+     * @param width
+     * @param dpi
      * @return
      * @throws ParameterException
      */

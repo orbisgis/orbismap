@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -41,24 +42,29 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IFillDrawer;
+import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
+import org.orbisgis.map.renderer.featureStyle.stroke.GraphicStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
+import org.orbisgis.map.renderer.featureStyle.stroke.TextStrokeDrawer;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.HatchedFill;
 import static org.orbisgis.style.fill.HatchedFill.DEFAULT_ALPHA;
 import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.stroke.GraphicStroke;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.stroke.Stroke;
+import org.orbisgis.style.stroke.TextStroke;
 import org.orbisgis.style.utils.UomUtils;
 
 /**
+ * Drawer for the element <code>HatchedFill</code>
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
+public class HatchedFillDrawer extends AbstractDrawerFinder<IStrokeDrawer, Stroke> implements IFillDrawer<HatchedFill> {
     //Useful constants.
 
     private static final double EPSILON = 0.01; // todo Eval, and use an external EPSILON value.
@@ -67,11 +73,6 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
 
     public static final double DEFAULT_NATURAL_LENGTH = 100;
 
-    final static Map<Class, PenStrokeDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(PenStroke.class, new PenStrokeDrawer());
-    }
     private Shape shape;
     private AffineTransform affineTransform;
 
@@ -84,9 +85,8 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     public void draw(Graphics2D g2, MapTransform mapTransform, HatchedFill styleNode) throws ParameterException {
         Uom uom = styleNode.getUom();
         Stroke stroke = styleNode.getStroke();
-        if (stroke != null) {
-            if (drawerMap.containsKey(stroke.getClass())) {
-                PenStrokeDrawer strokeToDraw = drawerMap.get(stroke.getClass());
+        IStrokeDrawer drawer = getDrawer(stroke);
+        if (drawer != null) {
                 // Perpendicular distance between two lines
 
                 float pDist = 0;
@@ -110,12 +110,12 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
                 double hOffset = 0.0;
                 Float offset = (Float) styleNode.getOffset().getValue();
                 if (offset != null) {
-                     hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
+                    hOffset = UomUtils.toPixel(offset, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator());
                 }
-                
-                drawHatch(g2, shape, mapTransform, alpha, pDist, (PenStroke) stroke, strokeToDraw, hOffset);
 
-            }
+                drawHatch(g2, shape, mapTransform, alpha, pDist, (PenStroke) stroke, drawer, hOffset);
+
+            
         }
     }
 
@@ -131,13 +131,13 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
      * produce a full black behaviour...)
      * @param hOffset offset between the references point and the reference
      * hatch
+     * @param penStrokeDrawer
      * @param penStroke
      * @throws ParameterException
      */
     public static void drawHatch(Graphics2D g2, Shape shp,
-            MapTransform mt, double alph, double pDist, PenStroke penStroke, PenStrokeDrawer penStrokeDrawer,
+            MapTransform mt, double alph, double pDist, Stroke penStroke, IStrokeDrawer penStrokeDrawer,
             double hOffset) throws ParameterException {
-
         double alpha = alph;
         while (alpha < 0.0) {
             alpha += TWO_PI_DEG;
@@ -371,6 +371,7 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
+
     @Override
     public AffineTransform getAffineTransform() {
         return affineTransform;
@@ -379,6 +380,29 @@ public class HatchedFillDrawer implements IFillDrawer<HatchedFill> {
     @Override
     public void setAffineTransform(AffineTransform affineTransform) {
         this.affineTransform = affineTransform;
+    }
+
+    @Override
+    public IStrokeDrawer getDrawer(Stroke styleNode) {
+        if (styleNode != null) {
+            IStrokeDrawer drawer = drawerMap.get(styleNode);
+            if (drawer == null) {
+                if (styleNode instanceof PenStroke) {
+                    drawer = new PenStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+                else if (styleNode instanceof TextStroke) {
+                    drawer = new TextStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+                else if (styleNode instanceof GraphicStroke) {
+                    drawer = new GraphicStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                }
+            }
+            return drawer;
+        }
+        return null;
     }
 
 }

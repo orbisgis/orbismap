@@ -62,7 +62,7 @@ public class MarkGraphicDrawerTest extends DrawerBaseTest {
         markGraphicDrawer.draw(g2, mapTransform, markGraphic);
         BasicStroke stroke = (BasicStroke) g2.getStroke();
         assertEquals((float) ((PenStroke)markGraphic.getStroke()).getWidth().getValue(), stroke.getLineWidth());
-        Shape makShape = markGraphicDrawer.getShape();
+        Shape makShape = markGraphicDrawer.getShape( mapTransform,markGraphic);
         assertTrue(makShape instanceof Rectangle2D);
         assertEquals(50, makShape.getBounds2D().getHeight());
         assertEquals(50, makShape.getBounds2D().getWidth());

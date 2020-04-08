@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -42,53 +43,116 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.GraphicSize;
 import org.orbisgis.style.graphic.Size;
 import org.orbisgis.style.graphic.ViewBox;
 import org.orbisgis.style.graphic.WellKnownName;
 import org.orbisgis.style.parameter.ParameterException;
+import org.orbisgis.style.parameter.ParameterValue;
 
 /**
- *
- * @author ebocher
+ * WellKnownName factory
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class WKNFactory extends AbstractShapeFactory {
 
     public static final String FACTORY_PREFIX = "wellknownname";
 
+    public HashMap<GraphicSize, Shape> shapes;
+
     public WKNFactory() {
         super(FACTORY_PREFIX);
+        shapes = new HashMap<>();
 
     }
 
     @Override
-    public Shape getShape(GraphicSize graphicSize, Double scale, Double dpi, Uom uom) throws ParameterException {
-        double x = DEFAULT_SIZE, y = DEFAULT_SIZE; // The size of the shape, [final unit] => [px]
-
+    public Shape getShape(GraphicSize graphicSize, Double scale, Double dpi, Uom uom) throws ParameterException  {
         WellKnownName wellKnownName = WellKnownName.fromString(getShapeName());
         if (graphicSize != null) {
             if (graphicSize instanceof ViewBox) {
                 ViewBox viewBox = (ViewBox) graphicSize;
-                Float height = (Float) viewBox.getHeight().getValue();
-                Float width = (Float) viewBox.getWidth().getValue();
-                if (height != null || width != null) {
-                    Point2D box = getDimensionInPixel(uom, height, width, scale, dpi);
-                    x = box.getX();
-                    y = box.getY();
+                ParameterValue heigthParameter = viewBox.getHeight();
+                ParameterValue widthParameterValue = viewBox.getWidth();
+                if (!heigthParameter.isLiteral() || !widthParameterValue.isLiteral()) {
+                    return buildShape(wellKnownName, viewBox, scale, dpi, uom);
+                } else {
+                    Shape shape = shapes.get(viewBox);
+                    if (shape == null) {
+                        shape = buildShape(wellKnownName, viewBox, scale, dpi, uom);
+                        shapes.put(viewBox, shape);
+                        return shape;
+                    }else{
+                        return shape;
+                    }
                 }
-            }
-            else if(graphicSize instanceof Size){
+
+            } else if (graphicSize instanceof Size) {
                 Size size = (Size) graphicSize;
-                Float sizeValue = (Float) size.getSize().getValue();
-                if (sizeValue!=null) {
-                    Point2D box = getDimensionInPixel(uom, sizeValue, sizeValue, scale, dpi);
-                    x = box.getX();
-                    y = box.getY();
+                if (!size.getSize().isLiteral()) {
+                    return buildShape(wellKnownName, size, scale, dpi, uom);
+                } else {
+                    Shape shape = shapes.get(size);
+                    if (shape == null) {
+                        shape = buildShape(wellKnownName, size, scale, dpi, uom);
+                        shapes.put(size, shape);
+                         return shape;
+                    }else{
+                        return shape;
+                    }
                 }
             }
         }
+        return null;
 
+    }
+
+    /**
+     * Build the corresponding shape from the viewbox
+     *
+     * @param wellKnownName
+     * @param x
+     * @param y
+     * @return
+     */
+    private Shape buildShape(WellKnownName wellKnownName, Size size, Double scale, Double dpi, Uom uom) throws ParameterException  {
+        Float sizeValue = (Float) size.getSize().getValue();
+        if (sizeValue != null) {
+            Point2D box = getDimensionInPixel(uom, sizeValue, sizeValue, scale, dpi);
+            return  buildShape(wellKnownName, box.getX(), box.getY());
+        }
+        return null;
+    }
+
+    /**
+     * Build the corresponding shape from the viewbox
+     *
+     * @param wellKnownName
+     * @param x
+     * @param y
+     * @return
+     */
+    private Shape buildShape(WellKnownName wellKnownName, ViewBox viewBox, Double scale, Double dpi, Uom uom) throws ParameterException {
+        Float height = (Float) viewBox.getHeight().getValue();
+        Float width = (Float) viewBox.getWidth().getValue();
+        if (viewBox.usable()) {
+            Point2D box = getDimensionInPixel(uom, height, width, scale, dpi);
+            return buildShape(wellKnownName, box.getX(), box.getY());
+        }
+        return null;
+    }
+
+    /**
+     * Build the corresponding shape
+     *
+     * @param wellKnownName
+     * @param x
+     * @param y
+     * @return
+     */
+    private Shape buildShape(WellKnownName wellKnownName, double x, double y) {
         int x2 = (int) (x / 2.0);
         int y2 = (int) (y / 2.0);
         int minxy6 = (int) Math.min(x / 6, y / 6);

@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -38,39 +39,28 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
+import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.map.renderer.featureStyle.IGraphicCollectionDrawer;
 import org.orbisgis.map.renderer.featureStyle.IGraphicDrawer;
-import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
-import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.graphic.MarkGraphic;
+import org.orbisgis.style.graphic.PointTextGraphic;
 import org.orbisgis.style.parameter.ParameterException;
 
 /**
- *
- * @author ebocher
+ * Drawer for the element <code>GraphicCollection</code>
+ * 
+ * @author Erwan Bocher, CNRS (2020)
  */
-public class GraphicCollectionDrawer implements IGraphicCollectionDrawer<GraphicCollection> {
+public class GraphicCollectionDrawer extends AbstractDrawerFinder<IGraphicDrawer, Graphic> implements IGraphicCollectionDrawer<GraphicCollection> {
 
     private Shape shape;
-    
+
     private AffineTransform affineTransform;
-
-    final static Map<Class, IGraphicDrawer> drawerMap = new HashMap<>();
-
-    static {
-        drawerMap.put(MarkGraphic.class, new MarkGraphicDrawer());
-        drawerMap.put(GraphicFill.class, new GraphicFillDrawer());
-    }
-
-    public GraphicCollectionDrawer() {
-
-    }
+    
 
     @Override
     public Shape getShape() {
@@ -85,14 +75,29 @@ public class GraphicCollectionDrawer implements IGraphicCollectionDrawer<Graphic
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, GraphicCollection styleNode) throws ParameterException {
         for (Graphic graphic : styleNode.getGraphics()) {
-            if (graphic != null) {
-                if (drawerMap.containsKey(graphic.getClass())) {
-                    IGraphicDrawer graphicDrawer = drawerMap.get(graphic.getClass());
-                    graphicDrawer.setAffineTransform(getAffineTransform());
-                    graphicDrawer.draw(g2, mapTransform, graphic);
+            IGraphicDrawer drawer = getDrawer(graphic);
+            drawer.setAffineTransform(getAffineTransform());
+            drawer.draw(g2, mapTransform, graphic);
+        }
+    }
+
+    
+    @Override
+    public IGraphicDrawer getDrawer(Graphic graphic) {
+        if (graphic != null) {
+            IGraphicDrawer graphicDrawer = drawerMap.get(graphic);
+            if (graphicDrawer == null) {
+                if (graphic instanceof MarkGraphic) {
+                    graphicDrawer = new MarkGraphicDrawer();
+                    drawerMap.put(graphic, graphicDrawer);
+                } else if (graphic instanceof PointTextGraphic) {
+                    graphicDrawer = new PointTextGraphicDrawer();
+                    drawerMap.put(graphic, graphicDrawer);
                 }
             }
+            return graphicDrawer;
         }
+        return null;
     }
 
     @Override
@@ -107,32 +112,27 @@ public class GraphicCollectionDrawer implements IGraphicCollectionDrawer<Graphic
         Iterator<Graphic> it = styleNode.getGraphics().iterator();
         while (it.hasNext()) {
             Graphic g = it.next();
-            if (drawerMap.containsKey(g.getClass())) {
-                IGraphicDrawer graphicDrawer = drawerMap.get(g.getClass());
-                Rectangle2D bounds = graphicDrawer.getBounds(mapTransform, g);
-                if (bounds != null) {
-                    double mX = bounds.getMinX();
-                    double w = bounds.getWidth();
-                    double mY = bounds.getMinY();
-                    double h = bounds.getHeight();
+            Rectangle2D bounds = getDrawer(g).getShape(mapTransform, g).getBounds2D();
+            if (bounds != null) {
+                double mX = bounds.getMinX();
+                double w = bounds.getWidth();
+                double mY = bounds.getMinY();
+                double h = bounds.getHeight();
 
-                    if (mX < xmin) {
-                        xmin = mX;
-                    }
-                    if (mY < ymin) {
-                        ymin = mY;
-                    }
-                    if (mX + w > xmax) {
-                        xmax = mX + w;
-                    }
-                    if (mY + h > ymax) {
-                        ymax = mY + h;
-                    }
+                if (mX < xmin) {
+                    xmin = mX;
+                }
+                if (mY < ymin) {
+                    ymin = mY;
+                }
+                if (mX + w > xmax) {
+                    xmax = mX + w;
+                }
+                if (mY + h > ymax) {
+                    ymax = mY + h;
                 }
             }
-
         }
-
         double width = xmax - xmin;
         double height = ymax - ymin;
 
@@ -145,12 +145,14 @@ public class GraphicCollectionDrawer implements IGraphicCollectionDrawer<Graphic
 
     @Override
     public AffineTransform getAffineTransform() {
-        return  affineTransform;
+        return affineTransform;
     }
 
     @Override
     public void setAffineTransform(AffineTransform affineTransform) {
-        this.affineTransform=affineTransform;
+        this.affineTransform = affineTransform;
     }
+    
+   
 
 }
