@@ -58,6 +58,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.label.RelativeOrientation;
 
 /**
  *
@@ -329,6 +330,21 @@ public class DemoGaleryDrawer {
     public void testLineLabelTextSymbolizerArea(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointLabelTextSymbolizer();
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+    
+    
+    @Test
+    public void testMeteoColdFrontLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createMeteoColdFrontLineSymbolizer(20, 10, RelativeOrientation.LINE);
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+    
+    @Test
+    public void testPointSymbolizerTransform(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createPointSymbolizerTransform();
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 

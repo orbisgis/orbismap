@@ -63,6 +63,10 @@ import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
+import org.orbisgis.style.transform.Rotate;
+import org.orbisgis.style.transform.Scale;
+import org.orbisgis.style.transform.Transform;
+import org.orbisgis.style.transform.Translate;
 
 /**
  *
@@ -812,5 +816,57 @@ public class StylesForTest {
         return style;
     }
 
+    static Feature2DStyle createMeteoColdFrontLineSymbolizer(float markSize, float distance, RelativeOrientation orientation) {
+        Feature2DStyle style = new Feature2DStyle();        
+        LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
+        lineSymbolizerBase.initDefault();
+        lineSymbolizerBase.setLevel(0);        
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setLevel(1);
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
+        graphicStroke.setDistance(distance);
+        MarkGraphic coldFrontMark = new MarkGraphic();
+        coldFrontMark.setUom(Uom.PX);
+        coldFrontMark.setWellKnownName(new Literal("triangle"));
+        coldFrontMark.setGraphicSize(new ViewBox(markSize));
+        coldFrontMark.setFill(createSolidFill(Color.GRAY));
+        coldFrontMark.setStroke(createPenStroke(Color.ORANGE, 1));
+        coldFrontMark.addTransform(new Translate(0, 0.2f));
+        graphicStroke.addGraphic(coldFrontMark);
+        lineSymbolizer.setStroke(graphicStroke);
+        lineSymbolizer.setPerpendicularOffset(markSize/2);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(lineSymbolizer);
+        rule.addSymbolizer(lineSymbolizerBase);
+        style.addRule(rule);
+        return style;
+    }
+    
+    
+    public static Feature2DStyle createPointSymbolizerTransform() {
+        Feature2DStyle style = new Feature2DStyle();
+        style.addRule(new Feature2DRule());
+        IRule rule = style.getRules().get(0);
+        PointSymbolizer ps = new PointSymbolizer();
+        ps.setUom(Uom.PX);
+        MarkGraphic markGraphic = new MarkGraphic();   
+        Transform transform = new Transform();
+        markGraphic.setTransform(transform);
+        Rotate rotate = new Rotate(new Literal(180f));
+        markGraphic.addTransform(rotate);
+        markGraphic.setWellKnownName(new Literal("HALFCIRCLE"));
+        markGraphic.setGraphicSize(new ViewBox(35f));
+        markGraphic.setFill(createSolidFill(Color.ORANGE));
+        ps.addGraphic(markGraphic);
+        MarkGraphic markGraphic2 = new MarkGraphic();   
+        markGraphic2.setWellKnownName(new Literal("HALFCIRCLE"));
+        markGraphic2.setGraphicSize(new ViewBox(35f));
+        markGraphic2.setFill(createSolidFill(Color.BLUE));
+        ps.addGraphic(markGraphic2);
+        rule.addSymbolizer(ps);
+        return style;
+    }
 
 }

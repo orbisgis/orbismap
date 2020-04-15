@@ -42,6 +42,7 @@ import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.IGraphicNode;
+import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.Literal;
@@ -64,7 +65,7 @@ import org.orbisgis.style.parameter.ParameterValue;
  */
 public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     
-    public static final double MIN_LENGTH = 1; // In pixel !
+    public static final float MIN_LENGTH = 1; // In pixel !
 
     private GraphicCollection graphics;
     private ParameterValue distance ;
@@ -79,7 +80,8 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     public GraphicStroke() {
         super();
         this.graphics = new GraphicCollection();
-        this.distance = new Literal(false);
+        this.setUom(Uom.PX);
+        this.distance = new Literal(MIN_LENGTH);
         this.overlapMark = new Literal(true);
     }
     

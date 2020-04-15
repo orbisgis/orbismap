@@ -79,7 +79,7 @@ public class PenStrokeConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-         PenStroke penStroke =  new PenStroke();        
+        PenStroke penStroke =  new PenStroke();        
         while (reader.hasMoreChildren()) {
             reader.moveDown();            
             if ("solidfill".equalsIgnoreCase(reader.getNodeName())) {

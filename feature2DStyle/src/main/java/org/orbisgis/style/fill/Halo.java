@@ -37,7 +37,6 @@ package org.orbisgis.style.fill;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
@@ -46,6 +45,7 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.IFillNode;
 
 /**
  * A {@code Halo} is a type of {@code Fill} that is applied to the background of
@@ -55,7 +55,7 @@ import org.orbisgis.style.parameter.ParameterValue;
  * @author Alexis Guéganno, CNRS (2012-2013)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class Halo extends StyleNode implements IUom, FillNode {
+public class Halo extends StyleNode implements IUom, IFillNode {
 
     /**
      * The default radius for new {@code Halo} instances. Set to 1.0, and UOM
@@ -153,8 +153,8 @@ public class Halo extends StyleNode implements IUom, FillNode {
         SolidFill  solidFill = new SolidFill();
         solidFill.setColor(Color.WHITE);
         solidFill.setOpacity(1f);
-        setFill(solidFill);
-        setRadius(DEFAULT_RADIUS);
+        this.fill = solidFill;
+        this.radius=new Literal(DEFAULT_RADIUS);
     }
     
 }

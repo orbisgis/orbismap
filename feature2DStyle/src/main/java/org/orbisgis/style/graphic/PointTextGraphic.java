@@ -207,6 +207,6 @@ public class PointTextGraphic extends Graphic implements IUom {
     public void initDefault() {
         PointLabel pointLab = new PointLabel();
         pointLab.initDefault();
-        setPointLabel(pointLab);
+        this.pointLabel = pointLab;
     }
 }

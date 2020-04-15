@@ -71,6 +71,8 @@ public abstract class StyleNode implements IStyleNode {
         /**
          * Init all style node with a default value
          */
-        public abstract void initDefault();
+        protected void initDefault(){
+            //Nothing to do
+        }
 
 }

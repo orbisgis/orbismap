@@ -43,7 +43,7 @@ import org.orbisgis.style.stroke.Stroke;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public interface StrokeNode {
+public interface IStrokeNode {
         /**
          * Get the Stroke associated to the current node.
          * @return 

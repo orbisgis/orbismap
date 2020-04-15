@@ -61,7 +61,7 @@ import org.orbisgis.style.utils.UomUtils;
 
 /**
  * Drawer for the element <code>GraphicStroke</code>
- * 
+ *
  * @author Erwan Bocher, CNRS (2020)
  */
 public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
@@ -101,8 +101,6 @@ public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
     public Double getNaturalLength(GraphicStroke stroke, MapTransform mapTransform) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
 
     public class MarkGraphicStroke {
 
@@ -168,23 +166,25 @@ public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
                             while (distance >= next) {
                                 float x = lastX + next * dx * r;
                                 float y = lastY + next * dy * r;
-                                t.setToTranslation(x, y);
-                                buildGraphicOrientation(t, angle, rOrient);
                                 if (isOverlap) {
-                                    double graphicWidth = advance ;
+                                    t.setToTranslation(x, y);
+                                    buildGraphicOrientation(t, angle, rOrient);
+                                    double graphicWidth = advance;
                                     for (Map.Entry<Graphic, IGraphicDrawer> entry : drawerMap.entrySet()) {
                                         Graphic graphic = entry.getKey();
                                         IGraphicDrawer drawer = entry.getValue();
                                         double currentWidth = getGraphicWidth(drawer, graphic, rOrient, mapTransform);
-                                        if(currentWidth>graphicWidth){
-                                            graphicWidth=currentWidth;
+                                        if (currentWidth > graphicWidth) {
+                                            graphicWidth = currentWidth;
                                         }
                                         drawer.setAffineTransform(t);
                                         drawer.draw(g2, mapTransform, graphic);
                                     }
                                     next += advance + graphicWidth;
                                 } else {
-                                    int counter = 1;                                    
+                                    int counter = 1;
+                                    t.setToTranslation(x, y);
+                                    buildGraphicOrientation(t, angle, rOrient);
                                     for (Map.Entry<Graphic, IGraphicDrawer> entry : drawerMap.entrySet()) {
                                         Graphic graphic = entry.getKey();
                                         IGraphicDrawer drawer = entry.getValue();
@@ -202,8 +202,7 @@ public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
                                             drawer.setAffineTransform(t);
                                             drawer.draw(g2, mapTransform, graphic);
                                             next += advance + graphicWidth;
-                                        }
-                                        else{
+                                        } else {
                                             //Move the last graphic
                                             x = lastX + next * dx * r;
                                             y = lastY + next * dy * r;
@@ -211,7 +210,7 @@ public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
                                             buildGraphicOrientation(t, angle, rOrient);
                                             drawer.setAffineTransform(t);
                                             drawer.draw(g2, mapTransform, graphic);
-                                            next += advance*2;
+                                            next += advance * 2;
                                         }
                                         counter++;
                                     }
@@ -228,6 +227,12 @@ public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
             }
         }
 
+        /**
+         *
+         * @param t
+         * @param angle
+         * @param rOrient
+         */
         public void buildGraphicOrientation(AffineTransform t, float angle, RelativeOrientation rOrient) {
             if (rOrient != RelativeOrientation.PORTRAYAL) {
                 switch (rOrient) {
@@ -239,13 +244,12 @@ public class GraphicStrokeDrawer implements IStrokeDrawer<GraphicStroke> {
                             angle += Math.PI;
                         }
                         break;
-                    //TODO : Implements
-                    /*case NORMAL:
-                                            
-                                            if (angle < -Math.PI / 2 || angle > Math.PI / 2) {
-                                                angle += Math.PI;
-                                            }
-                                            break;*/
+                    case LINE_UP:
+                        angle += (0.5 * Math.PI) + Math.PI;
+                        break;
+                    case NORMAL:
+                        angle = 0;
+                        break;
                 }
                 t.concatenate(AffineTransform.getRotateInstance(angle));
             }

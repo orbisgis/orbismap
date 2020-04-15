@@ -34,12 +34,10 @@
  */
 package org.orbisgis.style.label;
 
-import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IFont;
 import org.orbisgis.style.ILabel;
 import org.orbisgis.style.IUom;
-import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.Halo;
@@ -47,6 +45,8 @@ import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.Stroke;
+import org.orbisgis.style.IStrokeNode;
+import org.orbisgis.style.IFillNode;
 
 /**
  * Labels are used to provide text-label contents. A textSymbolizer must contain
@@ -59,7 +59,7 @@ import org.orbisgis.style.stroke.Stroke;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public abstract class Label extends StyleNode implements ILabel<ParameterValue>, FillNode, StrokeNode {
+public abstract class Label extends StyleNode implements ILabel<ParameterValue>, IFillNode, IStrokeNode {
 
     private Uom uom;
     private HorizontalAlignment hAlign;

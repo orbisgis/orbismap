@@ -35,6 +35,7 @@
  */
 package org.orbisgis.style.graphic;
 
+import org.orbisgis.style.ITransformNode;
 import java.awt.Color;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.stroke.Stroke;
@@ -42,18 +43,18 @@ import org.orbisgis.style.transform.Transform;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
-import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.parameter.TransformParameter;
 import org.orbisgis.style.stroke.PenStroke;
+import org.orbisgis.style.IStrokeNode;
+import org.orbisgis.style.IFillNode;
+import org.orbisgis.style.ITransform;
 
 /**
  * A {@code MarkGraphic} is created by stroking and filling a geometry line or
@@ -75,8 +76,8 @@ import org.orbisgis.style.stroke.PenStroke;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
-        IUom, TransformNode {
+public class MarkGraphic extends Graphic implements IFillNode, IStrokeNode,
+        IUom, ITransformNode {
 
     /**
      * The default size used to build {@code MarkGraphic} instances.
@@ -84,12 +85,13 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     public static float DEFAULT_SIZE = 3;
     //private MarkGraphicSource source;
     private Uom uom;
-    private TransformParameter transform;
+    private Transform transform;
     private ParameterValue wellKnownName;
     private Halo halo;
     private IFill fill;
     private Stroke stroke;
     private GraphicSize graphicSize;
+    private AnchorPosition anchorPosition = AnchorPosition.CENTER;
 
     /**
      * Build an empty MarkGraphic
@@ -119,19 +121,41 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
     }
 
     @Override
-    public TransformParameter getTransform() {
+    public Transform getTransform() {
         return transform;
     }
 
     @Override
-    public void setTransform(TransformParameter transform) {
-        if (transform == null) {
-
-        } else {
+    public void setTransform(Transform transform) {
+        if (transform != null) {
             this.transform = transform;
             this.transform.setParent(this);
         }
     }
+    
+    @Override
+    public void addTransform(ITransform transform) {
+        if (this.transform != null && transform!=null) {
+            this.transform.addTransformation(transform);
+        }
+        else{
+            this.transform =new Transform();
+            this.transform.addTransformation(transform);
+        }
+    }
+
+    public void setAnchorPosition(AnchorPosition anchorPosition) {
+        this.anchorPosition = anchorPosition;
+    }
+
+    public AnchorPosition getAnchorPosition() {
+        if (anchorPosition != null) {
+            return anchorPosition;
+        } else {
+            return AnchorPosition.CENTER;
+        }
+    }    
+    
 
     @Override
     public IFill getFill() {
@@ -235,6 +259,7 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
         if (transform != null) {
             ls.add(transform);
         }
+        
         return ls;
     }
 
@@ -253,20 +278,24 @@ public class MarkGraphic extends Graphic implements FillNode, StrokeNode,
 
     @Override
     public void initDefault() {
-        setUom(Uom.MM);
-        setWellKnownName(new Literal("circle"));
-        setGraphicSize(new ViewBox(DEFAULT_SIZE, DEFAULT_SIZE));
+        this.uom = Uom.MM;
+        this.wellKnownName = new Literal("circle");
+        Size size = new Size();
+        size.setSize(DEFAULT_SIZE);
+        this.graphicSize = size;
         SolidFill solidFill = new SolidFill();
         solidFill.setColor(Color.GRAY);
         solidFill.setOpacity(1);
-        setFill(solidFill);
+        this.fill = solidFill;
         PenStroke penStroke = new PenStroke();
         SolidFill solidStroke = new SolidFill();
         solidStroke.setColor(Color.BLACK);
         solidStroke.setOpacity(1);
         penStroke.setFill(solidStroke);
         penStroke.setWidth(1);
-        setStroke(penStroke);
+        this.stroke = penStroke;
     }
+
+    
 
 }

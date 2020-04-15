@@ -44,7 +44,6 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.Description;
-import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
@@ -84,8 +83,8 @@ public class TextSymbolizer extends StyleNode implements IFeatureSymbolizer {
         this.name = DEFAULT_NAME;
         this.level = 0;
         this.uom = Uom.MM;
-    }
-
+    }    
+  
     /**
      * Set geometry expression
      *

@@ -38,7 +38,6 @@ package org.orbisgis.style.stroke;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.FillNode;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
@@ -46,6 +45,7 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.style.IFillNode;
 
 /**
  * Basic stroke for linear features. It is designed according to :
@@ -66,7 +66,7 @@ import org.orbisgis.style.parameter.ParameterValue;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class PenStroke extends Stroke implements FillNode {
+public class PenStroke extends Stroke implements IFillNode {
 
     public static final float DEFAULT_WIDTH_PX = 1.0f;
     public static final float DEFAULT_WIDTH = .25f;

@@ -38,18 +38,14 @@ package org.orbisgis.map.renderer.featureStyle.symbolizer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
-import org.orbisgis.map.renderer.featureStyle.IStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.map.renderer.featureStyle.ISymbolizerDraw;
 import org.orbisgis.map.renderer.featureStyle.stroke.GraphicStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.map.renderer.featureStyle.stroke.TextStrokeDrawer;
 import org.orbisgis.style.symbolizer.LineSymbolizer;
-import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.GraphicStroke;
 import org.orbisgis.style.stroke.PenStroke;
@@ -73,8 +69,11 @@ public class LineSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, Str
         Stroke stroke = symbolizer.getStroke();
         IStyleDrawer drawer = getDrawer(stroke);
         if (drawer != null) {
-            Uom uom = symbolizer.getUom();
-            drawer.setShape(getShape());
+            if (symbolizer.getTransform() != null) {
+                shape = symbolizer.getTransform().getAffineTransform(mapTransform.getDpi(), mapTransform.getScaleDenominator(),
+                        (float) mapTransform.getWidth(), (float) mapTransform.getHeight()).createTransformedShape(getShape());
+            }
+            drawer.setShape(shape);
             drawer.draw(g2, mapTransform, stroke);
         }
     }

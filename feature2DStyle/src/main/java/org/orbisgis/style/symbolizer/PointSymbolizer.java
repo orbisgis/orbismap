@@ -42,7 +42,6 @@ import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
@@ -50,6 +49,7 @@ import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.style.IUomNode;
 
 /**
  * {@code PointSymbolizer} are used to draw a graphic at a point. As a
@@ -74,7 +74,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
  * @author Erwan Bocher, CNRS (2010-2020)
  *
  */
-public class PointSymbolizer extends StyleNode implements IGraphicNode, Comparable, IFeatureSymbolizer, UomNode {
+public class PointSymbolizer extends StyleNode implements IGraphicNode, Comparable, IFeatureSymbolizer, IUomNode {
 
     private GraphicCollection graphics;
     private boolean onVertex = false;
@@ -99,7 +99,7 @@ public class PointSymbolizer extends StyleNode implements IGraphicNode, Comparab
         this.graphics = new GraphicCollection();
 
     }
-
+    
     /**
      * Set geometry expression
      *

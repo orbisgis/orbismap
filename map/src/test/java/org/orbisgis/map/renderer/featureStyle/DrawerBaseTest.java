@@ -54,7 +54,11 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.graphic.Size;
+import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
+import static org.orbisgis.style.stroke.PenStroke.DEFAULT_CAP;
+import static org.orbisgis.style.stroke.PenStroke.DEFAULT_JOIN;
 
 /**
  *
@@ -69,7 +73,7 @@ public class DrawerBaseTest {
     private static BufferedImage image;
 
     @BeforeEach
-    public  void tearUpBaseTest() throws Exception {
+    public void tearUpBaseTest() throws Exception {
         mapTransform = new MapTransform();
         Envelope envelope = new Envelope(0, 100, 0, 100);
         mapTransform.setExtent(new MapEnvelope(envelope));
@@ -80,16 +84,16 @@ public class DrawerBaseTest {
         g2.fillRect(0, 0, width, height);
         g2.addRenderingHints(mapTransform.getRenderingHints());
     }
-    
+
     @AfterEach
-     public  void tearDownBaseTest() throws Exception {
+    public void tearDownBaseTest() throws Exception {
         g2.dispose();
-        mapTransform=null;
-         image=null;
-     }
-    
+        mapTransform = null;
+        image = null;
+    }
+
     public static void saveImage(TestInfo testInfo) throws IOException {
-        File savePath = new File("./target/" + testInfo.getDisplayName()+".png");
+        File savePath = new File("./target/" + testInfo.getDisplayName() + ".png");
         ImageIO.write(image, "png", savePath);
     }
 
@@ -100,19 +104,23 @@ public class DrawerBaseTest {
     public static Shape getSimpleaAxisLine() {
         return new Line2D.Double(0, 50, 100, 50);
     }
-    
+
+    public static Shape getCrossLine() {
+        return new Line2D.Double(0, 0, 100, 100);
+    }
+
     public static Shape getRectangle() {
         return new Rectangle2DDouble(0, 10, 10, 10);
     }
-    
+
     /**
      * Create a MarkGraphic
-     * 
+     *
      * @param wellKnownName
      * @param size
-     * @return 
+     * @return
      */
-    public static MarkGraphic createMarkGraphic(String wellKnownName, float size){
+    public static MarkGraphic createMarkGraphic(String wellKnownName, float size) {
         MarkGraphic markGraphic = new MarkGraphic();
         markGraphic.setUom(Uom.PX);
         markGraphic.setWellKnownName(wellKnownName);
@@ -126,7 +134,36 @@ public class DrawerBaseTest {
         return markGraphic;
     }
 
-    
-    
+    /**
+     * Create a <code>SolidFill</code>
+     *
+     * @param color
+     * @return a  <code>SolidFill</code>
+     */
+    public static SolidFill createSolidFill(Color color) {
+        SolidFill solidFill = new SolidFill();
+        solidFill.setColor(color);
+        solidFill.setOpacity(1.0f);
+        return solidFill;
+    }
+
+    /**
+     * Create basic PenStroke
+     *
+     * @param color
+     * @param width
+     * @return
+     */
+    public static PenStroke createPenStroke(Color color, float width) {
+        PenStroke penStroke = new PenStroke();
+        penStroke.setFill(createSolidFill(color));
+        penStroke.setWidth(new Literal(width));
+        penStroke.setUom(Uom.PX);
+        penStroke.setDashOffset(new NullParameterValue());
+        penStroke.setDashArray(new NullParameterValue());
+        penStroke.setLineCap(DEFAULT_CAP);
+        penStroke.setLineJoin(DEFAULT_JOIN);
+        return penStroke;
+    }
 
 }

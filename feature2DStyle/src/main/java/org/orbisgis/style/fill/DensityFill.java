@@ -42,13 +42,13 @@ import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
+import org.orbisgis.style.IUomNode;
 
 /**
  * A {@code Fill} implementation where the content of a shape is painted
@@ -62,7 +62,7 @@ import org.orbisgis.style.stroke.PenStroke;
  * @author Maxence Laurent, HEIG-VD (2010-2012) 
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNode {
+public class DensityFill extends StyleNode implements IGraphicNode, IFill, IUomNode {
 
     private boolean isHatched;
     private PenStroke hatches;
@@ -236,7 +236,7 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((UomNode) getParent()).getUom() : uom;
+        return uom == null ? ((IUomNode) getParent()).getUom() : uom;
     }
 
     @Override
@@ -260,8 +260,8 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, UomNo
     public void initDefault() {
         PenStroke ps = new PenStroke();
         ps.initDefault();
-        setHatches(new PenStroke());
-        setHatchesOrientation(HatchedFill.DEFAULT_ALPHA);
-        setPercentageCovered(DEFAULT_PERCENTAGE);
+        this.hatches= new PenStroke();
+        this.hatchesOrientation = new Literal(HatchedFill.DEFAULT_ALPHA);
+        this.percentageCovered=new Literal(DEFAULT_PERCENTAGE);
     }
 }

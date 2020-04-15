@@ -44,8 +44,7 @@ package org.orbisgis.style.label;
  */
 public enum RelativeOrientation {
 
-    PORTRAYAL, NORMAL, NORMAL_UP, LINE;
-    // TODO NORMAL_REVERSE, LINE_REVERSE ?
+    PORTRAYAL, NORMAL, NORMAL_UP, LINE, LINE_UP;
 
    
     
@@ -62,7 +61,9 @@ public enum RelativeOrientation {
             case NORMAL_UP:
                 return "normalUp";
             case PORTRAYAL:
-                return "portrayal";
+                return "portrayal";                
+            case LINE_UP:
+                return "lineUp";
         }
         return null;
     }

@@ -70,8 +70,8 @@ public class ViewBox extends GraphicSize {
     private ParameterValue width = new NullParameterValue();
     private ParameterValue height = new NullParameterValue();
     private Uom uom;
-    
-     //In mm
+
+    //In mm
     public static float DEFAULT_SIZE = 3;
 
     /**
@@ -81,18 +81,10 @@ public class ViewBox extends GraphicSize {
     }
 
     /**
-     * Build a new {@code ViewBox}, with only one parameter.
+     * Build a new {@code ViewBox}, with empty parameters.
      */
     public ViewBox(float width) {
         setWidth(width);
-    }
-
-    /**
-     * Build a new {@code ViewBox}, with width and heigh parameters.
-     */
-    public ViewBox(float width, float height) {
-        setWidth(width);
-        setHeight(height);
     }
 
     /**
@@ -212,27 +204,27 @@ public class ViewBox extends GraphicSize {
             return Uom.PX;
         }
     }
-
+    
     @Override
     public Uom getOwnUom() {
         return uom;
     }
-
+    
     @Override
     public void setUom(Uom uom) {
         this.uom = uom;
     }
-
+    
     @Override
     public void initDefault() {
-        setUom(Uom.MM);
-        setHeight(DEFAULT_SIZE);
-        setWidth(DEFAULT_SIZE);
+        this.uom = Uom.MM;
+        this.height = new Literal(DEFAULT_SIZE);
+        this.width = new Literal(DEFAULT_SIZE);
     }
-
+    
     @Override
     public boolean equals(Object o) {
-         if (this == o) {
+        if (this == o) {
             return true;
         }
         if (o == null) {
@@ -246,7 +238,7 @@ public class ViewBox extends GraphicSize {
         if (!getUom().equals(other.getUom())) {
             return false;
         }
-
+        
         if (!getHeight().equals(other.getHeight())) {
             return false;
         }
@@ -254,9 +246,9 @@ public class ViewBox extends GraphicSize {
             return false;
         }
         return true;
-
+        
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -265,6 +257,5 @@ public class ViewBox extends GraphicSize {
         hash = 83 * hash + Objects.hashCode(this.uom);
         return hash;
     }
-    
     
 }

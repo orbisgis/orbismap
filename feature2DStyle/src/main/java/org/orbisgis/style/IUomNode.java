@@ -34,27 +34,30 @@
  */
 package org.orbisgis.style;
 
-
 /**
- * Interface to be implemented by every node that can contain a <code>IFill</code> element.
- * 
+ * Defines unit of measure management.
+ *
+ * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
- * 
  */
-public interface FillNode {
-
+public interface IUomNode extends IStyleNode {
         /**
-         * Replace the current fill with the one given in argument.
-         * @param fill 
-         * A {@link IFill} implementation. It's up to the realization to decide
-         * if it can be null or not.
+         * Associates a unit of measure to this node
+         * @param u 
          */
-	void setFill(IFill fill);
-        
+	void setUom(Uom u);
         /**
-         * Gets the {@code IFill} associated to this {@code FillNode}.
+         * Get the Uom associated to this node. It differs from {@code getUom}
+         * in the sense that the method in SymbolizerNode will search for the nearest
+         * Uom int the tree of Nodes, if this node does not contain one, while this
+         * method is expected to return null if it can't find an Uom directly.
          * @return 
-         * A {@link IFill} instance.
+         * A Uom instance, if this has got one, null otherwise.
          */
-	IFill getFill();
+	Uom getOwnUom();
+        /**
+         * Get the unit of measure associated with the current node.
+         * @return
+         */
+        Uom getUom();
 }

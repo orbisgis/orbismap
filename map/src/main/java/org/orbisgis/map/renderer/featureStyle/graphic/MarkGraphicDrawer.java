@@ -36,8 +36,10 @@
 package org.orbisgis.map.renderer.featureStyle.graphic;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 import org.orbisgis.map.layerModel.MapTransform;
 import org.orbisgis.map.renderer.featureStyle.AbstractDrawerFinder;
@@ -51,6 +53,7 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
+import org.orbisgis.style.graphic.AnchorPosition;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.parameter.ParameterException;
 import org.orbisgis.style.stroke.PenStroke;
@@ -58,6 +61,7 @@ import org.orbisgis.style.stroke.Stroke;
 
 /**
  * Drawer for the element <code>MarkGraphic</code>
+ *
  * @author Erwan Bocher, CNRS (2020)
  */
 public class MarkGraphicDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyleNode> implements IGraphicDrawer<MarkGraphic> {
@@ -77,10 +81,30 @@ public class MarkGraphicDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyle
         if (shp != null) {
             AffineTransform at = new AffineTransform(getAffineTransform());
             if (styleNode.getTransform() != null) {
-                //TODO : Put in cache...
-                //TransformBuilder transformBuilder = new TransformBuilder();
-                //at.concatenate(transformBuilder.getAffineTransform(styleNode.getTransform(), properties));
+                Rectangle2D bounds = shp.getBounds2D();
+                at.concatenate(styleNode.getTransform().getAffineTransform(mapTransform.getDpi(),
+                        mapTransform.getScaleDenominator(), (float) bounds.getWidth(), (float) bounds.getHeight()));
             }
+
+            AnchorPosition anchorPosition = styleNode.getAnchorPosition();
+            if (anchorPosition != AnchorPosition.CENTER) {
+                Rectangle bounds = shp.getBounds();
+                switch (anchorPosition) {
+                    case UPPER_LEFT:
+                        at.concatenate(AffineTransform.getTranslateInstance(-bounds.getMinX(), -bounds.getMinY()));
+                        break;
+                    case UPPER_RIGHT:
+                        at.concatenate(AffineTransform.getTranslateInstance(-bounds.getMaxX(), -bounds.getMinY()));
+                        break;
+                    case LOWER_LEFT:
+                        at.concatenate(AffineTransform.getTranslateInstance(-bounds.getMinX(), -bounds.getMaxY()));
+                        break;
+                    case LOWER_RIGHT:
+                        at.concatenate(AffineTransform.getTranslateInstance(-bounds.getMaxX(), -bounds.getMaxY()));
+                        break;
+                }
+            }
+
             Shape atShp = at.createTransformedShape(shp);
 
             //We give the raw shape to the drawHalo method in order not to lose the
@@ -89,9 +113,9 @@ public class MarkGraphicDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyle
             //compute it twice, as it is a complicated operation.
             Halo halo = styleNode.getHalo();
             if (halo != null) {
-                    IStyleDrawer drawer = getDrawer(halo);
-                    drawer.setShape(atShp);
-                    drawer.draw(g2, mapTransform, halo);
+                IStyleDrawer drawer = getDrawer(halo);
+                drawer.setShape(atShp);
+                drawer.draw(g2, mapTransform, halo);
             }
             IStyleDrawer drawerFill = getDrawer(styleNode.getFill());
             if (drawerFill != null) {
@@ -100,9 +124,9 @@ public class MarkGraphicDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyle
             }
             Stroke stroke = styleNode.getStroke();
             if (stroke != null) {
-                    IStyleDrawer drawer = getDrawer(stroke);
-                    drawer.setShape(atShp);
-                    drawer.draw(g2, mapTransform, stroke);
+                IStyleDrawer drawer = getDrawer(stroke);
+                drawer.setShape(atShp);
+                drawer.draw(g2, mapTransform, stroke);
             }
         }
 
