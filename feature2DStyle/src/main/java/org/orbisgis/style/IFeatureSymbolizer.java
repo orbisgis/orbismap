@@ -40,7 +40,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
 
 /**
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
 public interface IFeatureSymbolizer extends ISymbolizer, Comparable{
     

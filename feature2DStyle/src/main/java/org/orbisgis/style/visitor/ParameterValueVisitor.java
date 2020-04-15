@@ -111,22 +111,7 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
             }
         });
     }
-
-    /**
-     * Gets the {@code HashSet<String>} instance that contains all the field
-     * names needed to use safely the last visited {@code SymbolizerNode}.
-     *
-     * @return
-     */
-    /*public HashMap<String, Object> getLiteralParameters() {
-        return literal_parameters;
-    }*/
-    /**
-     * Gets the {@code HashSet<String>} instance that contains all the field
-     * names needed to use safely the last visited {@code SymbolizerNode}.
-     *
-     * @return
-     */
+    
     public HashMap<String, String> getExpressionParameters() {
         return expression_parameters;
     }

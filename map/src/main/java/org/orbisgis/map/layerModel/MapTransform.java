@@ -74,7 +74,7 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
     private AffineTransform trans = new AffineTransform();
     private AffineTransform transInv = new AffineTransform();
     private MapEnvelope extent;
-    private ArrayList<TransformListener> listeners = new ArrayList<TransformListener>();
+    private ArrayList<TransformListener> listeners = new ArrayList<>();
     private ShapeWriter converter;
     private double dpi;
     private static final double DEFAULT_DPI = 96.0;
@@ -84,7 +84,7 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
     static {
         Map<RenderingHints.Key, Object> hints = new HashMap<>();
         hints.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-        hints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+        hints.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         screenHints = new RenderingHints(hints);

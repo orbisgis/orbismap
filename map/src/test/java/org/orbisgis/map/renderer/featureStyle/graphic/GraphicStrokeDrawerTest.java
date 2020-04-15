@@ -41,6 +41,7 @@ import org.junit.jupiter.api.TestInfo;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.map.renderer.featureStyle.stroke.GraphicStrokeDrawer;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.label.RelativeOrientation;
 import org.orbisgis.style.stroke.GraphicStroke;
 
 /**
@@ -122,5 +123,100 @@ public class GraphicStrokeDrawerTest extends DrawerBaseTest {
         graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
         saveImage(testInfo);
     }
+    
+    @Test
+    public void drawGraphicStrokeLineOrientation(TestInfo testInfo) throws Exception {
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setDistance(20);
+        graphicStroke.setOverlap(false);
+        MarkGraphic markGraphic = createMarkGraphic("triangle", 20);
+        graphicStroke.addGraphic(markGraphic);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.LINE);
+        GraphicStrokeDrawer graphicStrokeDrawer = new GraphicStrokeDrawer();
+        graphicStrokeDrawer.setShape(getCrossLine());
+        graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
+        saveImage(testInfo);
+    }
+    
+    @Test
+    public void drawGraphicStrokeNormalOrientation(TestInfo testInfo) throws Exception {
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setDistance(20);
+        graphicStroke.setOverlap(false);
+        MarkGraphic markGraphic = createMarkGraphic("triangle", 20);
+        graphicStroke.addGraphic(markGraphic);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL);
+        GraphicStrokeDrawer graphicStrokeDrawer = new GraphicStrokeDrawer();
+        graphicStrokeDrawer.setShape(getCrossLine());
+        graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
+        saveImage(testInfo);
+    }
+    
+    @Test
+    public void drawGraphicStrokePortrayalOrientation(TestInfo testInfo) throws Exception {
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setDistance(20);
+        graphicStroke.setOverlap(false);
+        MarkGraphic markGraphic = createMarkGraphic("triangle", 20);
+        graphicStroke.addGraphic(markGraphic);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.PORTRAYAL);
+        GraphicStrokeDrawer graphicStrokeDrawer = new GraphicStrokeDrawer();
+        graphicStrokeDrawer.setShape(getCrossLine());
+        graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
+        saveImage(testInfo);
+    }
+    
+    @Test
+    public void drawGraphicStrokeNormalUpOrientation(TestInfo testInfo) throws Exception {
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setDistance(20);
+        graphicStroke.setOverlap(false);
+        MarkGraphic markGraphic = createMarkGraphic("triangle", 20);
+        graphicStroke.addGraphic(markGraphic);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
+        GraphicStrokeDrawer graphicStrokeDrawer = new GraphicStrokeDrawer();
+        graphicStrokeDrawer.setShape(getCrossLine());
+        graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
+        saveImage(testInfo);
+    }
+    
+    @Test
+    public void drawGraphicStrokeLineUpOrientation(TestInfo testInfo) throws Exception {
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setDistance(20);
+        graphicStroke.setOverlap(false);
+        MarkGraphic markGraphic = createMarkGraphic("triangle", 20);
+        graphicStroke.addGraphic(markGraphic);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.LINE_UP);
+        GraphicStrokeDrawer graphicStrokeDrawer = new GraphicStrokeDrawer();
+        graphicStrokeDrawer.setShape(getCrossLine());
+        graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
+        saveImage(testInfo);
+    }
+    
+     @Test
+    public void drawMultipleGraphicStrokeLineUpOrientation(TestInfo testInfo) throws Exception {
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.PX);
+        graphicStroke.setDistance(20);
+        graphicStroke.setOverlap(false);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.LINE_UP);
+        MarkGraphic markGraphic = createMarkGraphic("triangle", 20);
+        MarkGraphic markGraphic2 = createMarkGraphic("square", 10);
+        MarkGraphic markGraphic3 = createMarkGraphic("circle", 5);
+        graphicStroke.addGraphic(markGraphic);
+        graphicStroke.addGraphic(markGraphic2);
+        graphicStroke.addGraphic(markGraphic3);
+        GraphicStrokeDrawer graphicStrokeDrawer = new GraphicStrokeDrawer();
+        graphicStrokeDrawer.setShape(getCrossLine());
+        graphicStrokeDrawer.draw(g2, mapTransform, graphicStroke);
+        saveImage(testInfo);
+    }
+
 
 }

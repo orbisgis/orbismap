@@ -51,7 +51,6 @@ import org.orbisgis.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
-import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.fill.HatchedFill;
@@ -73,23 +72,22 @@ public class AreaSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, ISt
 
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, AreaSymbolizer symbolizer) throws ParameterException {
-        Uom uom = symbolizer.getUom();
-        if (symbolizer.getTranslate() != null) {
-            // TODO : shp = AffineTransformUtils.getAffineTranslate(symbolizer.getTranslate(), uom,properties, mapTransform,
-            //       (double) mapTransform.getWidth(), (double) mapTransform.getHeight()).createTransformedShape(shp);
+        if (symbolizer.getTransform() != null) {
+            shape = symbolizer.getTransform().getAffineTransform(mapTransform.getDpi(), mapTransform.getScaleDenominator(),
+                    (float) mapTransform.getWidth(), (float) mapTransform.getHeight()).createTransformedShape(getShape());
         }
 
         IFill fill = symbolizer.getFill();
         IStyleDrawer fillDrawer = getDrawer(fill);
         if (fillDrawer != null) {
-                fillDrawer.setShape(getShape());
-                fillDrawer.draw(g2, mapTransform, fill);
+            fillDrawer.setShape(shape);
+            fillDrawer.draw(g2, mapTransform, fill);
         }
         Stroke stroke = symbolizer.getStroke();
         IStyleDrawer strokeDrawer = getDrawer(stroke);
         if (strokeDrawer != null) {
-                strokeDrawer.setShape(getShape());
-                strokeDrawer.draw(g2, mapTransform, stroke);
+            strokeDrawer.setShape(shape);
+            strokeDrawer.draw(g2, mapTransform, stroke);
         }
     }
 

@@ -140,6 +140,7 @@ public final class ShapeUtils {
 
     /**
      * @param line
+     * @return 
      * @see #getAreaPerimeterLength
      */
     public static double getLineLength(Shape line) {
@@ -271,7 +272,6 @@ public final class ShapeUtils {
             }
         }
         //last segment end with last point
-
         shapes.add(segment);
 
         return shapes;

@@ -51,9 +51,7 @@ import org.orbisgis.style.utils.ColorUtils;
 public class SolidFillDrawer implements IFillDrawer<SolidFill> {
 
     private Shape shape;
-    private AffineTransform affineTransform;
-
-    
+    private AffineTransform affineTransform;    
     
     @Override
     public void draw(Graphics2D g2, MapTransform mapTransform, SolidFill styleNode) throws ParameterException {
@@ -64,7 +62,7 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
     }
 
     @Override
-    public Paint getPaint( SolidFill solidFill,MapTransform mt) throws ParameterException {
+    public Paint getPaint(SolidFill solidFill,MapTransform mt) throws ParameterException {
         String colorValue = (String) solidFill.getColor().getValue();
         Color color = null;
         if (colorValue!= null) {
@@ -75,7 +73,7 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
             //GRAY50 to build RGB value - As it equals 128.0f, we need a cast
             //because Color(float, float, float) needs values between 0 and 1.
             color = new Color((int) GRAY50, (int) GRAY50, (int) GRAY50);
-        }       
+        }     
        
         
         Float opacity =  (Float) solidFill.getOpacity().getValue();

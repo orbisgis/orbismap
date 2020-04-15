@@ -32,15 +32,29 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.parameter;
+package org.orbisgis.style;
+
 
 /**
- *
+ * Interface to be implemented by every node that can contain a <code>IFill</code> element.
+ * 
  * @author Erwan Bocher, CNRS (2010-2020)
+ * 
  */
-public interface IValueIdentifier {
-    
-    String getIdentifier();
-    
-    void setIdentifier(String identifier);
+public interface IFillNode {
+
+        /**
+         * Replace the current fill with the one given in argument.
+         * @param fill 
+         * A {@link IFill} implementation. It's up to the realization to decide
+         * if it can be null or not.
+         */
+	void setFill(IFill fill);
+        
+        /**
+         * Gets the {@code IFill} associated to this {@code FillNode}.
+         * @return 
+         * A {@link IFill} instance.
+         */
+	IFill getFill();
 }

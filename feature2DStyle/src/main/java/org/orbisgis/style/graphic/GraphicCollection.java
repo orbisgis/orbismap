@@ -43,23 +43,19 @@ import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 
 /**
- *
+ * Collection of graphics
+ * 
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class GraphicCollection extends StyleNode implements IUom {
+public class GraphicCollection extends StyleNode implements IUom{
 
     ArrayList<Graphic> graphics;
 
     public GraphicCollection() {
         graphics = new ArrayList<>();
     }
-
-    public GraphicCollection(Graphic graphic) {
-        graphics = new ArrayList<>();
-        graphics.add(graphic);
-    }
-
+    
     /**
      * Add a graphic in this collection, at index i if<code>i &lt;= getNumGraphics()-1 &amp;&amp; i &gt;= 0
      * </code>, or in the end of the collection (ie at index n+1, if the
@@ -187,10 +183,6 @@ public class GraphicCollection extends StyleNode implements IUom {
         } else {
             return Uom.PX;
         }
-    }
-
-    @Override
-    public void initDefault() {
     }
 
     /**

@@ -43,7 +43,6 @@ import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
 

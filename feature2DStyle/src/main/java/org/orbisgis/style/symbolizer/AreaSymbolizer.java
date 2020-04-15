@@ -37,23 +37,25 @@ package org.orbisgis.style.symbolizer;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import org.orbisgis.style.FillNode;
 import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
-import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.UomNode;
 import org.orbisgis.style.common.Description;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.Stroke;
-import org.orbisgis.style.transform.Translate;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.style.stroke.PenStroke;
+import org.orbisgis.style.IStrokeNode;
+import org.orbisgis.style.IFillNode;
+import org.orbisgis.style.ITransform;
+import org.orbisgis.style.ITransformNode;
+import org.orbisgis.style.IUom;
+import org.orbisgis.style.transform.Transform;
 
 /**
  * A "AreaSymbolizer" specifies the rendering of a polygon or other area/surface
@@ -69,9 +71,9 @@ import org.orbisgis.style.stroke.PenStroke;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, IFeatureSymbolizer, UomNode {
+public class AreaSymbolizer extends StyleNode implements  ITransformNode, IFillNode, IStrokeNode, IFeatureSymbolizer, IUom {
 
-    private Translate translate;
+    private Transform transform;
     private ParameterValue perpendicularOffset = new NullParameterValue();
     private Stroke stroke;
     private IFill fill;
@@ -140,24 +142,28 @@ public class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, I
         return fill;
     }
 
-    /**
-     * Retrieve the geometric transformation that must be applied to the
-     * geometries.
-     *
-     * @return The transformation associated to this Symbolizer.
-     */
-    public Translate getTranslate() {
-        return translate;
+    @Override
+    public Transform getTransform() {
+        return transform;
     }
 
-    /**
-     * Get the geometric transformation that must be applied to the geometries.
-     *
-     * @param translate
-     */
-    public void setTranslate(Translate translate) {
-        this.translate = translate;
-        //translate.setParent(this);
+    @Override
+    public void setTransform(Transform transform) {
+        if (transform != null) {
+            this.transform = transform;
+            this.transform.setParent(this);
+        }
+    }
+    
+    @Override
+    public void addTransform(ITransform transform) {
+        if (this.transform != null) {
+            this.transform.addTransformation(transform);
+        }
+        else{
+            this.transform =new Transform();
+            this.transform.addTransformation(transform);
+        }
     }
 
     @Override
@@ -192,8 +198,8 @@ public class AreaSymbolizer extends StyleNode implements FillNode, StrokeNode, I
         if (this.getGeometryParameter() != null) {
             ls.add(this.getGeometryParameter());
         }
-        if (translate != null) {
-            ls.add(translate);
+        if (transform != null) {
+            ls.add(transform);
         }
         if (fill != null) {
             ls.add(fill);

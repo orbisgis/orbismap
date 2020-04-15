@@ -95,7 +95,7 @@ public class Size extends GraphicSize {
 
     @Override
     public void initDefault() {
-        setSize(DEFAULT_SIZE);
+        this.size = new Literal(DEFAULT_SIZE);
     }
 
     @Override

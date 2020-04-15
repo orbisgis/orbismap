@@ -34,25 +34,35 @@
  */
 package org.orbisgis.style.graphic;
 
-import org.orbisgis.style.parameter.TransformParameter;
-import org.orbisgis.style.transform.Transform;
 
 /**
- * TransformNode are graphics for which we can use {@link Transform}.
- * @author Alexis Guéganno, Maxence Laurent
- * TODO : refactoring
+ * {@code AnchorPosition} is used to anchor a graphic at a position
+ * 
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
-public interface TransformNode {
+public enum AnchorPosition {
 
-        /**
-         * Set the inner {@link TransformParameter} associated to this node to {@code t}.
-         * @param t 
-         */
-        void setTransform(TransformParameter t);
+    CENTER, UPPER_LEFT, UPPER_RIGHT, LOWER_LEFT, LOWER_RIGHT;
 
-        /**
-         * Get the {@link TransformParameter} associated to this node.
-         * @return 
-         */
-        TransformParameter getTransform();
+   
+    
+    /**
+     * Get a String representation of this {@code AnchorPosition}.
+     * @return 
+     */
+    public String getAsString() {
+        switch (values()[ordinal()]) {
+            case CENTER:
+                return "center";
+            case UPPER_LEFT:
+                return "upper_left";
+            case UPPER_RIGHT:
+                return "upper_right";
+            case LOWER_LEFT:
+                return "lower_left";                
+            case LOWER_RIGHT:
+                return "lower_right";
+        }
+        return null;
+    }
 }

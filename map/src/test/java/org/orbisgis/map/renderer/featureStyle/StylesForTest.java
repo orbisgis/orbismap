@@ -1,6 +1,6 @@
 /**
  * Map is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Map is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
  * Map is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
  * Map is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Map. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Map. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -44,6 +45,7 @@ import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
 import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
+import org.orbisgis.style.graphic.AnchorPosition;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.graphic.ViewBox;
 import org.orbisgis.style.label.Label;
@@ -63,6 +65,10 @@ import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.symbolizer.TextSymbolizer;
+import org.orbisgis.style.transform.Rotate;
+import org.orbisgis.style.transform.Scale;
+import org.orbisgis.style.transform.Transform;
+import org.orbisgis.style.transform.Translate;
 
 /**
  *
@@ -108,8 +114,7 @@ public class StylesForTest {
         style.addRule(rule);
         return style;
     }
-    
-    
+
     /*
          * Create a style with one <code>LineSymbolizer</code>
          *
@@ -542,7 +547,7 @@ public class StylesForTest {
         IRule rule = style.getRules().get(0);
         PointSymbolizer ps = new PointSymbolizer();
         ps.setUom(Uom.PX);
-        MarkGraphic markGraphic = new MarkGraphic();        
+        MarkGraphic markGraphic = new MarkGraphic();
         markGraphic.setWellKnownName(new Literal("square"));
         markGraphic.setGraphicSize(new ViewBox(12f));
         markGraphic.setFill(createSolidFill(Color.ORANGE));
@@ -632,7 +637,7 @@ public class StylesForTest {
      * @return a  <code>SolidFill</code>
      */
     public static SolidFill createSolidFill(Color color, float opacity) {
-        SolidFill solidFill =  new SolidFill();
+        SolidFill solidFill = new SolidFill();
         solidFill.setColor(color);
         solidFill.setOpacity(opacity);
         return solidFill;
@@ -645,29 +650,41 @@ public class StylesForTest {
      * @return a  <code>SolidFill</code>
      */
     public static SolidFill createSolidFill(Color color) {
-        SolidFill solidFill =  new SolidFill();
+        SolidFill solidFill = new SolidFill();
         solidFill.setColor(color);
         solidFill.setOpacity(1.0f);
         return solidFill;
     }
 
     /**
-     * Create a standard 0.1mm-wide opaque black stroke without dash.
+     * Create a standard PenStroke.
+     *
+     * @param color
+     * @param width
+     * @param uom
+     * @return
+     */
+    public static PenStroke createPenStroke(Color color, float width, Uom uom) {
+        PenStroke penStroke = new PenStroke();
+        penStroke.setFill(createSolidFill(color));
+        penStroke.setWidth(new Literal(width));
+        penStroke.setUom(uom);
+        penStroke.setDashOffset(new NullParameterValue());
+        penStroke.setDashArray(new NullParameterValue());
+        penStroke.setLineCap(DEFAULT_CAP);
+        penStroke.setLineJoin(DEFAULT_JOIN);
+        return penStroke;
+    }
+
+    /**
+     * Create a standard PenStroke in PX.
      *
      * @param color
      * @param width
      * @return
      */
     public static PenStroke createPenStroke(Color color, float width) {
-        PenStroke penStroke = new PenStroke();
-        penStroke.setFill(createSolidFill(color));
-        penStroke.setWidth(new Literal(width));
-        penStroke.setUom(Uom.PX);
-        penStroke.setDashOffset(new NullParameterValue());
-        penStroke.setDashArray(new NullParameterValue());
-        penStroke.setLineCap(DEFAULT_CAP);
-        penStroke.setLineJoin(DEFAULT_JOIN);
-        return penStroke;
+        return createPenStroke(color, width, Uom.PX);
     }
 
     /**
@@ -693,10 +710,11 @@ public class StylesForTest {
      * @param offset
      * @return a  <code>Style</code>
      */
-    public static Feature2DStyle createGraphicStrokeLineSymbolizer(Color color, float width, double offset, float  distance) {        Feature2DStyle style = new Feature2DStyle();
+    public static Feature2DStyle createGraphicStrokeLineSymbolizer(Color color, float width, double offset, float distance) {
+        Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
         lineSymbolizerBase.initDefault();
-        lineSymbolizerBase.setLevel(0);        
+        lineSymbolizerBase.setLevel(0);
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setLevel(1);
         GraphicStroke graphicStroke = new GraphicStroke();
@@ -725,7 +743,7 @@ public class StylesForTest {
         style.addRule(rule);
         return style;
     }
-    
+
     /**
      * Create a style with one <code>LineSymbolizer</code>
      *
@@ -734,10 +752,11 @@ public class StylesForTest {
      * @param offset
      * @return a  <code>Style</code>
      */
-    public static Feature2DStyle createGraphicStrokeLineSymbolizerNoOverlaps(Color color, float width, double offset, float  distance) {        Feature2DStyle style = new Feature2DStyle();
+    public static Feature2DStyle createGraphicStrokeLineSymbolizerNoOverlaps(Color color, float width, double offset, float distance) {
+        Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
         lineSymbolizerBase.initDefault();
-        lineSymbolizerBase.setLevel(0);        
+        lineSymbolizerBase.setLevel(0);
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setLevel(1);
         GraphicStroke graphicStroke = new GraphicStroke();
@@ -770,13 +789,13 @@ public class StylesForTest {
 
     /**
      * Create a line label text symbolizer
-     * 
-     * @return 
+     *
+     * @return
      */
     static Feature2DStyle createLineLabelTextSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
-        lineSymbolizer.initDefault();        
+        lineSymbolizer.initDefault();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
         LineLabel lineLabel = new LineLabel();
         lineLabel.initDefault();
@@ -789,16 +808,16 @@ public class StylesForTest {
         style.addRule(rule);
         return style;
     }
-    
+
     /**
      * Create a line label text symbolizer
-     * 
-     * @return 
+     *
+     * @return
      */
     static Feature2DStyle createPointLabelTextSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
-        areaSymbolizer.initDefault();        
+        areaSymbolizer.initDefault();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
         PointLabel pointLabel = new PointLabel();
         pointLabel.initDefault();
@@ -812,5 +831,85 @@ public class StylesForTest {
         return style;
     }
 
+    static Feature2DStyle createMeteoColdFrontLineSymbolizer(float markSize, float distance, RelativeOrientation orientation) {
+        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
+        lineSymbolizerBase.setUom(Uom.MM);
+        lineSymbolizerBase.initDefault();
+        lineSymbolizerBase.setLevel(0);
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setLevel(1);
+        lineSymbolizer.setUom(Uom.MM);
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.MM);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
+        graphicStroke.setDistance(distance);
+        MarkGraphic coldFrontMark = new MarkGraphic();
+        coldFrontMark.setAnchorPosition(AnchorPosition.LOWER_LEFT);
+        coldFrontMark.setWellKnownName(new Literal("triangle"));
+        coldFrontMark.setGraphicSize(new ViewBox(markSize));
+        coldFrontMark.setFill(createSolidFill(Color.GRAY));
+        coldFrontMark.setStroke(createPenStroke(Color.ORANGE, 0.26f, Uom.MM));
+        coldFrontMark.setUom(Uom.MM);
+        graphicStroke.addGraphic(coldFrontMark);
+        lineSymbolizer.setStroke(graphicStroke);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(lineSymbolizer);
+        rule.addSymbolizer(lineSymbolizerBase);
+        style.addRule(rule);
+        return style;
+    }
+
+    public static Feature2DStyle createPointSymbolizerTransform() {
+        Feature2DStyle style = new Feature2DStyle();
+        style.addRule(new Feature2DRule());
+        IRule rule = style.getRules().get(0);
+        PointSymbolizer ps = new PointSymbolizer();
+        ps.setUom(Uom.PX);
+        MarkGraphic markGraphic = new MarkGraphic();
+        Transform transform = new Transform();
+        markGraphic.setTransform(transform);
+        Rotate rotate = new Rotate(new Literal(180f));
+        markGraphic.addTransform(rotate);
+        markGraphic.setWellKnownName(new Literal("HALFCIRCLE"));
+        markGraphic.setGraphicSize(new ViewBox(35f));
+        markGraphic.setFill(createSolidFill(Color.ORANGE));
+        ps.addGraphic(markGraphic);
+        MarkGraphic markGraphic2 = new MarkGraphic();
+        markGraphic2.setWellKnownName(new Literal("HALFCIRCLE"));
+        markGraphic2.setGraphicSize(new ViewBox(35f));
+        markGraphic2.setFill(createSolidFill(Color.BLUE));
+        ps.addGraphic(markGraphic2);
+        rule.addSymbolizer(ps);
+        return style;
+    }
+
+    static Feature2DStyle createElevationBarLineSymbolizer(float markSize, float distance, RelativeOrientation orientation) {
+        Feature2DStyle style = new Feature2DStyle();
+        LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
+        lineSymbolizerBase.setUom(Uom.MM);
+        lineSymbolizerBase.initDefault();
+        lineSymbolizerBase.setLevel(0);
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setLevel(1);
+        lineSymbolizer.setUom(Uom.MM);
+        GraphicStroke graphicStroke = new GraphicStroke();
+        graphicStroke.setUom(Uom.MM);
+        graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
+        graphicStroke.setDistance(new Expression("CASE WHEN Z >= 70 then 0.2 WHEN Z<70 and Z>=40 then 0.5 else 1 end"));
+        MarkGraphic coldFrontMark = new MarkGraphic();
+        coldFrontMark.setAnchorPosition(AnchorPosition.LOWER_LEFT);
+        coldFrontMark.setWellKnownName(new Literal("VERTLINE"));
+        coldFrontMark.setGraphicSize(new ViewBox(markSize));
+        coldFrontMark.setStroke(createPenStroke(Color.BLACK, 0.05f, Uom.MM));
+        coldFrontMark.setUom(Uom.MM);
+        graphicStroke.addGraphic(coldFrontMark);
+        lineSymbolizer.setStroke(graphicStroke);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(lineSymbolizer);
+        rule.addSymbolizer(lineSymbolizerBase);
+        style.addRule(rule);
+        return style;
+    }
 
 }

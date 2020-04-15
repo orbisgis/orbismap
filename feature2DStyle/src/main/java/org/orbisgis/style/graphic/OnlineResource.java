@@ -105,8 +105,4 @@ public class OnlineResource extends StyleNode implements ExternalGraphicSource {
         List<IStyleNode> ret = new ArrayList<IStyleNode>();
         return ret;
     }
-
-    @Override
-    public void initDefault() {
-    }
 }

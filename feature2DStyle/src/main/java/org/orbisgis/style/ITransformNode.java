@@ -34,30 +34,25 @@
  */
 package org.orbisgis.style;
 
+import org.orbisgis.style.transform.Transform;
+
 /**
- * Defines unit of measure management.
- *
- * @author Maxence Laurent, HEIG-VD (2010-2012)
- * @author Erwan Bocher, CNRS (2010-2020)
+ * TransformNode are graphics for which we can use {@link Transform}.
+ * @author Alexis Guéganno, Maxence Laurent
  */
-public interface UomNode extends IStyleNode {
+public interface ITransformNode {
+
         /**
-         * Associates a unit of measure to this node
-         * @param u 
+         * Set the inner {@link Transform} associated to this node to {@code transform}.
+         * @param transform
          */
-	void setUom(Uom u);
+        void setTransform(Transform transform);
+
         /**
-         * Get the Uom associated to this node. It differs from {@code getUom}
-         * in the sense that the method in SymbolizerNode will search for the nearest
-         * Uom int the tree of Nodes, if this node does not contain one, while this
-         * method is expected to return null if it can't find an Uom directly.
+         * Get the {@link Transform} associated to this node.
          * @return 
-         * A Uom instance, if this has got one, null otherwise.
          */
-	Uom getOwnUom();
-        /**
-         * Get the unit of measure associated with the current node.
-         * @return
-         */
-        Uom getUom();
+        Transform getTransform();
+        
+        void addTransform(ITransform transformation);
 }

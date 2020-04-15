@@ -39,9 +39,9 @@ import java.util.List;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IGraphicNode;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.UomNode;
 import org.orbisgis.style.graphic.Graphic;
 import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.Literal;
@@ -59,7 +59,7 @@ import org.orbisgis.style.parameter.ParameterValue;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNode {
+public class GraphicFill extends StyleNode implements IGraphicNode, IFill, IUom {
     
     private GraphicCollection graphics;
     /**
@@ -186,7 +186,7 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
     
     @Override
     public Uom getUom() {
-        return uom == null ? ((UomNode) getParent()).getUom() : uom;
+        return uom == null ? ((IUom) getParent()).getUom() : uom;
     }
     
     @Override
@@ -206,8 +206,5 @@ public class GraphicFill extends StyleNode implements IGraphicNode, IFill, UomNo
         }
     }
 
-    @Override
-    public void initDefault() {
-    }
     
 }

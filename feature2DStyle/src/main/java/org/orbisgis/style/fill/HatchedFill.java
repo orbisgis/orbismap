@@ -34,7 +34,6 @@
  */
 package org.orbisgis.style.fill;
 
-import org.orbisgis.style.StrokeNode;
 import org.orbisgis.style.stroke.Stroke;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +41,12 @@ import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
-import org.orbisgis.style.UomNode;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
+import org.orbisgis.style.IStrokeNode;
+import org.orbisgis.style.IUom;
 
 /**
  * A {@code HatchedFill} will fill a shape with hatches. It is configured
@@ -67,7 +67,7 @@ import org.orbisgis.style.stroke.PenStroke;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode {
+public class HatchedFill extends StyleNode implements IStrokeNode, IFill, IUom {
 
     /**
      * Default offset value for hatches.
@@ -234,7 +234,7 @@ public class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((UomNode) getParent()).getUom() : uom;
+        return uom == null ? ((IUom) getParent()).getUom() : uom;
     }
 
     @Override
@@ -251,10 +251,10 @@ public class HatchedFill extends StyleNode implements StrokeNode, IFill, UomNode
     public void initDefault() {
         PenStroke ps = new PenStroke();
         ps.initDefault();
-        setStroke(ps);
-        setAngle(DEFAULT_ALPHA);
-        setDistance(DEFAULT_PDIST);
-        setOffset(DEFAULT_OFFSET);
+        this.stroke = ps;
+        this.angle = new Literal(DEFAULT_ALPHA);
+        this.distance =new Literal(DEFAULT_PDIST);
+        this.offset = new Literal(DEFAULT_OFFSET);
     }
 
 }
