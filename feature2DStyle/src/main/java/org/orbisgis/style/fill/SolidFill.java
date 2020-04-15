@@ -40,13 +40,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.utils.ColorUtils;
-import org.orbisgis.style.IUomNode;
 
 /**
  * A solid fill fills a shape with a solid color (+opacity)
@@ -54,7 +54,7 @@ import org.orbisgis.style.IUomNode;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class SolidFill extends StyleNode implements IFill, IUomNode {
+public class SolidFill extends StyleNode implements IFill, IUom{
 
     private ParameterValue color = new NullParameterValue();
     private ParameterValue opacity = new NullParameterValue();
@@ -177,7 +177,7 @@ public class SolidFill extends StyleNode implements IFill, IUomNode {
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((IUomNode) getParent()).getUom() : uom;
+        return uom == null ? ((IUom) getParent()).getUom() : uom;
     }
 
     @Override

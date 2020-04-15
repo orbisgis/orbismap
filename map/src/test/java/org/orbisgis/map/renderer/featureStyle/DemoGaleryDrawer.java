@@ -337,7 +337,7 @@ public class DemoGaleryDrawer {
     @Test
     public void testMeteoColdFrontLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
         String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StylesForTest.createMeteoColdFrontLineSymbolizer(20, 10, RelativeOrientation.LINE);
+        Feature2DStyle style = StylesForTest.createMeteoColdFrontLineSymbolizer(2, 3, RelativeOrientation.NORMAL_UP);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
     
@@ -345,6 +345,13 @@ public class DemoGaleryDrawer {
     public void testPointSymbolizerTransform(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointSymbolizerTransform();
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+    
+     @Test
+    public void testElevationBarLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+        String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createElevationBarLineSymbolizer(2, 1, RelativeOrientation.NORMAL_UP);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 

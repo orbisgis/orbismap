@@ -50,7 +50,7 @@ import org.orbisgis.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.style.IStrokeNode;
 import org.orbisgis.style.ITransform;
 import org.orbisgis.style.ITransformNode;
-import org.orbisgis.style.IUomNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.transform.Transform;
 
 /**
@@ -67,7 +67,7 @@ import org.orbisgis.style.transform.Transform;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class LineSymbolizer extends StyleNode implements Comparable, IStrokeNode, ITransformNode, IFeatureSymbolizer, IUomNode {
+public class LineSymbolizer extends StyleNode implements Comparable, IStrokeNode, ITransformNode, IFeatureSymbolizer, IUom {
 
     private Transform transform;
     private ParameterValue perpendicularOffset = new NullParameterValue();

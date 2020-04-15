@@ -80,7 +80,6 @@ public class GraphicStroke extends Stroke implements IGraphicNode, IUom {
     public GraphicStroke() {
         super();
         this.graphics = new GraphicCollection();
-        this.setUom(Uom.PX);
         this.distance = new Literal(MIN_LENGTH);
         this.overlapMark = new Literal(true);
     }

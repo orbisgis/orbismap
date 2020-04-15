@@ -41,6 +41,7 @@ import java.util.Random;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IGraphicNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.Graphic;
@@ -48,7 +49,6 @@ import org.orbisgis.style.graphic.GraphicCollection;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
-import org.orbisgis.style.IUomNode;
 
 /**
  * Descriptor for dot maps. Each point represents a given quantity. Points are
@@ -62,7 +62,7 @@ import org.orbisgis.style.IUomNode;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class DotMapFill extends StyleNode implements IGraphicNode, IFill, IUomNode {
+public class DotMapFill extends StyleNode implements IGraphicNode, IFill, IUom{
 
     private GraphicCollection graphics;
     private ParameterValue quantityPerMark = new NullParameterValue();
@@ -176,7 +176,7 @@ public class DotMapFill extends StyleNode implements IGraphicNode, IFill, IUomNo
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((IUomNode) getParent()).getUom() : uom;
+        return uom == null ? ((IUom) getParent()).getUom() : uom;
     }
 
     @Override

@@ -54,7 +54,7 @@ import org.orbisgis.style.IStrokeNode;
 import org.orbisgis.style.IFillNode;
 import org.orbisgis.style.ITransform;
 import org.orbisgis.style.ITransformNode;
-import org.orbisgis.style.IUomNode;
+import org.orbisgis.style.IUom;
 import org.orbisgis.style.transform.Transform;
 
 /**
@@ -71,7 +71,7 @@ import org.orbisgis.style.transform.Transform;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class AreaSymbolizer extends StyleNode implements  ITransformNode, IFillNode, IStrokeNode, IFeatureSymbolizer, IUomNode {
+public class AreaSymbolizer extends StyleNode implements  ITransformNode, IFillNode, IStrokeNode, IFeatureSymbolizer, IUom {
 
     private Transform transform;
     private ParameterValue perpendicularOffset = new NullParameterValue();

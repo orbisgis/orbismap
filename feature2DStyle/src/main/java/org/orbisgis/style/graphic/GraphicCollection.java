@@ -48,7 +48,7 @@ import org.orbisgis.style.Uom;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class GraphicCollection extends StyleNode implements IUom {
+public class GraphicCollection extends StyleNode implements IUom{
 
     ArrayList<Graphic> graphics;
 

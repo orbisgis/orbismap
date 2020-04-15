@@ -46,7 +46,7 @@ import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
 import org.orbisgis.style.IStrokeNode;
-import org.orbisgis.style.IUomNode;
+import org.orbisgis.style.IUom;
 
 /**
  * A {@code HatchedFill} will fill a shape with hatches. It is configured
@@ -67,7 +67,7 @@ import org.orbisgis.style.IUomNode;
  * @author Maxence Laurent, HEIG-VD (2010-2012)
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class HatchedFill extends StyleNode implements IStrokeNode, IFill, IUomNode {
+public class HatchedFill extends StyleNode implements IStrokeNode, IFill, IUom {
 
     /**
      * Default offset value for hatches.
@@ -234,7 +234,7 @@ public class HatchedFill extends StyleNode implements IStrokeNode, IFill, IUomNo
 
     @Override
     public Uom getUom() {
-        return uom == null ? ((IUomNode) getParent()).getUom() : uom;
+        return uom == null ? ((IUom) getParent()).getUom() : uom;
     }
 
     @Override
