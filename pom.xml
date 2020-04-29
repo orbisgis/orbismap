@@ -10,10 +10,9 @@
         <artifactId>orbisparent</artifactId>
         <version>1.0.3-SNAPSHOT</version>
     </parent>
-
     <artifactId>orbismap</artifactId>
-    <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <modules>
         <module>map-api</module>
         <module>symcore</module>
@@ -27,9 +26,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>YYYY-MM-dd</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
-        <maven.compiler.target>8</maven.compiler.target>
-        <maven.compiler.source>8</maven.compiler.source>
-        <site.basedir>${project.basedir}</site.basedir>
     </properties>
 
     <!-- Build Settings -->
@@ -58,6 +54,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
