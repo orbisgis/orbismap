@@ -60,8 +60,6 @@ import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.map.api.IProgressMonitor;
 import org.orbisgis.map.renderer.featureStyle.utils.ExpressionParser;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcTable;
 import org.orbisgis.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.symbolizer.LineSymbolizer;
@@ -145,14 +143,12 @@ public class FeatureStyleRenderer {
                     }
                     ruleFilter += spatialWherefilter;
 
-                    JdbcSpatialTable spatialTableQuery = (JdbcSpatialTable) ((JdbcTable) spatialTable.columns(query))
-                            .where(ruleFilter).getSpatialTable();
+                    ISpatialTable spatialTableQuery =  spatialTable.columns(query).filter(ruleFilter);
 
                     //This map is populated from the data
-                    Map<String, Object> properties = new HashMap<>();
                     Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl, mt);
                     while (spatialTableQuery.next()) {
-                        Map<String, Shape> shapes = new HashMap<String, Shape>();
+                        Map<String, Shape> shapes = new HashMap<>();
                         Shape currentShape = null;
                         Geometry geomReduced = null;
                         //Populate expressions here
@@ -332,7 +328,7 @@ public class FeatureStyleRenderer {
      * @param parameterValueIdentifiers
      * @throws SQLException
      */
-    private void populateExpressions(JdbcSpatialTable sp, MapTransform mt, Map<String, org.orbisgis.style.parameter.Expression> parameterValueIdentifiers) throws SQLException {
+    private void populateExpressions(ISpatialTable sp, MapTransform mt, Map<String, org.orbisgis.style.parameter.Expression> parameterValueIdentifiers) throws  Exception {
         if (!parameterValueIdentifiers.isEmpty()) {
             for (Map.Entry<String, org.orbisgis.style.parameter.Expression> entry : parameterValueIdentifiers.entrySet()) {
                 Expression exp = entry.getValue();

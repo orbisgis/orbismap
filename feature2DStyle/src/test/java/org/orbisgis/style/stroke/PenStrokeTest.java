@@ -104,7 +104,7 @@ public class PenStrokeTest {
         SolidFill sf = new SolidFill();
         sf.setColor(Color.BLACK);
         ps.setFill(sf);
-        assertEquals(ColorUtils.toHex(Color.BLACK), sf.getColor().getValue() );
+        assertEquals(Color.BLACK, sf.getAWTColor() );
         assertTrue(ps.getFill() instanceof SolidFill);
         GraphicCollection gc = new GraphicCollection();
         PointTextGraphic ptg1 = new PointTextGraphic();

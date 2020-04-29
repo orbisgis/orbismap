@@ -44,7 +44,7 @@ import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.Halo;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.graphic.ViewBox;
+import org.orbisgis.style.graphic.graphicSize.ViewBox;
 import org.orbisgis.style.stroke.PenStroke;
 
 /**

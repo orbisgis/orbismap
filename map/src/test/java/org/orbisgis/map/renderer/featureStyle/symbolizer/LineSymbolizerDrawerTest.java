@@ -42,7 +42,7 @@ import org.junit.jupiter.api.TestInfo;
 import org.orbisgis.style.graphic.MarkGraphic;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.graphic.AnchorPosition;
-import org.orbisgis.style.graphic.ViewBox;
+import org.orbisgis.style.graphic.graphicSize.ViewBox;
 import org.orbisgis.style.label.RelativeOrientation;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.stroke.GraphicStroke;

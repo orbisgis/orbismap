@@ -58,7 +58,7 @@ import org.orbisgis.map.api.LayerException;
  *
  * @author Erwan Bocher, CNRS
  */
-public class MapRenderer implements IRenderer{
+public class MapView implements IRenderer{
 
     int width = 800;
     int height = 800;
@@ -66,11 +66,11 @@ public class MapRenderer implements IRenderer{
     private MapTransform mt;
     private BufferedImage image;
 
-    public MapRenderer() {
+    public MapView() {
         this(800, 800);
     }
 
-    public MapRenderer(int width, int height) {
+    public MapView(int width, int height) {
         this.width = width;
         this.height = height;
         init();
@@ -178,7 +178,10 @@ public class MapRenderer implements IRenderer{
         }
         return extension;
     }
-    
+
+    /**
+     * Method to display the map in a Swing component
+     */
     public void show(){
         Icon icon = new ImageIcon(mt.getImage());
         JLabel label = new JLabel(icon);

@@ -40,7 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.graphic.Size;
+import org.orbisgis.style.graphic.graphicSize.Size;
 
 /**
  *
@@ -53,7 +53,7 @@ public class GraphicSizeConverter implements Converter {
 
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        Size size = (Size) value;        
+        Size size = (Size) value;
         Feature2DStyleIO.marshalParameterValue("Size", size.getSize(), writer);
 
     }

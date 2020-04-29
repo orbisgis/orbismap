@@ -35,6 +35,7 @@
  */
 package org.orbisgis.map.renderer.featureStyle.graphic;
 
+import org.orbisgis.style.graphic.shapeFactory.ShapeFinder;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;

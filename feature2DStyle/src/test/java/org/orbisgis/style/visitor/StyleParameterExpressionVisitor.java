@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.orbisgis.style.Feature2DStyle;
 import static org.junit.jupiter.api.Assertions.*;
 import org.orbisgis.style.Feature2DRule;
+import org.orbisgis.style.color.HexaColor;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.Expression;
 import org.orbisgis.style.stroke.PenStroke;
@@ -101,9 +102,11 @@ public class StyleParameterExpressionVisitor {
     public static Feature2DStyle createAreaSymbolizerStyleColorExpression(String expression) {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
-        Expression colorExpression = new Expression(expression);        
+        Expression colorExpression = new Expression(expression);
+        HexaColor hexaColor =  new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
         SolidFill solidFill = new SolidFill();
-        solidFill.setColor(colorExpression);
+        solidFill.setColor(hexaColor);
         areaSymbolizer.setFill(solidFill);
         PenStroke ps = new PenStroke();
         ps.initDefault();

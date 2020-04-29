@@ -32,19 +32,25 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.graphic;
+package org.orbisgis.style.graphic.shapeFactory;
 
-import org.orbisgis.style.IGraphicSize;
-import org.orbisgis.style.IUom;
-import org.orbisgis.style.StyleNode;
+import java.awt.Shape;
+import org.orbisgis.style.Uom;
+import org.orbisgis.style.graphic.graphicSize.GraphicSize;
+import org.orbisgis.style.parameter.ParameterException;
 
 /**
- * Class to manage various size implementations
- * 
- * @author Erwan Bocher, CNRS (2020)
+ *
+ * @author ebocher
  */
-public abstract class GraphicSize extends StyleNode implements IGraphicSize, IUom{
-
-   
+public interface IShapeFactory {
     
+    String getIdentifier();
+    
+    Shape getShape(GraphicSize graphicSize,
+            Double scale, Double dpi, Uom uom) throws  ParameterException;
+
+    void setShapeName(String shapeName);
+    
+    String getShapeName();
 }
