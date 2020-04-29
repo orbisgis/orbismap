@@ -1,6 +1,6 @@
 /**
  * Feature2DStyle-IO is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -40,45 +40,29 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.style.color.HexaColor;
+import org.orbisgis.style.color.WellknownNameColor;
 
 /**
- *
  * @author Erwan Bocher, CNRS (2020)
  */
-public class ViewBoxConverter implements Converter {
+public class WellknownNameColorConverter implements Converter {
 
-    public ViewBoxConverter() {
+    @Override
+    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext marshallingContext) {
+        WellknownNameColor wellknownNameColor = (WellknownNameColor) value;
+        Feature2DStyleIO.marshalParameterValue("Color", wellknownNameColor.getWellknownName(), writer);
     }
 
     @Override
-    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        ViewBox viewBox = (ViewBox) value;
-        writer.startNode("ViewBox");
-        Feature2DStyleIO.marshalParameterValue("Width", viewBox.getWidth(), writer);
-        Feature2DStyleIO.marshalParameterValue("Height", viewBox.getHeight(), writer);
-        writer.endNode();
-
-    }
-
-    @Override
-    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        ViewBox viewBox = new ViewBox();
-        while (reader.hasMoreChildren()) {
-            reader.moveDown();
-            if ("width".equalsIgnoreCase(reader.getNodeName())) {
-                viewBox.setWidth(Feature2DStyleIO.createParameterValue(reader));
-            } else if ("height".equalsIgnoreCase(reader.getNodeName())) {
-                viewBox.setHeight(Feature2DStyleIO.createParameterValue(reader));
-            }
-            reader.moveUp();
-        }
-        return viewBox;
+    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext unmarshallingContext) {
+        WellknownNameColor wellknownNameColor = new WellknownNameColor();
+        wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValue(reader));
+        return wellknownNameColor;
     }
 
     @Override
     public boolean canConvert(Class type) {
-        return type.equals(ViewBox.class);
+        return type.equals(WellknownNameColor.class);
     }
-
 }

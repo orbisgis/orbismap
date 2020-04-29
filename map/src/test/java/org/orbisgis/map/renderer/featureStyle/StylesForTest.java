@@ -41,6 +41,7 @@ import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.IRule;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.color.HexaColor;
+import org.orbisgis.style.color.RGBColor;
 import org.orbisgis.style.fill.DensityFill;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
@@ -359,6 +360,29 @@ public class StylesForTest {
         HexaColor hexaColor = new HexaColor();
         hexaColor.setHexaColor(colorExpression);
         solidFill.setColor(hexaColor);
+        solidFill.setOpacity(opacity);
+        areaSymbolizer.setFill(solidFill);
+        PenStroke ps = new PenStroke();
+        ps.setWidth(new Literal(1.0f));
+        ps.setFill(createSolidFill(Color.BLUE));
+        areaSymbolizer.setStroke(ps);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(areaSymbolizer);
+        style.addRule(rule);
+        return style;
+    }
+
+
+    public static Feature2DStyle createAreaSymbolizerStyleRGBColorExpression() {
+        Feature2DStyle style = new Feature2DStyle();
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        Literal opacity = new Literal(1f);
+        SolidFill solidFill = new SolidFill();
+        RGBColor rgbColor = new RGBColor();
+        rgbColor.setRed(new Expression("CASE WHEN RUNOFF_WIN= 1 THEN 255 WHEN RUNOFF_WIN>0.2 AND  RUNOFF_WIN<1 THEN 100 ELSE 0 END"));
+        rgbColor.setGreen(new Expression("CASE WHEN RUNOFF_SUM=1 THEN 255 WHEN RUNOFF_SUM>0.2 AND  RUNOFF_SUM<1 THEN 100 ELSE 0 END"));
+        rgbColor.setBlue(new Literal(0));
+        solidFill.setColor(rgbColor);
         solidFill.setOpacity(opacity);
         areaSymbolizer.setFill(solidFill);
         PenStroke ps = new PenStroke();

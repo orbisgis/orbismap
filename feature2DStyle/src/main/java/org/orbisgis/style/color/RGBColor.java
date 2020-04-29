@@ -43,6 +43,7 @@ import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
 
@@ -69,6 +70,12 @@ public class RGBColor extends StyleNode implements IColor {
 
     public RGBColor() {
 
+    }
+
+    public RGBColor(int red, int green, int blue) {
+        setRed(new Literal(red));
+        setGreen(new Literal(green));
+        setBlue(new Literal(blue));
     }
 
     @Override
@@ -181,4 +188,18 @@ public class RGBColor extends StyleNode implements IColor {
     public Uom getOwnUom() {
         return uom;
     }
+
+
+    /**
+     * A {@code RGBColor} can be used if and only the three color
+     * parameters has been set.
+     *
+     * @return
+     */
+    public boolean usable() {
+        return ((blue != null && !(blue instanceof NullParameterValue))
+                && (red != null && !(red instanceof NullParameterValue))
+                && (green != null && !(green instanceof NullParameterValue))) ;
+    }
+
 }

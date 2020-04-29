@@ -40,6 +40,10 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.style.IColor;
+import org.orbisgis.style.color.HexaColor;
+import org.orbisgis.style.color.RGBColor;
+import org.orbisgis.style.color.WellknownNameColor;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.parameter.Literal;
 
@@ -56,7 +60,7 @@ public class SolidFillConverter implements Converter {
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         SolidFill solidFill = (SolidFill) value;
         writer.startNode("SolidFill");
-        Feature2DStyleIO.marshalParameterValue("Color", solidFill.getColor(), writer);
+        Feature2DStyleIO.convertAnother(mc,solidFill.getColor());
         Feature2DStyleIO.marshalParameterValue("Opacity", solidFill.getOpacity(), writer);
         writer.endNode();
 
@@ -67,11 +71,32 @@ public class SolidFillConverter implements Converter {
         SolidFill solidFill =  new SolidFill();
         while (reader.hasMoreChildren()) {
             reader.moveDown();            
-            if ("color".equalsIgnoreCase(reader.getNodeName())) {                ;
-                solidFill.setColor(Feature2DStyleIO.createParameterValue(reader));
+            if ("color".equalsIgnoreCase(reader.getNodeName())) {
+                    String colorValue = reader.getValue();
+                    if(colorValue!=null && colorValue.startsWith("#")){
+                        HexaColor hexaColor = new HexaColor();
+                        hexaColor.setHexaColor(new Literal(colorValue));
+                        solidFill.setColor(hexaColor);
+                    }
+                    else if(colorValue!=null && !colorValue.isEmpty()){
+                        if(reader.hasMoreChildren()){
+                            RGBColor color = (RGBColor) context.convertAnother(reader, RGBColor.class);
+                            solidFill.setColor(color);
+                        }
+                        WellknownNameColor wellknownNameColor = new WellknownNameColor();
+                        wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValue(reader));
+                        solidFill.setColor(wellknownNameColor);
+                    }
+                    else if(colorValue!=null && colorValue.toLowerCase().startsWith("expression")){
+
+                        HexaColor hexaColor = new HexaColor();
+                        hexaColor.setHexaColor(Feature2DStyleIO.createParameterValue(reader));
+                        solidFill.setColor(hexaColor);
+                    }
+
             }
             else if ("opacity".equalsIgnoreCase(reader.getNodeName())) {
-                solidFill.setOpacity(new Literal(Float.parseFloat(reader.getValue())));
+                solidFill.setOpacity(Feature2DStyleIO.createParameterValue(reader));
             }
             reader.moveUp();
         }

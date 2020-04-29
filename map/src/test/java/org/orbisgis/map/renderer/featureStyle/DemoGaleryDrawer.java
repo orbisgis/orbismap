@@ -45,8 +45,8 @@ import javax.imageio.ImageIO;
 import org.locationtech.jts.geom.Envelope;
 import org.orbisgis.map.layerModel.MapEnvelope;
 import org.orbisgis.map.layerModel.StyledLayer;
-import org.orbisgis.map.renderer.Map;
 import org.orbisgis.map.api.LayerException;
+import org.orbisgis.map.renderer.MapView;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS;
 import org.orbisgis.style.Feature2DStyle;
@@ -86,7 +86,7 @@ public class DemoGaleryDrawer {
 
         StyledLayer layer = new StyledLayer(spatialTable);
         layer.setStyle(style);
-        Map mapRenderer = new Map();
+        MapView mapRenderer = new MapView();
         mapRenderer.addLayer(layer);
 
         if (extent != null) {
@@ -130,6 +130,13 @@ public class DemoGaleryDrawer {
     public void testAreaSymbolizerColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerStyleColorExpression();
+        template(inputFile, testInfo.getDisplayName(), style, true, null);
+    }
+
+    @Test
+    public void testAreaSymbolizerRGBColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createAreaSymbolizerStyleRGBColorExpression();
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 

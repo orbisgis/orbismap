@@ -58,7 +58,7 @@ import org.orbisgis.map.api.LayerException;
  *
  * @author Erwan Bocher, CNRS
  */
-public class Map implements IRenderer{
+public class MapView implements IRenderer{
 
     int width = 800;
     int height = 800;
@@ -66,11 +66,11 @@ public class Map implements IRenderer{
     private MapTransform mt;
     private BufferedImage image;
 
-    public Map() {
+    public MapView() {
         this(800, 800);
     }
 
-    public Map(int width, int height) {
+    public MapView(int width, int height) {
         this.width = width;
         this.height = height;
         init();

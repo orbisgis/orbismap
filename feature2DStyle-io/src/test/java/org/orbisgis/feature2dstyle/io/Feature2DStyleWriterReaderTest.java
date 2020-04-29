@@ -43,12 +43,18 @@ import org.orbisgis.style.Feature2DStyle;
 import org.junit.jupiter.api.TestInfo;
 import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.style.IRule;
+import org.orbisgis.style.color.HexaColor;
+import org.orbisgis.style.color.RGBColor;
+import org.orbisgis.style.color.WellknownNameColor;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.graphic.Size;
-import org.orbisgis.style.graphic.ViewBox;
+import org.orbisgis.style.graphic.graphicSize.Size;
+import org.orbisgis.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.style.parameter.Expression;
+import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.style.stroke.PenStroke;
+import org.orbisgis.style.symbolizer.LineSymbolizer;
 import org.orbisgis.style.symbolizer.PointSymbolizer;
 import org.orbisgis.style.visitor.CompareStyleVisitor;
 
@@ -97,6 +103,86 @@ public class Feature2DStyleWriterReaderTest {
         markGraphic.setStroke(penStroke);
         ps.addGraphic(markGraphic);
         rule.addSymbolizer(ps);
+        writeReadTest(testInfo.getDisplayName(), style);
+    }
+
+    @Test
+    public void writeReadColorElementsSymbolizer(TestInfo testInfo) throws Exception {
+        Feature2DStyle style = new Feature2DStyle();
+        style.addRule(new Feature2DRule());
+        IRule rule = style.getRules().get(0);
+        //WellknownNameColor
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setName("WellknownNameColor");
+        PenStroke penStrokeLine = new PenStroke();
+        penStrokeLine.initDefault();
+        SolidFill solidFill1 = new SolidFill();
+        WellknownNameColor wellknownNameColor = new WellknownNameColor();
+        wellknownNameColor.setWellknownName(new Literal("orange"));
+        solidFill1.setColor(wellknownNameColor);
+        penStrokeLine.setFill(solidFill1);
+        lineSymbolizer.setStroke(penStrokeLine);
+        rule.addSymbolizer(lineSymbolizer);
+        //WellknownNameColor expression
+        LineSymbolizer lineSymbolizer2 = new LineSymbolizer();
+        lineSymbolizer2.setName("WellknownNameColor with expression");
+        PenStroke penStrokeLine2 = new PenStroke();
+        penStrokeLine2.initDefault();
+        SolidFill solidFill2 = new SolidFill();
+        WellknownNameColor wellknownNameColor2 = new WellknownNameColor();
+        wellknownNameColor2.setWellknownName(new Expression("orange"));
+        solidFill2.setColor(wellknownNameColor2);
+        penStrokeLine2.setFill(solidFill2);
+        lineSymbolizer2.setStroke(penStrokeLine2);
+        rule.addSymbolizer(lineSymbolizer2);
+        //RGBColor
+        LineSymbolizer lineSymbolizer3 = new LineSymbolizer();
+        lineSymbolizer3.setName("RGBColor");
+        PenStroke penStrokeLine3 = new PenStroke();
+        penStrokeLine3.initDefault();
+        SolidFill solidFill3 = new SolidFill();
+        RGBColor rgbColor3 = new RGBColor(0,0,0);
+        solidFill3.setColor(rgbColor3);
+        penStrokeLine3.setFill(solidFill3);
+        lineSymbolizer3.setStroke(penStrokeLine3);
+        rule.addSymbolizer(lineSymbolizer3);
+        //RGBColor expression
+        LineSymbolizer lineSymbolizer4 = new LineSymbolizer();
+        lineSymbolizer4.setName("RGBColor with expression");
+        PenStroke penStrokeLine4 = new PenStroke();
+        penStrokeLine4.initDefault();
+        SolidFill solidFill4 = new SolidFill();
+        RGBColor rgbColor4 = new RGBColor();
+        rgbColor4.setRed(new Expression("22"));
+        rgbColor4.setGreen(new Expression("15"));
+        rgbColor4.setBlue(new Expression("120"));
+        solidFill4.setColor(rgbColor4);
+        penStrokeLine4.setFill(solidFill4);
+        lineSymbolizer4.setStroke(penStrokeLine4);
+        rule.addSymbolizer(lineSymbolizer4);
+        //HexaColor
+        LineSymbolizer lineSymbolizer5 = new LineSymbolizer();
+        lineSymbolizer5.setName("HexaColor");
+        PenStroke penStrokeLine5 = new PenStroke();
+        penStrokeLine5.initDefault();
+        SolidFill solidFill5 = new SolidFill();
+        HexaColor hexaColor5 = new HexaColor("#000000");
+        solidFill5.setColor(hexaColor5);
+        penStrokeLine5.setFill(solidFill5);
+        lineSymbolizer5.setStroke(penStrokeLine5);
+        rule.addSymbolizer(lineSymbolizer5);
+        //HexaColor expression
+        LineSymbolizer lineSymbolizer6 = new LineSymbolizer();
+        lineSymbolizer6.setName("HexaColor with expression");
+        PenStroke penStrokeLine6 = new PenStroke();
+        penStrokeLine6.initDefault();
+        SolidFill solidFill6 = new SolidFill();
+        HexaColor hexaColor6 = new HexaColor();
+        hexaColor6.setHexaColor(new Expression("#000000"));
+        solidFill6.setColor(hexaColor6);
+        penStrokeLine6.setFill(solidFill6);
+        lineSymbolizer6.setStroke(penStrokeLine6);
+        rule.addSymbolizer(lineSymbolizer6);
         writeReadTest(testInfo.getDisplayName(), style);
     }
 

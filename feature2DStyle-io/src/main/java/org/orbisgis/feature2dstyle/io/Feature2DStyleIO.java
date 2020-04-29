@@ -34,11 +34,7 @@
  */
 package org.orbisgis.feature2dstyle.io;
 
-import org.orbisgis.feature2dstyle.io.converter.UomConverter;
-import org.orbisgis.feature2dstyle.io.converter.SolidFillConverter;
-import org.orbisgis.feature2dstyle.io.converter.PenStrokeConverter;
-import org.orbisgis.feature2dstyle.io.converter.GeometryParameterConverter;
-import org.orbisgis.feature2dstyle.io.converter.AreaSymbolizerConverter;
+import org.orbisgis.feature2dstyle.io.converter.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -48,20 +44,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import org.orbisgis.feature2dstyle.io.converter.DescriptionConverter;
-import org.orbisgis.feature2dstyle.io.converter.Feature2DRuleConverter;
-import org.orbisgis.feature2dstyle.io.converter.LineSymbolizerConverter;
-import org.orbisgis.feature2dstyle.io.converter.PointSymbolizerConverter;
-import org.orbisgis.feature2dstyle.io.converter.TextSymbolizerConverter;
-import org.orbisgis.feature2dstyle.io.converter.Feature2DStyleConverter;
-import org.orbisgis.feature2dstyle.io.converter.GraphicSizeConverter;
-import org.orbisgis.feature2dstyle.io.converter.HaloConverter;
-import org.orbisgis.feature2dstyle.io.converter.MarkGraphicConverter;
-import org.orbisgis.feature2dstyle.io.converter.ViewBoxConverter;
+
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.IFeatureSymbolizer;
 import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.graphic.ViewBox;
+import org.orbisgis.style.graphic.graphicSize.ViewBox;
 import org.orbisgis.style.parameter.Expression;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
@@ -98,6 +85,9 @@ public class Feature2DStyleIO {
             xstream.registerConverter(new DescriptionConverter());
             xstream.registerConverter(new UomConverter());
             xstream.registerConverter(new GeometryParameterConverter());
+            xstream.registerConverter(new RGBColorConverter());
+            xstream.registerConverter(new HexaColorConverter());
+            xstream.registerConverter(new WellknownNameColorConverter());
             xstream.alias("Feature2DStyle", Feature2DStyle.class);
             return (Feature2DStyle) xstream.fromXML(new FileInputStream(file));
         } else {
@@ -130,6 +120,9 @@ public class Feature2DStyleIO {
             xstream.registerConverter(new DescriptionConverter());
             xstream.registerConverter(new UomConverter());
             xstream.registerConverter(new GeometryParameterConverter());
+            xstream.registerConverter(new RGBColorConverter());
+            xstream.registerConverter(new HexaColorConverter());
+            xstream.registerConverter(new WellknownNameColorConverter());
             xstream.alias("Feature2DStyle", Feature2DStyle.class);
             xstream.toXML(styleNode, new FileOutputStream(file));
         } else {
@@ -163,6 +156,9 @@ public class Feature2DStyleIO {
             xstream.registerConverter(new DescriptionConverter());
             xstream.registerConverter(new UomConverter());
             xstream.registerConverter(new GeometryParameterConverter());
+            xstream.registerConverter(new RGBColorConverter());
+            xstream.registerConverter(new HexaColorConverter());
+            xstream.registerConverter(new WellknownNameColorConverter());
             xstream.alias("Feature2DStyle", Feature2DStyle.class);
             xstream.toXML(styleNode, new FileOutputStream(file));
         } else {

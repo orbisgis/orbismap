@@ -34,7 +34,13 @@
  */
 package org.orbisgis.style.color;
 
+import org.orbisgis.style.*;
+import org.orbisgis.style.parameter.NullParameterValue;
+import org.orbisgis.style.parameter.ParameterValue;
+
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A list of basic color names : aqua, black, blue, fuchsia, gray... 
@@ -42,11 +48,54 @@ import java.awt.Color;
  *
  * @author Erwan Bocher, CNRS (2020)
  */
-public enum WellknownNameColor {
+public class WellknownNameColor extends StyleNode implements IColor  {
 
-    BLACK, SILVER, GRAY, WHITE, MAROON, RED, PURPLE,
+    private ParameterValue wellknownName;
+
+
+    enum  ColorNames {BLACK, SILVER, GRAY, WHITE, MAROON, RED, PURPLE,
     FUCHSIA, GREEN, LIME, OLIVE, YELLOW, NAVY, BLUE,
-    TEAL, AQUA;
+    TEAL, AQUA};
+
+    private Uom uom;
+
+    public WellknownNameColor() {
+
+    }
+
+    @Override
+    public List<IStyleNode> getChildren() {
+        List<IStyleNode> ls = new ArrayList<IStyleNode>();
+        if (wellknownName != null && !(wellknownName instanceof NullParameterValue)) {
+            ls.add(wellknownName);
+        }
+        return ls;
+    }
+
+    /**
+     * Set a color name
+     *
+     * @param wellknownName
+     */
+    public void setWellknownName(ParameterValue wellknownName){
+        if (wellknownName == null) {
+            this.wellknownName = new NullParameterValue();
+            this.wellknownName.setParent(this);
+        } else {
+            this.wellknownName = wellknownName;
+            this.wellknownName.setParent(this);
+            this.wellknownName.format(String.class);
+        }
+    }
+
+    /**
+     * Return a color name
+     *
+     * @return
+     */
+    public ParameterValue getWellknownName() {
+        return wellknownName;
+    }
 
     /**
      * Build a new {@code Color} from a {@code String colorName}.
@@ -91,6 +140,26 @@ public enum WellknownNameColor {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Color getColor() {
+        return getColor((String) wellknownName.getValue());
+    }
+
+    @Override
+    public Uom getUom() {
+        return uom == null ? ((IUom) getParent()).getUom() : uom;
+    }
+
+    @Override
+    public void setUom(Uom uom) {
+        this.uom = uom;
+    }
+
+    @Override
+    public Uom getOwnUom() {
+        return uom;
     }
 
 }
