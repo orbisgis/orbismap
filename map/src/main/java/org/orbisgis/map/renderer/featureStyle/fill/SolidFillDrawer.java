@@ -63,12 +63,8 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
 
     @Override
     public Paint getPaint(SolidFill solidFill,MapTransform mt) throws ParameterException {
-        String colorValue = (String) solidFill.getColor().getValue();
-        Color color = null;
-        if (colorValue!= null) {
-            color = Color.decode(colorValue);
-        }
-        if (color == null) {
+       Color color = solidFill.getAWTColor();
+       if (color == null) {
             //We must cast the colours to int values, because we want to use
             //GRAY50 to build RGB value - As it equals 128.0f, we need a cast
             //because Color(float, float, float) needs values between 0 and 1.

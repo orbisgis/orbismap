@@ -34,6 +34,7 @@
  */
 package org.orbisgis.style.graphic;
 
+import org.orbisgis.style.graphic.graphicSize.GraphicSize;
 import org.orbisgis.style.IGraphic;
 import org.orbisgis.style.StyleNode;
 

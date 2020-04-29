@@ -21,6 +21,8 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>symcore</artifactId>
+    <packaging>bundle</packaging>
+    <version>1.0.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>YYYY-MM-dd</maven.build.timestamp.format>

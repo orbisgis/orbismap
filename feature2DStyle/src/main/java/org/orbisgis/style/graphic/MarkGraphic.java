@@ -35,6 +35,8 @@
  */
 package org.orbisgis.style.graphic;
 
+import org.orbisgis.style.graphic.graphicSize.Size;
+import org.orbisgis.style.graphic.graphicSize.GraphicSize;
 import org.orbisgis.style.ITransformNode;
 import java.awt.Color;
 import org.orbisgis.style.fill.Halo;

@@ -40,6 +40,7 @@ import org.orbisgis.style.Feature2DRule;
 import org.orbisgis.style.Feature2DStyle;
 import org.orbisgis.style.IRule;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.color.HexaColor;
 import org.orbisgis.style.fill.DensityFill;
 import org.orbisgis.style.fill.DotMapFill;
 import org.orbisgis.style.fill.GraphicFill;
@@ -47,7 +48,7 @@ import org.orbisgis.style.fill.HatchedFill;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.AnchorPosition;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.graphic.ViewBox;
+import org.orbisgis.style.graphic.graphicSize.ViewBox;
 import org.orbisgis.style.label.Label;
 import org.orbisgis.style.label.LineLabel;
 import org.orbisgis.style.label.PointLabel;
@@ -105,7 +106,9 @@ public class StylesForTest {
         Expression colorExpression = new Expression(""
                 + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
         SolidFill solidFill = new SolidFill();
-        solidFill.setColor(colorExpression);
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
+        solidFill.setColor(hexaColor);
         solidFill.setOpacity(1);
         ps.setFill(solidFill);
         lineSymbolizer.setStroke(ps);
@@ -323,7 +326,9 @@ public class StylesForTest {
         PenStroke psHatchedFill = new PenStroke();
         psHatchedFill.setWidth(new Literal(hatchWidth));
         SolidFill sfhatchedFill = new SolidFill();
-        sfhatchedFill.setColor(new Expression(colorExpression));
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(new Expression(colorExpression));
+        sfhatchedFill.setColor(hexaColor);
         sfhatchedFill.setOpacity(1.0f);
         psHatchedFill.setFill(sfhatchedFill);
         hatchedFill.setStroke(psHatchedFill);
@@ -351,7 +356,9 @@ public class StylesForTest {
                 + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END");
         Literal opacity = new Literal(1f);
         SolidFill solidFill = new SolidFill();
-        solidFill.setColor(colorExpression);
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
+        solidFill.setColor(hexaColor);
         solidFill.setOpacity(opacity);
         areaSymbolizer.setFill(solidFill);
         PenStroke ps = new PenStroke();
@@ -402,7 +409,9 @@ public class StylesForTest {
         Expression colorExpression = new Expression(""
                 + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END ");
         SolidFill solidFill = new SolidFill();
-        solidFill.setColor(colorExpression);
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
+        solidFill.setColor(hexaColor);
         solidFill.setOpacity(1.0f);
         pointLabel.setFill(solidFill);
         textSymbolizer.setLabel(pointLabel);
@@ -441,7 +450,9 @@ public class StylesForTest {
                 + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
         Literal opacity = new Literal(1f);
         SolidFill sfhatchedFill = new SolidFill();
-        sfhatchedFill.setColor(colorExpression);
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
+        sfhatchedFill.setColor(hexaColor);
         sfhatchedFill.setOpacity(1.0f);
         psHatchedFill.setFill(sfhatchedFill);
         densityFill.setHatches(psHatchedFill);
@@ -473,7 +484,9 @@ public class StylesForTest {
                 + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
         Literal opacity = new Literal(1f);
         SolidFill markFill = new SolidFill();
-        markFill.setColor(colorExpression);
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
+        markFill.setColor(hexaColor);
         markGraphic.setFill(markFill);
         markGraphic.setGraphicSize(new ViewBox(12f));
         densityFill.addGraphic(markGraphic);

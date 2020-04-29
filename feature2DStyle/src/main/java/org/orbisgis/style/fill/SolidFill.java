@@ -38,11 +38,13 @@ package org.orbisgis.style.fill;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import org.orbisgis.style.IColor;
 import org.orbisgis.style.IFill;
 import org.orbisgis.style.IStyleNode;
 import org.orbisgis.style.IUom;
 import org.orbisgis.style.StyleNode;
 import org.orbisgis.style.Uom;
+import org.orbisgis.style.color.HexaColor;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.parameter.ParameterValue;
@@ -56,7 +58,7 @@ import org.orbisgis.style.utils.ColorUtils;
  */
 public class SolidFill extends StyleNode implements IFill, IUom{
 
-    private ParameterValue color = new NullParameterValue();
+    private IColor color;
     private ParameterValue opacity = new NullParameterValue();
 
     /**
@@ -87,7 +89,7 @@ public class SolidFill extends StyleNode implements IFill, IUom{
      * @param color
      */
     public void setColor(String color) {
-        setColor(new Literal(color));
+        setColor(new HexaColor(color));
     }
 
     /**
@@ -96,7 +98,16 @@ public class SolidFill extends StyleNode implements IFill, IUom{
      * @param color
      */
     public void setColor(Color color) {
-        setColor(new Literal(ColorUtils.toHex(color)));
+        setColor(new HexaColor(ColorUtils.toHex(color)));
+    }
+
+
+    /**
+     * Return the color element
+     * @return
+     */
+    public IColor getColor() {
+        return color;
     }
 
     /**
@@ -104,15 +115,11 @@ public class SolidFill extends StyleNode implements IFill, IUom{
      *
      * @param color
      */
-    public void setColor(ParameterValue color) {
-        if (color == null) {
-            this.color = new NullParameterValue();
-            this.color.setParent(this);
-        } else {
+    public void setColor(IColor color) {
+        if (color != null) {
             this.color = color;
             this.color.setParent(this);
-            this.color.format(String.class);
-        }
+        } 
     }
 
     /**
@@ -120,8 +127,8 @@ public class SolidFill extends StyleNode implements IFill, IUom{
      *
      * @return
      */
-    public ParameterValue getColor() {
-        return color;
+    public Color getAWTColor() {
+        return color.getColor();
     }
 
     /**
@@ -192,7 +199,7 @@ public class SolidFill extends StyleNode implements IFill, IUom{
 
     @Override
     public void initDefault() {
-        this.color = new Literal("#000000");
+        this.color = new HexaColor("#000000");
         this.opacity = new Literal(1f);
     }
 }

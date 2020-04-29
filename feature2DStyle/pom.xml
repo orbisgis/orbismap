@@ -13,7 +13,8 @@
         <buildNumber>${maven.build.timestamp}</buildNumber>
         <site.basedir>${project.parent.basedir}</site.basedir>
     </properties>
-    
+    <packaging>bundle</packaging>
+    <version>1.0.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -29,13 +30,7 @@
             <artifactId>symcore</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>   
-        <dependency>
-            <groupId>org.orbisgis</groupId>
-            <artifactId>map-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>  
+        </dependency>
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>

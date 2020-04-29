@@ -39,14 +39,13 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import org.locationtech.jts.geom.Envelope;
 import org.orbisgis.map.layerModel.MapEnvelope;
 import org.orbisgis.map.layerModel.StyledLayer;
-import org.orbisgis.map.renderer.MapRenderer;
+import org.orbisgis.map.renderer.Map;
 import org.orbisgis.map.api.LayerException;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS;
@@ -56,7 +55,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.orbisgis.orbisdata.datamanager.jdbc.JdbcSpatialTable;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.label.RelativeOrientation;
 
@@ -88,7 +86,7 @@ public class DemoGaleryDrawer {
 
         StyledLayer layer = new StyledLayer(spatialTable);
         layer.setStyle(style);
-        MapRenderer mapRenderer = new MapRenderer();
+        Map mapRenderer = new Map();
         mapRenderer.addLayer(layer);
 
         if (extent != null) {
@@ -262,10 +260,10 @@ public class DemoGaleryDrawer {
     }
 
     @Test
-    public void testAreaSymbolizerAndPointSymbolizerVertexEnvelope(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testAreaSymbolizerAndPointSymbolizerVertexEnvelope(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, Exception {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
-        spatialTable.where("limit 1");
+        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.filter("limit 1");
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerAndPointSymbolizerVertex();
@@ -273,10 +271,10 @@ public class DemoGaleryDrawer {
     }
 
     @Test
-    public void testSymbolsWithLevelEnvelope(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testSymbolsWithLevelEnvelope(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, Exception {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
-        spatialTable.where("limit 1");
+        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.filter("limit 1");
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createSymbolsWithLevel();
@@ -284,10 +282,10 @@ public class DemoGaleryDrawer {
     }
 
     @Test
-    public void testDashedLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testDashedLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, Exception {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
-        spatialTable.where("limit 1");
+        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.filter("limit 1");
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createDashedLineSymbolizer(Color.yellow, 2, 0, "5 2");
@@ -295,10 +293,10 @@ public class DemoGaleryDrawer {
     }
 
     @Test
-    public void testDashedAreaSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testDashedAreaSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, Exception {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        JdbcSpatialTable spatialTable = (JdbcSpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
-        spatialTable.where("limit 1");
+        ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
+        spatialTable.filter("limit 1");
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createDashedAreaymbolizer(Color.yellow, 2, 0, "10");
@@ -306,28 +304,28 @@ public class DemoGaleryDrawer {
     }
 
     @Test
-    public void testGraphicStrokeLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testGraphicStrokeLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizer(Color.yellow, 2, 0, 10);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
     
     @Test
-    public void testGraphicStrokeLineSymbolizerNoOverlaps(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testGraphicStrokeLineSymbolizerNoOverlaps(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizerNoOverlaps(Color.BLACK, 2, 0, 10);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 
     @Test
-    public void testLineLabelTextSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testLineLabelTextSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createLineLabelTextSymbolizer();
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
 
     @Test
-    public void testLineLabelTextSymbolizerArea(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testLineLabelTextSymbolizerArea(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointLabelTextSymbolizer();
         template(inputFile, testInfo.getDisplayName(), style, true, null);
@@ -335,7 +333,7 @@ public class DemoGaleryDrawer {
     
     
     @Test
-    public void testMeteoColdFrontLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testMeteoColdFrontLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createMeteoColdFrontLineSymbolizer(2, 3, RelativeOrientation.NORMAL_UP);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
@@ -349,7 +347,7 @@ public class DemoGaleryDrawer {
     }
     
      @Test
-    public void testElevationBarLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException, SQLException {
+    public void testElevationBarLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createElevationBarLineSymbolizer(2, 1, RelativeOrientation.NORMAL_UP);
         template(inputFile, testInfo.getDisplayName(), style, true, null);

@@ -33,7 +33,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.style.graphic;
+package org.orbisgis.style.graphic.graphicSize;
 
 import java.util.ArrayList;
 import java.util.List;

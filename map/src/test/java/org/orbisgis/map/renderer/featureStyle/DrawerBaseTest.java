@@ -53,7 +53,7 @@ import org.orbisgis.map.layerModel.Rectangle2DDouble;
 import org.orbisgis.style.Uom;
 import org.orbisgis.style.fill.SolidFill;
 import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.graphic.Size;
+import org.orbisgis.style.graphic.graphicSize.Size;
 import org.orbisgis.style.parameter.Literal;
 import org.orbisgis.style.parameter.NullParameterValue;
 import org.orbisgis.style.stroke.PenStroke;
