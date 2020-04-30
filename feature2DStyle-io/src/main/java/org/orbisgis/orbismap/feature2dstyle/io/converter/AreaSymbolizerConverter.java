@@ -40,11 +40,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.Uom;
-import org.orbisgis.style.common.Description;
-import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.stroke.PenStroke;
-import org.orbisgis.style.symbolizer.AreaSymbolizer;
+import org.orbisgis.orbismap.style.Uom;
+import org.orbisgis.orbismap.style.common.Description;
+import org.orbisgis.orbismap.style.fill.SolidFill;
+import org.orbisgis.orbismap.style.stroke.PenStroke;
+import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 
 /**
  *

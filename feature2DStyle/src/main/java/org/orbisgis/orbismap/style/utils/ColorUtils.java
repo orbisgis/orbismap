@@ -279,48 +279,53 @@ public final class ColorUtils {
     }
 
     /**
+     * Class to parse a RGB string representation and return the ParameterValue for each
+     * color components
      *
      * @param stringRGB
      * @return
      */
     public static HashMap<String, ParameterValue> parseRGB(String stringRGB) {
-        HashMap<String, ParameterValue> map = new HashMap();
         final String rgbValue = stringRGB.trim().toLowerCase();
         if (!rgbValue.isEmpty()) {
+            HashMap<String, ParameterValue> map = new HashMap();
             if (rgbPatern == null) {
                 rgbPatern = Pattern.compile(PATTERN_RGB, Pattern.CASE_INSENSITIVE);
             }
             Matcher matcher = rgbPatern.matcher(rgbValue);
-            String red = matcher.group(1);
-            if (red != null) {
-                map.put("red", new Literal(Integer.valueOf(red)));
-            } else {
-                red = matcher.group(2);
+            if(matcher.matches()) {
+                String red = matcher.group(1);
                 if (red != null) {
-                    map.put("red", new Expression(red));
+                    map.put("red", new Literal(Integer.valueOf(red)));
+                } else {
+                    red = matcher.group(2);
+                    if (red != null) {
+                        map.put("red", new Expression(red));
+                    }
                 }
-            }
-            String green = matcher.group(3);
-            if (green != null) {
-                map.put("green", new Literal(Integer.valueOf(green)));
-            } else {
-                green = matcher.group(4);
+                String green = matcher.group(3);
                 if (green != null) {
-                    map.put("red", new Expression(green));
+                    map.put("green", new Literal(Integer.valueOf(green)));
+                } else {
+                    green = matcher.group(4);
+                    if (green != null) {
+                        map.put("red", new Expression(green));
+                    }
                 }
-            }
-            String blue = matcher.group(5);
-            if (blue != null) {
-                map.put("blue", new Literal(Integer.valueOf(blue)));
-            } else {
-                blue = matcher.group(6);
+                String blue = matcher.group(5);
                 if (blue != null) {
-                    map.put("blue", new Expression(blue));
+                    map.put("blue", new Literal(Integer.valueOf(blue)));
+                } else {
+                    blue = matcher.group(6);
+                    if (blue != null) {
+                        map.put("blue", new Expression(blue));
+                    }
                 }
+                return map;
             }
 
         }
-        return map;
+        return null;
 
     }
 

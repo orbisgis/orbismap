@@ -40,14 +40,34 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.Literal;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 public class ColorUtilsTests {
     @Test
-    public void parseRGBRepresentionTest() {
-        String rgbValue = "rgb(12,12,12)";
-        HashMap<String, ParameterValue> rgvValues = ColorUtils.parseRGB(rgbValue);
-        assertEquals(new Literal(12), rgvValues.get("red"));
+    public void parseRGBRepresentionTest1() {
+        String rgbValue = "rgb(12,120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertEquals(new Literal(12), rgbValues.get("red"));
+        assertEquals(new Literal(120), rgbValues.get("green"));
+        assertEquals(new Literal(11), rgbValues.get("blue"));
+    }
+
+    @Test
+    public void parseRGBRepresentionTest2() {
+        String rgbValue = "rgb(expression(the_color),120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertEquals(new Expression("the_color"), rgbValues.get("red"));
+        assertEquals(new Literal(120), rgbValues.get("green"));
+        assertEquals(new Literal(11), rgbValues.get("blue"));
+    }
+
+    @Test
+    public void parseRGBRepresentionTest3() {
+        String rgbValue = "rgb(120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertNull(rgbValues);
     }
 }

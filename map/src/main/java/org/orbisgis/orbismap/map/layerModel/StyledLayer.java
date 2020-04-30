@@ -64,6 +64,7 @@ public class StyledLayer extends AbstractLayer {
     public StyledLayer(ISpatialTable spatialTable, Feature2DStyle style) {
         super(spatialTable.getName());
         this.spatialTable = spatialTable;
+        this.style=style;
     }
 
     public Feature2DStyle getStyle() {

@@ -35,12 +35,12 @@
  */
 package org.orbisgis.orbismap.map.renderer.featureStyle
 
+import org.orbisgis.orbismap.map.layerModel.StyledLayer
+import org.orbisgis.orbismap.map.renderer.MapView
 import org.junit.jupiter.api.Test
-import org.orbisgis.map.layerModel.StyledLayer
-import org.orbisgis.map.renderer.MapView
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS
-import org.orbisgis.style.Feature2DStyle
+import org.orbisgis.orbismap.style.Feature2DStyle
 
 import java.awt.Color
 
@@ -66,10 +66,9 @@ class MapViewInActionsTests {
         MapView mapView = new MapView()
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0);
         StyledLayer styledLayer = new StyledLayer(spatialTable, style)
-        mapView << styledLayer
+        mapView.addLayer(styledLayer)
         mapView.draw();
         mapView.show();
     }
-
 
     }

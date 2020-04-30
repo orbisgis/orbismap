@@ -40,7 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.color.RGBColor;
+import org.orbisgis.orbismap.style.color.RGBColor;
 
 /**
  * @author Erwan Bocher, CNRS (2020)
@@ -52,28 +52,20 @@ public class RGBColorConverter implements Converter {
         RGBColor rgbColor = (RGBColor) value;
         if(rgbColor.usable()){
             writer.startNode("Color");
-            Feature2DStyleIO.marshalParameterValue("Red", rgbColor.getRed(), writer);
-            Feature2DStyleIO.marshalParameterValue("Green", rgbColor.getGreen(), writer);
-            Feature2DStyleIO.marshalParameterValue("Blue", rgbColor.getBlue(), writer);
+            StringBuilder sb=  new StringBuilder();
+            sb.append("rgb(");
+            sb.append(Feature2DStyleIO.getParameterValue(rgbColor.getRed())).append(",");
+            sb.append(Feature2DStyleIO.getParameterValue(rgbColor.getGreen())).append(",");
+            sb.append(Feature2DStyleIO.getParameterValue(rgbColor.getBlue())).append(")");
+            writer.setValue(sb.toString());
             writer.endNode();
         }
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext unmarshallingContext) {
-        RGBColor rgbColor = new RGBColor();
-        while (reader.hasMoreChildren()) {
-            reader.moveDown();
-            if ("red".equalsIgnoreCase(reader.getNodeName())) {
-                rgbColor.setRed(Feature2DStyleIO.createParameterValue(reader));
-            } else if ("green".equalsIgnoreCase(reader.getNodeName())) {
-                rgbColor.setGreen(Feature2DStyleIO.createParameterValue(reader));
-            } else if ("blue".equalsIgnoreCase(reader.getNodeName())) {
-                rgbColor.setBlue(Feature2DStyleIO.createParameterValue(reader));
-            }
-            reader.moveUp();
-        }
-        return rgbColor;
+
+        return null;
     }
 
     @Override

@@ -34,6 +34,8 @@
  */
 package org.orbisgis.orbismap.style.parameter;
 
+import java.util.Objects;
+
 /**
  * ParamaterValue to manage Expression
  * 
@@ -71,7 +73,21 @@ public class Expression extends ParameterValue {
     public void setValue(Object value) {
         this.value = value;
         this.checkValue(value);
-    }   
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Expression that = (Expression) o;
+        return expression.equals(that.expression) &&
+                reference.equals(that.reference);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), expression, value, reference);
+    }
 
     @Override
     public void format(Class dataType, String expressionDomain) {

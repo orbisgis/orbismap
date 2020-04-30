@@ -68,6 +68,7 @@ public class MapView implements IRenderer{
 
     public MapView() {
         this(800, 800);
+        init();
     }
 
     public MapView(int width, int height) {
@@ -197,8 +198,20 @@ public class MapView implements IRenderer{
         });
     }
 
+    /**
+     *
+     * @param envelope
+     */
     public void setEnvelope(MapEnvelope envelope) {
         mt.setExtent(envelope);
         mt.resizeImage(width, height);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public MapEnvelope getEnvelope( ) {
+        return mt.getExtent();
     }
 }

@@ -40,11 +40,14 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.color.HexaColor;
-import org.orbisgis.style.color.RGBColor;
-import org.orbisgis.style.color.WellknownNameColor;
-import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.parameter.Literal;
+import org.orbisgis.orbismap.style.color.HexaColor;
+import org.orbisgis.orbismap.style.color.RGBColor;
+import org.orbisgis.orbismap.style.color.WellknownNameColor;
+import org.orbisgis.orbismap.style.fill.SolidFill;
+import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
+import org.orbisgis.orbismap.style.utils.*;
+import java.util.HashMap;
 
 /**
  *
@@ -78,16 +81,21 @@ public class SolidFillConverter implements Converter {
                         solidFill.setColor(hexaColor);
                     }
                     else if(colorValue!=null && !colorValue.isEmpty()){
-                        if(reader.hasMoreChildren()){
-                            RGBColor color = (RGBColor) context.convertAnother(reader, RGBColor.class);
-                            solidFill.setColor(color);
+                        if(colorValue.startsWith("rgb")){
+                            HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(colorValue);
+                            if(rgbValues!=null){
+                                RGBColor rgbColor = new RGBColor();
+                                rgbColor.setRed(rgbValues.get("red"));
+                                rgbColor.setGreen(rgbValues.get("green"));
+                                rgbColor.setBlue(rgbValues.get("blue"));
+                            }
+                        }else{
+                            WellknownNameColor wellknownNameColor = new WellknownNameColor();
+                            wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValue(reader));
+                            solidFill.setColor(wellknownNameColor);
                         }
-                        WellknownNameColor wellknownNameColor = new WellknownNameColor();
-                        wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValue(reader));
-                        solidFill.setColor(wellknownNameColor);
                     }
                     else if(colorValue!=null && colorValue.toLowerCase().startsWith("expression")){
-
                         HexaColor hexaColor = new HexaColor();
                         hexaColor.setHexaColor(Feature2DStyleIO.createParameterValue(reader));
                         solidFill.setColor(hexaColor);

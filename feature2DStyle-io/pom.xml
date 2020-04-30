@@ -36,7 +36,7 @@
             <artifactId>slf4j-simple</artifactId>
         </dependency>        
         <dependency>
-            <groupId>org.orbisgis</groupId>
+            <groupId>org.orbisgis.orbismap</groupId>
             <artifactId>feature2DStyle</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>

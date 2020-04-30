@@ -165,6 +165,9 @@ public abstract class ParameterValue extends StyleNode implements IParameterValu
             return false;
         }
         ParameterValue other = (ParameterValue) o;
+        if(getValue()==null){
+            return false;
+        }
         if (!getValue().equals(other.getValue())) {
             return false;
         }

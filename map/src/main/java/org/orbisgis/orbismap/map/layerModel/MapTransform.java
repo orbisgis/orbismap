@@ -305,10 +305,16 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
     public void resizeImage(int width, int height) {
         int oldWidth = getWidth();
         int oldHeight = getHeight();
-        GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getDefaultConfiguration();
-        image = configuration.createCompatibleImage(width, height,
-                BufferedImage.TYPE_INT_ARGB);
+        boolean isHeadLess = GraphicsEnvironment.isHeadless();
+        if(isHeadLess) {
+            GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().
+                    getDefaultScreenDevice().getDefaultConfiguration();
+            image = configuration.createCompatibleImage(width, height,
+                    BufferedImage.TYPE_INT_ARGB);
+        }else{
+            image = new BufferedImage(width, height,
+                    BufferedImage.TYPE_INT_ARGB);
+        }
         calculateAffineTransform();
         listeners.forEach((listener) -> {
             listener.imageSizeChanged(oldWidth, oldHeight, this);
