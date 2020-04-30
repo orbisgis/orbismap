@@ -107,7 +107,7 @@ public class Literal extends ParameterValue {
     public void format(Class expectedDataType, String expressionDomain) {
         if (expectedDataType.isAssignableFrom(this.parameterDomain.getDataType())) {
             this.setDomain(expectedDataType, expressionDomain);
-        } else if (expectedDataType.isInstance(Float.class)) {
+        } else if (expectedDataType.isAssignableFrom(Float.class)) {
             if (getValue() instanceof String) {
                 this.setValue(Float.parseFloat((String) getValue()));
                 this.setDomain(expectedDataType, expressionDomain);
@@ -120,7 +120,7 @@ public class Literal extends ParameterValue {
             } else {
                 throw new RuntimeException("Cannot format the literal value to float");
             }
-        } else if (expectedDataType.isInstance(Double.class)) {
+        } else if (expectedDataType.isAssignableFrom(Double.class)) {
             if (getValue() instanceof String) {
                 this.setValue(Double.parseDouble((String) getValue()));
                 this.setDomain(expectedDataType, expressionDomain);
@@ -133,14 +133,14 @@ public class Literal extends ParameterValue {
             } else {
                 throw new RuntimeException("Cannot format the literal value to double");
             }
-        } else if (expectedDataType.isInstance(Integer.class)) {
+        } else if (expectedDataType.isAssignableFrom(Integer.class)) {
             if (getValue() instanceof String) {
                 this.setValue(Integer.parseInt((String) getValue()));
                 this.setDomain(expectedDataType, expressionDomain);
             } else {
                 throw new RuntimeException("Cannot format the literal value to int");
             }
-        } else if (expectedDataType.isInstance(Boolean.class)) {
+        } else if (expectedDataType.isAssignableFrom(Boolean.class)) {
             if (getValue() instanceof String) {
                 this.setValue(Boolean.parseBoolean((String) getValue()));
                 this.setDomain(expectedDataType, expressionDomain);

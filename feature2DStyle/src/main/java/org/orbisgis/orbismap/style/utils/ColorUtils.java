@@ -1,6 +1,6 @@
 /**
  * Feature2DStyle is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -13,21 +13,22 @@
  *
  * Feature2DStyle is distributed under LGPL 3 license.
  *
- * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488)
- * Copyright (C) 2015-2020 CNRS (Lab-STICC UMR CNRS 6285)
+ * Copyright (C) 2007-2014 CNRS (IRSTV FR CNRS 2488) Copyright (C) 2015-2020
+ * CNRS (Lab-STICC UMR CNRS 6285)
  *
  *
- * Feature2DStyle is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Feature2DStyle is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * Feature2DStyle is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with
- * Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Feature2DStyle. If not, see <http://www.gnu.org/licenses/>.
  *
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
@@ -37,7 +38,13 @@ package org.orbisgis.orbismap.style.utils;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.orbisgis.orbismap.style.parameter.Expression;
+import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
  *
@@ -57,6 +64,8 @@ public final class ColorUtils {
     private static final float DEGREES = 360.0f;
 
     private static Random rndGenerator;
+    private static Pattern rgbPatern;
+    private static String PATTERN_RGB = "rgb\\s*\\(\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*,\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*,\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*\\)";
 
     static {
         rndGenerator = new Random(13579);
@@ -267,6 +276,52 @@ public final class ColorUtils {
         int g = (int) (rndGenerator.nextFloat() * 255);
         int b = (int) (rndGenerator.nextFloat() * 255);
         return new Color(r, g, b);
-    }    
-   
+    }
+
+    /**
+     *
+     * @param stringRGB
+     * @return
+     */
+    public static HashMap<String, ParameterValue> parseRGB(String stringRGB) {
+        HashMap<String, ParameterValue> map = new HashMap();
+        final String rgbValue = stringRGB.trim().toLowerCase();
+        if (!rgbValue.isEmpty()) {
+            if (rgbPatern == null) {
+                rgbPatern = Pattern.compile(PATTERN_RGB, Pattern.CASE_INSENSITIVE);
+            }
+            Matcher matcher = rgbPatern.matcher(rgbValue);
+            String red = matcher.group(1);
+            if (red != null) {
+                map.put("red", new Literal(Integer.valueOf(red)));
+            } else {
+                red = matcher.group(2);
+                if (red != null) {
+                    map.put("red", new Expression(red));
+                }
+            }
+            String green = matcher.group(3);
+            if (green != null) {
+                map.put("green", new Literal(Integer.valueOf(green)));
+            } else {
+                green = matcher.group(4);
+                if (green != null) {
+                    map.put("red", new Expression(green));
+                }
+            }
+            String blue = matcher.group(5);
+            if (blue != null) {
+                map.put("blue", new Literal(Integer.valueOf(blue)));
+            } else {
+                blue = matcher.group(6);
+                if (blue != null) {
+                    map.put("blue", new Expression(blue));
+                }
+            }
+
+        }
+        return map;
+
+    }
+
 }
