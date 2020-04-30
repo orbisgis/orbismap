@@ -39,6 +39,8 @@ import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+
+import org.junit.jupiter.api.Disabled;
 import org.orbisgis.map.renderer.featureStyle.DrawerBaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -50,6 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Erwan Bocher, CNRS (2020)
  */
+//Disabled until call to GraphicsEnvironment is solved (java.awt.HeadlessException).
+@Disabled
 public class MarkGraphicDrawerTest extends DrawerBaseTest {
 
     @Test

@@ -35,6 +35,7 @@
  */
 package org.orbisgis.map.renderer.featureStyle.graphic;
 
+import org.junit.jupiter.api.Disabled;
 import org.orbisgis.map.renderer.featureStyle.DrawerBaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -48,6 +49,8 @@ import org.orbisgis.style.stroke.GraphicStroke;
  *
  * @author Erwan Bocher, CNRS (2020)
  */
+//Disabled until call to GraphicsEnvironment is solved (java.awt.HeadlessException).
+@Disabled
 public class GraphicStrokeDrawerTest extends DrawerBaseTest {
 
     @Test
