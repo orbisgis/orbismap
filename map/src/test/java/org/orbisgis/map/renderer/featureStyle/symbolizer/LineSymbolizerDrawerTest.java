@@ -36,6 +36,8 @@
 package org.orbisgis.map.renderer.featureStyle.symbolizer;
 
 import java.awt.Color;
+
+import org.junit.jupiter.api.Disabled;
 import org.orbisgis.map.renderer.featureStyle.DrawerBaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -53,6 +55,8 @@ import org.orbisgis.style.transform.Translate;
  *
  * @author Erwan Bocher, CNRS (2020)
  */
+//Disabled until call to GraphicsEnvironment is solved (java.awt.HeadlessException).
+@Disabled
 public class LineSymbolizerDrawerTest extends DrawerBaseTest {
 
     
