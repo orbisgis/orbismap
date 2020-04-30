@@ -4,17 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- The Basics -->
     <parent>
         <artifactId>orbismap</artifactId>
         <groupId>org.orbisgis</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.orbisgis</groupId>
+    <groupId>org.orbisgis.orbismap</groupId>
     <artifactId>map</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
+    <!-- Properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>YYYY-MM-dd</maven.build.timestamp.format>
@@ -22,6 +24,7 @@
         <site.basedir>${project.parent.basedir}</site.basedir>
     </properties>
 
+    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -32,25 +35,22 @@
             <artifactId>jdbc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.orbisgis</groupId>
+            <groupId>org.orbisgis.orbismap</groupId>
             <artifactId>symcore</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.orbisgis</groupId>
+            <groupId>org.orbisgis.orbismap</groupId>
             <artifactId>feature2DStyle</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.orbisgis</groupId>
+            <groupId>org.orbisgis.orbismap</groupId>
             <artifactId>map-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>3.1</version>
         </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
