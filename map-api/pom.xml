@@ -10,7 +10,7 @@
         <artifactId>orbismap</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>org.orbisgis</groupId>
+    <groupId>org.orbisgis.orbismap</groupId>
     <artifactId>map-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
