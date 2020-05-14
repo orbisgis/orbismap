@@ -45,14 +45,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import org.orbisgis.style.Feature2DStyle;
-import org.orbisgis.style.IFeatureSymbolizer;
-import org.orbisgis.style.StyleNode;
-import org.orbisgis.style.graphic.graphicSize.ViewBox;
-import org.orbisgis.style.parameter.Expression;
-import org.orbisgis.style.parameter.Literal;
-import org.orbisgis.style.parameter.NullParameterValue;
-import org.orbisgis.style.parameter.ParameterValue;
+import org.orbisgis.orbismap.style.Feature2DStyle;
+import org.orbisgis.orbismap.style.IFeatureSymbolizer;
+import org.orbisgis.orbismap.style.StyleNode;
+import org.orbisgis.orbismap.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.orbismap.style.parameter.Expression;
+import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.NullParameterValue;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
  *
@@ -273,5 +273,56 @@ public class Feature2DStyleIO {
             reader.moveUp();
         }
         return viewBox;
+    }
+
+    /**
+     * Return a string representation of the parameterValue
+     * @param parameterValue
+     * @return
+     */
+    public static String getParameterValue(ParameterValue parameterValue) {
+        if (parameterValue != null && !(parameterValue instanceof NullParameterValue)) {
+            StringBuilder sb= new StringBuilder();
+            if (parameterValue instanceof Literal) {
+                String valuetoWrite = String.valueOf(parameterValue.getValue());
+                if (!valuetoWrite.isEmpty()) {
+                    sb.append(valuetoWrite);
+                    return sb.toString();
+                }
+            } else if (parameterValue instanceof Expression) {
+                String valuetoWrite = String.valueOf(((Expression) parameterValue).getExpression());
+                if (!valuetoWrite.isEmpty()) {
+                    sb.append("expression(").append(valuetoWrite).append(")");
+                    return sb.toString();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Create a node element based on a name and add its value as a string representation
+     * @param parameterValue
+     * @return
+     */
+    public static void appendParameterValue(String fielName, ParameterValue parameterValue, HierarchicalStreamWriter writer) {
+        if(fielName!=null && !fielName.isEmpty())
+        if (parameterValue != null && !(parameterValue instanceof NullParameterValue)) {
+            if (parameterValue instanceof Literal) {
+                String valuetoWrite = String.valueOf(parameterValue.getValue());
+                if (!valuetoWrite.isEmpty()) {
+                    writer.startNode(fielName);
+                    writer.setValue(valuetoWrite);
+                    writer.endNode();
+                }
+            } else if (parameterValue instanceof Expression) {
+                String valuetoWrite = String.valueOf(((Expression) parameterValue).getExpression());
+                if (!valuetoWrite.isEmpty()) {
+                    writer.startNode(fielName);
+                    writer.setValue("Expression("+ valuetoWrite+")");
+                    writer.endNode();
+                }
+            }
+        }
     }
 }

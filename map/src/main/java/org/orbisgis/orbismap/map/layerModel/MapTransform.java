@@ -40,13 +40,10 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
@@ -93,12 +90,7 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
 
     public MapTransform() {
         adjustExtent = true;
-        if (!GraphicsEnvironment.isHeadless()) {
-            this.dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-        } else {
-            LOGGER.trace("Headless graphics environment, set current DPI to 96.0");
-            this.dpi = DEFAULT_DPI;
-        }
+        this.dpi = DEFAULT_DPI;
     }
 
     /**
@@ -305,10 +297,8 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
     public void resizeImage(int width, int height) {
         int oldWidth = getWidth();
         int oldHeight = getHeight();
-        GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getDefaultConfiguration();
-        image = configuration.createCompatibleImage(width, height,
-                BufferedImage.TYPE_INT_ARGB);
+        image = new BufferedImage(width, height,
+                    BufferedImage.TYPE_INT_ARGB);
         calculateAffineTransform();
         listeners.forEach((listener) -> {
             listener.imageSizeChanged(oldWidth, oldHeight, this);

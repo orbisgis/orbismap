@@ -44,8 +44,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors; 
-import org.orbisgis.style.common.Description;
-import org.orbisgis.style.common.Keywords;
+import org.orbisgis.orbismap.style.common.Description;
+import org.orbisgis.orbismap.style.common.Keywords;
 
 /**
  *

@@ -40,7 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.color.HexaColor;
+import org.orbisgis.orbismap.style.color.HexaColor;
 
 /**
  * @author Erwan Bocher, CNRS (2020)
@@ -50,14 +50,12 @@ public class HexaColorConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext marshallingContext) {
         HexaColor hexaColor = (HexaColor) value;
-        Feature2DStyleIO.marshalParameterValue("Color", hexaColor.getHexaColor(), writer);
+        Feature2DStyleIO.appendParameterValue( "Color", hexaColor.getHexaColor(), writer);
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext unmarshallingContext) {
-        HexaColor hexaColor = new HexaColor();
-        hexaColor.setHexaColor(Feature2DStyleIO.createParameterValue(reader));
-        return hexaColor;
+        return null;
     }
 
     @Override

@@ -38,24 +38,24 @@ package org.orbisgis.orbismap.feature2dstyle.io;
 import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
-import org.orbisgis.style.Feature2DStyle;
+import org.orbisgis.orbismap.style.Feature2DStyle;
 
 import org.junit.jupiter.api.TestInfo;
-import org.orbisgis.style.Feature2DRule;
-import org.orbisgis.style.IRule;
-import org.orbisgis.style.color.HexaColor;
-import org.orbisgis.style.color.RGBColor;
-import org.orbisgis.style.color.WellknownNameColor;
-import org.orbisgis.style.fill.SolidFill;
-import org.orbisgis.style.graphic.MarkGraphic;
-import org.orbisgis.style.graphic.graphicSize.Size;
-import org.orbisgis.style.graphic.graphicSize.ViewBox;
-import org.orbisgis.style.parameter.Expression;
-import org.orbisgis.style.parameter.Literal;
-import org.orbisgis.style.parameter.geometry.GeometryParameter;
-import org.orbisgis.style.stroke.PenStroke;
-import org.orbisgis.style.symbolizer.LineSymbolizer;
-import org.orbisgis.style.symbolizer.PointSymbolizer;
+import org.orbisgis.orbismap.style.Feature2DRule;
+import org.orbisgis.orbismap.style.IRule;
+import org.orbisgis.orbismap.style.color.HexaColor;
+import org.orbisgis.orbismap.style.color.RGBColor;
+import org.orbisgis.orbismap.style.color.WellknownNameColor;
+import org.orbisgis.orbismap.style.fill.SolidFill;
+import org.orbisgis.orbismap.style.graphic.MarkGraphic;
+import org.orbisgis.orbismap.style.graphic.graphicSize.Size;
+import org.orbisgis.orbismap.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.orbismap.style.parameter.Expression;
+import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.orbismap.style.stroke.PenStroke;
+import org.orbisgis.orbismap.style.symbolizer.LineSymbolizer;
+import org.orbisgis.orbismap.style.symbolizer.PointSymbolizer;
 
 /**
  *
@@ -207,7 +207,7 @@ public class Feature2DStyleWriterReaderTest {
 
         
         //TODO : to be finished
-        //Feature2DStyle output_fds = Feature2DStyleIO.fromXML(outputStyleFile);
+        Feature2DStyle output_fds = Feature2DStyleIO.fromXML(outputStyleFile);
 
         //CompareStyleVisitor cp = new CompareStyleVisitor();
         //cp.visitSymbolizerNode(inputStyle, output_fds);

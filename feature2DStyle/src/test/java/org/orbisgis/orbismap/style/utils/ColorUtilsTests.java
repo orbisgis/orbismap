@@ -1,6 +1,6 @@
 /**
  * Feature2DStyle is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -32,69 +32,42 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.orbismap.style.parameter;
+package org.orbisgis.orbismap.style.utils;
 
-import java.util.Objects;
+import org.junit.jupiter.api.Test;
 
-/**
- * ParamaterValue to manage Expression
- * 
- * @author Erwan Bocher, CNRS (2010-2020)
- */
-public class Expression extends ParameterValue {
 
-    private final String expression;
-    private Object value;
-    private String reference = "";
+import java.util.HashMap;
 
-    public Expression(String expression) {
-        this.expression = expression;
-        this.setLiteral(false);
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.orbisgis.orbismap.style.parameter.Expression;
+import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
+
+public class ColorUtilsTests {
+    @Test
+    public void parseRGBRepresentionTest1() {
+        String rgbValue = "rgb(12,120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertEquals(new Literal(12), rgbValues.get("red"));
+        assertEquals(new Literal(120), rgbValues.get("green"));
+        assertEquals(new Literal(11), rgbValues.get("blue"));
     }
 
-    @Override
-    public Object getValue() {
-        return value;
+    @Test
+    public void parseRGBRepresentionTest2() {
+        String rgbValue = "rgb(expression(the_color),120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertEquals(new Expression("the_color"), rgbValues.get("red"));
+        assertEquals(new Literal(120), rgbValues.get("green"));
+        assertEquals(new Literal(11), rgbValues.get("blue"));
     }
 
-    public String getExpression() {
-        return expression;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-        this.checkValue(value);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Expression that = (Expression) o;
-        return expression.equals(that.expression) &&
-                reference.equals(that.reference);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), expression, value, reference);
-    }
-
-    @Override
-    public void format(Class dataType, String expressionDomain) {
-        this.setDomain(dataType, expressionDomain);
-    }
-
-    @Override
-    public void initDefault() {
+    @Test
+    public void parseRGBRepresentionTest3() {
+        String rgbValue = "rgb(120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertNull(rgbValues);
     }
 }

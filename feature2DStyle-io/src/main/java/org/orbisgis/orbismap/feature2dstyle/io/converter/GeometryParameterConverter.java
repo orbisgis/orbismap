@@ -39,7 +39,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.orbisgis.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
 
 /**
  * 

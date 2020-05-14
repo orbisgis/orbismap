@@ -40,8 +40,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.style.Feature2DRule;
-import org.orbisgis.style.Feature2DStyle;
+import org.orbisgis.orbismap.style.Feature2DRule;
+import org.orbisgis.orbismap.style.Feature2DStyle;
 
 /**
  *
