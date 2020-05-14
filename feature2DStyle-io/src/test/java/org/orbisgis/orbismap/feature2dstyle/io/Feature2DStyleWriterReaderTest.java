@@ -204,7 +204,6 @@ public class Feature2DStyleWriterReaderTest {
         }
         Feature2DStyleIO.toXML(inputStyle, outputStyleFile);        
         assertTrue(outputStyleFile.exists());
-
         
         //TODO : to be finished
         Feature2DStyle output_fds = Feature2DStyleIO.fromXML(outputStyleFile);

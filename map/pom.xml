@@ -44,6 +44,10 @@
         </dependency>
         <dependency>
             <groupId>org.orbisgis.orbismap</groupId>
+            <artifactId>feature2DStyle-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis.orbismap</groupId>
             <artifactId>map-api</artifactId>
         </dependency>
         <dependency>

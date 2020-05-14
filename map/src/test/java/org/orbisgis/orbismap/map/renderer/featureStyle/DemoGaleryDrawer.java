@@ -107,7 +107,8 @@ public class DemoGaleryDrawer {
 
     @Test
     public void testAreaSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
-        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+       // String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        String inputFile = "/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }
@@ -143,6 +144,7 @@ public class DemoGaleryDrawer {
     @Test
     public void testLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        inputFile ="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";
         Feature2DStyle style = StylesForTest.createLineSymbolizer(Color.BLACK, 1, 0, Uom.PX);
         template(inputFile, testInfo.getDisplayName(), style, true, null);
     }

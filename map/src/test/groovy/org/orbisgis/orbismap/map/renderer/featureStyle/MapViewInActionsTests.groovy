@@ -46,7 +46,6 @@ import java.awt.Color
 
 import static org.junit.jupiter.api.Assertions.*
 
-import java.sql.SQLException;
 
 
 class MapViewInActionsTests {
@@ -66,7 +65,20 @@ class MapViewInActionsTests {
         MapView mapView = new MapView()
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0);
         StyledLayer styledLayer = new StyledLayer(spatialTable, style)
-        mapView.addLayer(styledLayer)
+        mapView << styledLayer
+        mapView.draw();
+        mapView.show();
+    }
+
+    @Test
+    void mapViewReadStyle() throws Exception {
+        H2GIS h2GIS = H2GIS.open("./target/mapview")
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        String inputStyle = new File(this.getClass().getResource("landcover2000_style.se").toURI()).getAbsolutePath();
+        ISpatialTable spatialTable = h2GIS.link(new File(inputFile), "LANDCOVER", true)
+        MapView mapView = new MapView()
+        StyledLayer styledLayer = Feature2DStyleIO.fromXML(new File(inputStyle));
+        mapView << styledLayer
         mapView.draw();
         mapView.show();
     }

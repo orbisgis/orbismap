@@ -95,7 +95,7 @@ public final class MapContext implements IMapContext<Description, MapEnvelope> {
     }
 
     @Override
-    public void add(ILayer layer) throws LayerException {
+    public void add(ILayer layer)  {
          getLayerModel().add(layer);
     }
 
