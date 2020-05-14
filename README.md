@@ -1,7 +1,7 @@
 # OrbisMap
 
 OrbisMap is POC about the SymCore specification implementation.
-OrbisMap intends to propose a Feature 2D Style model with two encoding in JSON and XML.
+OrbisMap intends to propose a Feature 2D Style model with two encodings in JSON and XML.
 The basic rendering engine called MapView is implemented to draw the symbology elements describe in a Feature2DStyle model.
 
 Note that OrbisMap is under active development so the API is moving.
