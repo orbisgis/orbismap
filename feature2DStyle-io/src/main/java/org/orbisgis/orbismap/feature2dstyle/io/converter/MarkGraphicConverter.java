@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.fill.Halo;
 import org.orbisgis.orbismap.style.fill.SolidFill;
@@ -59,10 +60,9 @@ public class MarkGraphicConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         MarkGraphic markGraphic = (MarkGraphic) value;
-        writer.startNode("MarkGraphic");
-        Feature2DStyleIO.marshalParameterValue("WellKnownName", markGraphic.getWellKnownName(), writer);        
+        writer.startNode(Feature2DStyleTerms.MARKGRAPHIC);
+        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.WELLKNOWNNAME, markGraphic.getWellKnownName(), writer);
         Feature2DStyleIO.convertAnother(mc, markGraphic.getGraphicSize());
-        Feature2DStyleIO.convertAnother(mc, markGraphic.getStroke());
         Feature2DStyleIO.convertAnother(mc, markGraphic.getStroke());
         Feature2DStyleIO.convertAnother(mc, markGraphic.getFill());
         Feature2DStyleIO.convertAnother(mc, markGraphic.getHalo());
@@ -75,26 +75,26 @@ public class MarkGraphicConverter implements Converter {
         MarkGraphic symbolizer =  new MarkGraphic();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
-            if ("uom".equalsIgnoreCase(reader.getNodeName())) {
+            if (Feature2DStyleTerms.UOM.equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);
                 symbolizer.setUom(uom);
             }
-            else if ("penstroke".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.PENSTROKE.equalsIgnoreCase(reader.getNodeName())) {
                 PenStroke penStroke = (PenStroke) context.convertAnother(reader, PenStroke.class);
                 symbolizer.setStroke(penStroke);
             }
-            else if ("solidfill".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.SOLIDFILL.equalsIgnoreCase(reader.getNodeName())) {
                 SolidFill fill = (SolidFill) context.convertAnother(reader, SolidFill.class);
                 symbolizer.setFill(fill);
             }
-            else if ("halo".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.HALO.equalsIgnoreCase(reader.getNodeName())) {
                 Halo halo = (Halo) context.convertAnother(reader, Halo.class);
                 symbolizer.setHalo(halo);
             }
-             else if ("wellKnownname".equalsIgnoreCase(reader.getNodeName())) {
+             else if (Feature2DStyleTerms.WELLKNOWNNAME.equalsIgnoreCase(reader.getNodeName())) {
                 symbolizer.setWellKnownName(Feature2DStyleIO.createParameterValue(reader));
             }
-             else if ("ViewBox".equalsIgnoreCase(reader.getNodeName())) {     
+             else if (Feature2DStyleTerms.VIEWBOX.equalsIgnoreCase(reader.getNodeName())) {
                 ViewBox viewBox = (ViewBox) context.convertAnother(reader, ViewBox.class);
                 symbolizer.setGraphicSize(viewBox);
             }

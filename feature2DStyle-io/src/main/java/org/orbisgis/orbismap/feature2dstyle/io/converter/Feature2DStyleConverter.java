@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Feature2DRule;
 import org.orbisgis.orbismap.style.Feature2DStyle;
 
@@ -58,17 +59,13 @@ public class Feature2DStyleConverter implements Converter {
             Feature2DStyle feature2DStyle = (Feature2DStyle) value;
             String name = feature2DStyle.getName();
             if (name != null) {
-                writer.startNode("Name");
+                writer.startNode(Feature2DStyleTerms.NAME);
                 writer.setValue(name);
-                writer.endNode();
-            }
+                writer.endNode();            }
             Feature2DStyleIO.convertAnother(mc,feature2DStyle.getDescription());
-
-            for (Feature2DRule symbolizer : feature2DStyle.getRules()) {
-
-                Feature2DStyleIO.convertAnother(mc,symbolizer);
+            for (Feature2DRule feature2DRule : feature2DStyle.getRules()) {
+                Feature2DStyleIO.convertAnother(mc,feature2DRule);
             }
-
         }
     }
 
@@ -77,11 +74,11 @@ public class Feature2DStyleConverter implements Converter {
         Feature2DStyle fs = new Feature2DStyle();
         while (reader.hasMoreChildren()) {
              reader.moveDown();             
-             if("rule".equalsIgnoreCase(reader.getNodeName())){
+             if(Feature2DStyleTerms.RULE.equalsIgnoreCase(reader.getNodeName())){
                  Feature2DRule feature2DRule = (Feature2DRule) context.convertAnother(reader, Feature2DRule.class);
                  fs.addRule(feature2DRule);
              }
-             else if("name".equalsIgnoreCase(reader.getNodeName())){
+             else if(Feature2DStyleTerms.NAME.equalsIgnoreCase(reader.getNodeName())){
                  fs.setName(reader.getValue());
              }
              reader.moveUp();

@@ -35,6 +35,7 @@
  */
 package org.orbisgis.orbismap.map.renderer.featureStyle
 
+import org.junit.jupiter.api.Disabled
 import org.orbisgis.orbismap.map.layerModel.StyledLayer
 import org.orbisgis.orbismap.map.renderer.MapView
 import org.junit.jupiter.api.Test
@@ -50,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.*
 
 class MapViewInActionsTests {
 
+    @Disabled
     @Test
     void createEmptyMapView() throws Exception {
         MapView mapView = new MapView()
@@ -57,6 +59,7 @@ class MapViewInActionsTests {
         //TODO : assertEquals(0, mapView.layers.size)
     }
 
+    @Disabled
     @Test
     void createMapView() throws Exception {
         H2GIS h2GIS = H2GIS.open("./target/mapview")
@@ -70,6 +73,7 @@ class MapViewInActionsTests {
         mapView.show();
     }
 
+    @Disabled
     @Test
     void mapViewReadStyle() throws Exception {
         H2GIS h2GIS = H2GIS.open("./target/mapview")

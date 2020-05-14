@@ -1,6 +1,6 @@
 /**
  * Feature2DStyle-IO is part of the OrbisGIS platform
- * 
+ *
  * OrbisGIS is a java GIS application dedicated to research in GIScience.
  * OrbisGIS is developed by the GIS group of the DECIDE team of the
  * Lab-STICC CNRS laboratory, see <http://www.lab-sticc.fr/>.
@@ -32,42 +32,36 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.orbismap.feature2dstyle.io.converter;
-
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
-import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
+package org.orbisgis.orbismap.feature2dstyle.io;
 
 /**
- * Geometry converter
- * 
- * @author Erwan Bocher, CNRS (2020)
+ * List of terms used by Feature2DStyle model
+ * @author Erwan Bocher, CNRS (2010-2020)
  */
-public class GeometryParameterConverter implements Converter {
+public interface Feature2DStyleTerms {
 
-    public GeometryParameterConverter() {
-    }
+    String FEATURE2DSTYLE = "Feature2DStyle";
+    String RULE = "Rule";
+    String NAME = "Name";
+    String POINTSYMBOLIZER = "PointSymbolizer";
+    String LINESYMBOLIZER = "LineSymbolizer";
+    String AREASYMBOLIZER = "AreaSymbolizer";
+    String TEXTSYMBOLIZER = "TextSymbolizer";
 
-    @Override
-    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        GeometryParameter geometryParameter = (GeometryParameter) value;
-        writer.startNode(Feature2DStyleTerms.GEOMETRY);
-        writer.setValue(geometryParameter.getExpression());
-        writer.endNode();
-    }
-
-    @Override
-    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext uc) {
-        return null;
-    }
-
-    @Override
-    public boolean canConvert(Class type) {
-        return type.equals(GeometryParameter.class);
-    }
-
+    String FILTER = "Filter" ;
+    String MAXSCALEDENOMINATOR = "MaxScaleDenominator";
+    String MINSCALEDENOMINATOR = "MinScaleDenominator";
+    String LEVEL = "Level";
+    String ONVERTEX = "OnVertex" ;
+    String UOM = "Uom";
+    String GEOMETRY = "Geometry";
+    String DESCRIPTION ="Description" ;
+    String MARKGRAPHIC = "MarkGraphic";
+    String WELLKNOWNNAME = "WellKnownName";
+    String PENSTROKE = "PenStroke";
+    String SOLIDFILL = "SolidFill";
+    String HALO = "Halo";
+    String VIEWBOX = "ViewBox";
+    String PERPENDICULAROFFSET = "PerpendicularOffset";
+    String SIZE = "Size";
 }

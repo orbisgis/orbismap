@@ -40,6 +40,7 @@ import org.orbisgis.orbismap.style.Feature2DStyle;
 import org.orbisgis.orbismap.map.api.IProgressMonitor;
 import org.orbisgis.orbismap.map.api.LayerException;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbismap.style.StyleFactory;
 
 /**
  *

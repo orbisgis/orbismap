@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.common.Description;
 import org.orbisgis.orbismap.style.fill.SolidFill;
@@ -47,8 +48,8 @@ import org.orbisgis.orbismap.style.stroke.PenStroke;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 
 /**
- *
- * @author ebocher
+ * AreaSymbolizer converter
+ * @author ERWAN Bocher, CNRS (2020)
  */
 public class AreaSymbolizerConverter implements Converter {
 
@@ -58,7 +59,7 @@ public class AreaSymbolizerConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
             AreaSymbolizer areaSymbolizer = (AreaSymbolizer) value;  
-            writer.startNode("AreaSymbolizer");
+            writer.startNode(Feature2DStyleTerms.AREASYMBOLIZER);
             Feature2DStyleIO.marshalSymbolizerMetadata(areaSymbolizer, writer, mc);
             Feature2DStyleIO.convertAnother(mc,areaSymbolizer.getStroke());
             Feature2DStyleIO.convertAnother(mc,areaSymbolizer.getFill());
@@ -70,31 +71,31 @@ public class AreaSymbolizerConverter implements Converter {
            AreaSymbolizer areaSymbolizer =  new AreaSymbolizer();
            while (reader.hasMoreChildren()) {
             reader.moveDown();            
-            if ("name".equalsIgnoreCase(reader.getNodeName())) {
+            if (Feature2DStyleTerms.NAME.equalsIgnoreCase(reader.getNodeName())) {
                 areaSymbolizer.setName(reader.getValue());
             }
-            else if ("level".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.LEVEL.equalsIgnoreCase(reader.getNodeName())) {
                 areaSymbolizer.setLevel(Integer.parseInt(reader.getValue()));
             }
-            else if ("perpendicularOffset".equalsIgnoreCase(reader.getNodeName())) {                
+            else if (Feature2DStyleTerms.PERPENDICULAROFFSET.equalsIgnoreCase(reader.getNodeName())) {
                 areaSymbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader));
             }
-             else if ("uom".equalsIgnoreCase(reader.getNodeName())) {
+             else if (Feature2DStyleTerms.UOM.equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);
                 areaSymbolizer.setUom(uom);
             }
-            else if ("geometry".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.GEOMETRY.equalsIgnoreCase(reader.getNodeName())) {
                 areaSymbolizer.setGeometryParameter(reader.getValue());
             }
-            else if ("description".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.DESCRIPTION.equalsIgnoreCase(reader.getNodeName())) {
                 Description description = (Description) context.convertAnother(reader, Description.class);
                 areaSymbolizer.setDescription(description);
             }            
-            else if ("solidfill".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.SOLIDFILL.equalsIgnoreCase(reader.getNodeName())) {
                 SolidFill fill = (SolidFill) context.convertAnother(reader, SolidFill.class);
                 areaSymbolizer.setFill(fill);
             }
-            else if ("penstroke".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.PENSTROKE.equalsIgnoreCase(reader.getNodeName())) {
                 PenStroke penStroke = (PenStroke) context.convertAnother(reader, PenStroke.class);
                 areaSymbolizer.setStroke(penStroke);
             }
