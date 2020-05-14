@@ -40,6 +40,7 @@ import org.orbisgis.orbismap.style.Feature2DStyle;
 import org.orbisgis.orbismap.map.api.IProgressMonitor;
 import org.orbisgis.orbismap.map.api.LayerException;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbismap.style.StyleFactory;
 
 /**
  *
@@ -54,11 +55,21 @@ public class StyledLayer extends AbstractLayer {
     public StyledLayer(String name, ISpatialTable spatialTable) {
         super(name);
         this.spatialTable = spatialTable;
+        initStyle();
     }
 
     public StyledLayer(ISpatialTable spatialTable) {
         super(spatialTable.getName());
         this.spatialTable = spatialTable;
+        initStyle();
+    }
+
+    /**
+     * Create a default style
+     * TODO : create the style according the geometry type
+     */
+    private void initStyle() {        
+        this.style = StyleFactory.createPointSymbolizer();
     }
 
     public StyledLayer(ISpatialTable spatialTable, Feature2DStyle style) {
@@ -91,6 +102,7 @@ public class StyledLayer extends AbstractLayer {
         }
     }
 
+    //TODO : Find in the style the geom used to compute the good envelope.
     @Override
     public MapEnvelope getEnvelope() {
         MapEnvelope cachedEnvelope = envelope;
@@ -99,6 +111,5 @@ public class StyledLayer extends AbstractLayer {
             envelope = cachedEnvelope;
         }
         return cachedEnvelope;
-
     }
 }

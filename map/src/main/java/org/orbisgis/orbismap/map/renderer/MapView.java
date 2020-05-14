@@ -35,6 +35,7 @@
 package org.orbisgis.orbismap.map.renderer;
 
 import java.awt.Color;
+
 import org.orbisgis.orbismap.map.api.IRenderer;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -47,18 +48,20 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import org.locationtech.jts.geom.Envelope;
+import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
 import org.orbisgis.orbismap.map.layerModel.MapContext;
 import org.orbisgis.orbismap.map.layerModel.MapEnvelope;
 import org.orbisgis.orbismap.map.api.ILayer;
 import org.orbisgis.orbismap.map.layerModel.MapTransform;
 import org.orbisgis.orbismap.map.utils.progress.NullProgressMonitor;
 import org.orbisgis.orbismap.map.api.LayerException;
+import org.orbisgis.orbismap.map.layerModel.StyledLayer;
 
 /**
  *
  * @author Erwan Bocher, CNRS
  */
-public class MapView implements IRenderer{
+public class MapView  implements IRenderer{
 
     int width = 800;
     int height = 800;
@@ -68,16 +71,11 @@ public class MapView implements IRenderer{
 
     public MapView() {
         this(800, 800);
-        init();
     }
 
     public MapView(int width, int height) {
         this.width = width;
         this.height = height;
-        init();
-    }
-
-    final void init() {
         mc = new MapContext();
         mt = new MapTransform();
     }
@@ -143,7 +141,8 @@ public class MapView implements IRenderer{
     public boolean save(String filePath) throws IOException {
         return save(filePath, true);
     }
-    
+
+
     /**
      * 
      * @param filePath
@@ -208,10 +207,45 @@ public class MapView implements IRenderer{
     }
 
     /**
+     * 
+     * @return 
+     */
+    public MapContext getMapContext() {
+        return mc;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public MapTransform getMapTransform() {
+        return mt;
+    }
+
+    /**
      *
      * @return
      */
     public MapEnvelope getEnvelope( ) {
         return mt.getExtent();
     }
+    
+    
+    
+     /**
+     * Method to overload the leftShift operator in groovy context
+     *
+     * Use it as mapview << layer to add a new layer in the mapview
+     * @param object
+     */
+    public void leftShift(Object object){
+        if(object!=null && object instanceof ISpatialTable){
+            mc.add(new StyledLayer((ISpatialTable) object));
+        }
+        else if(object!=null && object instanceof StyledLayer){
+            mc.add((StyledLayer) object);
+        }
+    }
+
+
 }

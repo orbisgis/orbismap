@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Feature2DRule;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
@@ -59,24 +60,24 @@ public class Feature2DRuleConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         Feature2DRule feature2DRule = (Feature2DRule) value;        
-        writer.startNode("Rule");
+        writer.startNode(Feature2DStyleTerms.RULE);
         String name = feature2DRule.getName();
         if (name != null) {
-            writer.startNode("Name");
+            writer.startNode(Feature2DStyleTerms.NAME);
             writer.setValue(name);
             writer.endNode();
         }
         Feature2DStyleIO.convertAnother(mc, feature2DRule.getDescription());        
-        Feature2DStyleIO.marshalParameterValue("Filter", feature2DRule.getFilter(), writer);
+        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.FILTER, feature2DRule.getFilter(), writer);
         Double maxScale = feature2DRule.getMaxScaleDenom();
         if (maxScale != null) {
-            writer.startNode("MaxScaleDenominator");
+            writer.startNode(Feature2DStyleTerms.MAXSCALEDENOMINATOR);
             writer.setValue(String.valueOf(maxScale));
             writer.endNode();
         }
         Double minScale = feature2DRule.getMinScaleDenom();        
         if (minScale != null) {
-            writer.startNode("MinScaleDenominator");
+            writer.startNode(Feature2DStyleTerms.MINSCALEDENOMINATOR);
             writer.setValue(String.valueOf(minScale));
             writer.endNode();
         }        
@@ -92,22 +93,22 @@ public class Feature2DRuleConverter implements Converter {
         Feature2DRule feature2DRule = new Feature2DRule();
         while (reader.hasMoreChildren()) {
             reader.moveDown();            
-            if ("name".equalsIgnoreCase(reader.getNodeName())) {
+            if (Feature2DStyleTerms.NAME.equalsIgnoreCase(reader.getNodeName())) {
                 feature2DRule.setName(reader.getValue());
             }
-            else if ("areasymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.AREASYMBOLIZER.equalsIgnoreCase(reader.getNodeName())) {
                 AreaSymbolizer symbolizer = (AreaSymbolizer) context.convertAnother(reader, AreaSymbolizer.class);
                 feature2DRule.addSymbolizer(symbolizer);
             }
-            else if ("linesymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.LINESYMBOLIZER.equalsIgnoreCase(reader.getNodeName())) {
                 LineSymbolizer symbolizer = (LineSymbolizer) context.convertAnother(reader, LineSymbolizer.class);
                 feature2DRule.addSymbolizer(symbolizer);
             }
-            else if ("pointsymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.POINTSYMBOLIZER.equalsIgnoreCase(reader.getNodeName())) {
                 PointSymbolizer symbolizer = (PointSymbolizer) context.convertAnother(reader, PointSymbolizer.class);
                 feature2DRule.addSymbolizer(symbolizer);
             }
-            else if ("textsymbolizer".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.TEXTSYMBOLIZER.equalsIgnoreCase(reader.getNodeName())) {
                 TextSymbolizer symbolizer = (TextSymbolizer) context.convertAnother(reader, TextSymbolizer.class);
                 feature2DRule.addSymbolizer(symbolizer);
             }

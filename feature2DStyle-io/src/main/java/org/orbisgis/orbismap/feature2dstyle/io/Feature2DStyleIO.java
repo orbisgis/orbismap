@@ -169,23 +169,23 @@ public class Feature2DStyleIO {
     /**
      * Method to marshall a parameter value
      *
-     * @param fielName
+     * @param nodeName
      * @param parameterValue
      * @param writer
      */
-    public static void marshalParameterValue(String fielName, ParameterValue parameterValue, HierarchicalStreamWriter writer) {
+    public static void marshalParameterValue(String nodeName, ParameterValue parameterValue, HierarchicalStreamWriter writer) {
         if (parameterValue != null && !(parameterValue instanceof NullParameterValue)) {
             if (parameterValue instanceof Literal) {
                 String valuetoWrite = String.valueOf(parameterValue.getValue());
                 if (!valuetoWrite.isEmpty()) {
-                    writer.startNode(fielName);
+                    writer.startNode(nodeName);
                     writer.setValue(valuetoWrite);
                     writer.endNode();
                 }
             } else if (parameterValue instanceof Expression) {
                 String valuetoWrite = String.valueOf(((Expression) parameterValue).getExpression());
                 if (!valuetoWrite.isEmpty()) {
-                    writer.startNode(fielName);
+                    writer.startNode(nodeName);
                     writer.startNode("Expression");
                     writer.setValue(valuetoWrite);
                     writer.endNode();
@@ -319,7 +319,7 @@ public class Feature2DStyleIO {
                 String valuetoWrite = String.valueOf(((Expression) parameterValue).getExpression());
                 if (!valuetoWrite.isEmpty()) {
                     writer.startNode(fielName);
-                    writer.setValue("Expression("+ valuetoWrite+")");
+                    writer.setValue("expression("+ valuetoWrite+")");
                     writer.endNode();
                 }
             }
