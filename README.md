@@ -10,7 +10,7 @@ Note that OrbisMap is under active development so the API is moving.
 If you want to test the feature style model and its capabilities, run the folowing code in a Groovy Console.
 
 
-```
+```groovy
 @GrabResolver(name='orbisgis', root='https://nexus.orbisgis.org/repository/orbisgis/')
 @Grab(group='org.orbisgis.orbismap', module='map', version='0.0.1-SNAPSHOT')
 
