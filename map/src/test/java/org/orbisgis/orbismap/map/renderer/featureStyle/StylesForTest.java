@@ -84,6 +84,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerRuleExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.initDefault();
         SolidFill solidFill = new SolidFill();
         solidFill.initDefault();
         areaSymbolizer.setFill(solidFill);

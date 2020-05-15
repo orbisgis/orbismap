@@ -217,7 +217,9 @@ public class FeatureStyleRenderer {
                         }
                     }
 
-                    //Draw the bufferedimages in the good order
+                    
+
+                    //Sort the symbolizer to draw the image accoring the symbol level
                     Comparator<Entry<IFeatureSymbolizer, ISymbolizerDraw>> symbolizerLevelComp = (o1, o2) -> {
                         if (o1.getKey().getLevel() > o2.getKey().getLevel()) {
                             return -1;
@@ -227,8 +229,6 @@ public class FeatureStyleRenderer {
                             return 0;
                         }
                     };
-
-                    //Sort the symbolizer to draw the image accoring the symbol level
                     Map<IFeatureSymbolizer, ISymbolizerDraw> sortedSymbolizers
                             = symbolizersToDraw.entrySet().stream().
                                     sorted(symbolizerLevelComp.reversed()).
@@ -237,12 +237,13 @@ public class FeatureStyleRenderer {
 
                     //Draw all buffered images
                     sortedSymbolizers.values().forEach((symbolizerDraw) -> {
-                        symbolizerDraw.dispose(g2);
+                        symbolizerDraw.dispose(g2);                        
+                        g2.dispose();
                     });
 
                 }
             }
-        }
+        } 
     }
 
     /**

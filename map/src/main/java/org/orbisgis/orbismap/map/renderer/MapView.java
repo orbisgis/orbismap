@@ -186,7 +186,7 @@ public class MapView  implements IRenderer{
         Icon icon = new ImageIcon(mt.getImage());
         JLabel label = new JLabel(icon);
         final JFrame f = new JFrame("Display map");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.getContentPane().add(label);
         f.pack();
         SwingUtilities.invokeLater(new Runnable(){
