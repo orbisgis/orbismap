@@ -40,8 +40,10 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.fill.SolidFill;
-import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.stroke.LineCap;
+import org.orbisgis.orbismap.style.stroke.LineJoin;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
 
 /**
@@ -56,20 +58,20 @@ public class PenStrokeConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {     
             PenStroke penStroke = (PenStroke) value;
-            writer.startNode("PenStroke");
+            writer.startNode(Feature2DStyleTerms.PENSTROKE);
             Feature2DStyleIO.convertAnother(mc,penStroke.getFill());
-            Feature2DStyleIO.marshalParameterValue("Width", penStroke.getWidth(), writer);
-            Feature2DStyleIO.marshalParameterValue("DashArray", penStroke.getDashArray(), writer);
-            Feature2DStyleIO.marshalParameterValue("DashOffset", penStroke.getDashOffset(), writer);
-            PenStroke.LineCap lineCap = penStroke.getLineCap();
+            Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.WIDTH, penStroke.getWidth(), writer);
+            Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.DASHARRAY, penStroke.getDashArray(), writer);
+            Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.DASHOFFSET, penStroke.getDashOffset(), writer);
+            LineCap lineCap = penStroke.getLineCap();
             if(lineCap!=null){
-                 writer.startNode("LineCap");
+                 writer.startNode(Feature2DStyleTerms.LINECAP);
                  writer.setValue(lineCap.name());
                  writer.endNode();
             }
-            PenStroke.LineJoin lineJoin = penStroke.getLineJoin();
+            LineJoin lineJoin = penStroke.getLineJoin();
             if(lineJoin!=null){
-                 writer.startNode("LineJoin");
+                 writer.startNode(Feature2DStyleTerms.LINEJOIN);
                  writer.setValue(lineJoin.name());
                  writer.endNode();
             }
@@ -82,12 +84,30 @@ public class PenStrokeConverter implements Converter {
         PenStroke penStroke =  new PenStroke();        
         while (reader.hasMoreChildren()) {
             reader.moveDown();            
-            if ("solidfill".equalsIgnoreCase(reader.getNodeName())) {
+            if (Feature2DStyleTerms.SOLIDFILL.equalsIgnoreCase(reader.getNodeName())) {
                SolidFill fill = (SolidFill) context.convertAnother(reader, SolidFill.class);
                penStroke.setFill(fill);            
             }
-            else if ("width".equalsIgnoreCase(reader.getNodeName())) {
-                penStroke.setWidth(new Literal(Float.parseFloat(reader.getValue())));
+            else if (Feature2DStyleTerms.WIDTH.equalsIgnoreCase(reader.getNodeName())) {
+                penStroke.setWidth(Feature2DStyleIO.createParameterValue(reader));
+            }
+            else if (Feature2DStyleTerms.DASHARRAY.equalsIgnoreCase(reader.getNodeName())) {
+                penStroke.setDashArray(Feature2DStyleIO.createParameterValue(reader));
+            }
+            else if (Feature2DStyleTerms.DASHOFFSET.equalsIgnoreCase(reader.getNodeName())) {
+                penStroke.setDashOffset(Feature2DStyleIO.createParameterValue(reader));
+            }
+            else if (Feature2DStyleTerms.LINECAP.equalsIgnoreCase(reader.getNodeName())) {
+                LineCap lineCap = LineCap.fromString(reader.getValue());
+                if (lineCap != null) {
+                    penStroke.setLineCap(lineCap);
+                }
+            }
+            else if (Feature2DStyleTerms.LINEJOIN.equalsIgnoreCase(reader.getNodeName())) {
+                LineJoin lineJoin = LineJoin.fromString(reader.getValue());
+                if (lineJoin != null) {
+                    penStroke.setLineJoin(lineJoin);
+                }
             }
             reader.moveUp();
         }

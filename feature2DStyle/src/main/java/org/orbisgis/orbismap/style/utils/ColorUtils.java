@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.Literal;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
@@ -296,29 +297,29 @@ public final class ColorUtils {
             if(matcher.matches()) {
                 String red = matcher.group(1);
                 if (red != null) {
-                    map.put("red", new Literal(Integer.valueOf(red)));
+                    map.put(Feature2DStyleTerms.RED, new Literal(Integer.valueOf(red)));
                 } else {
                     red = matcher.group(2);
                     if (red != null) {
-                        map.put("red", new Expression(red));
+                        map.put(Feature2DStyleTerms.RED, new Expression(red));
                     }
                 }
                 String green = matcher.group(3);
                 if (green != null) {
-                    map.put("green", new Literal(Integer.valueOf(green)));
+                    map.put(Feature2DStyleTerms.GREEN, new Literal(Integer.valueOf(green)));
                 } else {
                     green = matcher.group(4);
                     if (green != null) {
-                        map.put("red", new Expression(green));
+                        map.put(Feature2DStyleTerms.GREEN, new Expression(green));
                     }
                 }
                 String blue = matcher.group(5);
                 if (blue != null) {
-                    map.put("blue", new Literal(Integer.valueOf(blue)));
+                    map.put(Feature2DStyleTerms.BLUE, new Literal(Integer.valueOf(blue)));
                 } else {
                     blue = matcher.group(6);
                     if (blue != null) {
-                        map.put("blue", new Expression(blue));
+                        map.put(Feature2DStyleTerms.BLUE, new Expression(blue));
                     }
                 }
                 return map;

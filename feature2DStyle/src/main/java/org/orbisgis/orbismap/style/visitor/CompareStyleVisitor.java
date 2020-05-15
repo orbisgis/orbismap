@@ -61,7 +61,7 @@ public class CompareStyleVisitor {
         try {
             visitImpl(expectedStyleNode, actualStyleNode);
         } catch (ParameterException ex) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ex);
         }
     }
 

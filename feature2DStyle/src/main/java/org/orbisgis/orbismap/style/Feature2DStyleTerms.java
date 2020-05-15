@@ -32,7 +32,7 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.orbismap.feature2dstyle.io;
+package org.orbisgis.orbismap.style;
 
 /**
  * List of terms used by Feature2DStyle model
@@ -47,7 +47,6 @@ public interface Feature2DStyleTerms {
     String LINESYMBOLIZER = "LineSymbolizer";
     String AREASYMBOLIZER = "AreaSymbolizer";
     String TEXTSYMBOLIZER = "TextSymbolizer";
-
     String FILTER = "Filter" ;
     String MAXSCALEDENOMINATOR = "MaxScaleDenominator";
     String MINSCALEDENOMINATOR = "MinScaleDenominator";
@@ -64,4 +63,17 @@ public interface Feature2DStyleTerms {
     String VIEWBOX = "ViewBox";
     String PERPENDICULAROFFSET = "PerpendicularOffset";
     String SIZE = "Size";
+    String WIDTH = "Width";
+    String HEIGHT = "Height";
+    String DASHARRAY ="DashArray";
+    String DASHOFFSET = "DashOffset" ;
+    String LINECAP = "LineCap";
+    String LINEJOIN = "LineJoin";
+    String OPACITY = "Opacity";
+    String COLOR = "Color" ;
+    String RED = "Red";
+    String GREEN = "Green";
+    String BLUE ="Blue" ;
+    String RGB = "rgb";
+    String EXPRESSION = "Expression";
 }

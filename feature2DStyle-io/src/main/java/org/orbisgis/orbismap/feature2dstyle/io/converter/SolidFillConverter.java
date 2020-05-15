@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.color.HexaColor;
 import org.orbisgis.orbismap.style.color.RGBColor;
 import org.orbisgis.orbismap.style.color.WellknownNameColor;
@@ -50,8 +51,8 @@ import org.orbisgis.orbismap.style.utils.*;
 import java.util.HashMap;
 
 /**
- *
- * @author ebocher
+ * SolidFill converter
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class SolidFillConverter implements Converter {
 
@@ -61,9 +62,9 @@ public class SolidFillConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         SolidFill solidFill = (SolidFill) value;
-        writer.startNode("SolidFill");
+        writer.startNode(Feature2DStyleTerms.SOLIDFILL);
         Feature2DStyleIO.convertAnother(mc,solidFill.getColor());
-        Feature2DStyleIO.marshalParameterValue("Opacity", solidFill.getOpacity(), writer);
+        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.OPACITY, solidFill.getOpacity(), writer);
         writer.endNode();
 
     }
@@ -73,7 +74,7 @@ public class SolidFillConverter implements Converter {
         SolidFill solidFill =  new SolidFill();
         while (reader.hasMoreChildren()) {
             reader.moveDown();            
-            if ("color".equalsIgnoreCase(reader.getNodeName())) {
+            if (Feature2DStyleTerms.COLOR.equalsIgnoreCase(reader.getNodeName())) {
                     String colorValue = reader.getValue();
                     if(colorValue!=null && colorValue.startsWith("#")){
                         HexaColor hexaColor = new HexaColor();
@@ -81,28 +82,32 @@ public class SolidFillConverter implements Converter {
                         solidFill.setColor(hexaColor);
                     }
                     else if(colorValue!=null && !colorValue.isEmpty()){
-                        if(colorValue.startsWith("rgb")){
+                        if(colorValue.startsWith(Feature2DStyleTerms.RGB)) {
                             HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(colorValue);
-                            if(rgbValues!=null){
+                            if (rgbValues != null) {
                                 RGBColor rgbColor = new RGBColor();
-                                rgbColor.setRed(rgbValues.get("red"));
-                                rgbColor.setGreen(rgbValues.get("green"));
-                                rgbColor.setBlue(rgbValues.get("blue"));
+                                rgbColor.setRed(rgbValues.get(Feature2DStyleTerms.RED));
+                                rgbColor.setGreen(rgbValues.get(Feature2DStyleTerms.GREEN));
+                                rgbColor.setBlue(rgbValues.get(Feature2DStyleTerms.BLUE));
+                                solidFill.setColor(rgbColor);
                             }
+                        } else if(colorValue.toLowerCase().startsWith(Feature2DStyleTerms.EXPRESSION.toLowerCase())){
+                                HexaColor hexaColor = new HexaColor();
+                                hexaColor.setHexaColor(Feature2DStyleIO.createParameterValueFromString(reader));
+                                solidFill.setColor(hexaColor);
                         }else{
                             WellknownNameColor wellknownNameColor = new WellknownNameColor();
-                            wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValue(reader));
+                            wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValueFromString(reader));
                             solidFill.setColor(wellknownNameColor);
                         }
                     }
-                    else if(colorValue!=null && colorValue.toLowerCase().startsWith("expression")){
+                    else if(colorValue!=null && colorValue.toLowerCase().startsWith(Feature2DStyleTerms.EXPRESSION.toLowerCase())){
                         HexaColor hexaColor = new HexaColor();
-                        hexaColor.setHexaColor(Feature2DStyleIO.createParameterValue(reader));
+                        hexaColor.setHexaColor(Feature2DStyleIO.createParameterValueFromString(reader));
                         solidFill.setColor(hexaColor);
                     }
-
             }
-            else if ("opacity".equalsIgnoreCase(reader.getNodeName())) {
+            else if (Feature2DStyleTerms.OPACITY.equalsIgnoreCase(reader.getNodeName())) {
                 solidFill.setOpacity(Feature2DStyleIO.createParameterValue(reader));
             }
             reader.moveUp();

@@ -173,4 +173,8 @@ public class Literal extends ParameterValue {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return "Literal :  "+ getValue();
+    }
 }

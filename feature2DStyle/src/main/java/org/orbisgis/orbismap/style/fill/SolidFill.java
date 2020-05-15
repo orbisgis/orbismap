@@ -200,6 +200,6 @@ public class SolidFill extends StyleNode implements IFill, IUom{
     @Override
     public void initDefault() {
         this.color = new HexaColor("#000000");
-        this.opacity = new Literal(1f);
+        this.setOpacity(new Literal(1f));
     }
 }

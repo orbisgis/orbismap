@@ -41,7 +41,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import java.util.ArrayList;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.common.Description;
 import org.orbisgis.orbismap.style.graphic.Graphic;

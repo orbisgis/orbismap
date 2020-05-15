@@ -34,6 +34,7 @@
  */
 package org.orbisgis.orbismap.feature2dstyle.io;
 
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.feature2dstyle.io.converter.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -44,6 +45,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.orbisgis.orbismap.style.Feature2DStyle;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
@@ -55,10 +58,13 @@ import org.orbisgis.orbismap.style.parameter.NullParameterValue;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
+ * Methods to read and write Feature2DStyle in XML or JSON formats.
  *
- * @author ebocher
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class Feature2DStyleIO {
+
+    private static Pattern EXPRESSION_PATTERN;
 
     /**
      * Save any style node to an xml file
@@ -70,25 +76,7 @@ public class Feature2DStyleIO {
     public static Feature2DStyle fromXML(File file) throws FileNotFoundException {
         if (file != null && isExtensionWellFormated(file, "se")) {
             XStream xstream = new XStream();
-            xstream.registerConverter(new Feature2DStyleConverter());
-            xstream.registerConverter(new Feature2DRuleConverter());
-            xstream.registerConverter(new AreaSymbolizerConverter());
-            xstream.registerConverter(new LineSymbolizerConverter());
-            xstream.registerConverter(new PointSymbolizerConverter());
-            xstream.registerConverter(new TextSymbolizerConverter());
-            xstream.registerConverter(new PenStrokeConverter());
-            xstream.registerConverter(new ViewBoxConverter());
-            xstream.registerConverter(new GraphicSizeConverter());
-            xstream.registerConverter(new SolidFillConverter());
-            xstream.registerConverter(new MarkGraphicConverter());
-            xstream.registerConverter(new HaloConverter());
-            xstream.registerConverter(new DescriptionConverter());
-            xstream.registerConverter(new UomConverter());
-            xstream.registerConverter(new GeometryParameterConverter());
-            xstream.registerConverter(new RGBColorConverter());
-            xstream.registerConverter(new HexaColorConverter());
-            xstream.registerConverter(new WellknownNameColorConverter());
-            xstream.alias("Feature2DStyle", Feature2DStyle.class);
+            registerConverter(xstream);
             return (Feature2DStyle) xstream.fromXML(new FileInputStream(file));
         } else {
             throw new RuntimeException("Invalid input file path. Use a se extension file name.");
@@ -105,25 +93,7 @@ public class Feature2DStyleIO {
     public static void toXML(StyleNode styleNode, File file) throws FileNotFoundException {
         if (file != null && isExtensionWellFormated(file, "se")) {
             XStream xstream = new XStream();
-            xstream.registerConverter(new Feature2DStyleConverter());
-            xstream.registerConverter(new Feature2DRuleConverter());
-            xstream.registerConverter(new AreaSymbolizerConverter());
-            xstream.registerConverter(new LineSymbolizerConverter());
-            xstream.registerConverter(new PointSymbolizerConverter());
-            xstream.registerConverter(new TextSymbolizerConverter());
-            xstream.registerConverter(new PenStrokeConverter());
-            xstream.registerConverter(new ViewBoxConverter());
-            xstream.registerConverter(new GraphicSizeConverter());
-            xstream.registerConverter(new SolidFillConverter());
-            xstream.registerConverter(new MarkGraphicConverter());
-            xstream.registerConverter(new HaloConverter());
-            xstream.registerConverter(new DescriptionConverter());
-            xstream.registerConverter(new UomConverter());
-            xstream.registerConverter(new GeometryParameterConverter());
-            xstream.registerConverter(new RGBColorConverter());
-            xstream.registerConverter(new HexaColorConverter());
-            xstream.registerConverter(new WellknownNameColorConverter());
-            xstream.alias("Feature2DStyle", Feature2DStyle.class);
+            registerConverter(xstream);
             xstream.toXML(styleNode, new FileOutputStream(file));
         } else {
             throw new RuntimeException("Invalid ouput file path. Use a se extension file name.");
@@ -138,32 +108,56 @@ public class Feature2DStyleIO {
      * @throws FileNotFoundException
      */
     public static void toJSON(StyleNode styleNode, File file) throws FileNotFoundException {
-        if (file != null && isExtensionWellFormated(file, "se")) {
+        if (file != null && isExtensionWellFormated(file, "json")) {
             XStream xstream = new XStream(new JettisonMappedXmlDriver());
-            xstream.setMode(XStream.NO_REFERENCES);
-            xstream.registerConverter(new Feature2DStyleConverter());
-            xstream.registerConverter(new Feature2DRuleConverter());
-            xstream.registerConverter(new AreaSymbolizerConverter());
-            xstream.registerConverter(new LineSymbolizerConverter());
-            xstream.registerConverter(new PointSymbolizerConverter());
-            xstream.registerConverter(new TextSymbolizerConverter());
-            xstream.registerConverter(new PenStrokeConverter());
-            xstream.registerConverter(new SolidFillConverter());
-            xstream.registerConverter(new ViewBoxConverter());
-            xstream.registerConverter(new GraphicSizeConverter());
-            xstream.registerConverter(new MarkGraphicConverter());
-            xstream.registerConverter(new HaloConverter());
-            xstream.registerConverter(new DescriptionConverter());
-            xstream.registerConverter(new UomConverter());
-            xstream.registerConverter(new GeometryParameterConverter());
-            xstream.registerConverter(new RGBColorConverter());
-            xstream.registerConverter(new HexaColorConverter());
-            xstream.registerConverter(new WellknownNameColorConverter());
-            xstream.alias("Feature2DStyle", Feature2DStyle.class);
+            registerConverter(xstream);
             xstream.toXML(styleNode, new FileOutputStream(file));
         } else {
             throw new RuntimeException("Invalid ouput file path. Use a json extension file name.");
         }
+    }
+
+    /**
+     * Read any style node to a json file
+     *
+     * @param file
+     * @throws FileNotFoundException
+     */
+    public static void fromJSON(File file) throws FileNotFoundException {
+        if (file != null && isExtensionWellFormated(file, "json")) {
+            XStream xstream = new XStream(new JettisonMappedXmlDriver());
+            registerConverter(xstream);
+            xstream.fromXML(new FileInputStream(file));
+        } else {
+            throw new RuntimeException("Invalid ouput file path. Use a json extension file name.");
+        }
+    }
+
+    /**
+     * Load Feature2Style converts
+     *
+     * @param xstream
+     */
+    private static void registerConverter( XStream xstream){
+        xstream.registerConverter(new Feature2DStyleConverter());
+        xstream.registerConverter(new Feature2DRuleConverter());
+        xstream.registerConverter(new AreaSymbolizerConverter());
+        xstream.registerConverter(new LineSymbolizerConverter());
+        xstream.registerConverter(new PointSymbolizerConverter());
+        xstream.registerConverter(new TextSymbolizerConverter());
+        xstream.registerConverter(new PenStrokeConverter());
+        xstream.registerConverter(new ViewBoxConverter());
+        xstream.registerConverter(new GraphicSizeConverter());
+        xstream.registerConverter(new SolidFillConverter());
+        xstream.registerConverter(new MarkGraphicConverter());
+        xstream.registerConverter(new HaloConverter());
+        xstream.registerConverter(new DescriptionConverter());
+        xstream.registerConverter(new UomConverter());
+        xstream.registerConverter(new GeometryParameterConverter());
+        xstream.registerConverter(new RGBColorConverter());
+        xstream.registerConverter(new HexaColorConverter());
+        xstream.registerConverter(new WellknownNameColorConverter());
+        xstream.alias(Feature2DStyleTerms.FEATURE2DSTYLE, Feature2DStyle.class);
     }
 
     /**
@@ -259,6 +253,47 @@ public class Feature2DStyleIO {
             reader.moveUp();
         }
         return parameterValue;
+    }
+
+    /**
+     * 
+     * @param reader
+     * @return 
+     */
+    public static ParameterValue createParameterValueFromString(HierarchicalStreamReader reader) {            
+        return createParameterValueFromString(reader.getValue());
+    }
+    
+    /**
+     * 
+     * @param value
+     * @return 
+     */
+    public static ParameterValue createParameterValueFromString(String value) {
+        if (EXPRESSION_PATTERN == null) {
+            EXPRESSION_PATTERN = Pattern.compile("\\s*(?:expression\\s*\\(\\s*(.+)?\\)|([^\\s]+))\\s*", Pattern.CASE_INSENSITIVE);
+        }
+        if (value != null && !value.isEmpty()) {
+            Matcher matcher = EXPRESSION_PATTERN.matcher(value);
+            if (matcher.find()) {
+                String group1 = matcher.group(1);
+                String group2 = matcher.group(2);
+                if (group1 != null) {
+                    if (group2 != null && !group2.isEmpty()) {
+                        return new NullParameterValue();
+                    } else {
+                        return new Expression(group1);
+                    }
+                } else {
+                    if (group2 != null && !group2.isEmpty()) {
+                        return new Literal(group2);
+                    } else {
+                        return new NullParameterValue();
+                    }
+                }
+            }
+        }
+        return new NullParameterValue();
     }
 
     public static ViewBox createViewBox(HierarchicalStreamReader reader) {
