@@ -40,7 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.common.Description;
 import org.orbisgis.orbismap.style.fill.SolidFill;
@@ -78,7 +78,7 @@ public class AreaSymbolizerConverter implements Converter {
                 areaSymbolizer.setLevel(Integer.parseInt(reader.getValue()));
             }
             else if (Feature2DStyleTerms.PERPENDICULAROFFSET.equalsIgnoreCase(reader.getNodeName())) {
-                areaSymbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader));
+                areaSymbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader, context));
             }
              else if (Feature2DStyleTerms.UOM.equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);

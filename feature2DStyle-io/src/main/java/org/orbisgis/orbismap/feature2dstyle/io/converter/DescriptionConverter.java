@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors; 
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.common.Description;
 import org.orbisgis.orbismap.style.common.Keywords;
 
@@ -62,13 +63,13 @@ public class DescriptionConverter implements Converter {
             Locale local = Locale.getDefault();
             String title = description.getTitle(local);
             if (title != null) {
-                writer.startNode("Title");
+                writer.startNode(Feature2DStyleTerms.TITLE);
                 writer.setValue(title);
                 writer.endNode();
             }
             String resum = description.getAbstract(local);
             if (resum != null) {
-                writer.startNode("Abstract");
+                writer.startNode(Feature2DStyleTerms.ABSTRACT);
                 writer.setValue(resum);
                 writer.endNode();
             }
@@ -77,11 +78,11 @@ public class DescriptionConverter implements Converter {
             if(keywords!=null){
             for (Map.Entry<URI, Keywords> en : keywords.entrySet()) {
                 URI key = en.getKey();
-                writer.startNode("Keywords");
-                writer.startNode("Uri");
+                writer.startNode(Feature2DStyleTerms.KEYWORDS);
+                writer.startNode(Feature2DStyleTerms.URI);
                 writer.setValue(key.toString());
                 String val = en.getValue().getKeywords(local).stream().map( n -> n.getValue() ).collect(Collectors.joining( "," ) );
-                writer.addAttribute("values", val);
+                writer.addAttribute(Feature2DStyleTerms.VALUES, val);
                 writer.endNode();
                 writer.endNode();
             }

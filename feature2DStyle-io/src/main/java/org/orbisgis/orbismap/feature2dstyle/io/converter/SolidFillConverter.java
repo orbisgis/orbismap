@@ -40,18 +40,14 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.orbismap.style.color.HexaColor;
-import org.orbisgis.orbismap.style.color.RGBColor;
-import org.orbisgis.orbismap.style.color.WellknownNameColor;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.fill.SolidFill;
-import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.IColor;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
-import org.orbisgis.orbismap.style.utils.*;
-import java.util.HashMap;
 
 /**
- *
- * @author ebocher
+ * SolidFill converter
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class SolidFillConverter implements Converter {
 
@@ -60,10 +56,10 @@ public class SolidFillConverter implements Converter {
 
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        SolidFill solidFill = (SolidFill) value;
-        writer.startNode("SolidFill");
+        SolidFill solidFill = (SolidFill) value; 
+        writer.startNode(Feature2DStyleTerms.SOLIDFILL);
         Feature2DStyleIO.convertAnother(mc,solidFill.getColor());
-        Feature2DStyleIO.marshalParameterValue("Opacity", solidFill.getOpacity(), writer);
+        Feature2DStyleIO.convertAnother(Feature2DStyleTerms.OPACITY,writer, mc,solidFill.getOpacity());
         writer.endNode();
 
     }
@@ -73,37 +69,13 @@ public class SolidFillConverter implements Converter {
         SolidFill solidFill =  new SolidFill();
         while (reader.hasMoreChildren()) {
             reader.moveDown();            
-            if ("color".equalsIgnoreCase(reader.getNodeName())) {
-                    String colorValue = reader.getValue();
-                    if(colorValue!=null && colorValue.startsWith("#")){
-                        HexaColor hexaColor = new HexaColor();
-                        hexaColor.setHexaColor(new Literal(colorValue));
-                        solidFill.setColor(hexaColor);
-                    }
-                    else if(colorValue!=null && !colorValue.isEmpty()){
-                        if(colorValue.startsWith("rgb")){
-                            HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(colorValue);
-                            if(rgbValues!=null){
-                                RGBColor rgbColor = new RGBColor();
-                                rgbColor.setRed(rgbValues.get("red"));
-                                rgbColor.setGreen(rgbValues.get("green"));
-                                rgbColor.setBlue(rgbValues.get("blue"));
-                            }
-                        }else{
-                            WellknownNameColor wellknownNameColor = new WellknownNameColor();
-                            wellknownNameColor.setWellknownName(Feature2DStyleIO.createParameterValue(reader));
-                            solidFill.setColor(wellknownNameColor);
-                        }
-                    }
-                    else if(colorValue!=null && colorValue.toLowerCase().startsWith("expression")){
-                        HexaColor hexaColor = new HexaColor();
-                        hexaColor.setHexaColor(Feature2DStyleIO.createParameterValue(reader));
-                        solidFill.setColor(hexaColor);
-                    }
-
-            }
-            else if ("opacity".equalsIgnoreCase(reader.getNodeName())) {
-                solidFill.setOpacity(Feature2DStyleIO.createParameterValue(reader));
+            if (Feature2DStyleTerms.COLOR.equalsIgnoreCase(reader.getNodeName())) {
+                IColor colorElement = IOColorUtils.createColorStyleElement(reader.getValue());
+                if (colorElement != null) {
+                    solidFill.setColor(colorElement);
+                }
+            } else if (Feature2DStyleTerms.OPACITY.equalsIgnoreCase(reader.getNodeName())) {
+                solidFill.setOpacity((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             reader.moveUp();
         }

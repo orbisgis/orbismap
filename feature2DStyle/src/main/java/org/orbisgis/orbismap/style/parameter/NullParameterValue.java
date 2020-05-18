@@ -70,5 +70,10 @@ public class NullParameterValue  extends ParameterValue{
     @Override
     public void initDefault() {
     }
-    
+
+    @Override
+    public String toString() {
+        return "Null Parameter";
+    }
+
 }

@@ -40,9 +40,12 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
+ * ViewBox converter
  *
  * @author Erwan Bocher, CNRS (2020)
  */
@@ -54,9 +57,9 @@ public class ViewBoxConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         ViewBox viewBox = (ViewBox) value;
-        writer.startNode("ViewBox");
-        Feature2DStyleIO.marshalParameterValue("Width", viewBox.getWidth(), writer);
-        Feature2DStyleIO.marshalParameterValue("Height", viewBox.getHeight(), writer);
+        writer.startNode(Feature2DStyleTerms.VIEWBOX);
+        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.WIDTH, viewBox.getWidth(), writer);
+        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.HEIGHT, viewBox.getHeight(), writer);
         writer.endNode();
 
     }
@@ -66,10 +69,10 @@ public class ViewBoxConverter implements Converter {
         ViewBox viewBox = new ViewBox();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
-            if ("width".equalsIgnoreCase(reader.getNodeName())) {
-                viewBox.setWidth(Feature2DStyleIO.createParameterValue(reader));
-            } else if ("height".equalsIgnoreCase(reader.getNodeName())) {
-                viewBox.setHeight(Feature2DStyleIO.createParameterValue(reader));
+            if (Feature2DStyleTerms.WIDTH.equalsIgnoreCase(reader.getNodeName())) {
+                viewBox.setWidth((ParameterValue) context.convertAnother(reader, ParameterValue.class));
+            } else if (Feature2DStyleTerms.HEIGHT.equalsIgnoreCase(reader.getNodeName())) {
+                viewBox.setHeight((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             reader.moveUp();
         }

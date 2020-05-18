@@ -128,7 +128,8 @@ public class AreaSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, ISt
             g2_bi.dispose();
             g2_bi = null;
             g2.drawImage(bi, 0, 0, null);
-            bi = null;
+            bi.flush();
+            bi=null;
         }
     }
 

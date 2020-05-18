@@ -85,6 +85,7 @@ public class ViewBox extends GraphicSize {
      */
     public ViewBox(float width) {
         setWidth(width);
+        setHeight(width);
     }
 
     /**

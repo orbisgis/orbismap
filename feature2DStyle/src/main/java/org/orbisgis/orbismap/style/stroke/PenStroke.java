@@ -86,23 +86,6 @@ public class PenStroke extends Stroke implements IFillNode {
     private ParameterValue dashArray = new NullParameterValue();
     private ParameterValue dashOffset = new NullParameterValue();
 
-    /**
-     * There are three ways to draw the end of a line : butt, round and square.
-     */
-    public enum LineCap {
-
-        BUTT, ROUND, SQUARE;
-    }
-
-    /**
-     * There are three ways to join the segments of a LineString : mitre, round,
-     * bevel.
-     */
-    public enum LineJoin {
-
-        MITRE, ROUND, BEVEL;
-
-    }
 
     public PenStroke() {
     }
@@ -115,8 +98,6 @@ public class PenStroke extends Stroke implements IFillNode {
         setFill(solidFill);
         setWidth(DEFAULT_WIDTH);
         setUom(Uom.PX);
-        setDashArray("");
-        setDashOffset(0);
         setLineCap(DEFAULT_CAP);
         setLineJoin(DEFAULT_JOIN);
     }

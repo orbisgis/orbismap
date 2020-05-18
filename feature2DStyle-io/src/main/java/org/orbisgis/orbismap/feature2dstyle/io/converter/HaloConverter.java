@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.fill.Halo;
 
 /**
@@ -54,8 +55,8 @@ public class HaloConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
             Halo halo = (Halo) value;
-            writer.startNode("Halo");
-            Feature2DStyleIO.marshalParameterValue("Radius", halo.getRadius(), writer);
+            writer.startNode(Feature2DStyleTerms.HALO);
+            Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.RADIUS, halo.getRadius(), writer);
             Feature2DStyleIO.convertAnother(mc,halo.getFill());
             writer.endNode();      
     }

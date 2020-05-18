@@ -40,8 +40,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
-import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleTerms;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.graphic.graphicSize.Size;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
  *
@@ -64,7 +65,7 @@ public class GraphicSizeConverter implements Converter {
         Size size = new Size();
         reader.moveDown();
         if (Feature2DStyleTerms.SIZE.equalsIgnoreCase(reader.getNodeName())) {
-            size.setSize(Feature2DStyleIO.createParameterValue(reader));            
+            size.setSize((ParameterValue) context.convertAnother(reader, ParameterValue.class));            
         }
         reader.moveUp();
         return size;

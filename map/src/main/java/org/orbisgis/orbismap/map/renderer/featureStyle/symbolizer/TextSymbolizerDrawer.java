@@ -108,7 +108,8 @@ public class TextSymbolizerDrawer extends AbstractDrawerFinder<ILabelDrawer, Lab
             g2_bi.dispose();
             g2_bi = null;
             g2.drawImage(bi, null, null);
-            bi = null;
+            bi.flush();
+            bi=null;
         }
     }
 

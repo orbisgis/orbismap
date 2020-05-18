@@ -42,8 +42,10 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.NullParameterValue;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
@@ -66,7 +68,11 @@ public final class ColorUtils {
     private static Random rndGenerator;
     private static Pattern rgbPatern;
     private static String PATTERN_RGB = "rgb\\s*\\(\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*,\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*,\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*\\)";
-
+    private static Pattern hexaPatern;
+    
+    
+    private static String PATTERN_HEXA ="^#?([a-f0-9]{6}|[a-f0-9]{3})$";
+    
     static {
         rndGenerator = new Random(13579);
     }
@@ -296,29 +302,29 @@ public final class ColorUtils {
             if(matcher.matches()) {
                 String red = matcher.group(1);
                 if (red != null) {
-                    map.put("red", new Literal(Integer.valueOf(red)));
+                    map.put(Feature2DStyleTerms.RED, new Literal(Integer.valueOf(red)));
                 } else {
                     red = matcher.group(2);
                     if (red != null) {
-                        map.put("red", new Expression(red));
+                        map.put(Feature2DStyleTerms.RED, new Expression(red));
                     }
                 }
                 String green = matcher.group(3);
                 if (green != null) {
-                    map.put("green", new Literal(Integer.valueOf(green)));
+                    map.put(Feature2DStyleTerms.GREEN, new Literal(Integer.valueOf(green)));
                 } else {
                     green = matcher.group(4);
                     if (green != null) {
-                        map.put("red", new Expression(green));
+                        map.put(Feature2DStyleTerms.GREEN, new Expression(green));
                     }
                 }
                 String blue = matcher.group(5);
                 if (blue != null) {
-                    map.put("blue", new Literal(Integer.valueOf(blue)));
+                    map.put(Feature2DStyleTerms.BLUE, new Literal(Integer.valueOf(blue)));
                 } else {
                     blue = matcher.group(6);
                     if (blue != null) {
-                        map.put("blue", new Expression(blue));
+                        map.put(Feature2DStyleTerms.BLUE, new Expression(blue));
                     }
                 }
                 return map;
@@ -327,6 +333,43 @@ public final class ColorUtils {
         }
         return null;
 
+    }
+    
+     /**
+     * Return true is it's an hexa representation of the color
+     * 
+     * @param hexaColor color representation
+     * @return
+     */
+    public static boolean isHexa(String hexaColor) {
+        if (hexaColor != null && !hexaColor.isEmpty()) {
+            if (hexaPatern == null) {
+                hexaPatern = Pattern.compile(PATTERN_HEXA, Pattern.CASE_INSENSITIVE);
+            }
+            Matcher matcher = hexaPatern.matcher(hexaColor);
+            return matcher.matches();
+        }
+        return false;
+    }
+  
+    /**
+     * Class to parse a hexa representation and return a ParameterValue
+     *
+     * @param hexaColor color representation
+     * @return
+     */
+    public static ParameterValue parseHexa(String hexaColor) {
+        if (hexaColor != null && !hexaColor.isEmpty()) {
+            if (hexaPatern == null) {
+                hexaPatern = Pattern.compile(PATTERN_HEXA, Pattern.CASE_INSENSITIVE);
+            }
+            Matcher matcher = hexaPatern.matcher(hexaColor);
+            if (matcher.matches()) {
+                return new Literal(hexaColor);
+            }
+            return new NullParameterValue();
+        }
+        return null;
     }
 
 }

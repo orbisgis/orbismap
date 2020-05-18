@@ -97,4 +97,9 @@ public class Expression extends ParameterValue {
     @Override
     public void initDefault() {
     }
+
+    @Override
+    public String toString() {
+        return "Expression :  "+ getExpression();
+    }
 }

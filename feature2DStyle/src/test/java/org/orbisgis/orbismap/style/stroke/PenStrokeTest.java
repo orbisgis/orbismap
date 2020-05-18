@@ -43,7 +43,6 @@ import org.orbisgis.orbismap.style.fill.GraphicFill;
 import org.orbisgis.orbismap.style.fill.SolidFill;
 import org.orbisgis.orbismap.style.graphic.GraphicCollection;
 import org.orbisgis.orbismap.style.graphic.PointTextGraphic;
-import org.orbisgis.orbismap.style.stroke.PenStroke;
 
 /**
  *
@@ -72,21 +71,21 @@ public class PenStrokeTest {
     @Test
     public void testSetLineCap() throws Exception {
         PenStroke ps = new PenStroke();
-        assertEquals(ps.getLineCap(), PenStroke.LineCap.BUTT);
+        assertEquals(ps.getLineCap(), LineCap.BUTT);
         ps.setLineCap(null);
-        assertEquals(ps.getLineCap(), PenStroke.LineCap.BUTT);
-        ps.setLineCap(PenStroke.LineCap.SQUARE);
-        assertEquals(ps.getLineCap(), PenStroke.LineCap.SQUARE);
+        assertEquals(ps.getLineCap(), LineCap.BUTT);
+        ps.setLineCap(LineCap.SQUARE);
+        assertEquals(ps.getLineCap(), LineCap.SQUARE);
     }
 
     @Test
     public void testSetLineJoin() throws Exception {
         PenStroke ps = new PenStroke();
-        assertEquals(ps.getLineJoin(), PenStroke.LineJoin.MITRE);
+        assertEquals(ps.getLineJoin(), LineJoin.MITRE);
         ps.setLineJoin(null);
-        assertEquals(ps.getLineJoin(), PenStroke.LineJoin.MITRE);
-        ps.setLineJoin(PenStroke.LineJoin.BEVEL);
-        assertEquals(ps.getLineJoin(), PenStroke.LineJoin.BEVEL);
+        assertEquals(ps.getLineJoin(), LineJoin.MITRE);
+        ps.setLineJoin(LineJoin.BEVEL);
+        assertEquals(ps.getLineJoin(), LineJoin.BEVEL);
     }
 
     @Test

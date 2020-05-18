@@ -32,13 +32,13 @@
  * For more information, please consult: <http://www.orbisgis.org/>
  * or contact directly: info_at_ orbisgis.org
  */
-package org.orbisgis.orbismap.feature2dstyle.io;
+package org.orbisgis.orbismap.style;
 
 /**
  * List of terms used by Feature2DStyle model
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public interface Feature2DStyleTerms {
+public interface Feature2DStyleTerms {    
 
     String FEATURE2DSTYLE = "Feature2DStyle";
     String RULE = "Rule";
@@ -47,7 +47,6 @@ public interface Feature2DStyleTerms {
     String LINESYMBOLIZER = "LineSymbolizer";
     String AREASYMBOLIZER = "AreaSymbolizer";
     String TEXTSYMBOLIZER = "TextSymbolizer";
-
     String FILTER = "Filter" ;
     String MAXSCALEDENOMINATOR = "MaxScaleDenominator";
     String MINSCALEDENOMINATOR = "MinScaleDenominator";
@@ -64,4 +63,23 @@ public interface Feature2DStyleTerms {
     String VIEWBOX = "ViewBox";
     String PERPENDICULAROFFSET = "PerpendicularOffset";
     String SIZE = "Size";
+    String WIDTH = "Width";
+    String HEIGHT = "Height";
+    String DASHARRAY ="DashArray";
+    String DASHOFFSET = "DashOffset" ;
+    String LINECAP = "LineCap";
+    String LINEJOIN = "LineJoin";
+    String OPACITY = "Opacity";
+    String COLOR = "Color" ;
+    String RED = "Red";
+    String GREEN = "Green";
+    String BLUE ="Blue" ;
+    String RGB = "rgb";
+    String EXPRESSION = "Expression";
+    String TITLE ="Title";
+    String ABSTRACT = "Abstract";
+    String KEYWORDS = "Keywords";
+    String VALUES = "Values";
+    String URI = "Uri";
+    String RADIUS = "Radius";
 }

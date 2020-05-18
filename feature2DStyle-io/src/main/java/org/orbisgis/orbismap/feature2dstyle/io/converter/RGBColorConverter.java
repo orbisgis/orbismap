@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.color.RGBColor;
 
 /**
@@ -51,7 +52,7 @@ public class RGBColorConverter implements Converter {
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext marshallingContext) {
         RGBColor rgbColor = (RGBColor) value;
         if(rgbColor.usable()){
-            writer.startNode("Color");
+            writer.startNode(Feature2DStyleTerms.COLOR);
             StringBuilder sb=  new StringBuilder();
             sb.append("rgb(");
             sb.append(Feature2DStyleIO.getParameterValue(rgbColor.getRed())).append(",");
