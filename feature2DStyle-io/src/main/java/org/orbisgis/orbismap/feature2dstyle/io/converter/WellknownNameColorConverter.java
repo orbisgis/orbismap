@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.color.WellknownNameColor;
 
 /**
@@ -50,7 +51,7 @@ public class WellknownNameColorConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext marshallingContext) {
         WellknownNameColor wellknownNameColor = (WellknownNameColor) value;
-       Feature2DStyleIO.appendParameterValue( "Color", wellknownNameColor.getWellknownName(), writer);
+       Feature2DStyleIO.appendParameterValue(Feature2DStyleTerms.COLOR, wellknownNameColor.getWellknownName(), writer);
     }
 
     @Override

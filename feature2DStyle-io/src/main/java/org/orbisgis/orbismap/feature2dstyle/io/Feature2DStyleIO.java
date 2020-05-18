@@ -123,11 +123,11 @@ public class Feature2DStyleIO {
      * @param file
      * @throws FileNotFoundException
      */
-    public static void fromJSON(File file) throws FileNotFoundException {
+    public static Feature2DStyle  fromJSON(File file) throws FileNotFoundException {
         if (file != null && isExtensionWellFormated(file, "json")) {
             XStream xstream = new XStream(new JettisonMappedXmlDriver());
             registerConverter(xstream);
-            xstream.fromXML(new FileInputStream(file));
+            return (Feature2DStyle) xstream.fromXML(new FileInputStream(file));
         } else {
             throw new RuntimeException("Invalid ouput file path. Use a json extension file name.");
         }
@@ -263,7 +263,8 @@ public class Feature2DStyleIO {
     public static ParameterValue createParameterValueFromString(HierarchicalStreamReader reader) {            
         return createParameterValueFromString(reader.getValue());
     }
-    
+
+
     /**
      * 
      * @param value

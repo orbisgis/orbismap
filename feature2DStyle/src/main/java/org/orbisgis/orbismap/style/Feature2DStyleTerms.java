@@ -38,7 +38,7 @@ package org.orbisgis.orbismap.style;
  * List of terms used by Feature2DStyle model
  * @author Erwan Bocher, CNRS (2010-2020)
  */
-public interface Feature2DStyleTerms {
+public interface Feature2DStyleTerms {    
 
     String FEATURE2DSTYLE = "Feature2DStyle";
     String RULE = "Rule";
@@ -76,4 +76,10 @@ public interface Feature2DStyleTerms {
     String BLUE ="Blue" ;
     String RGB = "rgb";
     String EXPRESSION = "Expression";
+    String TITLE ="Title";
+    String ABSTRACT = "Abstract";
+    String KEYWORDS = "Keywords";
+    String VALUES = "Values";
+    String URI = "Uri";
+    String RADIUS = "Radius";
 }

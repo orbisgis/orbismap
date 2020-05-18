@@ -39,6 +39,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 
 /**
@@ -54,7 +55,7 @@ public class UomConverter implements Converter {
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         if (value != null) {
             Uom uom = (Uom) value;
-            writer.startNode("Uom");
+            writer.startNode(Feature2DStyleTerms.UOM);
             writer.setValue(uom.name());
             writer.endNode();
         }
@@ -62,7 +63,6 @@ public class UomConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext uc) {
-        
         return Uom.PX;
     }
 

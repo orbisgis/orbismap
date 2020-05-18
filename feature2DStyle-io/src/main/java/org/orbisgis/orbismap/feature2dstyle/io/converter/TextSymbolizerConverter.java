@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.common.Description;
 import org.orbisgis.orbismap.style.symbolizer.TextSymbolizer;
@@ -56,7 +57,7 @@ public class TextSymbolizerConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
         TextSymbolizer textSymbolizer = (TextSymbolizer) value;
-        writer.startNode("TextSymbolizer");
+        writer.startNode(Feature2DStyleTerms.TEXTSYMBOLIZER);
         Feature2DStyleIO.marshalSymbolizerMetadata(textSymbolizer, writer, mc);
         Feature2DStyleIO.convertAnother(mc, textSymbolizer.getLabel());
         writer.endNode();
@@ -67,18 +68,18 @@ public class TextSymbolizerConverter implements Converter {
         TextSymbolizer symbolizer = new TextSymbolizer();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
-            if ("name".equalsIgnoreCase(reader.getNodeName())) {
+            if (Feature2DStyleTerms.NAME.equalsIgnoreCase(reader.getNodeName())) {
                 symbolizer.setName(reader.getValue());
-            } else if ("level".equalsIgnoreCase(reader.getNodeName())) {
+            } else if (Feature2DStyleTerms.LEVEL.equalsIgnoreCase(reader.getNodeName())) {
                 symbolizer.setLevel(Integer.parseInt(reader.getValue()));
-            } else if ("perpendicularOffset".equalsIgnoreCase(reader.getNodeName())) {
+            } else if (Feature2DStyleTerms.PERPENDICULAROFFSET.equalsIgnoreCase(reader.getNodeName())) {
                 symbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader));
-            } else if ("uom".equalsIgnoreCase(reader.getNodeName())) {
+            } else if (Feature2DStyleTerms.UOM.equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);
                 symbolizer.setUom(uom);
-            } else if ("geometry".equalsIgnoreCase(reader.getNodeName())) {
+            } else if (Feature2DStyleTerms.GEOMETRY.equalsIgnoreCase(reader.getNodeName())) {
                 symbolizer.setGeometryParameter(reader.getValue());
-            } else if ("description".equalsIgnoreCase(reader.getNodeName())) {
+            } else if (Feature2DStyleTerms.DESCRIPTION.equalsIgnoreCase(reader.getNodeName())) {
                 Description description = (Description) context.convertAnother(reader, Description.class);
                 symbolizer.setDescription(description);
             }

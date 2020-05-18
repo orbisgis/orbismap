@@ -84,7 +84,28 @@ public class Feature2DStyleWriterReaderTest {
         markGraphic.setStroke(penStroke);
         ps.addGraphic(markGraphic);
         rule.addSymbolizer(ps);
-        writeReadTest(testInfo.getDisplayName(), style);
+        writeReadXMLTest(testInfo.getDisplayName(), style);
+    }
+
+    @Test
+    public void writeReadJSONPointSymbolizerWithSize(TestInfo testInfo) throws Exception {
+        Feature2DStyle style = new Feature2DStyle();
+        style.addRule(new Feature2DRule());
+        IRule rule = style.getRules().get(0);
+        PointSymbolizer ps = new PointSymbolizer();
+        ps.setGeometryParameter(new GeometryParameter("the_geom"));
+        MarkGraphic markGraphic = new MarkGraphic();
+        markGraphic.setWellKnownName("circle");
+        markGraphic.setGraphicSize(new Size(10f));
+        SolidFill solidFill = new SolidFill();
+        solidFill.initDefault();
+        markGraphic.setFill(solidFill);
+        PenStroke penStroke = new PenStroke();
+        penStroke.initDefault();
+        markGraphic.setStroke(penStroke);
+        ps.addGraphic(markGraphic);
+        rule.addSymbolizer(ps);
+        writeReadJSONTest(testInfo.getDisplayName(), style);
     }
 
     @Test
@@ -105,7 +126,7 @@ public class Feature2DStyleWriterReaderTest {
         markGraphic.setStroke(penStroke);
         ps.addGraphic(markGraphic);
         rule.addSymbolizer(ps);
-        writeReadTest(testInfo.getDisplayName(), style);
+        writeReadXMLTest(testInfo.getDisplayName(), style);
     }
 
     @Test
@@ -185,7 +206,7 @@ public class Feature2DStyleWriterReaderTest {
         penStrokeLine6.setFill(solidFill6);
         lineSymbolizer6.setStroke(penStrokeLine6);
         rule.addSymbolizer(lineSymbolizer6);
-        writeReadTest(testInfo.getDisplayName(), style);
+        writeReadXMLTest(testInfo.getDisplayName(), style);
     }
 
     @Test
@@ -210,7 +231,7 @@ public class Feature2DStyleWriterReaderTest {
         areaSymbolizer.setStroke(ps_1);
         rule_1.addSymbolizer(areaSymbolizer);
         style.addRule(rule_1);
-        writeReadTest(testInfo.getDisplayName(), style);        
+        writeReadXMLTest(testInfo.getDisplayName(), style);
     }
     
     @Test
@@ -231,7 +252,13 @@ public class Feature2DStyleWriterReaderTest {
         assertEquals(new Expression("#000000"),Feature2DStyleIO.createParameterValueFromString(value));
     }
 
-    public static void writeReadTest(String testName, Feature2DStyle inputStyle) throws Exception {
+    /**
+     *
+     * @param testName
+     * @param inputStyle
+     * @throws Exception
+     */
+    public static void writeReadXMLTest(String testName, Feature2DStyle inputStyle) throws Exception {
         File outputStyleFile = new File("./target/" + testName + ".se");
         if (outputStyleFile == null) {
             throw new IllegalArgumentException("The output file to save the json style cannot be null");
@@ -246,6 +273,32 @@ public class Feature2DStyleWriterReaderTest {
         assertTrue(outputStyleFile.exists());
 
         Feature2DStyle output_fds = Feature2DStyleIO.fromXML(outputStyleFile);
+
+        CompareStyleVisitor cp = new CompareStyleVisitor();
+        cp.visitSymbolizerNode(inputStyle, output_fds);
+    }
+
+    /**
+     *
+     * @param testName
+     * @param inputStyle
+     * @throws Exception
+     */
+    public static void writeReadJSONTest(String testName, Feature2DStyle inputStyle) throws Exception {
+        File outputStyleFile = new File("./target/" + testName + ".json");
+        if (outputStyleFile == null) {
+            throw new IllegalArgumentException("The output file to save the json style cannot be null");
+        }
+        if (inputStyle == null) {
+            throw new IllegalArgumentException("The input style cannot be null");
+        }
+        if (outputStyleFile.exists()) {
+            outputStyleFile.delete();
+        }
+        Feature2DStyleIO.toJSON(inputStyle, outputStyleFile);
+        assertTrue(outputStyleFile.exists());
+
+        Feature2DStyle output_fds = Feature2DStyleIO.fromJSON(outputStyleFile);
 
         CompareStyleVisitor cp = new CompareStyleVisitor();
         cp.visitSymbolizerNode(inputStyle, output_fds);

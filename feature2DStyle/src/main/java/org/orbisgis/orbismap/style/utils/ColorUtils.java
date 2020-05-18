@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
 import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.Literal;
+import org.orbisgis.orbismap.style.parameter.NullParameterValue;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
@@ -67,7 +68,11 @@ public final class ColorUtils {
     private static Random rndGenerator;
     private static Pattern rgbPatern;
     private static String PATTERN_RGB = "rgb\\s*\\(\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*,\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*,\\s*(?:(\\d{1,3})|(?:expression\\s*\\(\\s*(.*?)\\s*\\)))\\s*\\)";
-
+    private static Pattern hexaPatern;
+    
+    
+    private static String PATTERN_HEXA ="^#?([a-f0-9]{6}|[a-f0-9]{3})$";
+    
     static {
         rndGenerator = new Random(13579);
     }
@@ -328,6 +333,43 @@ public final class ColorUtils {
         }
         return null;
 
+    }
+    
+     /**
+     * Return true is it's an hexa representation of the color
+     * 
+     * @param hexaColor color representation
+     * @return
+     */
+    public static boolean isHexa(String hexaColor) {
+        if (hexaColor != null && !hexaColor.isEmpty()) {
+            if (hexaPatern == null) {
+                hexaPatern = Pattern.compile(PATTERN_HEXA, Pattern.CASE_INSENSITIVE);
+            }
+            Matcher matcher = hexaPatern.matcher(hexaColor);
+            return matcher.matches();
+        }
+        return false;
+    }
+  
+    /**
+     * Class to parse a hexa representation and return a ParameterValue
+     *
+     * @param hexaColor color representation
+     * @return
+     */
+    public static ParameterValue parseHexa(String hexaColor) {
+        if (hexaColor != null && !hexaColor.isEmpty()) {
+            if (hexaPatern == null) {
+                hexaPatern = Pattern.compile(PATTERN_HEXA, Pattern.CASE_INSENSITIVE);
+            }
+            Matcher matcher = hexaPatern.matcher(hexaColor);
+            if (matcher.matches()) {
+                return new Literal(hexaColor);
+            }
+            return new NullParameterValue();
+        }
+        return null;
     }
 
 }
