@@ -42,6 +42,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.fill.SolidFill;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 import org.orbisgis.orbismap.style.stroke.LineCap;
 import org.orbisgis.orbismap.style.stroke.LineJoin;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
@@ -89,13 +90,13 @@ public class PenStrokeConverter implements Converter {
                penStroke.setFill(fill);            
             }
             else if (Feature2DStyleTerms.WIDTH.equalsIgnoreCase(reader.getNodeName())) {
-                penStroke.setWidth(Feature2DStyleIO.createParameterValue(reader));
+                penStroke.setWidth((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             else if (Feature2DStyleTerms.DASHARRAY.equalsIgnoreCase(reader.getNodeName())) {
-                penStroke.setDashArray(Feature2DStyleIO.createParameterValue(reader));
+                penStroke.setDashArray((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             else if (Feature2DStyleTerms.DASHOFFSET.equalsIgnoreCase(reader.getNodeName())) {
-                penStroke.setDashOffset(Feature2DStyleIO.createParameterValue(reader));
+                penStroke.setDashOffset((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             else if (Feature2DStyleTerms.LINECAP.equalsIgnoreCase(reader.getNodeName())) {
                 LineCap lineCap = LineCap.fromString(reader.getValue());

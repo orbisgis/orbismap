@@ -235,6 +235,31 @@ public class Feature2DStyleWriterReaderTest {
     }
     
     @Test
+    public void writeReadJSONComplexStyle(TestInfo testInfo) throws Exception {
+        Feature2DStyle style = new Feature2DStyle();
+        Feature2DRule rule_1 = new Feature2DRule();
+        rule_1.setName("Area color expression");
+        rule_1.setMaxScaleDenom(10000d);
+        rule_1.setMinScaleDenom(1000d);
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setName("Color according a type");
+        areaSymbolizer.setPerpendicularOffset(new Expression("CASE WHEN ST_AREA(the_geom)< 1000 then 10 else 0"));
+        SolidFill solidFill_1 = new SolidFill();
+        RGBColor rgbColor_1 = new RGBColor();
+        rgbColor_1.setRed(new Expression("CASE WHEN ST_AREA(the_geom)> 1000 then 12 else 0"));
+        rgbColor_1.setGreen(new Expression("15"));
+        rgbColor_1.setBlue(new Expression("120"));
+        solidFill_1.setColor(rgbColor_1);
+        areaSymbolizer.setFill(solidFill_1);
+        PenStroke ps_1 = new PenStroke();
+        ps_1.initDefault();
+        areaSymbolizer.setStroke(ps_1);
+        rule_1.addSymbolizer(areaSymbolizer);
+        style.addRule(rule_1);
+        writeReadJSONTest(testInfo.getDisplayName(), style);
+    }
+    
+    @Test
     public void createParameterValueFromString(TestInfo testInfo) throws Exception {
         String value = "orange";
         assertEquals(new Literal("orange"),Feature2DStyleIO.createParameterValueFromString(value));

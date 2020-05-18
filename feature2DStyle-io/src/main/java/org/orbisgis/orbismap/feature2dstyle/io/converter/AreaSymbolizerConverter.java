@@ -78,7 +78,7 @@ public class AreaSymbolizerConverter implements Converter {
                 areaSymbolizer.setLevel(Integer.parseInt(reader.getValue()));
             }
             else if (Feature2DStyleTerms.PERPENDICULAROFFSET.equalsIgnoreCase(reader.getNodeName())) {
-                areaSymbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader));
+                areaSymbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader, context));
             }
              else if (Feature2DStyleTerms.UOM.equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);

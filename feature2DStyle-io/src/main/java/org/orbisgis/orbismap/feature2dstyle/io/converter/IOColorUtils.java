@@ -35,6 +35,8 @@
 package org.orbisgis.orbismap.feature2dstyle.io.converter;
 
 import java.util.HashMap;
+
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.IColor;
 import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.Literal;
@@ -60,9 +62,10 @@ public class IOColorUtils {
     private static Pattern EXPRESSION_PATTERN;
 
     /**
+     * Create the style color element according a string color representation
      *
-     * @param value
-     * @return
+     * @param value of the color
+     * @return a style color element
      */
     public static IColor createColorStyleElement(String value) {
         if (EXPRESSION_PATTERN == null) {
@@ -70,7 +73,7 @@ public class IOColorUtils {
         }
         if (value != null && !value.isEmpty()) {
             Matcher matcher = EXPRESSION_PATTERN.matcher(value);
-            if (matcher.find()) {
+            if (matcher.matches()) {
                 String group1 = matcher.group(1);
                 String group2 = matcher.group(2);
                 if (group1 != null) {
@@ -97,7 +100,6 @@ public class IOColorUtils {
                             rgbColor.setGreen(rgbValues.get(Feature2DStyleTerms.GREEN));
                             rgbColor.setBlue(rgbValues.get(Feature2DStyleTerms.BLUE));
                             return rgbColor;
-
                         }
                         if (ColorUtils.isHexa(group2)) {
                             HexaColor hexaColor = new HexaColor();
@@ -114,6 +116,16 @@ public class IOColorUtils {
                     }
                 }
             }
+            //Look for rgb color element
+            HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(value);
+            if (rgbValues != null && !rgbValues.isEmpty()) {
+                RGBColor rgbColor = new RGBColor();
+                rgbColor.setRed(rgbValues.get(Feature2DStyleTerms.RED));
+                rgbColor.setGreen(rgbValues.get(Feature2DStyleTerms.GREEN));
+                rgbColor.setBlue(rgbValues.get(Feature2DStyleTerms.BLUE));
+                return rgbColor;
+            }
+
         }
         return null;
     }

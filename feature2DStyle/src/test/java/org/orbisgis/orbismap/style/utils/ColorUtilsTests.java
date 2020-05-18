@@ -74,6 +74,16 @@ public class ColorUtilsTests {
         assertNull(rgbValues);
     }
 
+
+    @Test
+    public void parseRGBRepresentionTest4() {
+        String rgbValue = "rgb(expression(CASE WHEN ST_AREA(the_geom)> 1000 then 12 else 0),120,11)";
+        HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
+        assertEquals(new Expression("case when st_area(the_geom)> 1000 then 12 else 0"), rgbValues.get(Feature2DStyleTerms.RED));
+        assertEquals(new Literal(120), rgbValues.get(Feature2DStyleTerms.GREEN));
+        assertEquals(new Literal(11), rgbValues.get(Feature2DStyleTerms.BLUE));
+    }
+
     @Test
     public void parseHexaRepresentionTest1() {
         String hexaColor = "#000";

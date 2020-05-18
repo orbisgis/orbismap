@@ -43,6 +43,7 @@ import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.common.Description;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 import org.orbisgis.orbismap.style.symbolizer.TextSymbolizer;
 
 /**
@@ -73,7 +74,7 @@ public class TextSymbolizerConverter implements Converter {
             } else if (Feature2DStyleTerms.LEVEL.equalsIgnoreCase(reader.getNodeName())) {
                 symbolizer.setLevel(Integer.parseInt(reader.getValue()));
             } else if (Feature2DStyleTerms.PERPENDICULAROFFSET.equalsIgnoreCase(reader.getNodeName())) {
-                symbolizer.setPerpendicularOffset(Feature2DStyleIO.createParameterValue(reader));
+                symbolizer.setPerpendicularOffset((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             } else if (Feature2DStyleTerms.UOM.equalsIgnoreCase(reader.getNodeName())) {
                 Uom uom = (Uom) context.convertAnother(reader, Uom.class);
                 symbolizer.setUom(uom);

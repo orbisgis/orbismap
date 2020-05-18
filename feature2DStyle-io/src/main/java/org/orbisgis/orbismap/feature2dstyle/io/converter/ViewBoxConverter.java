@@ -42,6 +42,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
  * ViewBox converter
@@ -69,9 +70,9 @@ public class ViewBoxConverter implements Converter {
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             if (Feature2DStyleTerms.WIDTH.equalsIgnoreCase(reader.getNodeName())) {
-                viewBox.setWidth(Feature2DStyleIO.createParameterValue(reader));
+                viewBox.setWidth((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             } else if (Feature2DStyleTerms.HEIGHT.equalsIgnoreCase(reader.getNodeName())) {
-                viewBox.setHeight(Feature2DStyleIO.createParameterValue(reader));
+                viewBox.setHeight((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             reader.moveUp();
         }

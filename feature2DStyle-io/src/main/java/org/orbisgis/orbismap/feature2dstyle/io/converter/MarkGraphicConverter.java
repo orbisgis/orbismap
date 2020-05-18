@@ -48,6 +48,7 @@ import org.orbisgis.orbismap.style.fill.SolidFill;
 import org.orbisgis.orbismap.style.graphic.MarkGraphic;
 import org.orbisgis.orbismap.style.graphic.graphicSize.Size;
 import org.orbisgis.orbismap.style.graphic.graphicSize.ViewBox;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
 
 /**
@@ -91,13 +92,13 @@ public class MarkGraphicConverter implements Converter {
                 Halo halo = (Halo) context.convertAnother(reader, Halo.class);
                 symbolizer.setHalo(halo);
             } else if (Feature2DStyleTerms.WELLKNOWNNAME.equalsIgnoreCase(node)) {
-                symbolizer.setWellKnownName(Feature2DStyleIO.createParameterValue(reader));
+                symbolizer.setWellKnownName((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             } else if (Feature2DStyleTerms.VIEWBOX.equalsIgnoreCase(node)) {
                 ViewBox viewBox = (ViewBox) context.convertAnother(reader, ViewBox.class);
                 symbolizer.setGraphicSize(viewBox);
             }else if (Feature2DStyleTerms.SIZE.equalsIgnoreCase(node)) {
                 Size size = new Size();
-                size.setSize(Feature2DStyleIO.createParameterValue(reader));
+                size.setSize((ParameterValue) context.convertAnother(reader, ParameterValue.class));
                 symbolizer.setGraphicSize(size);
             }
             reader.moveUp();

@@ -43,6 +43,7 @@ import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.fill.SolidFill;
 import org.orbisgis.orbismap.style.IColor;
+import org.orbisgis.orbismap.style.parameter.ParameterValue;
 
 /**
  * SolidFill converter
@@ -55,10 +56,10 @@ public class SolidFillConverter implements Converter {
 
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext mc) {
-        SolidFill solidFill = (SolidFill) value;
+        SolidFill solidFill = (SolidFill) value; 
         writer.startNode(Feature2DStyleTerms.SOLIDFILL);
         Feature2DStyleIO.convertAnother(mc,solidFill.getColor());
-        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.OPACITY, solidFill.getOpacity(), writer);
+        Feature2DStyleIO.convertAnother(Feature2DStyleTerms.OPACITY,writer, mc,solidFill.getOpacity());
         writer.endNode();
 
     }
@@ -74,7 +75,7 @@ public class SolidFillConverter implements Converter {
                     solidFill.setColor(colorElement);
                 }
             } else if (Feature2DStyleTerms.OPACITY.equalsIgnoreCase(reader.getNodeName())) {
-                solidFill.setOpacity(Feature2DStyleIO.createParameterValue(reader));
+                solidFill.setOpacity((ParameterValue) context.convertAnother(reader, ParameterValue.class));
             }
             reader.moveUp();
         }
