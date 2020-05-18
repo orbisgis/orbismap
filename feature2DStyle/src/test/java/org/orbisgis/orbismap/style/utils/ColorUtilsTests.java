@@ -41,6 +41,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.Literal;
 import org.orbisgis.orbismap.style.parameter.NullParameterValue;
@@ -52,18 +53,18 @@ public class ColorUtilsTests {
     public void parseRGBRepresentionTest1() {
         String rgbValue = "rgb(12,120,11)";
         HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
-        assertEquals(new Literal(12), rgbValues.get("red"));
-        assertEquals(new Literal(120), rgbValues.get("green"));
-        assertEquals(new Literal(11), rgbValues.get("blue"));
+        assertEquals(new Literal(12), rgbValues.get(Feature2DStyleTerms.RED));
+        assertEquals(new Literal(120), rgbValues.get(Feature2DStyleTerms.GREEN));
+        assertEquals(new Literal(11), rgbValues.get(Feature2DStyleTerms.BLUE));
     }
 
     @Test
     public void parseRGBRepresentionTest2() {
         String rgbValue = "rgb(expression(the_color),120,11)";
         HashMap<String, ParameterValue> rgbValues = ColorUtils.parseRGB(rgbValue);
-        assertEquals(new Expression("the_color"), rgbValues.get("red"));
-        assertEquals(new Literal(120), rgbValues.get("green"));
-        assertEquals(new Literal(11), rgbValues.get("blue"));
+        assertEquals(new Expression("the_color"), rgbValues.get(Feature2DStyleTerms.RED));
+        assertEquals(new Literal(120), rgbValues.get(Feature2DStyleTerms.GREEN));
+        assertEquals(new Literal(11), rgbValues.get(Feature2DStyleTerms.BLUE));
     }
 
     @Test
