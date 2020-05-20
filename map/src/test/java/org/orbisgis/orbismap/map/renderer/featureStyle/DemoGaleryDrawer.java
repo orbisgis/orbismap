@@ -116,6 +116,13 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.ORANGE, 1, 0, Color.darkGray, 2);
         template(inputFile, style.getName().replace(" ", "_").toLowerCase(), style, true,true, null);
     }
+    
+    @Test
+    public void testLineSymbolizerRules(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createLineSymbolizerRulesExpression();
+        template(inputFile, style.getName().replace(" ", "_").toLowerCase(), style, true,true, null);
+    }
 
     @Test
     public void testAreaSymbolizerOffset(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {

@@ -77,6 +77,31 @@ import org.orbisgis.orbismap.style.transform.Transform;
 public class StylesForTest {
 
     /**
+     * Create a style LineSymbolizer with a filter rule
+     *
+     * @return
+     */
+    public static Feature2DStyle createLineSymbolizerRulesExpression() {
+        Feature2DStyle style = new Feature2DStyle();
+        style.setName("Unique values map");
+        LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.initDefault();
+        lineSymbolizer.setStroke(createPenStroke(Color.GREEN, 2));
+        Feature2DRule rule1 = new Feature2DRule();
+        rule1.setFilter(new Expression("type='hedgeTalus'"));
+        rule1.addSymbolizer(lineSymbolizer);
+        LineSymbolizer lineSymbolizer2 = new LineSymbolizer();
+        lineSymbolizer2.initDefault();
+        lineSymbolizer2.setStroke(createPenStroke(Color.GRAY,3));
+        Feature2DRule rule2 = new Feature2DRule();
+        rule2.setFilter(new Expression("type='talus'"));
+        rule2.addSymbolizer(lineSymbolizer2);
+        style.addRule(rule1);
+        style.addRule(rule2);
+        return style;
+    }
+
+    /**
      * Create a style area with a filter rule
      *
      * @return
@@ -216,12 +241,12 @@ public class StylesForTest {
     }
 
     public static Feature2DStyle createAreaSymbolizer(Color fillColor, float opacity, double offset, Color strokeColor, float strokeWidth) {
-        Feature2DStyle style = new Feature2DStyle();        
+        Feature2DStyle style = new Feature2DStyle();
         style.setName("Single symbol map");
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setFill(createSolidFill(fillColor, opacity));
-        if(offset!=0){
-        areaSymbolizer.setPerpendicularOffset(new Literal(offset));
+        if (offset != 0) {
+            areaSymbolizer.setPerpendicularOffset(new Literal(offset));
         }
         areaSymbolizer.setStroke(createPenStroke(strokeColor, strokeWidth));
         Feature2DRule rule = new Feature2DRule();
@@ -374,7 +399,6 @@ public class StylesForTest {
         style.addRule(rule);
         return style;
     }
-
 
     public static Feature2DStyle createAreaSymbolizerStyleRGBColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
