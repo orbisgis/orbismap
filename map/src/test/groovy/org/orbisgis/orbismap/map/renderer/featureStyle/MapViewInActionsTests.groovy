@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS
 import org.orbisgis.orbismap.style.Feature2DStyle
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 
 import java.awt.Color
 
@@ -81,10 +82,10 @@ class MapViewInActionsTests {
         String inputStyle = new File(this.getClass().getResource("landcover2000_style.se").toURI()).getAbsolutePath();
         ISpatialTable spatialTable = h2GIS.link(new File(inputFile), "LANDCOVER", true)
         MapView mapView = new MapView()
-        StyledLayer styledLayer = Feature2DStyleIO.fromXML(new File(inputStyle));
+        Feature2DStyle style = Feature2DStyleIO.fromJSON(new File(inputStyle));
+        StyledLayer styledLayer =new StyledLayer(spatialTable,style )
         mapView << styledLayer
         mapView.draw();
         mapView.show();
     }
-
     }

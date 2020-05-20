@@ -37,6 +37,7 @@ package org.orbisgis.orbismap.map.renderer.featureStyle;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.Uom;
 import org.orbisgis.orbismap.style.label.RelativeOrientation;
 
@@ -78,7 +80,10 @@ public class DemoGaleryDrawer {
         h2GIS.close();
     }
 
-    public static void template(String inputFile, String title, Feature2DStyle style, boolean display, Envelope extent) throws LayerException, IOException, InterruptedException {
+    public static void template(String inputFile, String title, Feature2DStyle style, boolean display,  boolean saveStyle, Envelope extent) throws LayerException, IOException, InterruptedException {
+        if(saveStyle){
+            saveStyle(style);
+        }
         ISpatialTable spatialTable = (ISpatialTable) h2GIS.link(new File(inputFile), "TMP_GEOFILE", true);
 
         long draw = System.currentTimeMillis();
@@ -100,172 +105,170 @@ public class DemoGaleryDrawer {
         if (display) {
             mapRenderer.show();
         }
-        File savePath = new File("./target/" + DemoGaleryDrawer.class.getSimpleName() + "_" + title);
+        File savePath = new File("./target/" + title+".png");
         ImageIO.write(mapRenderer.getImage(), "png", savePath);
 
     }
 
     @Test
     public void testAreaSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
-       // String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        String inputFile = "/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp";
-        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.ORANGE, 1, 0, Color.darkGray, 2);
+        template(inputFile, style.getName().replace(" ", "_").toLowerCase(), style, true,true, null);
     }
 
     @Test
     public void testAreaSymbolizerOffset(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 5);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 5, Color.BLACK, 0.26f);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
 
     @Test
     public void testAreaSymbolizerGeometryExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerGeometryExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerStyleColorExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
 
     @Test
     public void testAreaSymbolizerRGBColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerStyleRGBColorExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        inputFile ="/home/ebocher/Autres/data/DONNEES RENNES/Reseau_Rennes.shp";
         Feature2DStyle style = StylesForTest.createLineSymbolizer(Color.BLACK, 1, 0, Uom.PX);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testTwoLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createTwoLineSymbolizers();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testLineSymbolizerOffset(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createLineSymbolizer(Color.green, 1, 5, Uom.PX);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
 
     @Test
     public void testLineSymbolizerSizeExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createStyleWithLineSymbolizerSizeExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testTextSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createTextSymbolizer();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
 
     @Test
     public void testTextSymbolizerColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createTextSymbolizerColorExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testTextSymbolizerFieldName(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createTextSymbolizerWithField();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerHatched(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createHatchedAreaSymbolizer(Color.YELLOW, 2, 45, 10, Color.BLACK, 1);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerHatchedColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerHatchedColorExpression("CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END", 2, 45, 10);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerRuleExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerRuleExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerDotFill(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerDotFillStyle();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerHatchDensityFillColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerHatchDensityFillColorExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerGraphicFillColor(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerGraphicFillColor();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerMarkDensityFillColorExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerMarkDensityFillColorExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testPointSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointSymbolizer("circle", Color.yellow, 10, Color.BLACK, 1);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
 
     @Test
     public void testPointSymbolizerMarkGraphicSizeExpression(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointSymbolizerMarkGraphicSizeExpression();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testPointSymbolizerVertex(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointSymbolizerVertex();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testAreaSymbolizerAndPointSymbolizerVertex(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerAndPointSymbolizerVertex();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
@@ -276,7 +279,7 @@ public class DemoGaleryDrawer {
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createAreaSymbolizerAndPointSymbolizerVertex();
-        template(inputFile, testInfo.getDisplayName(), style, true, envelope);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,envelope);
     }
 
     @Test
@@ -287,7 +290,7 @@ public class DemoGaleryDrawer {
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createSymbolsWithLevel();
-        template(inputFile, testInfo.getDisplayName(), style, true, envelope);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, envelope);
     }
 
     @Test
@@ -298,7 +301,7 @@ public class DemoGaleryDrawer {
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().buffer(100).getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createDashedLineSymbolizer(Color.yellow, 2, 0, "5 2");
-        template(inputFile, testInfo.getDisplayName(), style, true, envelope);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,envelope);
     }
 
     @Test
@@ -309,57 +312,71 @@ public class DemoGaleryDrawer {
         spatialTable.next();
         Envelope envelope = spatialTable.getGeometry().getEnvelopeInternal();
         Feature2DStyle style = StylesForTest.createDashedAreaymbolizer(Color.yellow, 2, 0, "10");
-        template(inputFile, testInfo.getDisplayName(), style, true, envelope);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,envelope);
     }
 
     @Test
     public void testGraphicStrokeLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizer(Color.yellow, 2, 0, 10);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
-    
+
     @Test
     public void testGraphicStrokeLineSymbolizerNoOverlaps(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createGraphicStrokeLineSymbolizerNoOverlaps(Color.BLACK, 2, 0, 10);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
 
     @Test
     public void testLineLabelTextSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("hedgerow2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createLineLabelTextSymbolizer();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
 
     @Test
     public void testLineLabelTextSymbolizerArea(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointLabelTextSymbolizer();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true,false, null);
     }
-    
-    
+
     @Test
     public void testMeteoColdFrontLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createMeteoColdFrontLineSymbolizer(2, 3, RelativeOrientation.NORMAL_UP);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
-    
+
     @Test
     public void testPointSymbolizerTransform(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createPointSymbolizerTransform();
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false,null);
     }
-    
-     @Test
+
+    @Test
     public void testElevationBarLineSymbolizer(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
         String inputFile = new File(this.getClass().getResource("contourlevels.shp").toURI()).getAbsolutePath();
         Feature2DStyle style = StylesForTest.createElevationBarLineSymbolizer(2, 1, RelativeOrientation.NORMAL_UP);
-        template(inputFile, testInfo.getDisplayName(), style, true, null);
+        template(inputFile, testInfo.getDisplayName(), style, true, false, null);
+    }
+    
+    /**
+     * Method to save the style in two encodings JSON and XML in the target
+     * folder
+     *
+     * @param style
+     */
+    public static void saveStyle(Feature2DStyle style) throws FileNotFoundException {
+        File jsonFile = new File("target/" + style.getName().replace(" ", "_").toLowerCase() + ".json");
+        jsonFile.delete();
+        File xmlFile = new File("target/" + style.getName().replace(" ", "_").toLowerCase() + ".se");
+        xmlFile.delete();
+        Feature2DStyleIO.toJSON(style, jsonFile);
+        Feature2DStyleIO.toXML(style, xmlFile);
     }
 
 }

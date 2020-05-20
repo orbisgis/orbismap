@@ -82,16 +82,15 @@ public class CompareStyleVisitor {
             throw new ParameterException("The styles doesn't have the same object instances ; expected style node = " + expectedStyleNode + " and actual style node = " + actualStyleNode);
         }
         if (expectedStyleNode instanceof Expression && actualStyleNode instanceof Expression) {
-            //TODO :  to be fixed issue on https://github.com/JSQLParser/JSqlParser/issues/986
-            /*try {
+            try {
                 net.sf.jsqlparser.expression.Expression expectedParsed = CCJSqlParserUtil.parseExpression(((Expression) expectedStyleNode).getExpression(), true);
                 net.sf.jsqlparser.expression.Expression actualParsed = CCJSqlParserUtil.parseExpression(((Expression) actualStyleNode).getExpression(), true);
-                if (!expectedParsed.toString().equals(actualParsed.toString())) {
-                    throw new ParameterException("The styles doesn't have the same expression ; expected style node = " + expectedStyleNode + " and actual style node = " + actualStyleNode);
+                if (!expectedParsed.toString().equalsIgnoreCase(actualParsed.toString())) {
+                    throw new ParameterException("The styles doesn't have the same expression ; expected style node = " + expectedParsed + " and actual style node = " + actualParsed);
                 }
             } catch (JSQLParserException ex) {
                 throw new ParameterException(ex);
-            }*/
+            }
 
         } else if (expectedStyleNode instanceof Literal && actualStyleNode instanceof Literal) {
             Literal expectedLiteral = (Literal) expectedStyleNode;

@@ -197,6 +197,7 @@ public class StylesForTest {
     /**
      * Create a style with one <code>LineSymbolizer</code>
      *
+     * @param color
      * @return a  <code>Style</code>
      */
     public static Feature2DStyle createDashedAreaymbolizer(Color color, float width, double offset, String dashArray) {
@@ -214,12 +215,15 @@ public class StylesForTest {
         return style;
     }
 
-    public static Feature2DStyle createAreaSymbolizer(Color fillColor, float opacity, double offset) {
-        Feature2DStyle style = new Feature2DStyle();
+    public static Feature2DStyle createAreaSymbolizer(Color fillColor, float opacity, double offset, Color strokeColor, float strokeWidth) {
+        Feature2DStyle style = new Feature2DStyle();        
+        style.setName("Single symbol map");
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setFill(createSolidFill(fillColor, opacity));
+        if(offset!=0){
         areaSymbolizer.setPerpendicularOffset(new Literal(offset));
-        areaSymbolizer.setStroke(createPenStroke(Color.BLACK, 1));
+        }
+        areaSymbolizer.setStroke(createPenStroke(strokeColor, strokeWidth));
         Feature2DRule rule = new Feature2DRule();
         rule.addSymbolizer(areaSymbolizer);
         style.addRule(rule);
