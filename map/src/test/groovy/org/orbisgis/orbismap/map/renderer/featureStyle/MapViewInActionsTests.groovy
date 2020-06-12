@@ -36,6 +36,8 @@
 package org.orbisgis.orbismap.map.renderer.featureStyle
 
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.TestInfo
+import org.orbisgis.orbisdata.datamanager.jdbc.postgis.POSTGIS
 import org.orbisgis.orbismap.map.layerModel.StyledLayer
 import org.orbisgis.orbismap.map.renderer.MapView
 import org.junit.jupiter.api.Test
@@ -62,7 +64,7 @@ class MapViewInActionsTests {
 
     @Disabled
     @Test
-    void createMapView() throws Exception {
+    void createMapView(TestInfo testInfo) throws Exception {
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         ISpatialTable spatialTable = h2GIS.link(new File(inputFile), "LANDCOVER", true)
@@ -72,20 +74,59 @@ class MapViewInActionsTests {
         mapView << styledLayer
         mapView.draw();
         mapView.show();
+        mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
     }
 
     @Disabled
     @Test
-    void mapViewReadStyle() throws Exception {
+    void createMapViewLinkedTable(TestInfo testInfo) throws Exception {
+        H2GIS h2GIS = H2GIS.open("./target/mapview")
+        h2GIS.execute("drop table if exists remoteTable; CREATE LINKED TABLE remoteTable ('org.h2gis.postgis_jts.Driver', 'jdbc:postgresql_h2://localhost:5432/orbisgis_db', 'orbisgis', 'orbisgis', 'public', '(SELECT st_buffer(the_geom, 20) FROM landcover)');");
+        ISpatialTable spatialTable = h2GIS.getSpatialTable("remoteTable")
+        MapView mapView = new MapView()
+        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0,Color.BLACK,1 );
+        StyledLayer styledLayer = new StyledLayer(spatialTable, style)
+        mapView << styledLayer
+        mapView.draw();
+        mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
+        mapView.show();
+    }
+
+
+    @Test
+    void createMapViewPostGIS(TestInfo testInfo) throws Exception {
+        String url = "jdbc:postgresql://localhost:5432/orbisgis_db";
+        Properties props = new Properties();
+        props.setProperty("user", "orbisgis");
+        props.setProperty("password", "orbisgis");
+        props.setProperty("url", url);
+        POSTGIS postgis = POSTGIS.open(props);
+        if(postgis!=null){
+            postgis.load(new File(this.getClass().getResource("landcover2000.shp").toURI()), "landcover", true)
+            postgis.execute("ANALYZE landcover")
+            ISpatialTable spatialTable = postgis.getSpatialTable("landcover")
+            MapView mapView = new MapView()
+            Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.ORANGE, 1, 0, Color.BLACK,1 )
+            StyledLayer styledLayer = new StyledLayer(spatialTable, style)
+            mapView << styledLayer
+            mapView.draw();
+            mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
+        }
+    }
+
+
+    @Test
+    void mapViewReadStyle(TestInfo testInfo) throws Exception {
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        String inputStyle = new File(this.getClass().getResource("landcover2000_style.se").toURI()).getAbsolutePath();
+        String inputStyle = new File(this.getClass().getResource("styles/single_symbol/single_symbol_map.json").toURI()).getAbsolutePath();
         ISpatialTable spatialTable = h2GIS.link(new File(inputFile), "LANDCOVER", true)
         MapView mapView = new MapView()
         Feature2DStyle style = Feature2DStyleIO.fromJSON(new File(inputStyle));
         StyledLayer styledLayer =new StyledLayer(spatialTable,style )
         mapView << styledLayer
         mapView.draw();
+        mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
         mapView.show();
     }
     }

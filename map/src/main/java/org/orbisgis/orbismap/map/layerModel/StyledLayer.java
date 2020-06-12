@@ -35,6 +35,7 @@
 package org.orbisgis.orbismap.map.layerModel;
 
 import java.awt.Graphics2D;
+import org.locationtech.jts.geom.Geometry;
 import org.orbisgis.orbismap.map.renderer.featureStyle.FeatureStyleRenderer;
 import org.orbisgis.orbismap.style.Feature2DStyle;
 import org.orbisgis.orbismap.map.api.IProgressMonitor;
@@ -102,12 +103,18 @@ public class StyledLayer extends AbstractLayer {
         }
     }
 
-    //TODO : Find in the style the geom used to compute the good envelope.
     @Override
     public MapEnvelope getEnvelope() {
         MapEnvelope cachedEnvelope = envelope;
         if (cachedEnvelope == null) {
-            cachedEnvelope = new MapEnvelope(spatialTable.getEstimatedExtend().getEnvelopeInternal());
+            Geometry geomEnv = spatialTable.getEstimatedExtend();
+            if(geomEnv==null){
+                geomEnv = spatialTable.getExtend();
+            }
+            if(geomEnv==null){
+                throw new RuntimeException("Cannot compute the envelope of the layer");
+            }
+            cachedEnvelope = new MapEnvelope(geomEnv.getEnvelopeInternal(), geomEnv.getSRID());
             envelope = cachedEnvelope;
         }
         return cachedEnvelope;

@@ -144,7 +144,7 @@ public class MapView  implements IRenderer{
 
 
     /**
-     * 
+     * Method to save the 
      * @param filePath
      * @param delete
      * @return

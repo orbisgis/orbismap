@@ -40,6 +40,7 @@ import java.util.List;
 import org.orbisgis.orbismap.style.common.Description;
 import org.orbisgis.orbismap.style.parameter.Expression;
 import org.orbisgis.orbismap.style.parameter.ParameterDomain;
+import org.orbisgis.orbismap.style.parameter.RuleFilter;
 import org.orbisgis.orbismap.style.symbolizer.PointSymbolizer;
 
 /**
@@ -61,7 +62,7 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
     public static final String DEFAULT_NAME = "Default Rule";
     private String name = "";
     private Description description = new Description();
-    private Expression expressionParameter;
+    private RuleFilter expressionParameter;
     private Double minScaleDenom = null;
     private Double maxScaleDenom = null;
     private ArrayList<IFeatureSymbolizer> symbolizers;
@@ -89,7 +90,7 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
      * @return 
      *      The associated <code>where</code> clause.
      */
-    public Expression getFilter() {
+    public RuleFilter getFilter() {
         return expressionParameter;
     }
     
@@ -98,18 +99,17 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
      * @param expression
      */
     public void setFilter(String expression) {
-        setFilter(new Expression(expression));
+        setFilter(new RuleFilter(expression));
     }
 
     /**
      * Replace the current inner <code>where</code> clause.
      * @param expression
      */
-    public void setFilter(Expression expression) {
+    public void setFilter(RuleFilter expression) {
         if(expression!=null){
         this.expressionParameter = expression;
         this.expressionParameter.setParent(this);
-        this.expressionParameter.setParameterDomain(new ParameterDomain(Boolean.class));
         }
     }
 

@@ -1,0 +1,39 @@
+<Feature2DStyle>
+  <Name>Unique values map</Name>
+  <Rule>
+    <Name>Hedge with talus</Name>
+    <Filter>type=&apos;hedgeTalus&apos;</Filter>
+    <LineSymbolizer>
+      <Name>Line Symbolizer</Name>
+      <Uom>PX</Uom>
+      <Level>0</Level>
+      <PenStroke>
+        <SolidFill>
+          <Color>#00ff00</Color>
+          <Opacity>1.0</Opacity>
+        </SolidFill>
+        <Width>2.0</Width>
+        <LineCap>BUTT</LineCap>
+        <LineJoin>MITRE</LineJoin>
+      </PenStroke>
+    </LineSymbolizer>
+  </Rule>
+  <Rule>
+    <Name>Talus</Name>
+    <Filter>type=&apos;talus&apos;</Filter>
+    <LineSymbolizer>
+      <Name>Line Symbolizer</Name>
+      <Uom>PX</Uom>
+      <Level>0</Level>
+      <PenStroke>
+        <SolidFill>
+          <Color>#808080</Color>
+          <Opacity>1.0</Opacity>
+        </SolidFill>
+        <Width>3.0</Width>
+        <LineCap>BUTT</LineCap>
+        <LineJoin>MITRE</LineJoin>
+      </PenStroke>
+    </LineSymbolizer>
+  </Rule>
+</Feature2DStyle>

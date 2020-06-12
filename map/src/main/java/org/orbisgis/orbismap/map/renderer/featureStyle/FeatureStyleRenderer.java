@@ -60,6 +60,7 @@ import org.orbisgis.orbismap.style.Feature2DRule;
 import org.orbisgis.orbismap.map.api.IProgressMonitor;
 import org.orbisgis.orbismap.map.renderer.featureStyle.utils.ExpressionParser;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbismap.style.parameter.RuleFilter;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.LineSymbolizer;
@@ -136,14 +137,17 @@ public class FeatureStyleRenderer {
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
 
-                    String ruleFilter = rule.getFilter().getExpression();
-
-                    if (!ruleFilter.isEmpty()) {
-                        ruleFilter += " and ";
+                    RuleFilter ruleFilter = rule.getFilter();
+                    String expressionRule ="";
+                    if(ruleFilter!=null) {
+                        expressionRule = rule.getFilter().getExpression();
+                        if (!expressionRule.isEmpty()) {
+                            expressionRule += " and ";
+                        }
                     }
-                    ruleFilter += spatialWherefilter;
+                    expressionRule += spatialWherefilter;
 
-                    ISpatialTable spatialTableQuery =  spatialTable.columns(query).filter(ruleFilter);
+                    ISpatialTable spatialTableQuery =  spatialTable.columns(query).filter(expressionRule);
 
                     //This map is populated from the data
                     Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl, mt);
@@ -237,13 +241,13 @@ public class FeatureStyleRenderer {
 
                     //Draw all buffered images
                     sortedSymbolizers.values().forEach((symbolizerDraw) -> {
-                        symbolizerDraw.dispose(g2);                        
-                        g2.dispose();
+                        symbolizerDraw.dispose(g2);   
                     });
 
                 }
             }
         } 
+        g2.dispose();
     }
 
     /**

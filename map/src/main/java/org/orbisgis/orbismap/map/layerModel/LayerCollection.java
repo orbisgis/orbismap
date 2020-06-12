@@ -43,6 +43,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.orbisgis.orbismap.map.api.ILayer;
 import org.orbisgis.orbismap.map.api.ILayerAction;
+import org.orbisgis.orbismap.map.api.IMapEnvelope;
 import org.orbisgis.orbismap.map.api.IProgressMonitor;
 import org.orbisgis.orbismap.map.api.LayerException;
 
@@ -123,14 +124,14 @@ public class LayerCollection extends AbstractLayer {
 
     private class GetEnvelopeLayerAction implements ILayerAction {
 
-        private Envelope globalEnvelope;
+        private MapEnvelope globalEnvelope;
 
         @Override
         public void action(ILayer layer) {
             if (null == globalEnvelope) {
-                globalEnvelope =  (Envelope) layer.getEnvelope();
-            } else {
-                globalEnvelope.expandToInclude((Coordinate) layer.getEnvelope());
+                globalEnvelope =  (MapEnvelope) layer.getEnvelope();
+            } else { 
+                globalEnvelope.expandToInclude((Envelope) layer.getEnvelope());
             }
         }
 

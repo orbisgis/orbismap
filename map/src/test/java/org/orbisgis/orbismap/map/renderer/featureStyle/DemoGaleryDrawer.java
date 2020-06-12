@@ -105,9 +105,8 @@ public class DemoGaleryDrawer {
         if (display) {
             mapRenderer.show();
         }
-        File savePath = new File("./target/" + title+".png");
+        File savePath = new File("./target" + File.separator+title+".png");
         ImageIO.write(mapRenderer.getImage(), "png", savePath);
-
     }
 
     @Test

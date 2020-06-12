@@ -38,21 +38,43 @@ import org.locationtech.jts.geom.Envelope;
 import org.orbisgis.orbismap.map.api.IMapEnvelope;
 
 /**
- * Envelope
+ * Extend the JTS envelope to manage SRID identifier
  * 
- * @author ebocher
+ * @author Erwan Bocher, CNRS, 2020
  */
 public class MapEnvelope extends Envelope implements IMapEnvelope{
 
-       
+    
+    private int srid = 0;
     
     public MapEnvelope(Envelope envelope){
         super(envelope);
-    }   
+    } 
+    public MapEnvelope(Envelope envelope, int srid){
+        super(envelope);
+        this.srid=srid;
+    } 
    
 
     public MapEnvelope() {
         super();
     }
+
+    
+    @Override
+    public int getSrid() {
+        return srid;
+    }
+
+    /**
+     * Identifier to find CRS parameters
+     * @param srid 
+     */
+    public void setSrid(int srid) {
+        this.srid = srid;
+    }
+    
+    
+    
     
 }

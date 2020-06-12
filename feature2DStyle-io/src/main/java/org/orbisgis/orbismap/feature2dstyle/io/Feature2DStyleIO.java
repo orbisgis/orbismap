@@ -146,6 +146,7 @@ public class Feature2DStyleIO {
     private static void registerConverter( XStream xstream){
         xstream.registerConverter(new Feature2DStyleConverter());
         xstream.registerConverter(new Feature2DRuleConverter());
+        xstream.registerConverter(new RuleFilterConverter());
         xstream.registerConverter(new AreaSymbolizerConverter());
         xstream.registerConverter(new LineSymbolizerConverter());
         xstream.registerConverter(new PointSymbolizerConverter());
@@ -164,6 +165,28 @@ public class Feature2DStyleIO {
         xstream.registerConverter(new WellknownNameColorConverter());
         xstream.registerConverter(new ParameterValueConverter());
         xstream.alias(Feature2DStyleTerms.FEATURE2DSTYLE, Feature2DStyle.class);
+    }
+
+    /**
+     * Method to marshall a parameter value
+     *
+     * @param parameterValue
+     * @param writer
+     */
+    public static void marshalParameterValue(ParameterValue parameterValue, HierarchicalStreamWriter writer) {
+        if (parameterValue != null && !(parameterValue instanceof NullParameterValue)) {
+            if (parameterValue instanceof Literal) {
+                String valuetoWrite = String.valueOf(parameterValue.getValue());
+                if (!valuetoWrite.isEmpty()) {
+                    writer.setValue(valuetoWrite);
+                }
+            } else if (parameterValue instanceof Expression) {
+                String valuetoWrite = String.valueOf(((Expression) parameterValue).getExpression());
+                if (!valuetoWrite.isEmpty()) {
+                    writer.setValue(valuetoWrite);
+                }
+            }
+        }
     }
 
     /**

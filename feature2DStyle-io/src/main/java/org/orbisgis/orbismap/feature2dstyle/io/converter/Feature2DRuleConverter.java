@@ -43,6 +43,8 @@ import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
 import org.orbisgis.orbismap.style.Feature2DStyleTerms;
 import org.orbisgis.orbismap.style.Feature2DRule;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
+import org.orbisgis.orbismap.style.parameter.Expression;
+import org.orbisgis.orbismap.style.parameter.RuleFilter;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.LineSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.PointSymbolizer;
@@ -67,8 +69,8 @@ public class Feature2DRuleConverter implements Converter {
             writer.setValue(name);
             writer.endNode();
         }
-        Feature2DStyleIO.convertAnother(mc, feature2DRule.getDescription());        
-        Feature2DStyleIO.marshalParameterValue(Feature2DStyleTerms.FILTER, feature2DRule.getFilter(), writer);
+        Feature2DStyleIO.convertAnother(mc, feature2DRule.getDescription());
+        Feature2DStyleIO.convertAnother(mc,feature2DRule.getFilter());
         Double maxScale = feature2DRule.getMaxScaleDenom();
         if (maxScale != null) {
             writer.startNode(Feature2DStyleTerms.MAXSCALEDENOMINATOR);
@@ -95,6 +97,10 @@ public class Feature2DRuleConverter implements Converter {
             reader.moveDown();            
             if (Feature2DStyleTerms.NAME.equalsIgnoreCase(reader.getNodeName())) {
                 feature2DRule.setName(reader.getValue());
+            }
+            else if (Feature2DStyleTerms.FILTER.equalsIgnoreCase(reader.getNodeName())) {
+                RuleFilter expression = (RuleFilter) context.convertAnother(reader, RuleFilterConverter.class);
+                feature2DRule.setFilter(expression);
             }
             else if (Feature2DStyleTerms.AREASYMBOLIZER.equalsIgnoreCase(reader.getNodeName())) {
                 AreaSymbolizer symbolizer = (AreaSymbolizer) context.convertAnother(reader, AreaSymbolizer.class);
