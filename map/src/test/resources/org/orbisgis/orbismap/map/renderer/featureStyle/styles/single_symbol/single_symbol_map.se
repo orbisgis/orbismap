@@ -1,0 +1,24 @@
+<Feature2DStyle>
+  <Name>Single symbol map</Name>
+  <Rule>
+    <Name>Default Rule</Name>
+    <AreaSymbolizer>
+      <Name>Area symbolizer</Name>
+      <Uom>PX</Uom>
+      <Level>0</Level>
+      <PenStroke>
+        <SolidFill>
+          <Color>#404040</Color>
+          <Opacity>1.0</Opacity>
+        </SolidFill>
+        <Width>2.0</Width>
+        <LineCap>BUTT</LineCap>
+        <LineJoin>MITRE</LineJoin>
+      </PenStroke>
+      <SolidFill>
+        <Color>#ffc800</Color>
+        <Opacity>1.0</Opacity>
+      </SolidFill>
+    </AreaSymbolizer>
+  </Rule>
+</Feature2DStyle>

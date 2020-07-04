@@ -36,10 +36,22 @@ package org.orbisgis.orbismap.map.api;
 
 
 /**
- *
- * @author Erwan Bocher
+ * An envelope with a SRID
+ * 
+ * @author Erwan Bocher, CNRS 2020
  */
 public interface IMapEnvelope{
-    
-        
+  
+    /**
+     * Identifier to find CRS parameters
+     *
+     * Spatial Reference System Identifier (SRID) is a unique value used to
+     * unambiguously identify projected, unprojected, and local spatial
+     * coordinate system definitions.
+     *
+     * default is 0
+     *
+     * @return int value
+     */
+    int getSrid();
 }

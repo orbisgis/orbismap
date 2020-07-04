@@ -152,6 +152,13 @@
 
     <repositories>
         <repository>
+            <id>jsqlparser-snapshots</id>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
             <id>orbisgis-release</id>
             <url>http://nexus-ng.orbisgis.org/repository/orbisgis-release</url>
             <snapshots>
@@ -171,13 +178,6 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-        </repository>
-        <repository>
-            <id>jsqlparser-snapshots</id>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
 </project>

@@ -62,7 +62,7 @@ import org.orbisgis.orbismap.style.visitor.CompareStyleVisitor;
 
 /**
  *
- * @author Erwan Bocher, CNRS
+ * @author Erwan Bocher, CNRS (2020)
  */
 public class Feature2DStyleWriterReaderTest {
 
@@ -218,10 +218,10 @@ public class Feature2DStyleWriterReaderTest {
         rule_1.setMinScaleDenom(1000d);
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setName("Color according a type");
-        areaSymbolizer.setPerpendicularOffset(new Expression("CASE WHEN ST_AREA(the_geom)< 1000 then 10 else 0"));
+        areaSymbolizer.setPerpendicularOffset(new Expression("CASE WHEN ST_AREA(the_geom)< 1000 then 10 else 0 end"));
         SolidFill solidFill_1 = new SolidFill();
         RGBColor rgbColor_1 = new RGBColor();
-        rgbColor_1.setRed(new Expression("CASE WHEN ST_AREA(the_geom)> 1000 then 12 else 0"));
+        rgbColor_1.setRed(new Expression("CASE WHEN ST_AREA(the_geom)> 1000 then 12 else 0 end"));
         rgbColor_1.setGreen(new Expression("15"));
         rgbColor_1.setBlue(new Expression("120"));
         solidFill_1.setColor(rgbColor_1);
@@ -243,10 +243,10 @@ public class Feature2DStyleWriterReaderTest {
         rule_1.setMinScaleDenom(1000d);
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setName("Color according a type");
-        areaSymbolizer.setPerpendicularOffset(new Expression("CASE WHEN ST_AREA(the_geom)< 1000 then 10 else 0"));
+        areaSymbolizer.setPerpendicularOffset(new Expression("CASE WHEN ST_AREA(the_geom)< 1000 then 10 else 0 end"));
         SolidFill solidFill_1 = new SolidFill();
         RGBColor rgbColor_1 = new RGBColor();
-        rgbColor_1.setRed(new Expression("CASE WHEN ST_AREA(the_geom)> 1000 then 12 else 0"));
+        rgbColor_1.setRed(new Expression("CASE WHEN ST_AREA(the_geom)> 1000 then 12 else 0 end"));
         rgbColor_1.setGreen(new Expression("15"));
         rgbColor_1.setBlue(new Expression("120"));
         solidFill_1.setColor(rgbColor_1);

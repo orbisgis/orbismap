@@ -454,7 +454,7 @@ public class MapTransform implements PointTransformation, IMapTransform<MapEnvel
         return decimationDistance;
     }
 
-    void computeDecimationDistance() {
+    private void computeDecimationDistance() {
         MAXPIXEL_DISPLAY = 0.5 / (25.4 / getDpi());
         decimationDistance = MAXPIXEL_DISPLAY / getScaleDenominator();
     }
