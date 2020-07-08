@@ -56,7 +56,6 @@ public class ParameterValueVisitor implements IStyleNodeVisitor {
     
     private HashMap<String, org.orbisgis.orbismap.style.parameter.Expression> expressionsProperties = new HashMap<String, org.orbisgis.orbismap.style.parameter.Expression>();
 
-
     private HashMap<String, String> expression_parameters = new HashMap<String, String>();
 
     private int count = 0;

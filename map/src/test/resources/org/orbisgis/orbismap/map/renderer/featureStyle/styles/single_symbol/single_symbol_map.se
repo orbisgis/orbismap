@@ -6,6 +6,7 @@
       <Name>Area symbolizer</Name>
       <Uom>PX</Uom>
       <Level>0</Level>
+      <Geometry>the_geom</Geometry>
       <PenStroke>
         <SolidFill>
           <Color>#404040</Color>

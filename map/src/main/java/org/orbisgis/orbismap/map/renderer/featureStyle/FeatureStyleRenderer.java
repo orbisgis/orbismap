@@ -96,7 +96,7 @@ public class FeatureStyleRenderer {
      * @param rule
      * @throws JSQLParserException
      */
-    public void formatRuleExpression(Feature2DRule rule) throws JSQLParserException {
+    public static void formatRuleExpression(Feature2DRule rule) throws JSQLParserException {
         rule.setFilter(ExpressionParser.formatConditionalExpression(rule.getFilter()));
     }
 
@@ -132,26 +132,24 @@ public class FeatureStyleRenderer {
                     StringBuilder geofilter = new StringBuilder();
                     geofilter.append("'").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
                     String geomFilter = geofilter.toString();
-
                     String spatialWherefilter = gp.getGeometryColumns().stream()
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
-
                     RuleFilter ruleFilter = rule.getFilter();
-                    String expressionRule ="";
+                    StringBuilder filter =new StringBuilder("");
                     if(ruleFilter!=null) {
-                        expressionRule = rule.getFilter().getExpression();
-                        if (!expressionRule.isEmpty()) {
-                            expressionRule += " and ";
+                        String expressionRule = rule.getFilter().getExpression();
+                        if (expressionRule!=null && !expressionRule.isEmpty()) {
+                            filter.append(expressionRule).append(" and ");
                         }
                     }
-                    expressionRule += spatialWherefilter;
+                    filter.append(spatialWherefilter);
 
-                    ISpatialTable spatialTableQuery =  spatialTable.columns(query).filter(expressionRule);
+                    ISpatialTable spatialTableQuery =  spatialTable.columns(query).filter(filter.toString());
 
                     //This map is populated from the data
                     Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl, mt);
-                    while (spatialTableQuery.next()) {
+                        while (spatialTableQuery.next()) {
                         Map<String, Shape> shapes = new HashMap<>();
                         Shape currentShape = null;
                         Geometry geomReduced = null;
@@ -221,9 +219,7 @@ public class FeatureStyleRenderer {
                         }
                     }
 
-                    
-
-                    //Sort the symbolizer to draw the image accoring the symbol level
+                    //Sort the symbolizer to draw the image according the symbol level
                     Comparator<Entry<IFeatureSymbolizer, ISymbolizerDraw>> symbolizerLevelComp = (o1, o2) -> {
                         if (o1.getKey().getLevel() > o2.getKey().getLevel()) {
                             return -1;
