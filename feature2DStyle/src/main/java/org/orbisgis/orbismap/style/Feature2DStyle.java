@@ -62,7 +62,7 @@ public class Feature2DStyle extends StyleNode implements IStyle<Feature2DRule> {
         name = DEFAULT_NAME;
         rules = new ArrayList<Feature2DRule>();        
     }
-      
+
 
     /**
      * This method remove everything in this feature type style

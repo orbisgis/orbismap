@@ -128,7 +128,7 @@ public class PenStroke extends Stroke implements IFillNode {
     /**
      * Sets the fill used to draw the inside of this {@code PenStroke}.
      *
-     * @param fill The new {@link Fill}. If null, will be set to a
+     * @param fill The new {@link IFill}. If null, will be set to a
      * {@link SolidFill} which color is black and opacity is 100%.
      */
     @Override

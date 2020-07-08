@@ -7,6 +7,7 @@
       <Name>Line Symbolizer</Name>
       <Uom>PX</Uom>
       <Level>0</Level>
+      <Geometry>the_geom</Geometry>
       <PenStroke>
         <SolidFill>
           <Color>#00ff00</Color>
@@ -25,6 +26,7 @@
       <Name>Line Symbolizer</Name>
       <Uom>PX</Uom>
       <Level>0</Level>
+      <Geometry>the_geom</Geometry>
       <PenStroke>
         <SolidFill>
           <Color>#808080</Color>

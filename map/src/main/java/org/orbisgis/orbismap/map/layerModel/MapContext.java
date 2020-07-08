@@ -69,6 +69,7 @@ public final class MapContext implements IMapContext<Description, MapEnvelope> {
     protected MapEnvelope boundingBox = null;
 
     protected int epsg_code = 0;
+    private MapTransform mt;
 
     /**
      * Default constructor
@@ -155,7 +156,4 @@ public final class MapContext implements IMapContext<Description, MapEnvelope> {
         this.epsg_code = oldEPSG_code;
         propertyChangeSupport.firePropertyChange(PROP_COORDINATEREFERENCESYSTEM, oldEPSG_code, epsg);
     }
-
-    
-
 }

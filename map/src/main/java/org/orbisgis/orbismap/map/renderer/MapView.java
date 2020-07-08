@@ -76,8 +76,8 @@ public class MapView  implements IRenderer{
     public MapView(int width, int height) {
         this.width = width;
         this.height = height;
-        mc = new MapContext();
         mt = new MapTransform();
+        mc = new MapContext();
     }
     
     public void addLayer(ILayer layer) throws LayerException {

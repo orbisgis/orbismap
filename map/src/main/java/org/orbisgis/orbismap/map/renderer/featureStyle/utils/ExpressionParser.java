@@ -39,6 +39,7 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import org.orbisgis.orbismap.style.parameter.RuleFilter;
+import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
 
 /**
  *
@@ -65,15 +66,31 @@ public class ExpressionParser {
      * expression
      *
      * @param ruleFilter
-     * @return RuleFilter
+     * @return String
      * @throws JSQLParserException
      */
-    public static RuleFilter formatConditionalExpression(RuleFilter ruleFilter) throws JSQLParserException {
+    public static String formatConditionalExpression(RuleFilter ruleFilter) throws JSQLParserException {
         if (ruleFilter != null) {
             Expression expParsed = CCJSqlParserUtil.parseCondExpression(ruleFilter.getExpression(), false);
-            ruleFilter.setExpression(expParsed.toString());
-            return ruleFilter;
+            return expParsed.toString();
         }
         return null;
     }
+
+    /**
+     * Use this class to format a geometryParameter and check if the
+     * expression is well formatted
+     *
+     * @param geometryParameter
+     * @return String
+     * @throws JSQLParserException
+     */
+    public static String formatGeometryParameterExpression(GeometryParameter geometryParameter) throws JSQLParserException {
+        if (geometryParameter != null) {
+            Expression expParsed = CCJSqlParserUtil.parseExpression(geometryParameter.getExpression(), false);
+            return expParsed.toString();
+        }
+        return null;
+    }
+
 }

@@ -37,7 +37,10 @@ package org.orbisgis.orbismap.style.parameter;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
+import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.parser.ParseException;
+import net.sf.jsqlparser.parser.StringProvider;
 import net.sf.jsqlparser.schema.Column;
 
 import java.util.ArrayList;
@@ -54,7 +57,7 @@ public class ExpressionParserTest {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws JSQLParserException {
+    public static void main(String[] args) throws JSQLParserException, ParseException {
         //Field lowercase
         Expression expr = CCJSqlParserUtil.parseExpression("the_geom", false);        
         System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
@@ -91,8 +94,21 @@ public class ExpressionParserTest {
         expr = CCJSqlParserUtil.parseExpression(" test ", false);
         System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
 
-        expr = CCJSqlParserUtil.parseExpression("CASE WHEN ST_AREA(the_geom) > 1000 then 12 else 0", false);
+        expr = CCJSqlParserUtil.parseExpression("CASE WHEN ST_AREA(the_geom) > 1000 then 12 else 0 end", false);
         System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+
+        expr = CCJSqlParserUtil.parseCondExpression("id=12", false);
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+
+        expr = CCJSqlParserUtil.parseCondExpression("id>12 and id<20", false);
+        System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+
+        //expr = CCJSqlParserUtil.parseCondExpression("where id=12", false);
+        //System.out.println(expr.getClass()+ " evaluate to : "+ expr.toString());
+
+        //CCJSqlParser parser = new CCJSqlParser(new StringProvider("where id=12"));
+        //parser.WhereClause();
+
     }
     
 }

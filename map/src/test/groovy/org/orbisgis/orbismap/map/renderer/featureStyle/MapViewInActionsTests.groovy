@@ -106,7 +106,7 @@ class MapViewInActionsTests {
             postgis.execute("ANALYZE landcover")
             ISpatialTable spatialTable = postgis.getSpatialTable("landcover")
             MapView mapView = new MapView()
-            Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.ORANGE, 1, 0, Color.BLACK,1 )
+            Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.ORANGE, 1, 0, Color.BLACK,2 )
             StyledLayer styledLayer = new StyledLayer(spatialTable, style)
             mapView << styledLayer
             mapView.draw();
@@ -120,7 +120,8 @@ class MapViewInActionsTests {
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         String inputStyle = new File(this.getClass().getResource("styles/single_symbol/single_symbol_map.json").toURI()).getAbsolutePath();
-        ISpatialTable spatialTable = h2GIS.link(new File(inputFile), "LANDCOVER", true)
+        h2GIS.link(new File(inputFile), "LANDCOVER", true)
+        ISpatialTable spatialTable =h2GIS.getSpatialTable("LANDCOVER")
         MapView mapView = new MapView()
         Feature2DStyle style = Feature2DStyleIO.fromJSON(new File(inputStyle));
         StyledLayer styledLayer =new StyledLayer(spatialTable,style )

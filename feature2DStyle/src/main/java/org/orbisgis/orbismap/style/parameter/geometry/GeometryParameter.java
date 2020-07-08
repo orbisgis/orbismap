@@ -45,6 +45,11 @@ import org.orbisgis.orbismap.style.StyleNode;
  * ParamaterValue dedicated to manage geometry property, column name or
  * expression
  *
+ * Allowed syntax :
+ * the_geom
+ * ST_Buffer(the_geom, 20)
+ * ST_GeomFromText('POINT(0 0)')
+ *
  * @author Erwan Bocher, CNRS (2010-2020)
  *
  */

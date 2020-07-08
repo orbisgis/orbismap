@@ -77,6 +77,91 @@ import org.orbisgis.orbismap.style.transform.Transform;
  */
 public class StylesForTest {
 
+
+    /**
+     * Create a style LineSymbolizer with two geometry value references
+     *
+     * @return
+     */
+    public static Feature2DStyle createLineSymbolizerWithVariousGeometryReferences() {
+        Feature2DStyle style = new Feature2DStyle();
+        style.setName("Unique values map");
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.initDefault();
+        areaSymbolizer.setGeometryParameter("the_geom");
+        areaSymbolizer.setFill(createSolidFill(Color.CYAN));
+        areaSymbolizer.setStroke(createPenStroke(Color.GREEN, 2));
+        Feature2DRule rule1 = new Feature2DRule();
+        rule1.setName("Surface {geometry : the_geom; filter : }");
+        rule1.addSymbolizer(areaSymbolizer);
+        PointSymbolizer pointSymbolizer = new PointSymbolizer();
+        pointSymbolizer.initDefault();
+        pointSymbolizer.setGeometryParameter("location");
+        MarkGraphic markGraphic = new MarkGraphic();
+        markGraphic.setWellKnownName(new Literal("circle"));
+        markGraphic.setGraphicSize(new ViewBox(12));
+        markGraphic.setFill(createSolidFill(Color.BLUE));
+        markGraphic.setStroke(createPenStroke(Color.GRAY, 1));
+        pointSymbolizer.addGraphic(markGraphic);
+        AreaSymbolizer areaSymbolizer1 = new AreaSymbolizer();
+        areaSymbolizer1.initDefault();
+        areaSymbolizer1.setGeometryParameter("st_buffer(the_geom, 20)");
+        areaSymbolizer1.setFill(createSolidFill(Color.CYAN));
+        areaSymbolizer1.setStroke(createPenStroke(Color.blue, 3));
+        Feature2DRule rule2 = new Feature2DRule();
+        rule2.setName("Location {geometry : location; filter : };{geometry : st_buffer(the_geom, 20); filter : }");
+        rule2.addSymbolizer(pointSymbolizer);
+        rule2.addSymbolizer(areaSymbolizer1);
+        style.addRule(rule1);
+        style.addRule(rule2);
+        AreaSymbolizer areaSymbolizer2 = new AreaSymbolizer();
+        areaSymbolizer2.initDefault();
+        areaSymbolizer2.setGeometryParameter("the_geom");
+        areaSymbolizer2.setFill(createSolidFill(Color.CYAN));
+        areaSymbolizer2.setStroke(createPenStroke(Color.GREEN, 2));
+        Feature2DRule rule3 = new Feature2DRule();
+        rule3.setName("Surface {geometry : the_geom; filter : id=2}");
+        rule3.addSymbolizer(areaSymbolizer2);
+        rule3.setFilter("id=2");
+        PointSymbolizer pointSymbolizer2 = new PointSymbolizer();
+        pointSymbolizer2.initDefault();
+        pointSymbolizer2.setGeometryParameter("st_buffer(location,20)");
+        MarkGraphic markGraphic2 = new MarkGraphic();
+        markGraphic2.setWellKnownName(new Literal("circle"));
+        markGraphic2.setGraphicSize(new ViewBox(12));
+        markGraphic2.setFill(createSolidFill(Color.RED));
+        markGraphic2.setStroke(createPenStroke(Color.GRAY, 1));
+        pointSymbolizer2.addGraphic(markGraphic2);
+        Feature2DRule rule4 = new Feature2DRule();
+        rule4.setName("Location {geometry : st_buffer(location,20); filter : }");
+        rule4.addSymbolizer(pointSymbolizer2);
+        style.addRule(rule3);
+        style.addRule(rule4);
+
+        AreaSymbolizer areaSymbolizer3 = new AreaSymbolizer();
+        areaSymbolizer3.initDefault();
+        areaSymbolizer3.setGeometryParameter("st_buffer(the_geom, 20)");
+        areaSymbolizer3.setFill(createSolidFill(Color.CYAN));
+        areaSymbolizer3.setStroke(createPenStroke(Color.blue, 3));
+        Feature2DRule rule5 = new Feature2DRule();
+        rule5.setName("Surface {geometry : st_buffer(the_geom, 20); filter : id=2}");
+        rule5.addSymbolizer(areaSymbolizer3);
+        rule5.setFilter("id=2");
+        style.addRule(rule5);
+
+        AreaSymbolizer areaSymbolizer4 = new AreaSymbolizer();
+        areaSymbolizer4.initDefault();
+        areaSymbolizer4.setGeometryParameter("st_buffer( the_geom,  20)");
+        areaSymbolizer4.setFill(createSolidFill(Color.blue));
+        areaSymbolizer4.setStroke(createPenStroke(Color.GREEN, 2));
+        Feature2DRule rule6 = new Feature2DRule();
+        rule6.setName("Surface  {geometry : st_buffer( the_geom,  20); filter : id=2}");
+        rule6.addSymbolizer(areaSymbolizer4);
+        rule6.setFilter("id=2 ");
+        style.addRule(rule6);
+        return style;
+    }
+
     /**
      * Create a style LineSymbolizer with a filter rule
      *
@@ -87,6 +172,7 @@ public class StylesForTest {
         style.setName("Unique values map");
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.initDefault();
+        lineSymbolizer.setGeometryParameter("the_geom");
         lineSymbolizer.setStroke(createPenStroke(Color.GREEN, 2));
         Feature2DRule rule1 = new Feature2DRule();
         rule1.setName("Hedge with talus");
@@ -94,6 +180,7 @@ public class StylesForTest {
         rule1.addSymbolizer(lineSymbolizer);
         LineSymbolizer lineSymbolizer2 = new LineSymbolizer();
         lineSymbolizer2.initDefault();
+        lineSymbolizer2.setGeometryParameter("the_geom");
         lineSymbolizer2.setStroke(createPenStroke(Color.GRAY,3));
         Feature2DRule rule2 = new Feature2DRule();
         rule2.setName("Talus");
@@ -112,6 +199,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerRuleExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         areaSymbolizer.initDefault();
         SolidFill solidFill = new SolidFill();
         solidFill.initDefault();
@@ -129,6 +217,7 @@ public class StylesForTest {
     public static Feature2DStyle createStyleWithLineSymbolizerSizeExpression() {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
+        lineSymbolizer.setGeometryParameter("the_geom");
         PenStroke ps = new PenStroke();
         ps.setWidth(new Expression("CASE WHEN TYPE = 'cereals' then 5 else 1 END"));
         Expression colorExpression = new Expression(""
@@ -159,6 +248,7 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setUom(Uom.PX);
+        lineSymbolizer.setGeometryParameter("the_geom");
         lineSymbolizer.setPerpendicularOffset(0);
         PenStroke ps = new PenStroke();
         ps.setWidth(10);
@@ -167,6 +257,7 @@ public class StylesForTest {
         LineSymbolizer lineSymbolizer2 = new LineSymbolizer();
         lineSymbolizer2.setUom(Uom.PX);
         lineSymbolizer2.setPerpendicularOffset(0);
+        lineSymbolizer2.setGeometryParameter("the_geom");
         PenStroke ps2 = new PenStroke();
         ps2.setWidth(2);
         ps2.setFill(createSolidFill(Color.YELLOW));
@@ -191,6 +282,7 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setUom(uom);
+        lineSymbolizer.setGeometryParameter("the_geom");
         lineSymbolizer.setPerpendicularOffset(new Literal(offset));
         PenStroke ps = new PenStroke();
         ps.setWidth(new Literal(width));
@@ -211,6 +303,7 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setPerpendicularOffset(new Literal(offset));
+        lineSymbolizer.setGeometryParameter("the_geom");
         PenStroke ps = new PenStroke();
         ps.setWidth(new Literal(width));
         ps.setFill(createSolidFill(color));
@@ -232,6 +325,7 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setPerpendicularOffset(new Literal(offset));
+        areaSymbolizer.setGeometryParameter("the_geom");
         PenStroke ps = new PenStroke();
         ps.setWidth(new Literal(width));
         ps.setFill(createSolidFill(color));
@@ -247,6 +341,7 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         style.setName("Single symbol map");
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         areaSymbolizer.setFill(createSolidFill(fillColor, opacity));
         if (offset != 0) {
             areaSymbolizer.setPerpendicularOffset(new Literal(offset));
@@ -266,6 +361,7 @@ public class StylesForTest {
     public static Feature2DStyle createTextSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
+        textSymbolizer.setGeometryParameter("the_geom");
         PointLabel pointLabel = new PointLabel();
         pointLabel.initDefault();
         pointLabel.setLabelText(new Literal("OrbisGIS"));
@@ -293,6 +389,7 @@ public class StylesForTest {
     public static Feature2DStyle createTextSymbolizerWithField() {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
+        textSymbolizer.setGeometryParameter("the_geom");
         PointLabel pointLabel = new PointLabel();
         pointLabel.setHorizontalAlign(Label.HorizontalAlignment.CENTER);
         pointLabel.setLabelText(new Expression("type"));
@@ -319,6 +416,7 @@ public class StylesForTest {
             Color strokeAreaColor, float strokeWidth) {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         areaSymbolizer.setFill(createHatchedFill(hatchColor, hatchWidth, hatchAngle, hatchDistance));
         PenStroke ps = new PenStroke();
         ps.setWidth(new Literal(strokeWidth));
@@ -352,6 +450,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerHatchedColorExpression(String colorExpression, float hatchWidth, float hatchAngle, float hatchDistance) {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         HatchedFill hatchedFill = new HatchedFill();
         hatchedFill.setAngle(new Literal(hatchAngle));
         hatchedFill.setDistance(new Literal(hatchDistance));
@@ -384,6 +483,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerStyleColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         Expression colorExpression = new Expression(""
                 + "CASE WHEN ST_AREA(THE_GEOM)> 10000 THEN '#ff6d6d' ELSE '#6d86ff' END");
         Literal opacity = new Literal(1f);
@@ -406,6 +506,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerStyleRGBColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         Literal opacity = new Literal(1f);
         SolidFill solidFill = new SolidFill();
         RGBColor rgbColor = new RGBColor();
@@ -433,6 +534,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerDotFillStyle() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         DotMapFill dotMapFill = new DotMapFill();
         MarkGraphic mg = new MarkGraphic();
         mg.setFill(createSolidFill(Color.yellow));
@@ -457,6 +559,7 @@ public class StylesForTest {
     public static Feature2DStyle createTextSymbolizerColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
+        textSymbolizer.setGeometryParameter("the_geom");
         PointLabel pointLabel = new PointLabel();
         pointLabel.initDefault();
         pointLabel.setLabelText("type");
@@ -495,6 +598,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerHatchDensityFillColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         DensityFill densityFill = new DensityFill();
         densityFill.setPercentageCovered(new Literal(0.2f));
         densityFill.setHatchesOrientation(new Literal(120f));
@@ -529,6 +633,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerMarkDensityFillColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         DensityFill densityFill = new DensityFill();
         densityFill.setPercentageCovered(new Literal(0.2f));
         densityFill.setHatchesOrientation(new Literal(120f));
@@ -564,6 +669,7 @@ public class StylesForTest {
     public static Feature2DStyle createAreaSymbolizerGraphicFillColor() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
         SolidFill solilFillG = new SolidFill();
         solilFillG.setColor("#ff6d6d");
         GraphicFill graphicFill = new GraphicFill();
@@ -613,6 +719,7 @@ public class StylesForTest {
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
         PointSymbolizer ps = new PointSymbolizer();
+        ps.setGeometryParameter("the_geom");
         ps.setUom(Uom.PX);
         MarkGraphic markGraphic = new MarkGraphic();
         markGraphic.setWellKnownName(new Literal("square"));
@@ -634,6 +741,7 @@ public class StylesForTest {
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
         PointSymbolizer ps = new PointSymbolizer();
+        ps.setGeometryParameter("the_geom");
         MarkGraphic markGraphic = new MarkGraphic();
         markGraphic.setFill(createSolidFill(Color.blue));
         markGraphic.setStroke(createPenStroke(Color.black, 1));
@@ -650,11 +758,13 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setFill(createSolidFill(Color.GREEN));
+        areaSymbolizer.setGeometryParameter("the_geom");
         PenStroke ps = new PenStroke();
         ps.setFill(createSolidFill(Color.ORANGE));
         areaSymbolizer.setStroke(ps);
         Feature2DRule rule = new Feature2DRule();
         PointSymbolizer pointSymbolizer = new PointSymbolizer();
+        pointSymbolizer.setGeometryParameter("the_geom");
         pointSymbolizer.addGraphic(createMarkGraphic());
         pointSymbolizer.setOnVertex(true);
         rule.addSymbolizer(areaSymbolizer);
@@ -667,12 +777,14 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.setFill(createSolidFill(Color.BLUE));
+        areaSymbolizer.setGeometryParameter("the_geom");
         PenStroke ps = new PenStroke();
         ps.setFill(createSolidFill(Color.PINK));
         areaSymbolizer.setStroke(ps);
         areaSymbolizer.setLevel(1);
         Feature2DRule rule = new Feature2DRule();
         PointSymbolizer pointSymbolizerCircle = new PointSymbolizer();
+        pointSymbolizerCircle.setGeometryParameter("the_geom");
         MarkGraphic mg = new MarkGraphic();
         mg.setFill(createSolidFill(Color.yellow));
         mg.setWellKnownName(new Literal("circle"));
@@ -681,6 +793,7 @@ public class StylesForTest {
         pointSymbolizerCircle.addGraphic(mg);
         pointSymbolizerCircle.setLevel(2);
         PointSymbolizer pointSymbolizerCross = new PointSymbolizer();
+        pointSymbolizerCross.setGeometryParameter("the_geom");
         MarkGraphic mg_cross = new MarkGraphic();
         mg_cross.setWellKnownName(new Literal("cross"));
         mg_cross.setGraphicSize(new ViewBox(10f));
@@ -688,7 +801,6 @@ public class StylesForTest {
         pointSymbolizerCross.setOnVertex(true);
         pointSymbolizerCross.addGraphic(mg_cross);
         pointSymbolizerCross.setLevel(3);
-
         rule.addSymbolizer(areaSymbolizer);
         rule.addSymbolizer(pointSymbolizerCircle);
         rule.addSymbolizer(pointSymbolizerCross);
@@ -781,9 +893,11 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
         lineSymbolizerBase.initDefault();
+        lineSymbolizerBase.setGeometryParameter("the_geom");
         lineSymbolizerBase.setLevel(0);
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setLevel(1);
+        lineSymbolizer.setGeometryParameter("the_geom");
         GraphicStroke graphicStroke = new GraphicStroke();
         graphicStroke.setUom(Uom.PX);
         graphicStroke.setRelativeOrientation(RelativeOrientation.NORMAL_UP);
@@ -824,8 +938,10 @@ public class StylesForTest {
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
         lineSymbolizerBase.initDefault();
         lineSymbolizerBase.setLevel(0);
+        lineSymbolizerBase.setGeometryParameter("the_geom");
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setLevel(1);
+        lineSymbolizer.setGeometryParameter("the_geom");
         GraphicStroke graphicStroke = new GraphicStroke();
         graphicStroke.setOverlap(false);
         graphicStroke.setUom(Uom.PX);
@@ -863,7 +979,9 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.initDefault();
+        lineSymbolizer.setGeometryParameter("the_geom");
         TextSymbolizer textSymbolizer = new TextSymbolizer();
+        textSymbolizer.setGeometryParameter("the_geom");
         LineLabel lineLabel = new LineLabel();
         lineLabel.initDefault();
         lineLabel.setLabelText(new Expression("type"));
@@ -885,7 +1003,9 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
         areaSymbolizer.initDefault();
+        areaSymbolizer.setGeometryParameter("the_geom");
         TextSymbolizer textSymbolizer = new TextSymbolizer();
+        textSymbolizer.setGeometryParameter("the_geom");
         PointLabel pointLabel = new PointLabel();
         pointLabel.initDefault();
         pointLabel.setLabelText(new Expression("type"));
@@ -902,10 +1022,12 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
         lineSymbolizerBase.setUom(Uom.MM);
+        lineSymbolizerBase.setGeometryParameter("the_geom");
         lineSymbolizerBase.initDefault();
         lineSymbolizerBase.setLevel(0);
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setLevel(1);
+        lineSymbolizer.setGeometryParameter("the_geom");
         lineSymbolizer.setUom(Uom.MM);
         GraphicStroke graphicStroke = new GraphicStroke();
         graphicStroke.setUom(Uom.MM);
@@ -932,6 +1054,7 @@ public class StylesForTest {
         style.addRule(new Feature2DRule());
         IRule rule = style.getRules().get(0);
         PointSymbolizer ps = new PointSymbolizer();
+        ps.setGeometryParameter("the_geom");
         ps.setUom(Uom.PX);
         MarkGraphic markGraphic = new MarkGraphic();
         Transform transform = new Transform();
@@ -955,10 +1078,12 @@ public class StylesForTest {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
         lineSymbolizerBase.setUom(Uom.MM);
+        lineSymbolizerBase.setGeometryParameter("the_geom");
         lineSymbolizerBase.initDefault();
         lineSymbolizerBase.setLevel(0);
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
         lineSymbolizer.setLevel(1);
+        lineSymbolizer.setGeometryParameter("the_geom");
         lineSymbolizer.setUom(Uom.MM);
         GraphicStroke graphicStroke = new GraphicStroke();
         graphicStroke.setUom(Uom.MM);

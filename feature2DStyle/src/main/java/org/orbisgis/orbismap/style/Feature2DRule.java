@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orbisgis.orbismap.style.common.Description;
-import org.orbisgis.orbismap.style.parameter.Expression;
-import org.orbisgis.orbismap.style.parameter.ParameterDomain;
 import org.orbisgis.orbismap.style.parameter.RuleFilter;
 import org.orbisgis.orbismap.style.symbolizer.PointSymbolizer;
 
@@ -228,11 +226,13 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
 
     @Override
     public void addSymbolizer(IFeatureSymbolizer iSymbolizer) {
+        iSymbolizer.setParent(this);
         symbolizers.add(iSymbolizer);
     }
 
     @Override
     public void addSymbolizer(int i, IFeatureSymbolizer iSymbolizer) {
+        iSymbolizer.setParent(this);
         symbolizers.add(i, iSymbolizer);
     }    
 
@@ -240,6 +240,7 @@ public class Feature2DRule extends StyleNode implements IRule<IFeatureSymbolizer
     public void initDefault() {
         PointSymbolizer pointSymbolizer = new PointSymbolizer();
         pointSymbolizer.initDefault();
+        pointSymbolizer.setParent(this);
         addSymbolizer(pointSymbolizer);
         setName("Feature2D rule");
     }
