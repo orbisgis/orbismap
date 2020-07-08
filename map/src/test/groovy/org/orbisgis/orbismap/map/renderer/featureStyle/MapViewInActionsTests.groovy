@@ -128,6 +128,6 @@ class MapViewInActionsTests {
         mapView << styledLayer
         mapView.draw();
         mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
-        mapView.show();
+        //mapView.show();
     }
     }
