@@ -125,9 +125,13 @@ public class EnvelopeVisitor {
     private String formatRuleExpression(RuleFilter ruleFilter)  {
         try {
             if (ruleFilter != null) {
-                net.sf.jsqlparser.expression.Expression expParsed = CCJSqlParserUtil.parseCondExpression(ruleFilter.getExpression(), false);
-                expParsed.accept(new ExpressionVisitorAdapter());
-                return expParsed.toString();
+                String expression = ruleFilter.getExpression();
+                if(!expression.isEmpty()) {
+                    net.sf.jsqlparser.expression.Expression expParsed = CCJSqlParserUtil.parseCondExpression(expression, false);
+                    String formatedExp = expParsed.toString();
+                    ruleFilter.setExpression(formatedExp);
+                    return formatedExp;
+                }
             }
             return "";
         } catch (JSQLParserException e) {

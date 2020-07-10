@@ -43,13 +43,20 @@ import org.orbisgis.orbismap.map.renderer.MapView
 import org.junit.jupiter.api.Test
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable
 import org.orbisgis.orbisdata.datamanager.jdbc.h2gis.H2GIS
+import org.orbisgis.orbismap.style.Feature2DRule
 import org.orbisgis.orbismap.style.Feature2DStyle
-import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO;
+import org.orbisgis.orbismap.feature2dstyle.io.Feature2DStyleIO
+import org.orbisgis.orbismap.style.fill.SolidFill
+import org.orbisgis.orbismap.style.parameter.Literal
+import org.orbisgis.orbismap.style.parameter.NullParameterValue
+import org.orbisgis.orbismap.style.stroke.PenStroke
+import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 
 import java.awt.Color
 
 import static org.junit.jupiter.api.Assertions.*
-
+import static org.orbisgis.orbismap.style.stroke.PenStroke.DEFAULT_CAP
+import static org.orbisgis.orbismap.style.stroke.PenStroke.DEFAULT_JOIN
 
 
 class MapViewInActionsTests {
@@ -73,7 +80,7 @@ class MapViewInActionsTests {
         StyledLayer styledLayer = new StyledLayer(spatialTable, style)
         mapView << styledLayer
         mapView.draw();
-        mapView.show();
+        //mapView.show();
         mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
     }
 
@@ -103,15 +110,45 @@ class MapViewInActionsTests {
         POSTGIS postgis = POSTGIS.open(props);
         if(postgis!=null){
             postgis.load(new File(this.getClass().getResource("landcover2000.shp").toURI()), "landcover", true)
-            postgis.execute("ANALYZE landcover")
             ISpatialTable spatialTable = postgis.getSpatialTable("landcover")
             MapView mapView = new MapView()
-            Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.ORANGE, 1, 0, Color.BLACK,2 )
+            Feature2DStyle style = createStyle("st_area(the_geom)>10000", Color.ORANGE, Color.BLACK,2 )
             StyledLayer styledLayer = new StyledLayer(spatialTable, style)
             mapView << styledLayer
             mapView.draw();
+            //mapView.show();
             mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
         }
+    }
+
+    /**
+     * A basic style
+     **/
+    def createStyle(def  filter, def fillColor, def strokeColor, def strokeWidth){
+        Feature2DStyle style = new Feature2DStyle()
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer()
+        areaSymbolizer.initDefault()
+        areaSymbolizer.setGeometryParameter("the_geom")
+        SolidFill solidFill = new SolidFill()
+        solidFill.setColor(fillColor)
+        solidFill.setOpacity(1.0)
+        areaSymbolizer.setFill(solidFill)
+        PenStroke penStroke = new PenStroke();
+        SolidFill solidFillS = new SolidFill()
+        solidFillS.setColor(strokeColor)
+        solidFillS.setOpacity(1.0)
+        penStroke.setFill(solidFillS);
+        penStroke.setWidth(new Literal(strokeWidth));
+        penStroke.setDashOffset(new NullParameterValue());
+        penStroke.setDashArray(new NullParameterValue());
+        penStroke.setLineCap(DEFAULT_CAP);
+        penStroke.setLineJoin(DEFAULT_JOIN);
+        areaSymbolizer.setStroke(penStroke)
+        Feature2DRule rule = new Feature2DRule()
+        rule.addSymbolizer(areaSymbolizer)
+        rule.setFilter(filter)
+        style.addRule(rule)
+        return style
     }
 
 
