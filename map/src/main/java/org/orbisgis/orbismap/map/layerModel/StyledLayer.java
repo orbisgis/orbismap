@@ -152,13 +152,15 @@ public class StyledLayer extends AbstractLayer {
                 filter = " where "+ k;
             }
             Geometry geom = spatialTable.getExtent((String[]) v.toArray(new String[0]), filter);
-            int currentSRID = geom.getSRID();
-            if (srid[0] == 0) {
-                srid[0] = currentSRID;
-            } else if (srid[0] != currentSRID) {
-                throw new RuntimeException("Cannot compute the envelope from mixed SRID geometries");
+            if(geom!=null) {
+                int currentSRID = geom.getSRID();
+                if (srid[0] == 0) {
+                    srid[0] = currentSRID;
+                } else if (srid[0] != currentSRID) {
+                    throw new RuntimeException("Cannot compute the envelope from mixed SRID geometries");
+                }
+                aggregatedEnvelope.expandToInclude(geom.getEnvelopeInternal());
             }
-            aggregatedEnvelope.expandToInclude(geom.getEnvelopeInternal());
         });
         if (aggregatedEnvelope.isNull()) {
             return null;

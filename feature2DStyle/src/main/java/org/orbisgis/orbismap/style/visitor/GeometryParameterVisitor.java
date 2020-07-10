@@ -58,18 +58,16 @@ public class GeometryParameterVisitor {
     private HashMap<String, String> res = new HashMap<String, String>();
     private final List<IFeatureSymbolizer> feature2DSymbolizers;
     private int count = 0;
-    private final List<String> geometryColumns;
 
-    public GeometryParameterVisitor(List<IFeatureSymbolizer> feature2DSymbolizers, List<String> geometryColumns) {
+    public GeometryParameterVisitor(List<IFeatureSymbolizer> feature2DSymbolizers) {
         this.feature2DSymbolizers = feature2DSymbolizers;
-        this.geometryColumns = geometryColumns;
     }
 
     /**
      * Method to visit the style elements
      */
     public void visit() throws Exception {
-        if (!feature2DSymbolizers.isEmpty() && !geometryColumns.isEmpty()) {
+        if (!feature2DSymbolizers.isEmpty()) {
             res = new HashMap<>();
             for (IFeatureSymbolizer feature2DSymbolizer : feature2DSymbolizers) {
                 GeometryParameter gp = feature2DSymbolizer.getGeometryParameter();

@@ -110,14 +110,13 @@ public class FeatureStyleRenderer {
      * @throws Exception
      */
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
-        List<String> geometryColumns = spatialTable.getGeometricColumns();
         for (Feature2DRule rule : fs.getRules()) {
             if (rule.isDomainAllowed(mt.getScaleDenominator())) {
-                formatRuleExpression(rule);
+                //formatRuleExpression(rule);
                 ParameterValueVisitor expressionParameters = prepareSymbolizerExpression(rule);
                 String allExpressions = expressionParameters.getExpressionParametersAsString();
                 List<IFeatureSymbolizer> sl = rule.getSymbolizers();
-                GeometryParameterVisitor gp = new GeometryParameterVisitor(sl, geometryColumns);
+                GeometryParameterVisitor gp = new GeometryParameterVisitor(sl);
                 gp.visit();
                 String selectGeometry = gp.getResultAsString();
                 String query = "";

@@ -182,15 +182,22 @@ public class MapView  implements IRenderer{
     /**
      * Method to display the map in a Swing component
      */
-    public void show(){
+    public void show() {
+        show(true);
+    }
+        /**
+         * Method to display the map in a Swing component
+         */
+    public void show(boolean decorate){
         Icon icon = new ImageIcon(mt.getImage());
         JLabel label = new JLabel(icon);
         final JFrame f = new JFrame("Display map");
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.getContentPane().add(label);
-        f.pack();
+        f.setUndecorated(decorate);
         SwingUtilities.invokeLater(new Runnable(){
             public void run() {
+                f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                f.getContentPane().add(label);
+                f.pack();
                 f.setLocationRelativeTo(null);
                 f.setVisible(true);
             }

@@ -37,6 +37,8 @@ package org.orbisgis.orbismap.style.graphic.shapeFactory;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.orbisgis.orbismap.style.Uom;
@@ -61,7 +63,8 @@ public class ShapeFinderTest {
         assertEquals(50,  shape.getBounds().width);        
         assertTrue(shape instanceof Rectangle2D);
     }
-    
+
+    @Disabled
     @Test
     public void readWeatherFactory(TestInfo testInfo) throws ParameterException{        
         ViewBox viewBox = new ViewBox(50f);
