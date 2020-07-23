@@ -34,17 +34,17 @@
  */
 package org.orbisgis.orbismap.map.renderer.featureStyle;
 
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import org.orbisgis.orbisdata.datamanager.api.dsl.IFilterBuilder;
 import org.orbisgis.orbismap.map.renderer.featureStyle.symbolizer.LineSymbolizerDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.symbolizer.AreaSymbolizerDrawer;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,6 +61,7 @@ import org.orbisgis.orbismap.map.api.IProgressMonitor;
 import org.orbisgis.orbismap.map.renderer.featureStyle.utils.ExpressionParser;
 import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
 import org.orbisgis.orbismap.style.parameter.RuleFilter;
+import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.LineSymbolizer;
@@ -79,9 +80,123 @@ import org.orbisgis.orbismap.style.visitor.ParameterValueVisitor;
 public class FeatureStyleRenderer {
 
     private final Feature2DStyle fs;
+    /**
+     * The map contains for each rule the filter and its geometry parameters
+     * Main map :
+     * Key  = rule index
+     * Values = Sub Map
+     *
+     * Sub Map
+     * Key  = Rule filter
+     * Values = HashSet of geometry expressions
+     */
+    private HashMap<Integer , HashMap<String, HashSet<String>>> ruleFilterAndGeometryParameters = new HashMap();
+
 
     public FeatureStyleRenderer(Feature2DStyle fs) {
         this.fs = fs;
+    }
+
+    /**
+     * Visit the rules to collect its filter and geometry parameters for each symbol
+     *
+     * @return
+     */
+    public void visitRules(){
+        int ruleIndex = 0;
+        for (Feature2DRule rule : fs.getRules()) {
+            //Check rule scale to draw or not
+            RuleFilter ruleFilter = rule.getFilter();
+            HashMap<String, HashSet<String>> filterAndGeom =  new HashMap<>();
+            HashSet<String> geomColumns = new HashSet<>();
+            String expressionRule = formatRuleExpression(ruleFilter);
+            String filterRuleKey = expressionRule == null ? "" : expressionRule;
+            for (IFeatureSymbolizer symbolizer : rule.getSymbolizers()){
+                GeometryParameter gp = symbolizer.getGeometryParameter();
+                String geometryExpression;
+                if (gp != null) {
+                    net.sf.jsqlparser.expression.Expression expParsed = null;
+                    try {
+                        expParsed = CCJSqlParserUtil.parseExpression(gp.getExpression(), false);
+                    } catch (JSQLParserException e) {
+                        throw new RuntimeException("The geometry column reference cannot be null");
+                    }
+                    geometryExpression = expParsed.toString();
+                } else {
+                    throw new RuntimeException("The geometry column reference cannot be null");
+                }
+                gp.setExpression(geometryExpression);
+                geomColumns.add(geometryExpression);
+                filterAndGeom.put(filterRuleKey, geomColumns);
+                ruleFilterAndGeometryParameters.put(ruleIndex, filterAndGeom);
+            }
+            ruleIndex++;
+        }
+    }
+
+    /**
+     * Return unique rule filter parameter instance with unique geometry parameters
+     * Must take into account if the layer is visible and the rule scales
+     * @return
+     */
+    public HashMap<String, HashSet<String>> getRuleFilterAndGeometryParameters() {
+        HashMap<String, HashSet<String>> collect = new HashMap<>();
+        ruleFilterAndGeometryParameters.values().forEach( v -> {
+            v.entrySet().stream().forEach(e ->{
+                collect.computeIfAbsent(e.getKey(), x -> new HashSet<String>()).addAll(e.getValue());
+            });
+        });
+        return collect;
+    }
+
+
+
+    /**
+     * Format rule filter expression and check if the rule expression is supported
+     *
+     * @param ruleFilter
+     * @throws JSQLParserException
+     */
+    private String formatRuleExpression(RuleFilter ruleFilter)  {
+        if (ruleFilter != null) {
+            String expression = ruleFilter.getExpression();
+            if(!expression.isEmpty()) {
+                try {
+                    net.sf.jsqlparser.expression.Expression expParsed = CCJSqlParserUtil.parseCondExpression(expression, false);
+                    String formatedExp = expParsed.toString();
+                    ruleFilter.setExpression(formatedExp);
+                    return "WHERE "+ formatedExp;
+                } catch (JSQLParserException e) {
+                    try {
+                        Select select = (Select) CCJSqlParserUtil.parse("SELECT * from foo " + expression);
+                        PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+                        if(plainSelect.getWhere()!=null){
+                            String formatedExp = plainSelect.getWhere().toString().trim();
+                            ruleFilter.setExpression(formatedExp);
+                            return formatedExp;
+                        }else if(plainSelect.getLimit()!=null){
+                            String formatedExp = plainSelect.getLimit().toString().trim();
+                            ruleFilter.setExpression(formatedExp);
+                            return formatedExp;
+                        }else if(plainSelect.getGroupBy()!=null){
+                            String formatedExp = plainSelect.getGroupBy().toString().trim();
+                            ruleFilter.setExpression(formatedExp);
+                            return formatedExp;
+                        }else if(plainSelect.getOrderByElements()!=null){
+                            String formatedExp = plainSelect.getOrderByElements().toString().trim();
+                            ruleFilter.setExpression(formatedExp);
+                            return formatedExp;
+                        }
+                        else{
+                            throw  new RuntimeException("Rule filter no supported", e);
+                        }
+                    } catch (JSQLParserException ex) {
+                        throw  new RuntimeException("Invalid rule filter", ex);
+                    }
+                }
+            }
+        }
+        return "";
     }
 
     public ParameterValueVisitor prepareSymbolizerExpression(Feature2DRule rule) {
@@ -90,15 +205,6 @@ public class FeatureStyleRenderer {
         return pvv;
     }
 
-    /**
-     * Format rule filter expression
-     *
-     * @param rule
-     * @throws JSQLParserException
-     */
-    public static void formatRuleExpression(Feature2DRule rule) throws JSQLParserException {
-        rule.setFilter(ExpressionParser.formatConditionalExpression(rule.getFilter()));
-    }
 
     //TODO : Add a short circuit method to not iterate the symbolizer when some requiered elements are null
     /**
@@ -110,14 +216,14 @@ public class FeatureStyleRenderer {
      * @throws Exception
      */
     public void draw(ISpatialTable spatialTable, MapTransform mt, Graphics2D g2, IProgressMonitor pm) throws Exception {
+        int ruleIndex = 0;
         for (Feature2DRule rule : fs.getRules()) {
             if (rule.isDomainAllowed(mt.getScaleDenominator())) {
-                //formatRuleExpression(rule);
                 ParameterValueVisitor expressionParameters = prepareSymbolizerExpression(rule);
                 String allExpressions = expressionParameters.getExpressionParametersAsString();
                 List<IFeatureSymbolizer> sl = rule.getSymbolizers();
                 GeometryParameterVisitor gp = new GeometryParameterVisitor(sl);
-                gp.visit();
+                gp.visit(false);
                 String selectGeometry = gp.getResultAsString();
                 String query = "";
                 if (!selectGeometry.isEmpty() && !allExpressions.isEmpty()) {
@@ -126,34 +232,30 @@ public class FeatureStyleRenderer {
                     query = selectGeometry;
                 }
                 if (!query.isEmpty()) {
+                    //Start to build the query
+                    IFilterBuilder spatialTableQuery = spatialTable.columns(query);
                     //Manage rule expression
                     //To build the where query we must find the name of the column                                        
                     StringBuilder geofilter = new StringBuilder();
-                    geofilter.append("'").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
+                    geofilter.append("WHERE '").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
                     String geomFilter = geofilter.toString();
-                    String spatialWherefilter = gp.getGeometryColumns().stream()
+                    String spatialWherefilter = gp.getGeometryIdentifiers().stream()
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
-                    RuleFilter ruleFilter = rule.getFilter();
-                    StringBuilder filter =new StringBuilder("");
-                    if(ruleFilter!=null) {
-                        String expressionRule = rule.getFilter().getExpression();
-                        if (expressionRule!=null && !expressionRule.isEmpty()) {
-                            filter.append(expressionRule).append(" and ");
-                        }
+                    String ruleFilter = ruleFilterAndGeometryParameters.get(ruleIndex).keySet().stream().findFirst().get();
+                    if(ruleFilter!=null && !ruleFilter.isEmpty()) {
+                           spatialTableQuery.filter(ruleFilter);
                     }
-                    filter.append(spatialWherefilter);
-
-                    ISpatialTable spatialTableQuery =  spatialTable.columns(query).filter(filter.toString());
+                    ISpatialTable sp_filtered =  spatialTableQuery.getTable().filter(spatialWherefilter).getSpatialTable();
 
                     //This map is populated from the data
                     Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl, mt);
-                        while (spatialTableQuery.next()) {
+                        while (sp_filtered.next()) {
                         Map<String, Shape> shapes = new HashMap<>();
                         Shape currentShape = null;
                         Geometry geomReduced = null;
                         //Populate expressions here
-                        populateExpressions(spatialTableQuery, mt, expressionParameters.getExpressionsProperties());
+                        populateExpressions(sp_filtered, mt, expressionParameters.getExpressionsProperties());
                         for (Map.Entry<IFeatureSymbolizer, ISymbolizerDraw> symbolizers : symbolizersToDraw.entrySet()) {
                             try {
                                 //Set the shape to the symbolizer to draw
@@ -179,7 +281,7 @@ public class FeatureStyleRenderer {
                                 } else {
                                     //We have already the geom in memory
                                     if (geomReduced == null) {
-                                        Geometry geom = spatialTableQuery.getGeometry(geomIdentifier);
+                                        Geometry geom = sp_filtered.getGeometry(geomIdentifier);
                                         geomReduced = geom;
                                         try {
                                             boolean overlaps = geom.overlaps(mt.getAdjustedExtentGeometry());
@@ -241,6 +343,7 @@ public class FeatureStyleRenderer {
 
                 }
             }
+            ruleIndex++;
         } 
         g2.dispose();
     }

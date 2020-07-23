@@ -35,9 +35,6 @@
 package org.orbisgis.orbismap.map.layerModel;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -59,7 +56,7 @@ public class StyledLayer extends AbstractLayer {
     private ISpatialTable spatialTable;
     private MapEnvelope envelope;
     private Feature2DStyle style;
-    private EnvelopeVisitor envelopeVisitor;
+    private FeatureStyleRenderer featureStyleRenderer;
 
     public StyledLayer(String name, ISpatialTable spatialTable) {
         super(name);
@@ -102,9 +99,11 @@ public class StyledLayer extends AbstractLayer {
     @Override
     public void draw(Graphics2D g2, MapTransform mt, IProgressMonitor pm) throws LayerException {
         if (isVisible() && spatialTable != null) {
-            FeatureStyleRenderer fsr = new FeatureStyleRenderer(style);
+            if (featureStyleRenderer == null) {
+                visitStyle();
+            }
             try {
-                fsr.draw(spatialTable, mt, g2, pm);
+                featureStyleRenderer.draw(spatialTable, mt, g2, pm);
             } catch (Exception ex) {
                 throw new LayerException(ex);
             }
@@ -117,8 +116,8 @@ public class StyledLayer extends AbstractLayer {
      */
     private void visitStyle() {
         if (style != null) {
-            envelopeVisitor = new EnvelopeVisitor(style);
-            envelopeVisitor.visit();
+            featureStyleRenderer = new FeatureStyleRenderer(style);
+            featureStyleRenderer.visitRules();
         }
     }
 
@@ -141,17 +140,13 @@ public class StyledLayer extends AbstractLayer {
      * @return
      */
     private Geometry computeEnvelopeFromStyle() {
-        if (envelopeVisitor == null) {
+        if (featureStyleRenderer == null) {
             visitStyle();
         }
         Envelope aggregatedEnvelope = new Envelope();
         final int[] srid = {0};
-        envelopeVisitor.getQueryForEnvelopes().forEach((k, v) -> {
-            String filter = "";
-            if (k != null && !k.isEmpty()) {
-                filter = " where "+ k;
-            }
-            Geometry geom = spatialTable.getExtent((String[]) v.toArray(new String[0]), filter);
+        featureStyleRenderer.getRuleFilterAndGeometryParameters().forEach((k, v) -> {
+            Geometry geom = spatialTable.getExtent((String[]) v.toArray(new String[0]), k);
             if(geom!=null) {
                 int currentSRID = geom.getSRID();
                 if (srid[0] == 0) {
