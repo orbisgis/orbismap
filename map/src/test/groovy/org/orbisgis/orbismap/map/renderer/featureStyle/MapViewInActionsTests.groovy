@@ -74,9 +74,10 @@ class MapViewInActionsTests {
     void createMapView(TestInfo testInfo) throws Exception {
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        ISpatialTable spatialTable = h2GIS.link(new File(inputFile), "LANDCOVER", true)
+        h2GIS.link(new File(inputFile), "LANDCOVER", true)
+        ISpatialTable spatialTable =h2GIS.getSpatialTable("LANDCOVER")
         MapView mapView = new MapView()
-        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0);
+        Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0,Color.BLACK,1);
         StyledLayer styledLayer = new StyledLayer(spatialTable, style)
         mapView << styledLayer
         mapView.draw();
@@ -96,9 +97,30 @@ class MapViewInActionsTests {
         mapView << styledLayer
         mapView.draw();
         mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
-        mapView.show();
+        //mapView.show();
     }
 
+
+    @Test
+    void createMapViewPostGISFilter(TestInfo testInfo) throws Exception {
+        String url = "jdbc:postgresql://localhost:5432/orbisgis_db";
+        Properties props = new Properties();
+        props.setProperty("user", "orbisgis");
+        props.setProperty("password", "orbisgis");
+        props.setProperty("url", url);
+        POSTGIS postgis = POSTGIS.open(props);
+        if(postgis!=null){
+            postgis.load(new File(this.getClass().getResource("landcover2000.shp").toURI()), "landcover", true)
+            ISpatialTable spatialTable = postgis.getSpatialTable("(SELECT * FROM landcover LIMIT 10)")
+            MapView mapView = new MapView()
+            Feature2DStyle style = createStyle("st_area(the_geom)>10000", Color.ORANGE, Color.BLACK,2 )
+            StyledLayer styledLayer = new StyledLayer(spatialTable, style)
+            mapView << styledLayer
+            mapView.draw();
+            //mapView.show();
+            mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
+        }
+    }
 
     @Test
     void createMapViewPostGIS(TestInfo testInfo) throws Exception {

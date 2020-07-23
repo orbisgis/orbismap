@@ -36,13 +36,12 @@
 
 package org.orbisgis.orbismap.map.renderer.featureStyle.utils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import org.orbisgis.orbisdata.datamanager.api.dataset.ISpatialTable;
+import org.orbisgis.orbismap.map.layerModel.MapTransform;
 import org.orbisgis.orbismap.style.Feature2DRule;
 import org.orbisgis.orbismap.style.Feature2DStyle;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
@@ -52,10 +51,19 @@ import org.orbisgis.orbismap.style.parameter.Literal;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
 import org.orbisgis.orbismap.style.parameter.RuleFilter;
 import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
+import org.orbisgis.orbismap.style.visitor.ParameterValueVisitor;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class to collect geometry parameters and filter for each rules
- * It's used to compute the envelope before drawing the rule
+ * This class is useful to build the envelope before rendering rule.
+ * It allows to create a ISpatialTable according the rule filter and the parameters available on Symbolizers.
+ *
  *
  * @author Erwan Bocher, CNRS (2010-2020)
  */
@@ -66,38 +74,81 @@ public class EnvelopeVisitor {
     private final Feature2DStyle feature2DStyle;
 
     /**
+     * The map contains for each rule the filter and its geometry parameters
+     * Main map :
+     * Key  = rule index
+     * Values = Sub Map
+     *
+     * Sub Map
      * Key  = Rule filter
-     * Values = Geometry expressions
+     * Values = HashSet of geometry expressions
      */
-    private HashMap<String, HashSet<String>> queryForEnvelopes = new HashMap();
+    private HashMap<Integer , HashMap<String, HashSet<String>>> ruleFilterAndGeometryParameters = new HashMap();
 
+
+    HashMap<String, HashSet<String>> collect = new HashMap<>();
+    HashMap<String, HashMap<Integer, LinkedList<IFeatureSymbolizer>>> collectSymbolizers = new HashMap<>();
 
     public EnvelopeVisitor(Feature2DStyle feature2DStyle){
         this.feature2DStyle=feature2DStyle;
     }
 
     /**
-     *
+     * Visit the rule to collect its filter and geometry parameters for each symbol
+     * Note : the envelope must be computed according the rule scale denominator and other information available from
+     * the layer. e.g. isVisible
      */
     public void visit(){
         int ruleIndex = 0;
+        int levelCounter =0;
         for (Feature2DRule rule : feature2DStyle.getRules()) {
+            //Check rule scale to draw or not
             RuleFilter ruleFilter = rule.getFilter();
-            String expressionRule = formatRuleExpression(ruleFilter);
+            HashMap<String, HashSet<String>> filterAndGeom =  new HashMap<>();
+            HashSet<String> geomColumns = new HashSet<>();
+            String expressionRule = formatRuleExpression(ruleFilter, ruleIndex);
              for (IFeatureSymbolizer symbolizer : rule.getSymbolizers()){
-                String geometryExpression =formatGeometryParameter(symbolizer.getGeometryParameter());
-                queryForEnvelopes.computeIfAbsent( expressionRule==null?"":expressionRule, x -> new HashSet<String>()).add(geometryExpression);
+                 String geometryExpression =formatGeometryParameter(symbolizer.getGeometryParameter());
+                 geomColumns.add(geometryExpression);
+                 String filterRuleKey = expressionRule == null ? "" : expressionRule;
+                 filterAndGeom.put(filterRuleKey, geomColumns);
+                 ruleFilterAndGeometryParameters.put(ruleIndex, filterAndGeom);
+                 collect.computeIfAbsent(filterRuleKey, x -> new HashSet<String>()).add(geometryExpression);
+                 int level = symbolizer.getLevel();
+                 if(level==0){
+                     levelCounter++;
+                 }
+                 collectSymbolizers.computeIfAbsent(filterRuleKey, x -> new HashMap<>()).computeIfAbsent(levelCounter, s -> new LinkedList<>()).add(symbolizer);
             }
             ruleIndex++;
         }
     }
 
+    public HashMap<String, HashSet<String>> getCollect() {
+        return collect;
+    }
+
+    public HashMap<String, HashMap<Integer, LinkedList<IFeatureSymbolizer>>> getCollectSymbolizers() {
+        return collectSymbolizers;
+    }
+
     /**
-     *
+     * Return unique rule filter parameter instance with unique geometry parameters
+     * Must take into account if the layer is visible and the rule scales
      * @return
      */
-    public HashMap<String, HashSet<String>> getQueryForEnvelopes() {
-        return queryForEnvelopes;
+    public HashMap<String, HashSet<String>> getRuleFilterAndGeometryParameters() {
+        HashMap<String, HashSet<String>> collect = new HashMap<>();
+        ruleFilterAndGeometryParameters.values().forEach( v -> {
+            v.entrySet().stream().forEach(e ->{
+                collect.computeIfAbsent(e.getKey(), x -> new HashSet<String>()).addAll(e.getValue());
+            });
+        });
+        return collect;
+    }
+
+    public void prepareData(){
+
     }
 
     /**
@@ -117,66 +168,106 @@ public class EnvelopeVisitor {
     }
 
     /**
-     * Format rule filter expression
+     * Format rule filter expression and check if the rule expression is supported
      *
      * @param ruleFilter
      * @throws JSQLParserException
      */
-    private String formatRuleExpression(RuleFilter ruleFilter)  {
-        try {
+    private String formatRuleExpression(RuleFilter ruleFilter, Integer ruleIndex)  {
             if (ruleFilter != null) {
                 String expression = ruleFilter.getExpression();
                 if(!expression.isEmpty()) {
-                    net.sf.jsqlparser.expression.Expression expParsed = CCJSqlParserUtil.parseCondExpression(expression, false);
-                    String formatedExp = expParsed.toString();
-                    ruleFilter.setExpression(formatedExp);
-                    return formatedExp;
+                    try {
+                        net.sf.jsqlparser.expression.Expression expParsed = CCJSqlParserUtil.parseCondExpression(expression, false);
+                        String formatedExp = expParsed.toString();
+                        ruleFilter.setExpression(formatedExp);
+                        return "WHERE "+ formatedExp;
+                    } catch (JSQLParserException e) {
+                        try {
+                            Select select = (Select) CCJSqlParserUtil.parse("SELECT * from foo " + expression);
+                            PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+                            if(plainSelect.getWhere()!=null){
+                               return plainSelect.getWhere().toString().trim();
+                            }else if(plainSelect.getLimit()!=null){
+                                return plainSelect.getLimit().toString().trim();
+                            }else if(plainSelect.getGroupBy()!=null){
+                                return plainSelect.getGroupBy().toString().trim();
+                            }else if(plainSelect.getOrderByElements()!=null){
+                                return plainSelect.getOrderByElements().toString().trim();
+                            }
+                            else{
+                                throw  new RuntimeException("Rule filter no supported", e);
+                            }
+                        } catch (JSQLParserException ex) {
+                            throw  new RuntimeException("Invalid rule filter", ex);
+                        }
+                    }
+
                 }
             }
             return "";
-        } catch (JSQLParserException e) {
-            throw  new RuntimeException("Invalid filter rule", e);
-        }
-    }
-    /**
-     * Recursively visits {@code styleNode} and all its children
-     *
-     * @param rule to visit
-     */
-    private void visitRule(Feature2DRule rule) {
-        try {
-            visitImpl(rule);
-        } catch (ParameterException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     /**
-     *
-     * @param styleNode the visited style node
-     *
-     * @throws ParameterException
+     * Traverse the rule symbolizers to
+     * @param rule
+     * @return
      */
-    protected void visitImpl(IStyleNode styleNode) throws ParameterException {
-        List<IStyleNode> actualChildren = styleNode.getChildren();
-        if (styleNode instanceof Expression) {
-            try {
-                net.sf.jsqlparser.expression.Expression actualParsed = CCJSqlParserUtil.parseExpression(((Expression) styleNode).getExpression(), true);
+    public ParameterValueVisitor prepareSymbolizerExpression(Feature2DRule rule) {
+        ParameterValueVisitor pvv = new ParameterValueVisitor();
+        pvv.visitSymbolizerNode(rule);
+        return pvv;
+    }
 
-            } catch (JSQLParserException ex) {
-                throw new ParameterException(ex);
-            }
+    /**
+     * Return a ISpatialTable according to the parameters of a rule
+     *
+     * @param spatialTable the input spatialTable to be reduced
+     * @param ruleIndex integer value used to find the desired parameters of the rule
+     * @return a new ISpatialTable instance
+     */
+    ISpatialTable getSpatialTable(ISpatialTable spatialTable,Feature2DRule rule,  int ruleIndex, MapTransform mt){
+        return spatialTable.columns(getSelectItems(ruleIndex)).filter(getFilter(ruleIndex, mt)).getSpatialTable();
+    }
 
-        } else if (styleNode instanceof Literal) {
-            Literal actualLiteral = (Literal) styleNode;
+    /**
+     *
+     * @param ruleIndex
+     * @return
+     */
+    private String getFilter(int ruleIndex,MapTransform mt) {
+        HashMap<String, HashSet<String>> ruleParameters = ruleFilterAndGeometryParameters.get(ruleIndex);
+        if(ruleParameters!=null) {
+            StringBuilder filterQuery = new StringBuilder();
+            String ruleExpression = ruleParameters.keySet().stream().findFirst().get();
+            filterQuery.append(ruleExpression).append(" and '").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
+            return filterQuery.toString();
         }
+        return "";
+    }
 
-        actualChildren.forEach((c) -> {
-            try {
-                visitImpl(c);
-            } catch (Exception ex) {
-                throw new RuntimeException("Cannot parse the expression for the node : "+ c.getClass().getSimpleName());
-            }
-        });
+    /***
+     * TODO be updated doesn't work yet
+     *
+     * @param ruleIndex
+     * @param mt
+     * @return
+     */
+    private String getSpatialFilter(int ruleIndex,MapTransform mt) {
+        StringBuilder geofilter = new StringBuilder();
+        geofilter.append("'").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
+        String geomFilter = geofilter.toString();
+        ruleFilterAndGeometryParameters.get(ruleIndex).entrySet().stream().map(entry -> geomFilter + " " + entry)
+                .collect(Collectors.joining(" , "));
+        return geomFilter.toString();
+    }
+
+    /**
+     * Build the list of columns to be selected in the spatialtable
+     * @param ruleIndex
+     * @return
+     */
+    private String getSelectItems(int ruleIndex) {
+        return null;
     }
 }

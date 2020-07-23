@@ -35,15 +35,12 @@
 package org.orbisgis.orbismap.style.visitor;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
 import org.orbisgis.orbismap.style.IFeatureSymbolizer;
 import org.orbisgis.orbismap.style.parameter.geometry.GeometryParameter;
 
@@ -66,20 +63,25 @@ public class GeometryParameterVisitor {
     /**
      * Method to visit the style elements
      */
-    public void visit() throws Exception {
+    public void visit(boolean parseExpression) throws Exception {
         if (!feature2DSymbolizers.isEmpty()) {
             res = new HashMap<>();
             for (IFeatureSymbolizer feature2DSymbolizer : feature2DSymbolizers) {
                 GeometryParameter gp = feature2DSymbolizer.getGeometryParameter();
                 String formatedExp;
                 if (gp != null) {
-                    Expression expParsed = CCJSqlParserUtil.parseExpression(gp.getExpression(), false);
-                    formatedExp = expParsed.toString();
+                    if(parseExpression) {
+                        Expression expParsed = CCJSqlParserUtil.parseExpression(gp.getExpression(), false);
+                        formatedExp = expParsed.toString();
+                        gp.setExpression(formatedExp);
+                    }
+                    else{
+                        formatedExp = gp.getExpression();
+                    }
                 } else {
                     throw new RuntimeException("The geometry column reference cannot be null");
                 }
                 String identifier = "geom_" + count++;
-                gp.setExpression(formatedExp);
                 if (!res.containsKey(formatedExp)) {
                     res.put(formatedExp, identifier);
                     gp.setIdentifier(identifier);
@@ -107,6 +109,10 @@ public class GeometryParameterVisitor {
 
     public Set<String> getGeometryColumns() {
         return res.keySet();
+    }
+
+    public java.util.Collection<String> getGeometryIdentifiers() {
+        return res.values();
     }
 
 }

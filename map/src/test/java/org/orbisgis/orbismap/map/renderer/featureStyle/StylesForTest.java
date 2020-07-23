@@ -133,8 +133,9 @@ public class StylesForTest {
         markGraphic2.setStroke(createPenStroke(Color.GRAY, 1));
         pointSymbolizer2.addGraphic(markGraphic2);
         Feature2DRule rule4 = new Feature2DRule();
-        rule4.setName("Location {geometry : st_buffer(location,20); filter : }");
+        rule4.setName("Location {geometry : st_buffer(location,20); filter : limit 1}");
         rule4.addSymbolizer(pointSymbolizer2);
+        rule4.setFilter("limit 1");
         style.addRule(rule3);
         style.addRule(rule4);
 

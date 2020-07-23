@@ -68,7 +68,6 @@ public final class MapContext implements IMapContext<Description, MapEnvelope> {
     private ILayer layerModel;
     protected MapEnvelope boundingBox = null;
 
-    protected int epsg_code = 0;
     private MapTransform mt;
 
     /**
@@ -142,8 +141,8 @@ public final class MapContext implements IMapContext<Description, MapEnvelope> {
      *
      * @return the value of the EPSG code
      */
-    public int getCoordinateReferenceSystem() {
-        return epsg_code;
+    public int getSRID() {
+        return boundingBox.getSrid();
     }
 
     /**
@@ -151,9 +150,9 @@ public final class MapContext implements IMapContext<Description, MapEnvelope> {
      *
      * @param epsg new value of the EPSG code
      */
-    public void setCoordinateReferenceSystem(int epsg) {
+    /*public void setSrid(int epsg) {
         int oldEPSG_code = this.epsg_code;
         this.epsg_code = oldEPSG_code;
         propertyChangeSupport.firePropertyChange(PROP_COORDINATEREFERENCESYSTEM, oldEPSG_code, epsg);
-    }
+    }*/
 }

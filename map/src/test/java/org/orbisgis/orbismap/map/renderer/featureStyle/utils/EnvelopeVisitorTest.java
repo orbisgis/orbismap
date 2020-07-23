@@ -49,9 +49,12 @@ public class EnvelopeVisitorTest {
         Feature2DStyle fs = StylesForTest.createLineSymbolizerWithVariousGeometryReferences();
         EnvelopeVisitor envelopeVisitor = new EnvelopeVisitor(fs);
         envelopeVisitor.visit();
-        HashMap<String, HashSet<String>> queryForEnv = envelopeVisitor.getQueryForEnvelopes();
-        assertEquals(2,queryForEnv.size());
-        assertEquals(4,queryForEnv.get("").size());
-        assertEquals(2,queryForEnv.get("id = 2").size());
+        HashMap<String, HashSet<String>> queryForEnv = envelopeVisitor.getRuleFilterAndGeometryParameters();
+        assertEquals(3,queryForEnv.size());
+        assertEquals(3,queryForEnv.get("").size());
+        assertEquals(2,queryForEnv.get("WHERE id = 2").size());
+        assertEquals(1,queryForEnv.get("LIMIT 1").size());
+        HashMap<String, HashSet<String>> test = envelopeVisitor.getCollect();
+
     }
 }
