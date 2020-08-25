@@ -69,12 +69,12 @@ class MapViewInActionsTests {
         //TODO : assertEquals(0, mapView.layers.size)
     }
 
-    @Disabled
     @Test
     void createMapView(TestInfo testInfo) throws Exception {
+        println("Go")
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        h2GIS.link(new File(inputFile), "LANDCOVER", true)
+        h2GIS.link(new File("/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp"), "LANDCOVER", true)
         ISpatialTable spatialTable =h2GIS.getSpatialTable("LANDCOVER")
         MapView mapView = new MapView()
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0,Color.BLACK,1);
@@ -83,6 +83,7 @@ class MapViewInActionsTests {
         mapView.draw();
         //mapView.show();
         mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
+        println("End")
     }
 
     @Disabled
@@ -172,7 +173,6 @@ class MapViewInActionsTests {
         style.addRule(rule)
         return style
     }
-
 
     @Test
     void mapViewReadStyle(TestInfo testInfo) throws Exception {

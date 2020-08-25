@@ -236,9 +236,7 @@ public class FeatureStyleRenderer {
                     IFilterBuilder spatialTableQuery = spatialTable.columns(query);
                     //Manage rule expression
                     //To build the where query we must find the name of the column                                        
-                    StringBuilder geofilter = new StringBuilder();
-                    geofilter.append("WHERE '").append(MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText()).append("' :: GEOMETRY && ");
-                    String geomFilter = geofilter.toString();
+                    String geomFilter = "'"+MapTransform.getGeometryFactory().toGeometry(mt.getAdjustedExtent()).toText() + "' :: GEOMETRY && ";
                     String spatialWherefilter = gp.getGeometryIdentifiers().stream()
                             .map(entry -> geomFilter + " " + entry)
                             .collect(Collectors.joining(" and "));
@@ -246,7 +244,7 @@ public class FeatureStyleRenderer {
                     if(ruleFilter!=null && !ruleFilter.isEmpty()) {
                            spatialTableQuery.filter(ruleFilter);
                     }
-                    ISpatialTable sp_filtered =  spatialTableQuery.getTable().filter(spatialWherefilter).getSpatialTable();
+                    ISpatialTable sp_filtered =  spatialTableQuery.getSpatialTable().filter(" WHERE "+spatialWherefilter).getSpatialTable();
 
                     //This map is populated from the data
                     Map<IFeatureSymbolizer, ISymbolizerDraw> symbolizersToDraw = prepareSymbolizers(sl, mt);
