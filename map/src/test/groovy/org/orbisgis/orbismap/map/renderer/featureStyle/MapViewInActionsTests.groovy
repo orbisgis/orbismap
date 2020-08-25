@@ -71,7 +71,6 @@ class MapViewInActionsTests {
 
     @Test
     void createMapView(TestInfo testInfo) throws Exception {
-        println("Go")
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
         h2GIS.link(new File(inputFile), "LANDCOVER", true)
@@ -83,7 +82,6 @@ class MapViewInActionsTests {
         mapView.draw();
         //mapView.show();
         mapView.save("./target"+File.separator+ testInfo.getDisplayName()+".png")
-        println("End")
     }
 
     @Disabled
