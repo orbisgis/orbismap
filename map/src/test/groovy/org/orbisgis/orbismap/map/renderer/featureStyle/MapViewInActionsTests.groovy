@@ -74,7 +74,7 @@ class MapViewInActionsTests {
         println("Go")
         H2GIS h2GIS = H2GIS.open("./target/mapview")
         String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
-        h2GIS.link(new File("/home/ebocher/Autres/data/IGN/data_cadastre/parc_dgi/Parc_dgi.shp"), "LANDCOVER", true)
+        h2GIS.link(new File(inputFile), "LANDCOVER", true)
         ISpatialTable spatialTable =h2GIS.getSpatialTable("LANDCOVER")
         MapView mapView = new MapView()
         Feature2DStyle style = StylesForTest.createAreaSymbolizer(Color.yellow, 1, 0,Color.BLACK,1);
