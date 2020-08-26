@@ -96,7 +96,7 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
 
             } else {
                 if(stroke==null) {
-                    stroke = new WobbleStrokeImpl(createBasicStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator())));
+                    stroke = createBasicStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator()));
                 }
             }
                 g2.setPaint(paint);
