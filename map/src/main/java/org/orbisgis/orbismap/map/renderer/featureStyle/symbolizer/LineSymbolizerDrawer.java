@@ -42,15 +42,15 @@ import org.orbisgis.orbismap.map.layerModel.MapTransform;
 import org.orbisgis.orbismap.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.orbismap.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.ISymbolizerDraw;
+import org.orbisgis.orbismap.map.renderer.featureStyle.graphic.GraphicFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.GraphicStrokeDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.TextStrokeDrawer;
+import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.WobbleStrokeDrawer;
+import org.orbisgis.orbismap.style.fill.GraphicFill;
+import org.orbisgis.orbismap.style.stroke.*;
 import org.orbisgis.orbismap.style.symbolizer.LineSymbolizer;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
-import org.orbisgis.orbismap.style.stroke.GraphicStroke;
-import org.orbisgis.orbismap.style.stroke.PenStroke;
-import org.orbisgis.orbismap.style.stroke.Stroke;
-import org.orbisgis.orbismap.style.stroke.TextStroke;
 
 /**
  * Drawer for the element <code>LineSymbolizer</code>
@@ -132,6 +132,9 @@ public class LineSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, Str
                     drawerMap.put(styleNode, drawer);
                 } else if (styleNode instanceof TextStroke) {
                     drawer = new TextStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof WobbleStroke) {
+                    drawer = new WobbleStrokeDrawer();
                     drawerMap.put(styleNode, drawer);
                 }
             }

@@ -61,9 +61,7 @@ public class PointLabel extends Label {
     private ExclusionZone exclusionZone;
 
     /**
-     * Creates a new {@code PointLabel} with default values as detailed in
-     * {@link org.orbisgis.coremap.renderer.se.label.Label#Label() Label} and
-     * {@link org.orbisgis.coremap.renderer.se.label.StyledText#StyledText() StyledText}.
+     * Creates a new {@code PointLabel}.
      * This {@code PointLabel} will be top and right aligned.
      */
     public PointLabel() {
@@ -96,7 +94,7 @@ public class PointLabel extends Label {
      * Get the rotation that must be applied to this {@code PointLabel} before
      * rendering.
      *
-     * @return The rotation, in degrees, as a {@link RealParameter}
+     * @return The rotation, in degrees, as a {@link ParameterValue}
      */
     public ParameterValue getRotation() {
         return rotation;

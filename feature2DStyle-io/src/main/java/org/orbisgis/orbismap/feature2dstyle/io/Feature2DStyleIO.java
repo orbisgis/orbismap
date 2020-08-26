@@ -152,6 +152,7 @@ public class Feature2DStyleIO {
         xstream.registerConverter(new PointSymbolizerConverter());
         xstream.registerConverter(new TextSymbolizerConverter());
         xstream.registerConverter(new PenStrokeConverter());
+        xstream.registerConverter(new WobbleStrokeConverter());
         xstream.registerConverter(new ViewBoxConverter());
         xstream.registerConverter(new GraphicSizeConverter());
         xstream.registerConverter(new SolidFillConverter());

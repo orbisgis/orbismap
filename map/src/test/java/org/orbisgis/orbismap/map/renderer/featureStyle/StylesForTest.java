@@ -64,6 +64,8 @@ import org.orbisgis.orbismap.style.stroke.GraphicStroke;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
 import static org.orbisgis.orbismap.style.stroke.PenStroke.DEFAULT_CAP;
 import static org.orbisgis.orbismap.style.stroke.PenStroke.DEFAULT_JOIN;
+
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.LineSymbolizer;
 import org.orbisgis.orbismap.style.symbolizer.PointSymbolizer;
@@ -72,17 +74,13 @@ import org.orbisgis.orbismap.style.transform.Rotate;
 import org.orbisgis.orbismap.style.transform.Transform;
 
 /**
+ * Set of style examples
+ * Read it to understand how to use the Feature2DStyle model extension
  *
  * @author Erwan Bocher, CNRS (2020)
  */
 public class StylesForTest {
 
-
-    /**
-     * Create a style LineSymbolizer with two geometry value references
-     *
-     * @return
-     */
     public static Feature2DStyle createLineSymbolizerWithVariousGeometryReferences() {
         Feature2DStyle style = new Feature2DStyle();
         style.setName("Unique values map");
@@ -163,11 +161,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style LineSymbolizer with a filter rule
-     *
-     * @return
-     */
+
     public static Feature2DStyle createLineSymbolizerRulesExpression() {
         Feature2DStyle style = new Feature2DStyle();
         style.setName("Unique values map");
@@ -192,11 +186,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style area with a filter rule
-     *
-     * @return
-     */
+
     public static Feature2DStyle createAreaSymbolizerRuleExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -236,15 +226,7 @@ public class StylesForTest {
         return style;
     }
 
-    /*
-         * Create a style with one <code>LineSymbolizer</code>
-         *
-         * @param color line color
-         * @param width of the line
-         * @param offset of the line
-         * @param uom unit of measure
-         * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createTwoLineSymbolizers() {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
@@ -270,15 +252,7 @@ public class StylesForTest {
         return style;
     }
 
-    /*
-         * Create a style with one <code>LineSymbolizer</code>
-         *
-         * @param color line color
-         * @param width of the line
-         * @param offset of the line
-         * @param uom unit of measure
-         * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createLineSymbolizer(Color color, float width, double offset, Uom uom) {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
@@ -295,11 +269,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>LineSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createDashedLineSymbolizer(Color color, float width, double offset, String dashArray) {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
@@ -316,12 +286,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>LineSymbolizer</code>
-     *
-     * @param color
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createDashedAreaymbolizer(Color color, float width, double offset, String dashArray) {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -354,11 +319,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createTextSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
@@ -382,11 +343,7 @@ public class StylesForTest {
         return font;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createTextSymbolizerWithField() {
         Feature2DStyle style = new Feature2DStyle();
         TextSymbolizer textSymbolizer = new TextSymbolizer();
@@ -402,17 +359,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a <code>HatchedFill</code> <code>AreaSymbolizer</code>
-     *
-     * @param hatchColor
-     * @param hatchAngle
-     * @param hatchDistance
-     * @param hatchWidth
-     * @param strokeAreaColor
-     * @param strokeWidth
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createHatchedAreaSymbolizer(Color hatchColor, float hatchWidth, float hatchAngle, float hatchDistance,
             Color strokeAreaColor, float strokeWidth) {
         Feature2DStyle style = new Feature2DStyle();
@@ -440,14 +387,7 @@ public class StylesForTest {
         return hatchedFill;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code>
-     *
-     * @param colorExpression
-     * @param hatchWidth
-     * @param hatchAngle
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createAreaSymbolizerHatchedColorExpression(String colorExpression, float hatchWidth, float hatchAngle, float hatchDistance) {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -475,12 +415,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code> and a SolidFill color
-     * expression
-     *
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createAreaSymbolizerStyleColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -527,11 +462,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createAreaSymbolizerDotFillStyle() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -591,11 +522,6 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
     public static Feature2DStyle createAreaSymbolizerHatchDensityFillColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -626,11 +552,6 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
     public static Feature2DStyle createAreaSymbolizerMarkDensityFillColorExpression() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -661,12 +582,6 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>AreaSymbolizer</code> and a SolidFill color
-     * expression
-     *
-     * @return a  <code>Style</code>
-     */
     public static Feature2DStyle createAreaSymbolizerGraphicFillColor() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -689,11 +604,6 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>PointSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
     public static Feature2DStyle createPointSymbolizer(String wkn, Color fillColor, float size, Color strokeColor, float strokeSize) {
         Feature2DStyle style = new Feature2DStyle();
         style.addRule(new Feature2DRule());
@@ -710,11 +620,6 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>PointSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
     public static Feature2DStyle createPointSymbolizerVertex() {
         Feature2DStyle style = new Feature2DStyle();
         style.addRule(new Feature2DRule());
@@ -732,11 +637,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>PointSymbolizer</code>
-     *
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createPointSymbolizerMarkGraphicSizeExpression() {
         Feature2DStyle style = new Feature2DStyle();
         style.addRule(new Feature2DRule());
@@ -882,14 +783,7 @@ public class StylesForTest {
         return markGraphic;
     }
 
-    /**
-     * Create a style with one <code>LineSymbolizer</code>
-     *
-     * @param color
-     * @param width
-     * @param offset
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createGraphicStrokeLineSymbolizer(Color color, float width, double offset, float distance) {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
@@ -926,14 +820,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a style with one <code>LineSymbolizer</code>
-     *
-     * @param color
-     * @param width
-     * @param offset
-     * @return a  <code>Style</code>
-     */
+
     public static Feature2DStyle createGraphicStrokeLineSymbolizerNoOverlaps(Color color, float width, double offset, float distance) {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizerBase = new LineSymbolizer();
@@ -971,11 +858,6 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a line label text symbolizer
-     *
-     * @return
-     */
     static Feature2DStyle createLineLabelTextSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         LineSymbolizer lineSymbolizer = new LineSymbolizer();
@@ -995,11 +877,7 @@ public class StylesForTest {
         return style;
     }
 
-    /**
-     * Create a line label text symbolizer
-     *
-     * @return
-     */
+
     static Feature2DStyle createPointLabelTextSymbolizer() {
         Feature2DStyle style = new Feature2DStyle();
         AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
@@ -1101,6 +979,36 @@ public class StylesForTest {
         Feature2DRule rule = new Feature2DRule();
         rule.addSymbolizer(lineSymbolizer);
         rule.addSymbolizer(lineSymbolizerBase);
+        style.addRule(rule);
+        return style;
+    }
+
+    public static Feature2DStyle createAreaSymbolizerHatchDensityFillColorExpressionWithNiceStroke() {
+        Feature2DStyle style = new Feature2DStyle();
+        AreaSymbolizer areaSymbolizer = new AreaSymbolizer();
+        areaSymbolizer.setGeometryParameter("the_geom");
+        DensityFill densityFill = new DensityFill();
+        densityFill.setPercentageCovered(new Literal(0.2f));
+        densityFill.setHatchesOrientation(new Literal(120f));
+        WobbleStroke psHatchedFill = new WobbleStroke();
+        psHatchedFill.setWidth(new Literal(1f));
+        Expression colorExpression = new Expression(""
+                + "CASE WHEN TYPE='cereals' THEN '#ff6d6d' ELSE '#6d86ff' END  ");
+        Literal opacity = new Literal(1f);
+        SolidFill sfhatchedFill = new SolidFill();
+        HexaColor hexaColor = new HexaColor();
+        hexaColor.setHexaColor(colorExpression);
+        sfhatchedFill.setColor(hexaColor);
+        sfhatchedFill.setOpacity(1.0f);
+        psHatchedFill.setFill(sfhatchedFill);
+        densityFill.setHatches(psHatchedFill);
+        areaSymbolizer.setFill(densityFill);
+        WobbleStroke ps = new WobbleStroke();
+        ps.setWidth(new Literal(2f));
+        ps.setFill(createSolidFill(Color.GREEN));
+        areaSymbolizer.setStroke(ps);
+        Feature2DRule rule = new Feature2DRule();
+        rule.addSymbolizer(areaSymbolizer);
         style.addRule(rule);
         return style;
     }

@@ -48,7 +48,9 @@ import org.orbisgis.orbismap.map.renderer.featureStyle.fill.DotMapFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.fill.HatchedFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.graphic.GraphicFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.PenStrokeDrawer;
+import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.WobbleStrokeDrawer;
 import org.orbisgis.orbismap.style.fill.*;
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.orbismap.style.IFill;
 import org.orbisgis.orbismap.style.IStyleNode;
@@ -152,6 +154,9 @@ public class AreaSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, ISt
                     drawerMap.put(styleNode, drawer);
                 } else if (styleNode instanceof GraphicFill) {
                     drawer = new GraphicFillDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof WobbleStroke) {
+                    drawer = new WobbleStrokeDrawer();
                     drawerMap.put(styleNode, drawer);
                 }
             }

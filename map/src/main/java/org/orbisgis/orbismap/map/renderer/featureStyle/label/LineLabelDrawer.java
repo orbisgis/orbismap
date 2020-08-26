@@ -48,11 +48,13 @@ import org.orbisgis.orbismap.map.renderer.featureStyle.IStyleDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.fill.SolidFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.PenStrokeDrawer;
+import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.WobbleStrokeDrawer;
 import org.orbisgis.orbismap.style.IFill;
 import org.orbisgis.orbismap.style.IStyleNode;
 import org.orbisgis.orbismap.style.fill.Halo;
 import org.orbisgis.orbismap.style.fill.SolidFill;
 import org.orbisgis.orbismap.style.label.RelativeOrientation;
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 import org.orbisgis.orbismap.style.utils.ShapeUtils;
 import org.orbisgis.orbismap.style.label.Label;
 import org.orbisgis.orbismap.style.label.LineLabel;
@@ -269,6 +271,9 @@ public class LineLabelDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyleNo
                     drawerMap.put(styleNode, drawer);
                 }  else if (styleNode instanceof PenStroke) {
                     drawer = new PenStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof WobbleStroke) {
+                    drawer = new WobbleStrokeDrawer();
                     drawerMap.put(styleNode, drawer);
                 }
             }

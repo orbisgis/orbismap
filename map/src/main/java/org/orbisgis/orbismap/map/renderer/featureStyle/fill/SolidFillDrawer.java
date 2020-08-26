@@ -69,11 +69,8 @@ public class SolidFillDrawer implements IFillDrawer<SolidFill> {
             //GRAY50 to build RGB value - As it equals 128.0f, we need a cast
             //because Color(float, float, float) needs values between 0 and 1.
             color = new Color((int) GRAY50, (int) GRAY50, (int) GRAY50);
-        }     
-       
-        
+        }
         Float opacity =  (Float) solidFill.getOpacity().getValue();
-       
         if(opacity==null){
             return color;
         }        
