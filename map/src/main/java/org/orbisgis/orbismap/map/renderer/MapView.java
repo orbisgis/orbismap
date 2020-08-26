@@ -253,6 +253,4 @@ public class MapView  implements IRenderer{
             mc.add((StyledLayer) object);
         }
     }
-
-
 }

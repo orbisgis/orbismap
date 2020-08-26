@@ -48,13 +48,10 @@ import org.orbisgis.orbismap.map.renderer.featureStyle.fill.DotMapFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.fill.HatchedFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.graphic.GraphicFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.PenStrokeDrawer;
+import org.orbisgis.orbismap.style.fill.*;
 import org.orbisgis.orbismap.style.symbolizer.AreaSymbolizer;
 import org.orbisgis.orbismap.style.IFill;
 import org.orbisgis.orbismap.style.IStyleNode;
-import org.orbisgis.orbismap.style.fill.DotMapFill;
-import org.orbisgis.orbismap.style.fill.GraphicFill;
-import org.orbisgis.orbismap.style.fill.HatchedFill;
-import org.orbisgis.orbismap.style.fill.SolidFill;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
 import org.orbisgis.orbismap.style.stroke.Stroke;
@@ -150,7 +147,7 @@ public class AreaSymbolizerDrawer extends AbstractDrawerFinder<IStyleDrawer, ISt
                 } else if (styleNode instanceof DotMapFill) {
                     drawer = new DotMapFillDrawer();
                     drawerMap.put(styleNode, drawer);
-                } else if (styleNode instanceof SolidFill) {
+                } else if (styleNode instanceof DensityFill) {
                     drawer = new DensityFillDrawer();
                     drawerMap.put(styleNode, drawer);
                 } else if (styleNode instanceof GraphicFill) {

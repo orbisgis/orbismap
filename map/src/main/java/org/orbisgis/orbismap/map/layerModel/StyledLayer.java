@@ -112,7 +112,7 @@ public class StyledLayer extends AbstractLayer {
 
     /**
      * This method is used to parse the style and collect informations
-     * before computing envelope or rendering style
+     * before computing envelope or rendering the style
      */
     private void visitStyle() {
         if (style != null) {

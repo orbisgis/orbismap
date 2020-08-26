@@ -69,7 +69,6 @@ class MapViewInActionsTests {
         //TODO : assertEquals(0, mapView.layers.size)
     }
 
-    @Disabled
     @Test
     void createMapView(TestInfo testInfo) throws Exception {
         H2GIS h2GIS = H2GIS.open("./target/mapview")
@@ -172,7 +171,6 @@ class MapViewInActionsTests {
         style.addRule(rule)
         return style
     }
-
 
     @Test
     void mapViewReadStyle(TestInfo testInfo) throws Exception {
