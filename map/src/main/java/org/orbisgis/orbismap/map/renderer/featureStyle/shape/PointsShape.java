@@ -52,7 +52,6 @@ public class PointsShape implements Shape {
 
     public PointsShape() {
     }
-    
    
     
     public void add(Shape shape) {

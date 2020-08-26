@@ -35,6 +35,7 @@
  */
 package org.orbisgis.orbismap.map.renderer.featureStyle.graphic;
 
+import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.WobbleStrokeDrawer;
 import org.orbisgis.orbismap.style.graphic.shapeFactory.ShapeFinder;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -59,6 +60,7 @@ import org.orbisgis.orbismap.style.graphic.MarkGraphic;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
 import org.orbisgis.orbismap.style.stroke.Stroke;
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 
 /**
  * Drawer for the element <code>MarkGraphic</code>
@@ -199,6 +201,9 @@ public class MarkGraphicDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyle
                     drawerMap.put(styleNode, drawer);
                 } else if (styleNode instanceof PenStroke) {
                     drawer = new PenStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof WobbleStroke) {
+                    drawer = new WobbleStrokeDrawer();
                     drawerMap.put(styleNode, drawer);
                 }
             }

@@ -35,40 +35,31 @@
  */
 package org.orbisgis.orbismap.map.renderer.featureStyle.stroke;
 
-import org.orbisgis.orbismap.map.renderer.featureStyle.fill.SolidFillDrawer;
-
-import java.awt.*;
-
 import org.orbisgis.orbismap.map.layerModel.MapTransform;
 import org.orbisgis.orbismap.map.renderer.featureStyle.AbstractDrawerFinder;
 import org.orbisgis.orbismap.map.renderer.featureStyle.IFillDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.IStrokeDrawer;
-import org.orbisgis.orbismap.map.renderer.featureStyle.fill.DensityFillDrawer;
-import org.orbisgis.orbismap.map.renderer.featureStyle.fill.DotMapFillDrawer;
-import org.orbisgis.orbismap.map.renderer.featureStyle.fill.HaloDrawer;
-import org.orbisgis.orbismap.map.renderer.featureStyle.fill.HatchedFillDrawer;
+import org.orbisgis.orbismap.map.renderer.featureStyle.fill.*;
 import org.orbisgis.orbismap.style.IFill;
 import org.orbisgis.orbismap.style.Uom;
-import org.orbisgis.orbismap.style.fill.DensityFill;
-import org.orbisgis.orbismap.style.fill.DotMapFill;
-import org.orbisgis.orbismap.style.fill.Halo;
-import org.orbisgis.orbismap.style.fill.HatchedFill;
-import org.orbisgis.orbismap.style.fill.SolidFill;
+import org.orbisgis.orbismap.style.fill.*;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
-import org.orbisgis.orbismap.style.stroke.PenStroke;
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 import org.orbisgis.orbismap.style.utils.UomUtils;
 
+import java.awt.*;
+
 /**
- * Drawer for the element <code>PenStroke</code>
+ * Drawer for the element <code>WobbleStroke</code>
  * @author Erwan Bocher, CNRS (2020)
  */
-public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> implements IStrokeDrawer<PenStroke> {
+public class WobbleStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> implements IStrokeDrawer<WobbleStroke> {
 
     private Shape shape;
     private Stroke stroke;
 
     @Override
-    public void draw(Graphics2D g2, MapTransform mapTransform, PenStroke styleNode) throws ParameterException {
+    public void draw(Graphics2D g2, MapTransform mapTransform, WobbleStroke styleNode) throws ParameterException {
         IFill fill = styleNode.getFill();
         Float width = (Float) styleNode.getWidth().getValue();
         if (fill != null && width != null) {
@@ -88,26 +79,33 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
                         }
                     }
                 }
+            BasicStroke currentStroke = null;
             if (dashLengths != null ) {
                 if(stroke==null) {
-                    stroke = createDashStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator()),
+                    currentStroke = createDashStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator()),
                             dashLengths, dashOffset);
                 }
-
             } else {
                 if(stroke==null) {
-                    stroke = new WobbleStrokeImpl(createBasicStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator())));
+                    currentStroke = createBasicStroke(styleNode, mapTransform, UomUtils.toPixel(width, uom, mapTransform.getDpi(), mapTransform.getScaleDenominator()));
                 }
             }
-                g2.setPaint(paint);
-                g2.setStroke(stroke);
-                if (paint != null) {
-                    g2.draw(shape);
-                } else {
-                    //    // Others can't -> create the ares to fill
-                    fillToDraw.setShape(stroke.createStrokedShape(shape));
-                    fillToDraw.draw(g2, mapTransform, styleNode);
-                }
+            Float amplitude = (Float)styleNode.getAmplitude().getValue();
+            Float detail = (Float)styleNode.getDetail().getValue();
+            if(detail!=null && amplitude!=null){
+                stroke = new WobbleStrokeImpl(currentStroke, amplitude, detail);
+            }else{
+                stroke = new WobbleStrokeImpl(currentStroke);
+            }
+            g2.setPaint(paint);
+            g2.setStroke(stroke);
+            if (paint != null) {
+                g2.draw(shape);
+            } else {
+                //    // Others can't -> create the ares to fill
+                fillToDraw.setShape(stroke.createStrokedShape(shape));
+                fillToDraw.draw(g2, mapTransform, styleNode);
+            }
         }
     }
 
@@ -137,7 +135,7 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
 
     /**
      *
-     * @param penStroke
+     * @param wobbleStroke
      * @param mt
      * @param v100p
      * @param dashArray
@@ -145,13 +143,13 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
      * @return
      * @throws ParameterException
      */
-    private static BasicStroke createDashStroke(PenStroke penStroke, MapTransform mt, float v100p, float[] dashArray, float dashOffset) throws ParameterException {
-        Uom uom = penStroke.getUom();
+    private static BasicStroke createDashStroke(WobbleStroke wobbleStroke, MapTransform mt, float v100p, float[] dashArray, float dashOffset) throws ParameterException {
+        Uom uom = wobbleStroke.getUom();
         int cap;
-        if (penStroke.getLineCap() == null) {
+        if (wobbleStroke.getLineCap() == null) {
             cap = BasicStroke.CAP_BUTT;
         } else {
-            switch (penStroke.getLineCap()) {
+            switch (wobbleStroke.getLineCap()) {
                 case ROUND:
                     cap = BasicStroke.CAP_ROUND;
                     break;
@@ -166,10 +164,10 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
         }
 
         int join;
-        if (penStroke.getLineJoin() == null) {
+        if (wobbleStroke.getLineJoin() == null) {
             join = BasicStroke.JOIN_ROUND;
         } else {
-            switch (penStroke.getLineJoin()) {
+            switch (wobbleStroke.getLineJoin()) {
                 case BEVEL:
                     join = BasicStroke.JOIN_BEVEL;
                     break;
@@ -193,13 +191,13 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
 
     }
 
-    private BasicStroke createBasicStroke(PenStroke penStroke, MapTransform mt, float v100p) throws ParameterException {
-        Uom uom = penStroke.getUom();
+    private BasicStroke createBasicStroke(WobbleStroke wobbleStroke, MapTransform mt, float v100p) throws ParameterException {
+        Uom uom = wobbleStroke.getUom();
         int cap;
-        if (penStroke.getLineCap() == null) {
+        if (wobbleStroke.getLineCap() == null) {
             cap = BasicStroke.CAP_BUTT;
         } else {
-            switch (penStroke.getLineCap()) {
+            switch (wobbleStroke.getLineCap()) {
                 case ROUND:
                     cap = BasicStroke.CAP_ROUND;
                     break;
@@ -214,10 +212,10 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
         }
 
         int join;
-        if (penStroke.getLineJoin() == null) {
+        if (wobbleStroke.getLineJoin() == null) {
             join = BasicStroke.JOIN_ROUND;
         } else {
-            switch (penStroke.getLineJoin()) {
+            switch (wobbleStroke.getLineJoin()) {
                 case BEVEL:
                     join = BasicStroke.JOIN_BEVEL;
                     break;
@@ -237,15 +235,15 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
 
     /**
      *
-     * @param penStroke
+     * @param wobbleStroke
      * @param mt
      * @return
      */
     @Override
-    public Double getNaturalLength(PenStroke penStroke, MapTransform mt) {
-        String dashArray = (String) penStroke.getDashArray().getValue();
+    public Double getNaturalLength(WobbleStroke wobbleStroke, MapTransform mt) {
+        String dashArray = (String) wobbleStroke.getDashArray().getValue();
         if (dashArray != null) {
-            // A dashed PenStroke has a length
+            // A dashed wobbleStroke has a length
             // This is required to compute hatches tile but will break the compound stroke natural length logic
             // for infinite PenStroke element ! For this reason, compound stroke use getNaturalLengthForCompound
             try {
@@ -254,7 +252,7 @@ public class PenStrokeDrawer extends AbstractDrawerFinder<IFillDrawer, IFill> im
                     String[] splitDash = dashArray.split(" ");
                     int size = splitDash.length;
                     for (int i = 0; i < size; i++) {
-                        sum += UomUtils.toPixel(Float.parseFloat(splitDash[i]), penStroke.getUom(), mt.getDpi(), mt.getScaleDenominator());
+                        sum += UomUtils.toPixel(Float.parseFloat(splitDash[i]), wobbleStroke.getUom(), mt.getDpi(), mt.getScaleDenominator());
                     }
 
                     if (size % 2 == 1) {

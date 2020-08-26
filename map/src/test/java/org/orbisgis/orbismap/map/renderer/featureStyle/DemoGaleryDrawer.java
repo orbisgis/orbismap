@@ -437,6 +437,24 @@ public class DemoGaleryDrawer {
         Feature2DStyle style = StylesForTest.createLineSymbolizerWithVariousGeometryReferences();
         template(tableName, testInfo.getDisplayName(), style, true, false, null);
     }
+
+    @Test
+    public void testAreaSymbolizerHatchDensityFillColorExpressionWithNiceStroke(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        String  tableName = "TMP_GEOFILE";
+        h2GIS.link(new File(inputFile), tableName, true);
+        Feature2DStyle style = StylesForTest.createAreaSymbolizerHatchDensityFillColorExpressionWithNiceStroke();
+        template(tableName, testInfo.getDisplayName(), style, true, false,null);
+    }
+
+    @Test
+    public void testTextSymbolizerColorExpressionWithNiceStroke(TestInfo testInfo) throws LayerException, IOException, URISyntaxException, InterruptedException {
+        String inputFile = new File(this.getClass().getResource("landcover2000.shp").toURI()).getAbsolutePath();
+        String  tableName = "TMP_GEOFILE";
+        h2GIS.link(new File(inputFile), tableName, true);
+        Feature2DStyle style = StylesForTest.createTextSymbolizerColorExpressionWithNiceStroke();
+        template(tableName, testInfo.getDisplayName(), style, true, false,null);
+    }
     
     /**
      * Method to save the style in two encodings JSON and XML in the target

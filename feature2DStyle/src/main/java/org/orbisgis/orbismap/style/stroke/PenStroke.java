@@ -50,7 +50,7 @@ import org.orbisgis.orbismap.style.Uom;
 
 /**
  * Basic stroke for linear features. It is designed according to :
- * <ul><li>A {@link Fill} value</li>
+ * <ul><li>A {@link IFillNode} value</li>
  * <li>A width</li>
  * <li>A way to draw the extremities of the lines</li>
  * <li>A way to draw the joins between the segments of the lines</li>
@@ -142,8 +142,8 @@ public class PenStroke extends Stroke implements IFillNode {
     /**
      * Sets the way to draw the extremities of a line.
      *
-     * @param cap The new {@link LineCap}. Will be replaced by {
-     * @see DEFAULT_CAP} if null.
+     * @param cap The new {@link LineCap}. Will be replaced by
+     * DEFAULT_CAP if null.
      */
     public void setLineCap(LineCap cap) {
         lineCap = cap == null ? DEFAULT_CAP : cap;
@@ -232,7 +232,7 @@ public class PenStroke extends Stroke implements IFillNode {
     /**
      * Sets the offset let before drawing the first dash.
      *
-     * @param dashOffset.
+     * @param dashOffset
      */
     public void setDashOffset(float dashOffset) {
         setDashOffset(new Literal(dashOffset));

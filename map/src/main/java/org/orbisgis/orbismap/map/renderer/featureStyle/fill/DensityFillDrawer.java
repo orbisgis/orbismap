@@ -50,6 +50,9 @@ import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.PenStrokeDrawer;
 import org.orbisgis.orbismap.style.fill.DensityFill;
 import org.orbisgis.orbismap.style.graphic.GraphicCollection;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
+import org.orbisgis.orbismap.style.stroke.PenStroke;
+import org.orbisgis.orbismap.style.stroke.Stroke;
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 import org.orbisgis.orbismap.style.utils.UomUtils;
 
 /**
@@ -103,8 +106,13 @@ public class DensityFillDrawer extends AbstractDrawerFinder<IGraphicCollectionDr
                     throw new ParameterException("The orientation parameter cannot be null");
                 }
                 // Stroke width in pixel
-                Float sWidth = (Float) styleNode.getHatches().getWidth().getValue();
-
+                Float sWidth  =null;
+                if(styleNode.getHatches() instanceof PenStroke){
+                    sWidth = (Float) ((PenStroke)styleNode.getHatches()).getWidth().getValue();
+                }
+                else if(styleNode.getHatches() instanceof WobbleStroke){
+                    sWidth = (Float) ((WobbleStroke)styleNode.getHatches()).getWidth().getValue();
+                }
                 if (sWidth == null) {
                     throw new ParameterException("The hatches size parameter cannot be null");
                 }

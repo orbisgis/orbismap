@@ -49,6 +49,7 @@ import org.orbisgis.orbismap.map.renderer.featureStyle.fill.HaloDrawer;
 import org.orbisgis.orbismap.map.renderer.featureStyle.fill.SolidFillDrawer;
 import static org.orbisgis.orbismap.map.renderer.featureStyle.label.StyleTextUtil.getOutline;
 import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.PenStrokeDrawer;
+import org.orbisgis.orbismap.map.renderer.featureStyle.stroke.WobbleStrokeDrawer;
 import org.orbisgis.orbismap.style.IFill;
 import org.orbisgis.orbismap.style.IStyleNode;
 import org.orbisgis.orbismap.style.Uom;
@@ -63,6 +64,7 @@ import org.orbisgis.orbismap.style.label.StyleFont;
 import org.orbisgis.orbismap.style.parameter.ParameterException;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
 import org.orbisgis.orbismap.style.stroke.Stroke;
+import org.orbisgis.orbismap.style.stroke.WobbleStroke;
 import org.orbisgis.orbismap.style.utils.UomUtils;
 
 /**
@@ -227,6 +229,9 @@ public class PointLabelDrawer extends AbstractDrawerFinder<IStyleDrawer, IStyleN
                     drawerMap.put(styleNode, drawer);
                 } else if (styleNode instanceof PenStroke) {
                     drawer = new PenStrokeDrawer();
+                    drawerMap.put(styleNode, drawer);
+                } else if (styleNode instanceof WobbleStroke) {
+                    drawer = new WobbleStrokeDrawer();
                     drawerMap.put(styleNode, drawer);
                 }
             }

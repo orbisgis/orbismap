@@ -407,6 +407,8 @@ public class FeatureStyleRenderer {
         } else {
             BufferedImage bufferedImage = new BufferedImage(mt.getWidth(), mt.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D sG2 = bufferedImage.createGraphics();
+            //Todo cache
+            sG2.setClip(mt.toPixel(mt.getAdjustedExtent()));
             sG2.addRenderingHints(mt.getRenderingHints());
             bufferedImages.put(level, new GraphicElements(sG2, bufferedImage));
             drawer.setBufferedImage(bufferedImage);

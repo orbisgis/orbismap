@@ -58,6 +58,7 @@ public interface Feature2DStyleTerms {
     String MARKGRAPHIC = "MarkGraphic";
     String WELLKNOWNNAME = "WellKnownName";
     String PENSTROKE = "PenStroke";
+    String WOBBLESTROKE ="WobbleStroke";
     String SOLIDFILL = "SolidFill";
     String HALO = "Halo";
     String VIEWBOX = "ViewBox";
@@ -82,4 +83,6 @@ public interface Feature2DStyleTerms {
     String VALUES = "Values";
     String URI = "Uri";
     String RADIUS = "Radius";
+    String AMPLITUDE = "Amplitude";
+    String DETAIL = "Detail";
 }

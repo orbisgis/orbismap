@@ -49,6 +49,7 @@ import org.orbisgis.orbismap.style.parameter.Literal;
 import org.orbisgis.orbismap.style.parameter.NullParameterValue;
 import org.orbisgis.orbismap.style.parameter.ParameterValue;
 import org.orbisgis.orbismap.style.stroke.PenStroke;
+import org.orbisgis.orbismap.style.stroke.Stroke;
 
 /**
  * A {@code Fill} implementation where the content of a shape is painted
@@ -65,7 +66,7 @@ import org.orbisgis.orbismap.style.stroke.PenStroke;
 public class DensityFill extends StyleNode implements IGraphicNode, IFill, IUom {
 
     private boolean isHatched;
-    private PenStroke hatches;
+    private Stroke hatches;
     private ParameterValue hatchesOrientation = new NullParameterValue();
     private GraphicCollection graphics;
     private ParameterValue percentageCovered = new NullParameterValue();
@@ -88,12 +89,12 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, IUom 
     }
 
     /**
-     * Set the {@link PenStroke} used to draw the hatches in this {@code
+     * Set the {@link Stroke} used to draw the hatches in this {@code
      * DensityFill}.
      *
      * @param hatches
      */
-    public void setHatches(PenStroke hatches) {
+    public void setHatches(Stroke hatches) {
         this.hatches = hatches;
         if (hatches != null) {
             this.isHatched = true;
@@ -103,12 +104,12 @@ public class DensityFill extends StyleNode implements IGraphicNode, IFill, IUom 
     }
 
     /**
-     * Get the {@link PenStroke} used to draw the hatches in this {@code
+     * Get the {@link Stroke} used to draw the hatches in this {@code
      * DensityFill}.
      *
      * @return
      */
-    public PenStroke getHatches() {
+    public Stroke getHatches() {
         return hatches;
     }
 
