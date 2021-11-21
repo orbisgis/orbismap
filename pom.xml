@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.orbisgis</groupId>
         <artifactId>orbisparent</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.4</version>
     </parent>
     <artifactId>orbismap</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -26,14 +26,85 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>YYYY-MM-dd</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
+        <h2gis-version>2.0.0-SNAPSHOT</h2gis-version>
+        <orbisparent-version>1.0.4-SNAPSHOT</orbisparent-version>
+        <cts-version>1.6.0-SNAPSHOT</cts-version>
+        <orbisdata-version>1.0.1-SNAPSHOT</orbisdata-version>
+        <jsqlparser-version>4.0</jsqlparser-version>
+        <commons-text-version>1.8</commons-text-version>
+        <commons-lang3-version>3.10</commons-lang3-version>
+        <jettison-version>1.4.1</jettison-version>
     </properties>
 
-    <!-- Build Settings --><dependencyManagement>
+    <!-- Build Settings -->
+    <dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>${jettison-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>commons</artifactId>
+            <version>${orbisparent-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2gis</artifactId>
+            <version>${h2gis-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2gis-utilities</artifactId>
+            <version>${h2gis-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2gis-network</artifactId>
+            <version>${h2gis-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>postgis-jts</artifactId>
+            <version>${h2gis-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>postgis-jts-osgi</artifactId>
+            <version>${h2gis-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>cts</artifactId>
+            <version>${cts-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis.orbisdata.datamanager</groupId>
+            <artifactId>api</artifactId>
+            <version>${orbisdata-version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.orbisgis.orbisdata.datamanager</groupId>
+            <artifactId>jdbc</artifactId>
+            <version>${orbisdata-version}</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>3.1</version>
+            <version>${jsqlparser-version}</version>
         </dependency>
         <dependency>
             <groupId>org.orbisgis.orbismap</groupId>
@@ -142,10 +213,6 @@
         <system>Github</system>
         <url>https://github.com/orbisgis/orbismap/issues</url>
     </issueManagement>
-    <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.com/orbisgis/orbismap</url>
-    </ciManagement>
     <scm>
         <connection>scm:git:git://github.com/orbisgis/orbismap</connection>
     </scm>
@@ -160,7 +227,7 @@
         </repository>
         <repository>
             <id>orbisgis-release</id>
-            <url>http://nexus-ng.orbisgis.org/repository/orbisgis-release</url>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -170,10 +237,9 @@
         </repository>
         <repository>
             <id>orbisgis-snapshot</id>
-            <url>http://nexus-ng.orbisgis.org/repository/orbisgis-snapshot</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
             </snapshots>
             <releases>
                 <enabled>false</enabled>
