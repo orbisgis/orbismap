@@ -15,6 +15,7 @@
     <artifactId>map</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <description>Renderering library to experiment new style and symbology standards</description>
 
     <!-- Properties -->
     <properties>
